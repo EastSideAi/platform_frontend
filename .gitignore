@@ -1,0 +1,17 @@
+﻿# deps
+node_modules/
+
+# screenshot/reference iterations (not source)
+_shots/
+_ref/
+docs/_design/
+
+# env & local
+.env
+.env.*
+*.local
+
+# logs & OS
+*.log
+.DS_Store
+Thumbs.db

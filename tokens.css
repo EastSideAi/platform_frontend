@@ -1,0 +1,534 @@
+/* ============================================================================
+   EastSide AI — ДИЗАЙН-ТОКЕНЫ
+   ----------------------------------------------------------------------------
+   Единственный источник правды по стилю. Меняешь облик платформы — меняешь
+   ТОЛЬКО этот файл. Компоненты и экраны не содержат хардкод-цветов, размеров и
+   теней — они ссылаются на переменные отсюда.
+
+   Две равноправные темы:
+     :root              — светлая (теплый premium editorial, кремовый фон)
+     [data-theme=dark]  — темная (навигабельная, для подростков может быть основной)
+
+   Переключение темы — атрибут data-theme на <html>. Без атрибута берется
+   светлая. Системную тему ловит блок prefers-color-scheme внизу файла (его
+   перебивает явный data-theme на html).
+
+   Правило по контрасту (из аудита, раздел recs-style-ui):
+     jade на кремовом ~3.98:1 — НЕ проходит AA на мелком тексте.
+     Поэтому критичные числа (шансы, суммы, дедлайны, проценты) — charcoal-ink,
+     не jade. Jade — акцент на крупном и декоративном. См. --critical-* ниже.
+   ============================================================================ */
+
+:root {
+  /* ---- ПАЛИТРА · светлая · фоны и поверхности -------------------------- */
+  /* Светлая тема — НЕ кремовая: чистые светлые поверхности + сапфировый акцент
+     (как в эталонной раскладке дашборда). Тот же визуальный язык, что тёмная,
+     только палитра светлее. Сапфир #2B8FFF — единственный акцент в обеих темах. */
+  --bg:            #EEF1FA;   /* фон страницы — холодный светлый (база трёхслойки) */
+  --rail:          #E7EBF6;   /* боковые рейлы/навигация — на тон глубже фона */
+  --surface:       #FFFFFF;   /* карточки, модалки, поля — чистый лист */
+  --surface-2:     #F4F6FD;   /* вторичная поверхность — секции внутри карточек */
+  --surface-sunken:#E8ECF8;   /* «утопленный» фон — треки, поля внутри карточки */
+  --overlay:       rgba(20, 28, 56, 0.42); /* затемнение под модалкой */
+
+  /* ---- ТЕКСТ · 4 уровня + инверсный ----------------------------------- */
+  --ink:        #15203B;                  /* основной текст, заголовки (сине-чернильный) */
+  --ink-soft:   rgba(21, 32, 59, 0.66);   /* вторичный текст, подписи абзацев */
+  --ink-mute:   rgba(21, 32, 59, 0.46);   /* приглушенный — лейблы, мета */
+  --ink-faint:  rgba(21, 32, 59, 0.27);   /* почти-фон — плейсхолдеры, иконки-призраки */
+  --ink-invert: #FFFFFF;                  /* текст на темных плашках (accent/jade) */
+
+  /* ---- ЛИНИИ ----------------------------------------------------------- */
+  --line:        rgba(21, 32, 59, 0.09);  /* тонкая граница — карточки, разделители */
+  --line-strong: rgba(21, 32, 59, 0.15);  /* заметная граница — поля, кнопки-призраки */
+
+  /* ---- ACCENT · сапфир — основной интерактив (один акцент в обеих темах) */
+  /* фон primary-кнопок и темной панели-спутника. Свет ВСЕГДА внутри (inset). */
+  --accent:        #2073E6;
+  --accent-hover:  #2B8FFF;
+  --accent-active: #1E63C2;
+  --accent-soft:   rgba(43, 143, 255, 0.10); /* легкая заливка hover/selected */
+  --on-accent:     #FFFFFF;                  /* текст на accent */
+  /* текст на НАСЫЩЕННОЙ цветной заливке (jade/danger-solid/нода вехи). */
+  --on-fill:       #FFFFFF;
+
+  /* ---- JADE · ИСТОРИЧЕСКОЕ ИМЯ = сапфир (один акцент на платформе) ------ */
+  /* Цвет синий. --jade-ink — затемнённый сапфир для текста (проходит AA на
+     мелком на светлом). Чистый --jade — заливки, бары, крупный декор, иконки. */
+  --jade:        #2B8FFF;   /* заливки, бары, крупный декор */
+  --jade-hover:  #1E72E6;
+  --jade-btn:      #2073E6;  /* фон сапфир-КНОПКИ под белым текстом */
+  --jade-btn-hover:#2B8FFF;
+  --jade-ink:    #1763C8;   /* сапфир-ТЕКСТ — затемнённый, проходит AA на мелком */
+  --jade-soft:   #E1EEFF;   /* мягкая заливка — бейджи, выделения */
+  --jade-tint:   #EDF4FF;   /* самая легкая заливка — фон секции «все хорошо» */
+  --jade-line:   rgba(43, 143, 255, 0.34);  /* сапфир-граница */
+  --jade-bright: #2B8FFF;   /* акцент-цвет на светлой панели (тексты на тёмной) */
+
+  /* ---- СЕМАНТИКА · статусы --------------------------------------------- */
+  /* у каждого статуса: -ink (текст, проходит контраст), базовый (заливка/бордер),
+     -soft (мягкая заливка-фон). Info опирается на сапфир — один акцентный язык. */
+  --success:      #2EA06E;  --success-ink: #1C7E52;  --success-soft: #E0F3EA;
+  --warning:      #C9923E;  --warning-ink: #936417;  --warning-soft: #FBF1DA;
+  --danger:       #D2604F;  --danger-ink:  #B23B2A;  --danger-soft:  #FBE7E2;
+  --info:         #2B8FFF;  --info-ink:    #1763C8;  --info-soft:    #E1EEFF;
+
+  /* ---- ДЕКОРАТИВНЫЕ акценты — золото и коралл (вторичный тёплый тон) ---- */
+  /* допустимый спокойный вторичный оттенок для зон роста и «обрати внимание» */
+  --ochre:        #C9923E;  --ochre-ink: #936417;  --ochre-soft: #FBF1DA;
+  --terra:        #D2604F;  --terra-ink: #B23B2A;  --terra-soft: rgba(210, 96, 79, 0.08);
+
+  /* ---- КРИТИЧНЫЕ ЧИСЛА ------------------------------------------------- */
+  /* семантический алиас: «цифра, которую родитель читает как факт о деньгах и
+     будущем ребенка». ВСЕГДА бери эти токены для шансов/сумм/дедлайнов/процентов,
+     не подставляй акцент. При смене темы алиас переедет сам. */
+  --critical-text: #15203B;            /* = ink: контрастная цифра */
+  --critical-pos:  var(--success-ink); /* положительная динамика — зелёный */
+  --critical-neg:  var(--danger-ink);  /* отрицательная динамика */
+
+  /* ---- ТИПОГРАФИКА · семейства ----------------------------------------- */
+  /* Arkhip — фирменный ДИСПЛЕЙНЫЙ шрифт, ТОЛЬКО крупные заголовки (h1/hero/
+     панель-титул). Onest — подзаголовки, числа, акцентная типографика.
+     Manrope — основной текст, интерфейсные подписи. @font-face Arkhip — в styles.css. */
+  --font-arkhip:  'Arkhip', 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-text:    'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono:    'Onest', ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
+
+  /* ---- ТИПОГРАФИКА · размеры (шкала, rem от 16px корня) ----------------- */
+  --fs-2xs:  0.6875rem; /* 11px — uppercase-метки, мелкая мета */
+  --fs-xs:   0.78125rem;/* 12.5px — подписи, мета, хинты */
+  --fs-sm:   0.875rem;  /* 14px — вторичный текст, кнопки, ячейки таблиц */
+  --fs-base: 0.9375rem; /* 15px — базовый интерфейсный текст */
+  --fs-md:   1rem;      /* 16px — длинный читаемый текст (prose), поля на тач */
+  --fs-lg:   1.1875rem; /* 19px — лиды, крупные подзаголовки */
+  --fs-xl:   1.375rem;  /* 22px — заголовок карточки h4 */
+  --fs-2xl:  1.5rem;    /* 24px — h3 */
+  --fs-3xl:  2rem;      /* 32px — h2 */
+  --fs-4xl:  2.625rem;  /* 42px — h1 экрана */
+  --fs-5xl:  3.5rem;    /* 56px — hero/лендинг */
+
+  /* ---- ТИПОГРАФИКА · веса --------------------------------------------- */
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    800;  /* заголовки Onest идут на 800 */
+
+  /* ---- ТИПОГРАФИКА · межстрочный и трекинг ---------------------------- */
+  --lh-tight:   1.1;   /* крупные заголовки */
+  --lh-snug:    1.3;   /* подзаголовки, плотные блоки */
+  --lh-normal:  1.5;   /* интерфейсный текст */
+  --lh-relaxed: 1.62;  /* длинная читаемая проза */
+  --tracking-tight:   -0.035em; /* крупные заголовки Onest */
+  --tracking-snug:    -0.015em; /* средние заголовки */
+  --tracking-normal:  0;
+  --tracking-wide:    0.06em;   /* uppercase-метки */
+  --tracking-wider:   0.14em;   /* мелкие uppercase-eyebrow */
+
+  /* ---- РАДИУСЫ --------------------------------------------------------- */
+  --r-xs:   6px;   /* мелкие бейджи, чипы-теги */
+  --r-sm:   9px;   /* кнопки-иконки, мелкие контролы */
+  --r-md:   12px;  /* поля, кнопки, средние карточки */
+  --r-lg:   16px;  /* карточки */
+  --r-xl:   20px;  /* крупные карточки, модалки */
+  --r-2xl:  24px;  /* hero-блоки, premium-карточки */
+  --r-pill: 999px; /* пилюли, чипы, segmented, аватары */
+
+  /* ---- ГЛУБИНА · ТОЛЬКО inset-свечение, НИ ОДНОЙ drop-тени -------------- */
+  /* Закон платформы: глубина — через внутреннее свечение, обводки, вуали и
+     градиенты. Внешний box-shadow с блюром ЗАПРЕЩЁН. Все «тени» — inset.
+     Имена --sh-* сохранены, чтобы старые компоненты автоматически потеряли дроп
+     и получили мягкое внутреннее свечение / тонкую внутреннюю обводку. */
+  --sh-xs:  inset 0 0 0 1px rgba(43, 143, 255, 0.04);
+  --sh-sm:  inset 0 0 0 1px rgba(43, 143, 255, 0.05);
+  --sh-md:  inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 0 0 1px rgba(43, 143, 255, 0.05);
+  --sh-lg:  inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(43, 143, 255, 0.07);
+  --sh-pop: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(43, 143, 255, 0.10); /* дропдауны/поповеры — обводка вместо дропа */
+  --sh-focus: 0 0 0 3.5px rgba(43, 143, 255, 0.18); /* кольцо фокуса (не дроп, ровный ореол) */
+
+  /* ---- ОТСТУПЫ · spacing scale (rem) ---------------------------------- */
+  --sp-0:   0;
+  --sp-1:   0.25rem; /* 4px */
+  --sp-2:   0.5rem;  /* 8px */
+  --sp-3:   0.75rem; /* 12px */
+  --sp-4:   1rem;    /* 16px */
+  --sp-5:   1.25rem; /* 20px */
+  --sp-6:   1.5rem;  /* 24px */
+  --sp-8:   2rem;    /* 32px */
+  --sp-10:  2.5rem;  /* 40px */
+  --sp-12:  3rem;    /* 48px */
+  --sp-16:  4rem;    /* 64px */
+  --sp-20:  5rem;    /* 80px */
+
+  /* ---- РАЗМЕРЫ КАРКАСА ------------------------------------------------- */
+  --sidebar-w:      264px;  /* левый рейл навигации (десктоп) */
+  --content-max:    880px;  /* максимум читаемой колонки */
+  --content-wide:   1180px; /* широкие табличные/дашборд-экраны */
+  --topbar-h:       60px;   /* высота верхней панели (моб./кабинеты) */
+  --tap-min:        44px;   /* минимальная тач-цель */
+
+  /* ---- Z-INDEX · шкала слоев ------------------------------------------ */
+  --z-base:     0;
+  --z-raised:   10;   /* приподнятые карточки, sticky-заголовки таблиц */
+  --z-sticky:   40;   /* липкие панели, footnav */
+  --z-nav:      60;   /* верхняя/боковая навигация */
+  --z-dropdown: 100;  /* дропдауны, поповеры, тултипы */
+  --z-overlay:  900;  /* затемнение под модалкой */
+  --z-modal:    1000; /* модалки, диалоги */
+  --z-toast:    1100; /* тосты — поверх всего */
+
+  /* ---- ДЛИТЕЛЬНОСТИ и кривые ------------------------------------------ */
+  --dur-fast:   120ms; /* hover/смена цвета */
+  --dur-base:   180ms; /* стандартный переход контрола */
+  --dur-slow:   340ms; /* раскрытие панелей, прогресс */
+  --dur-page:   600ms; /* смена экрана */
+  --ease-out:   cubic-bezier(.22, .61, .36, 1);  /* стандартное замедление */
+  --ease-spring:cubic-bezier(.32, .72, 0, 1);    /* живой «пружинный» вход экрана */
+  --ease-in:    cubic-bezier(.5, 0, .75, 0);     /* уход элемента */
+
+  /* ============================================================================
+     ТРЁХСЛОЙКА · SHELL платформы (sapphire-язык в dark, тёплый — в light)
+     ----------------------------------------------------------------------------
+     Структура одна на обе темы (тёмная база → светлая плашка → панель-спутник).
+     Меняются ТОЛЬКО значения токенов. В светлой теме «база» = кремовый фон, плашка
+     = чистый лист, панель — тёплая тёмная плашка. В тёмной — это полный sapphire.
+     ============================================================================ */
+  --shell-gap:     16px;   /* зазор сайдбар↔плашка и панель↔край */
+  --shell-pad:     16px;   /* внешний паддинг каркаса */
+  --shell-side-w:  240px;  /* сайдбар */
+  --shell-panel-w: 312px;  /* панель-спутник */
+  --shell-col-max: 824px;  /* узкая колонка контента в плашке */
+
+  /* база — фон под трёхслойкой (холодный светлый с тихим сапфировым переливом) */
+  --base:       #E7EBF6;
+  --base-glow:  radial-gradient(900px 520px at 88% -12%, rgba(43,143,255,.12), transparent 62%),
+                radial-gradient(700px 520px at -4% 108%, rgba(43,143,255,.08), transparent 60%);
+
+  /* светлая «молочная» плашка — чистый светлый лист с лёгким сапфировым свечением сверху */
+  --plate-sky:  #FBFCFF;
+  --plate-hi:   #F4F7FE;
+  --plate-lo:   #EDF1FB;
+  --plate-bg:   radial-gradient(820px 540px at 100% 0%, rgba(43,143,255,.12) 0%, rgba(43,143,255,.05) 45%, transparent 72%),
+                linear-gradient(180deg, var(--plate-sky) 0%, var(--plate-hi) 46%, var(--plate-lo) 100%);
+  --plate-glow: linear-gradient(0deg, rgba(43,143,255,.10) 0%, rgba(43,143,255,.04) 55%, transparent 100%);
+
+  /* чернила контента на плашке */
+  --plate-ink:     var(--ink);
+  --plate-ink-sub: var(--ink-soft);
+
+  /* панель-спутник (тёмная сапфировая плашка справа — в light она остаётся тёмной,
+     это якорь «горы»; работает как акцентная панель на светлом полотне) */
+  --panel:       #0A1538;
+  --panel-2:     #0E1E4C;
+  --panel-line:  rgba(43, 143, 255, 0.18);
+  --panel-tx:    #FFFFFF;
+  --panel-tx-soft: rgba(255, 255, 255, 0.78);
+  --panel-tx-mute: rgba(197, 203, 227, 0.62);
+
+  /* текст САЙДБАРА — он лежит на --base (светлый): в light это тёмный ink */
+  --sb-tx:      var(--ink);
+  --sb-tx-soft: var(--ink-soft);
+  --sb-tx-mute: var(--ink-mute);
+  --sb-hover:   var(--accent-soft);
+  --sb-chip-bg: rgba(43, 143, 255, 0.05);
+
+  /* sapphire-акцент — один акцент в обеих темах */
+  --violet:      #2B8FFF;
+  --violet-2:    #5CB4FF;
+  --violet-deep: #1E72E6;
+  --violet-soft: #9FCBFF;
+
+  /* поверхность КАРТОЧКИ на плашке (вуаль + тонкая сапфировая обводка) */
+  --plate-card:     #FFFFFF;
+  --plate-card-br:  rgba(43, 143, 255, 0.14);
+  --plate-card-hi:  #F4F7FE;
+
+  /* HERO-сцена (Путь — полноэкранный этап «восхождения») */
+  --scene-bg:        radial-gradient(1100px 680px at 78% -8%, rgba(43,143,255,.14), transparent 60%), linear-gradient(180deg, #FBFCFF 0%, #EDF1FB 100%);
+  --scene-card:      #FFFFFF;
+  --scene-card-br:   rgba(43,143,255,.14);
+  --scene-card-glow: inset 0 1px 0 rgba(255,255,255,.8), inset 0 0 0 1px rgba(43,143,255,.05);
+  --scene-overline:  var(--jade-ink);
+  --scene-mtn:       0.55;
+
+  /* inset-glow: выбранная карточка / primary-кнопка / чип / nav-active / step / dark-widget.
+     Один сапфировый язык в обеих темах. Внешних ореолов нет — только inset. */
+  --glow-sel-bg:     #FFFFFF;
+  --glow-sel-br:     var(--jade-line);
+  --glow-sel:        inset 0 0 26px rgba(43, 143, 255, 0.10), inset 0 0 6px rgba(43, 143, 255, 0.06);
+  --glow-chip:       inset 0 0 14px rgba(43, 143, 255, 0.55), inset 0 0 3px rgba(160, 205, 255, 0.5);
+  --glow-btn:        inset 0 0 18px rgba(120, 190, 255, 0.0), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  --glow-step:       inset 0 0 18px rgba(43, 143, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  --glow-widget:     inset 0 0 26px rgba(43, 143, 255, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  /* primary-кнопка в трёхслойке (сапфир, свет ВНУТРИ) */
+  --pri-bg:      var(--jade-btn);
+  --pri-bg-hi:   var(--jade-btn-hover);
+  --pri-tx:      var(--on-fill);
+  --pri-glow:    inset 0 0 18px rgba(150, 200, 255, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+
+  /* нав-актив в сайдбаре — сапфировая заливка с белым текстом (как в эталоне) */
+  --nav-active-bg:   linear-gradient(135deg, var(--accent), var(--accent-active));
+  --nav-active-br:   transparent;
+  --nav-active-glow: inset 0 0 22px rgba(120,190,255,.45), inset 0 1px 0 rgba(255,255,255,.28);
+  --nav-active-tx:   #FFFFFF;
+  --nav-active-ic:   #FFFFFF;
+
+  /* гора (SVG): склон/гребень/точка/звезда — сапфировая палитра */
+  --mtn-bg:     radial-gradient(58% 80% at 77% 22%, rgba(43,143,255,.18), transparent 62%), linear-gradient(180deg, #DDE6FA 0%, #CBD8F2 100%);
+  --mtn-ridge:  rgba(43,143,255,.62);
+  --mtn-dot:    #2B8FFF;
+  --mtn-dot-hi: #5CB4FF;
+  --mtn-star:   #1E72E6;
+
+  /* прогресс-бар с бегущим бликом */
+  --gleam-track: var(--surface-sunken);
+  --gleam-fill:  linear-gradient(90deg, var(--violet), var(--violet-2));
+  --gleam-glow:  inset 0 0 8px rgba(255,255,255,.5);
+}
+
+/* ============================================================================
+   ТЕМНАЯ ТЕМА — «EastSide Dark», sapphire (эталон anketa-dark.html)
+   ----------------------------------------------------------------------------
+   Глубокая сапфировая база #03081C, молочная плашка, синий акцент #2B8FFF.
+   Один акцент — сапфир (имя --violet/--jade историческое, цвет синий).
+   Свет ВСЕГДА внутри (inset). Меняются только значения — имена те же.
+   ============================================================================ */
+[data-theme="dark"] {
+  /* фоны и поверхности — сапфировая ночь, ступени светлеют в синь */
+  --bg:            #03081C;
+  --rail:          #03081C;
+  --surface:       #0A1538;
+  --surface-2:     #070F2E;
+  --surface-sunken:#07112E;
+  --overlay:       rgba(1, 2, 8, 0.78);
+
+  /* текст — белый на 4 уровнях с синеватым уходом */
+  --ink:        #FFFFFF;
+  --ink-soft:   #C5CBE3;
+  --ink-mute:   #8B93B8;
+  --ink-faint:  rgba(197, 203, 227, 0.4);
+  --ink-invert: #15151F;  /* тёмный текст на светлых плашках */
+
+  --line:        rgba(255, 255, 255, 0.10);
+  --line-strong: rgba(120, 150, 220, 0.22);
+
+  /* ACCENT — синий сапфир; на тёмном primary остаётся синим со свечением внутри */
+  --accent:        #2073E6;
+  --accent-hover:  #2B8FFF;
+  --accent-active: #1E63C2;
+  --accent-soft:   rgba(43, 143, 255, 0.12);
+  --on-accent:     #FFFFFF;
+  --on-fill:       #FFFFFF;
+
+  /* JADE-имя = сапфир (один акцент на платформе). jade-ink — светло-синий текст */
+  --jade:        #2B8FFF;
+  --jade-hover:  #1E72E6;
+  --jade-btn:      #2073E6;
+  --jade-btn-hover:#2B8FFF;
+  --jade-ink:    #9FCBFF;
+  --jade-soft:   rgba(43, 143, 255, 0.16);
+  --jade-tint:   rgba(43, 143, 255, 0.10);
+  --jade-line:   rgba(43, 143, 255, 0.4);
+  --jade-bright: #5CB4FF;
+
+  /* семантика — статусные чернила на сапфировом фоне */
+  --success:      #3EE08F;  --success-ink: #6FE6AC;  --success-soft: rgba(62, 224, 143, 0.14);
+  --warning:      #F5C84C;  --warning-ink: #F7D77A;  --warning-soft: rgba(245, 200, 76, 0.14);
+  --danger:       #FF6A6A;  --danger-ink:  #FF9B9B;  --danger-soft:  rgba(255, 106, 106, 0.16);
+  --info:         #5CB4FF;  --info-ink:    #9FCBFF;  --info-soft:    rgba(43, 143, 255, 0.15);
+
+  --ochre:        #F5C84C;  --ochre-ink: #F7D77A;  --ochre-soft: rgba(245, 200, 76, 0.14);
+  --terra:        #FF6A6A;  --terra-ink: #FF9B9B;  --terra-soft: rgba(255, 106, 106, 0.12);
+
+  /* критичные числа на сапфировом — белый ink контрастен */
+  --critical-text: #FFFFFF;
+  --critical-pos:  #6FE6AC;
+  --critical-neg:  #FF9B9B;
+
+  /* глубина — ТОЛЬКО inset (закон: внешний дроп запрещён в обеих темах).
+     На сапфировой ночи разделение несут обводки + тонкое внутреннее свечение. */
+  --sh-xs:  inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --sh-sm:  inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  --sh-md:  inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(43, 143, 255, 0.10);
+  --sh-lg:  inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 0 1px rgba(43, 143, 255, 0.14);
+  --sh-pop: inset 0 1px 0 rgba(255, 255, 255, 0.07), inset 0 0 0 1px rgba(43, 143, 255, 0.20);
+  --sh-focus: 0 0 0 3.5px rgba(43, 143, 255, 0.34);
+
+  /* ---- ТРЁХСЛОЙКА · sapphire ---- */
+  --base:       #03081C;
+  --base-glow:  radial-gradient(900px 500px at 85% -10%, rgba(30,114,240,.16), transparent 60%),
+                radial-gradient(700px 500px at 0% 110%, rgba(22,100,230,.12), transparent 60%);
+
+  /* молочная плашка с сине-голубым переливом справа-вверху + свечение по низу */
+  --plate-sky:  #D4D9F6;
+  --plate-hi:   #F6F7FB;
+  --plate-lo:   #E9EBFA;
+  --plate-bg:   radial-gradient(820px 560px at 100% 0%, rgba(100,165,250,.5) 0%, rgba(110,170,252,.18) 45%, transparent 72%),
+                linear-gradient(180deg, var(--plate-sky) 0%, var(--plate-hi) 46%, var(--plate-lo) 100%);
+  --plate-glow: linear-gradient(0deg, rgba(110,170,252,.42) 0%, rgba(110,170,252,.14) 55%, rgba(110,170,252,0) 100%);
+
+  /* чернила контента на светлой плашке (тёмные — плашка светлая в обеих темах) */
+  --plate-ink:     #15151F;
+  --plate-ink-sub: #616080;
+
+  /* панель-спутник — сапфировая ночь */
+  --panel:       #060D28;
+  --panel-2:     #07153C;
+  --panel-line:  rgba(43, 143, 255, 0.18);
+  --panel-tx:    #FFFFFF;
+  --panel-tx-soft: #C5CBE3;
+  --panel-tx-mute: #8B93B8;
+
+  /* сайдбар на сапфировой базе — светлый текст */
+  --sb-tx:      #FFFFFF;
+  --sb-tx-soft: #C5CBE3;
+  --sb-tx-mute: #8B93B8;
+  --sb-hover:   rgba(255, 255, 255, 0.05);
+  --sb-chip-bg: rgba(255, 255, 255, 0.04);
+
+  /* sapphire-акцент */
+  --violet:      #2B8FFF;
+  --violet-2:    #5CB4FF;
+  --violet-deep: #1E72E6;
+  --violet-soft: #9FCBFF;
+
+  /* карточка на светлой плашке (вуаль + тонкая белая обводка) */
+  --plate-card:     rgba(255, 255, 255, 0.42);
+  --plate-card-br:  rgba(255, 255, 255, 0.96);
+  --plate-card-hi:  rgba(255, 255, 255, 0.6);
+
+  /* HERO-сцена (Путь — полноэкранный этап «восхождения»), sapphire-ночь */
+  --scene-bg:        radial-gradient(1000px 620px at 80% -10%, rgba(43,143,255,.24), transparent 62%), radial-gradient(760px 560px at 6% 110%, rgba(30,114,240,.18), transparent 60%), linear-gradient(180deg, #050C24 0%, #03081C 100%);
+  --scene-card:      rgba(12,24,62,.60);
+  --scene-card-br:   rgba(95,150,255,.24);
+  --scene-card-glow: inset 0 0 30px rgba(43,143,255,.16), inset 0 1px 0 rgba(255,255,255,.07);
+  --scene-overline:  var(--jade-bright);
+  --scene-mtn:       0.85;
+
+  /* inset-glow — sapphire */
+  --glow-sel-bg:     rgba(255, 255, 255, 0.9);
+  --glow-sel-br:     rgba(43, 143, 255, 0.4);
+  --glow-sel:        inset 0 0 26px rgba(43,143,255,.3), inset 0 0 6px rgba(43,143,255,.16);
+  --glow-chip:       inset 0 0 14px rgba(43,143,255,.95), inset 0 0 3px rgba(160,205,255,.7);
+  --glow-btn:        inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
+  --glow-step:       inset 0 0 18px rgba(30,114,240,.22), inset 0 1px 0 rgba(255,255,255,.1);
+  --glow-widget:     inset 0 0 26px rgba(43,143,255,.22), inset 0 1px 0 rgba(255,255,255,.06);
+
+  --pri-bg:      #2073E6;
+  --pri-bg-hi:   #2B8FFF;
+  --pri-tx:      #FFFFFF;
+  --pri-glow:    inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
+
+  --nav-active-bg:   linear-gradient(90deg, rgba(43,143,255,.55) 0%, rgba(43,143,255,.22) 45%, rgba(43,143,255,.06) 100%);
+  --nav-active-br:   rgba(60,150,250,.7);
+  --nav-active-glow: inset 0 0 22px rgba(43,143,255,.28), inset 0 1px 0 rgba(255,255,255,.16);
+  --nav-active-tx:   #FFFFFF;
+  --nav-active-ic:   #FFFFFF;
+
+  /* гора — sapphire low-poly */
+  --mtn-bg:     radial-gradient(58% 80% at 77% 22%, rgba(43,143,255,.22), transparent 62%), linear-gradient(180deg, #08133A 0%, #050B22 100%);
+  --mtn-ridge:  rgba(120,185,255,.7);
+  --mtn-dot:    #3FA2FF;
+  --mtn-dot-hi: #B0DCFF;
+  --mtn-star:   #EAF4FF;
+
+  --gleam-track: #07112E;
+  --gleam-fill:  linear-gradient(90deg, var(--violet-soft), var(--violet-2));
+  --gleam-glow:  0 0 10px rgba(43,143,255,.8);
+}
+
+/* ============================================================================
+   Системная тема — если на <html> НЕТ явного data-theme, идем за ОС.
+   Явный атрибут (ручной переключатель) перебивает этот блок, потому что
+   селектор [data-theme] специфичнее, чем :root внутри media-query.
+   ============================================================================ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:            #03081C;
+    --rail:          #03081C;
+    --surface:       #0A1538;
+    --surface-2:     #070F2E;
+    --surface-sunken:#07112E;
+    --overlay:       rgba(1, 2, 8, 0.78);
+
+    --ink:        #FFFFFF;
+    --ink-soft:   #C5CBE3;
+    --ink-mute:   #8B93B8;
+    --ink-faint:  rgba(197, 203, 227, 0.4);
+    --ink-invert: #15151F;
+
+    --line:        rgba(255, 255, 255, 0.10);
+    --line-strong: rgba(120, 150, 220, 0.22);
+
+    --accent:        #2073E6;
+    --accent-hover:  #2B8FFF;
+    --accent-active: #1E63C2;
+    --accent-soft:   rgba(43, 143, 255, 0.12);
+    --on-accent:     #FFFFFF;
+    --on-fill:       #FFFFFF;
+
+    --jade:        #2B8FFF;
+    --jade-hover:  #1E72E6;
+    --jade-btn:      #2073E6;
+    --jade-btn-hover:#2B8FFF;
+    --jade-ink:    #9FCBFF;
+    --jade-soft:   rgba(43, 143, 255, 0.16);
+    --jade-tint:   rgba(43, 143, 255, 0.10);
+    --jade-line:   rgba(43, 143, 255, 0.4);
+    --jade-bright: #5CB4FF;
+
+    --success:      #3EE08F;  --success-ink: #6FE6AC;  --success-soft: rgba(62, 224, 143, 0.14);
+    --warning:      #F5C84C;  --warning-ink: #F7D77A;  --warning-soft: rgba(245, 200, 76, 0.14);
+    --danger:       #FF6A6A;  --danger-ink:  #FF9B9B;  --danger-soft:  rgba(255, 106, 106, 0.16);
+    --info:         #5CB4FF;  --info-ink:    #9FCBFF;  --info-soft:    rgba(43, 143, 255, 0.15);
+
+    --ochre:        #F5C84C;  --ochre-ink: #F7D77A;  --ochre-soft: rgba(245, 200, 76, 0.14);
+    --terra:        #FF6A6A;  --terra-ink: #FF9B9B;  --terra-soft: rgba(255, 106, 106, 0.12);
+
+    --critical-text: #FFFFFF;
+    --critical-pos:  #6FE6AC;
+    --critical-neg:  #FF9B9B;
+
+    --sh-xs:  inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+    --sh-sm:  inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    --sh-md:  inset 0 1px 0 rgba(255, 255, 255, 0.05), inset 0 0 0 1px rgba(43, 143, 255, 0.10);
+    --sh-lg:  inset 0 1px 0 rgba(255, 255, 255, 0.06), inset 0 0 0 1px rgba(43, 143, 255, 0.14);
+    --sh-pop: inset 0 1px 0 rgba(255, 255, 255, 0.07), inset 0 0 0 1px rgba(43, 143, 255, 0.20);
+    --sh-focus: 0 0 0 3.5px rgba(43, 143, 255, 0.34);
+
+    --base:       #03081C;
+    --base-glow:  radial-gradient(900px 500px at 85% -10%, rgba(30,114,240,.16), transparent 60%),
+                  radial-gradient(700px 500px at 0% 110%, rgba(22,100,230,.12), transparent 60%);
+    --plate-sky:  #D4D9F6;  --plate-hi: #F6F7FB;  --plate-lo: #E9EBFA;
+    --plate-bg:   radial-gradient(820px 560px at 100% 0%, rgba(100,165,250,.5) 0%, rgba(110,170,252,.18) 45%, transparent 72%),
+                  linear-gradient(180deg, var(--plate-sky) 0%, var(--plate-hi) 46%, var(--plate-lo) 100%);
+    --plate-glow: linear-gradient(0deg, rgba(110,170,252,.42) 0%, rgba(110,170,252,.14) 55%, rgba(110,170,252,0) 100%);
+    --plate-ink:  #15151F;  --plate-ink-sub: #616080;
+    --panel:      #060D28;  --panel-2: #07153C;  --panel-line: rgba(43,143,255,.18);
+    --panel-tx:   #FFFFFF;  --panel-tx-soft: #C5CBE3;  --panel-tx-mute: #8B93B8;
+    --sb-tx: #FFFFFF;  --sb-tx-soft: #C5CBE3;  --sb-tx-mute: #8B93B8;  --sb-hover: rgba(255,255,255,.05);  --sb-chip-bg: rgba(255,255,255,.04);
+    --violet: #2B8FFF;  --violet-2: #5CB4FF;  --violet-deep: #1E72E6;  --violet-soft: #9FCBFF;
+    --plate-card: rgba(255,255,255,.42);  --plate-card-br: rgba(255,255,255,.96);  --plate-card-hi: rgba(255,255,255,.6);
+    --scene-bg: radial-gradient(1000px 620px at 80% -10%, rgba(43,143,255,.24), transparent 62%), radial-gradient(760px 560px at 6% 110%, rgba(30,114,240,.18), transparent 60%), linear-gradient(180deg, #050C24 0%, #03081C 100%);
+    --scene-card: rgba(12,24,62,.60);  --scene-card-br: rgba(95,150,255,.24);  --scene-card-glow: inset 0 0 30px rgba(43,143,255,.16), inset 0 1px 0 rgba(255,255,255,.07);  --scene-overline: var(--jade-bright);  --scene-mtn: 0.85;
+    --glow-sel-bg: rgba(255,255,255,.9);  --glow-sel-br: rgba(43,143,255,.4);
+    --glow-sel:   inset 0 0 26px rgba(43,143,255,.3), inset 0 0 6px rgba(43,143,255,.16);
+    --glow-chip:  inset 0 0 14px rgba(43,143,255,.95), inset 0 0 3px rgba(160,205,255,.7);
+    --glow-btn:   inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
+    --glow-step:  inset 0 0 18px rgba(30,114,240,.22), inset 0 1px 0 rgba(255,255,255,.1);
+    --glow-widget:inset 0 0 26px rgba(43,143,255,.22), inset 0 1px 0 rgba(255,255,255,.06);
+    --pri-bg: #2073E6;  --pri-bg-hi: #2B8FFF;  --pri-tx: #FFFFFF;
+    --pri-glow: inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
+    --nav-active-bg: linear-gradient(90deg, rgba(43,143,255,.55) 0%, rgba(43,143,255,.22) 45%, rgba(43,143,255,.06) 100%);
+    --nav-active-br: rgba(60,150,250,.7);
+    --nav-active-glow: inset 0 0 22px rgba(43,143,255,.28), inset 0 1px 0 rgba(255,255,255,.16);
+    --nav-active-tx: #FFFFFF;  --nav-active-ic: #FFFFFF;
+    --mtn-bg: radial-gradient(58% 80% at 77% 22%, rgba(43,143,255,.22), transparent 62%), linear-gradient(180deg, #08133A 0%, #050B22 100%);
+    --mtn-ridge: rgba(120,185,255,.7);  --mtn-dot: #3FA2FF;  --mtn-dot-hi: #B0DCFF;  --mtn-star: #EAF4FF;
+    --gleam-track: #07112E;
+    --gleam-fill:  linear-gradient(90deg, var(--violet-soft), var(--violet-2));
+    --gleam-glow:  0 0 10px rgba(43,143,255,.8);
+  }
+}

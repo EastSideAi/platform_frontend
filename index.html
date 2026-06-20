@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>EastSide AI — Платформа</title>
+  <meta name="description" content="EastSide AI — платформа поступления в вузы Китая: кабинеты ученика и родителя, дорожная карта, документы, оплаты." />
+
+  <!-- Инициализация темы ДО рендера и до подключения стилей: убираем мигание.
+       'system' снимает data-theme (тему берет prefers-color-scheme из tokens.css). -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('es-theme'); // 'light' | 'dark' | 'system'
+        var html = document.documentElement;
+        if (saved === 'dark' || saved === 'light') html.setAttribute('data-theme', saved);
+        else html.removeAttribute('data-theme'); // system / нет выбора — идем за ОС
+      } catch (e) { /* приватный режим — остаемся на дефолте */ }
+    })();
+  </script>
+
+  <!-- Шрифты: Onest (заголовки/числа) + Manrope (текст) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Дизайн-токены, затем базовые стили (порядок важен). ?v — бастер кеша:
+       бампай число при правках CSS, чтобы браузер брал свежий файл. -->
+  <link rel="stylesheet" href="tokens.css?v=18" />
+  <link rel="stylesheet" href="styles.css?v=19" />
+
+  <!-- Конфигурация: база бэка. Пусто => фронт живет на mock (graceful-fallback). -->
+  <script>
+    // TODO: вписать боевой URL API при деплое (РФ-хостинг). Пусто = mock-режим.
+    window.ES_API_BASE = '';
+  </script>
+</head>
+<body>
+  <a class="u-skip-link" href="#main">Перейти к содержимому</a>
+  <div id="app"></div>
+
+  <!-- React 18 + ReactDOM (UMD) + Babel standalone (no-build) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- ВАЖНО: запуск только по HTTP (статик-сервер), не file:// (CORS блокирует fetch .jsx):
+         python -m http.server 5173   (из папки frontend), открывать http://localhost:5173
+       Загрузчик ELoad компилирует каждый .jsx в своей области (см. src/lib/loader.js) —
+       это чинит коллизию Babel-helpers между файлами. -->
+  <script src="src/lib/loader.js"></script>
+  <script>
+    // Порядок строгий: lib -> ui -> screens -> app. Каждый файл регистрирует себя в window.
+    window.ELoad([
+      'src/lib/icons.jsx',
+      'src/lib/mock.jsx',
+      'src/lib/api.jsx',
+      'src/lib/router.jsx',
+      'src/lib/theme.jsx',
+      'src/ui/primitives.jsx',
+      'src/ui/forms.jsx',
+      'src/ui/surfaces.jsx',
+      'src/ui/overlays.jsx',
+      'src/ui/navigation.jsx',
+      'src/ui/shell.jsx',
+      'src/ui/dashboard.jsx',
+      'src/screens/landing.jsx',
+      'src/screens/anketa.jsx',
+      'src/screens/result.jsx',
+      'src/screens/auth.jsx',
+      'src/screens/diagnostics.jsx',
+      'src/screens/documents.jsx',
+      'src/screens/payments.jsx',
+      'src/screens/partner.jsx',
+      'src/screens/assistant.jsx',
+      'src/screens/home.jsx',
+      'src/screens/cabinet-parent.jsx',
+      'src/screens/cabinet-student.jsx',
+      'src/screens/crm-clients.jsx',
+      'src/screens/crm-client.jsx',
+      'src/screens/crm-funnel.jsx',
+      'src/screens/learning-schedule.jsx',
+      'src/screens/learning-lesson.jsx',
+      'src/screens/learning-progress.jsx',
+      'src/app.jsx'
+    ]);
+  </script>
+</body>
+</html>

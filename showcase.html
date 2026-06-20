@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <title>EastSide AI — Витрина компонентов</title>
+
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('es-theme');
+        var html = document.documentElement;
+        if (saved === 'dark' || saved === 'light') html.setAttribute('data-theme', saved);
+        else html.removeAttribute('data-theme');
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>window.ES_API_BASE = '';</script>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Те же tokens/styles/ui, что и index. Запуск по HTTP (см. index.html).
+       Грузим через ELoad (своя область на файл) — иначе Babel-helpers коллизируют. -->
+  <script src="src/lib/loader.js"></script>
+  <script>
+    window.ELoad([
+      'src/lib/icons.jsx',
+      'src/lib/mock.jsx',
+      'src/lib/api.jsx',
+      'src/lib/router.jsx',
+      'src/lib/theme.jsx',
+      'src/ui/primitives.jsx',
+      'src/ui/forms.jsx',
+      'src/ui/surfaces.jsx',
+      'src/ui/overlays.jsx',
+      'src/ui/navigation.jsx',
+      'src/showcase-gallery.jsx'
+    ]);
+  </script>
+  <!-- старые babel-теги удалены ниже -->
+
+</body>
+</html>
