@@ -1,0 +1,1439 @@
+<!doctype html>
+<!-- anketa-dark.html — темная версия анкеты (шаг «Где ты сейчас?»).
+     Точная копия референса _ref/anketa-dark-reference.png по спеке
+     _ref/anketa-dark-spec.md. Standalone: без сборки, без зависимостей
+     от styles.css — все инлайном. Ассеты: assets/{mascot-dark,mountain-light,
+     mountain-dark,compass}.png -->
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EastSide — Анкета (dark)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=Poiret+One&display=swap" rel="stylesheet" />
+<style>
+  /* фирменный шрифт заголовков — Arkhip (локально, assets/fonts/arkhip) */
+  @font-face {
+    font-family: 'Arkhip';
+    src: url('assets/fonts/arkhip/Arkhip_font.otf') format('opentype'),
+         url('assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  /* ── Палитра (снята с референса, см. spec) ─────────────────────── */
+  :root {
+    --base: #03081C;
+    --panel: #060D28;
+    --card-dark: #0A1538;
+    --card-dark-2: #070F2E;
+    --row-active: #101E4C;
+    --violet: #2B8FFF;
+    --violet-2: #5CB4FF;
+    --violet-deep: #1E72E6;
+    --violet-soft: #9FCBFF;
+    --plate-hi: #F6F7FB;
+    --plate-lo: #E9EBFA;
+    --plate-sky: #D4D9F6;
+    --q-card: rgba(255,255,255,.74);
+    --opt: #EBECFE;
+    --opt-sel: #F1F3FF;
+    --ink: #15151F;
+    --ink-2: #434252;
+    --ink-sub: #616080;
+    --tx: #FFFFFF;
+    --tx-soft: #C5CBE3;
+    --tx-mute: #8B93B8;
+    --gold-1: #F5C84C;
+    --gold-2: #E2A52E;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Onest', 'Segoe UI', sans-serif;
+    background: var(--base);
+    color: var(--tx);
+    overflow: hidden;
+  }
+  /* нижний темный слой с легкими фиолетовыми переливами */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(900px 500px at 85% -10%, rgba(30,114,240,.16), transparent 60%),
+      radial-gradient(700px 500px at 0% 110%, rgba(22,100,230,.12), transparent 60%);
+  }
+
+  /* ── Каркас: сайдбар на темном низу · светлая плашка до правого
+     края · темная панель «Твой путь» ЛЕЖИТ на плашке ──────────────── */
+  .shell {
+    position: relative;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 16px;
+    height: 100vh;
+    padding: 16px;
+  }
+
+  /* ════ СЛОЙ 1 · Сайдбар ════════════════════════════════════════ */
+  .sb { display: flex; flex-direction: column; padding: 6px 4px; height: 100%; min-height: 0; overflow: hidden; }
+  .sb-brand { display: flex; align-items: center; padding: 0 6px 4px; flex: none; }
+  .sb-logo-img { width: 158px; height: auto; display: block; }
+  .sb-logo {
+    width: 38px; height: 38px; border-radius: 12px; flex: none;
+    display: grid; place-items: center;
+    background: linear-gradient(140deg, #5CB4FF, #1666E0 70%);
+    box-shadow: 0 0 18px rgba(30,114,240,.55), inset 0 1px 5px rgba(255,255,255,.28);
+    color: #fff;
+  }
+  .sb-logo svg { filter: drop-shadow(0 0 4px rgba(255,255,255,.6)); }
+  .sb-brand b { font-size: 16px; font-weight: 800; letter-spacing: .1px; display: block; }
+  .sb-brand div span { font-size: 11px; color: var(--tx-mute); display: block; margin-top: 1px; }
+
+  /* карточка профиля: маскот-фигура выглядывает слева (выше карточки),
+     имя в Arkhip + роль справа. */
+  .sb-profile {
+    flex: none; margin-top: auto; margin-bottom: 14px; position: relative; top: 0; overflow: visible;
+    display: flex; align-items: center; min-height: 104px;
+    padding: 14px 12px 14px 108px;
+    background: linear-gradient(150deg, rgba(43,143,255,.2), rgba(43,143,255,.05) 60%), #07143A;
+    border: 1px solid rgba(60,150,250,.34);
+    border-radius: 20px;
+  }
+  .sb-profile .sb-meta { position: relative; z-index: 2; min-width: 0; }
+  .sb-mascot {
+    position: absolute; left: -18px; bottom: 0; width: 128px; height: 182px; pointer-events: none; z-index: 1;
+  }
+  .sb-mascot img {
+    width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
+    filter: drop-shadow(0 6px 14px rgba(4,6,26,.65));
+  }
+  .sb-mascot .on {
+    position: absolute; right: 12px; bottom: 12px; width: 13px; height: 13px;
+    border-radius: 50%; background: #3EE08F; border: 2.5px solid #0A2358;
+    box-shadow: 0 0 8px #3EE08F;
+  }
+  .sb-profile b {
+    display: block; font-family: 'Arkhip', 'Poiret One', 'Onest', sans-serif;
+    font-size: 16px; font-weight: 400; letter-spacing: .3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
+  /* подпись в одну строку — кегль подобран так, чтобы влезала и не наезжала на маскота */
+  .sb-profile small { display: block; font-size: 10.5px; color: var(--tx-soft); margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+
+  /* нав: голые иконки без кружков; актив — градиентное свечение слева направо,
+     сама иконка светится. Начинается на уровне заголовка контента */
+  /* нав — гибкая зона: при нехватке высоты ужимается и скроллит сама,
+     профиль и кнопки внизу остаются прижатыми (не сваливаются в угол) */
+  .sb-nav { display: flex; flex-direction: column; gap: 6px; flex: none; min-height: 0; margin-top: 20px; }
+  .sb-nav::-webkit-scrollbar { width: 0; }
+
+  .sb-item {
+    display: flex; align-items: center; gap: 12px; white-space: nowrap;
+    padding: 10px 13px; border-radius: 12px; border: 1px solid transparent;
+    color: var(--tx-soft); font-size: 14px; font-weight: 500;
+    text-decoration: none; cursor: pointer; transition: background .15s;
+  }
+  .sb-item:hover { background: rgba(255,255,255,.04); }
+  .sb-item svg { width: 19px; height: 19px; flex: none; color: #9AA3C7; }
+  .sb-item.active {
+    background: linear-gradient(90deg, rgba(43,143,255,.55) 0%, rgba(43,143,255,.22) 45%, rgba(43,143,255,.06) 100%);
+    border-color: rgba(60,150,250,.7);
+    box-shadow: inset 0 0 22px rgba(43,143,255,.28), inset 0 1px 0 rgba(255,255,255,.16);
+    color: #fff; font-weight: 600;
+  }
+  .sb-item.active svg {
+    color: #fff;
+    filter: drop-shadow(0 0 8px rgba(185,215,255,1)) drop-shadow(0 0 18px rgba(43,143,255,1)) drop-shadow(0 0 4px #fff);
+  }
+  /* подпись над шагами + будущие шаги воронки (заблокированы) */
+  .sb-navlabel { margin: 0 0 8px 15px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--tx-mute); }
+  .sb-item.locked { opacity: .4; cursor: default; pointer-events: none; }
+  .sb-item .lock { margin-left: auto; color: var(--tx-mute); display: inline-flex; }
+
+  /* кнопки действий — две в ряд в самом низу сайдбара */
+  .sb-foot { display: flex; flex: none; gap: 8px; margin-bottom: 14px; }
+  .sb-mini {
+    flex: 1; min-width: 0; display: inline-flex; align-items: center; gap: 8px; overflow: hidden;
+    padding: 9px 9px; border-radius: 14px; cursor: pointer; text-align: left; white-space: nowrap;
+    background: rgba(255,255,255,.035); border: 1px solid rgba(255,255,255,.08);
+    color: var(--tx-soft); font: 600 12px 'Onest', sans-serif;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  /* чип: свечение ВНУТРИ (inset), без внешнего ореола, ровно по краям */
+  .sb-mini .chip {
+    width: 25px; height: 25px; flex: none; border-radius: 8px;
+    padding: 0; box-sizing: border-box;
+    display: grid; place-items: center; border: 0;
+    background: rgba(43,143,255,.14);
+    color: #EAF2FF;
+    box-shadow: inset 0 0 14px rgba(43,143,255,.95), inset 0 0 3px rgba(160,205,255,.7);
+  }
+  .sb-mini .chip svg { width: 14px; height: 14px; }
+  .sb-mini:hover { background: rgba(43,143,255,.12); border-color: rgba(60,150,250,.4); color: #fff; }
+  .sb-mini:hover .chip { color: #fff; box-shadow: inset 0 0 16px rgba(43,143,255,1), inset 0 0 4px rgba(160,205,255,.9); }
+  /* «Выйти» — красная с красным свечением */
+  .sb-mini.exit {
+    background: linear-gradient(135deg, rgba(255,86,86,.16), rgba(255,70,70,.05));
+    border-color: rgba(255,110,110,.42); color: #FFD8D8;
+    box-shadow: 0 0 14px rgba(255,80,80,.22);
+  }
+  .sb-mini.exit .chip {
+    border: 0; background: rgba(255,90,90,.14); color: #FFE0E0;
+    box-shadow: inset 0 0 14px rgba(255,85,85,.95), inset 0 0 3px rgba(255,160,160,.7);
+  }
+  .sb-mini.exit:hover { border-color: rgba(255,130,130,.7); color: #fff; box-shadow: 0 0 20px rgba(255,80,80,.45); }
+  .sb-mini.exit:hover .chip { color: #fff; box-shadow: inset 0 0 16px rgba(255,85,85,1), inset 0 0 4px rgba(255,160,160,.9); }
+
+  /* ════ СЛОЙ 2 · Светлая плашка (уходит до правого края, панель
+     «Твой путь» лежит НА ней) ════════════════════════════════════ */
+  .plate {
+    position: relative; min-height: 0;
+    border-radius: 24px; overflow: hidden;
+    background:
+      radial-gradient(820px 560px at 100% 0%, rgba(100,165,250,.5) 0%, rgba(110,170,252,.18) 45%, transparent 72%),
+      linear-gradient(180deg, var(--plate-sky) 0%, var(--plate-hi) 46%, var(--plate-lo) 100%);
+    color: var(--ink);
+  }
+  /* сине-голубое свечение по нижней кромке плашки */
+  .plate::after {
+    content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 170px;
+    background: linear-gradient(0deg, rgba(110,170,252,.42) 0%, rgba(110,170,252,.14) 55%, rgba(110,170,252,0) 100%);
+    pointer-events: none;
+  }
+  .plate-scroll, .path { z-index: 1; }
+  /* контент не лезет под панель справа: 16(зазор) + 312(панель) + воздух.
+     Контент в УЗКОЙ центрированной колонке — не растекается по всей ширине. */
+  .plate-scroll {
+    position: relative; height: 100%; overflow-y: auto;
+    padding: 77px 44px 22px 44px; margin-right: 336px;
+  }
+  .plate-scroll::-webkit-scrollbar { width: 0; }
+  .plate-col {
+    max-width: 824px; margin: 0 auto; min-height: 100%;
+    display: flex; flex-direction: column; align-items: stretch;
+  }
+  /* блок вопроса прижат к ВЕРХУ: заголовок на каждом шаге начинается с одной
+     и той же высоты (не «плавает» по центру в зависимости от длины контента).
+     Низ заполняется крупными карточками, футер закреплен снизу через margin-top:auto */
+  .plate-mid { margin: 0; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: flex-start; }
+
+  .h1 {
+    font-family: 'Arkhip', 'Poiret One', 'Onest', sans-serif;
+    font-size: 40px; font-weight: 400; letter-spacing: -3px; color: var(--ink);
+  }
+  .sub { margin-top: 9px; font-size: 15px; color: var(--ink-sub); }
+
+  /* контейнер вопроса: почти невидимый — легкая белая вуаль + тонкая обводка.
+     Просторный паддинг — короткие шаги заполняются воздухом, а не центровкой */
+  .q-card {
+    margin-top: 54px; padding: 38px 40px;
+    background: rgba(255,255,255,.28);
+    border: 1px solid rgba(255,255,255,.7); border-radius: 24px;
+  }
+  .q-label { font-size: 22px; font-weight: 700; color: #21212E; }
+  .q-hint { margin-top: 9px; font-size: 15.5px; color: var(--ink-sub); }
+
+  /* карточки-опции: крупные, аккуратные, еле-еле с цветом, тонкая белая обводка */
+  .opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 0; }
+  .opt {
+    position: relative; border-radius: 20px; padding: 26px 28px; cursor: pointer;
+    min-height: 168px; display: flex; flex-direction: column; justify-content: flex-end;
+    background: rgba(255,255,255,.66);
+    border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05);
+    transition: border-color .15s, background .15s, box-shadow .15s;
+  }
+  .opt:hover { background: rgba(255,255,255,.82); border-color: rgba(43,143,255,.6); box-shadow: 0 4px 14px rgba(43,143,255,.14); }
+  .opt b { display: block; font-size: 18.5px; font-weight: 700; color: var(--ink-2); line-height: 1.34; }
+  .opt span { display: block; margin-top: 11px; font-size: 14.5px; color: var(--ink-sub); line-height: 1.5; }
+  /* во всю ширину (одна колонка) — радио-строка: кружок по центру слева, текст справа */
+  .opts.cols-1 .opt { min-height: 0; padding: 18px 26px 18px 56px; justify-content: center; }
+  .opts.cols-1 .opt .tick { top: 50%; left: 18px; transform: translateY(-50%); }
+  .opts.cols-2 .opt { min-height: 152px; }
+  /* кружок-бланк: у невыбранных — пустой контур, у выбранной — синий с галочкой */
+  .opt .tick {
+    position: absolute; top: 12px; left: 12px; width: 22px; height: 22px;
+    border-radius: 50%; display: grid; place-items: center; color: transparent;
+    background: transparent; border: 2px solid rgba(74,98,150,.45);
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  /* выбранная карточка-ответ: мягкая тонкая обводка + свечение ВНУТРИ */
+  .opt.sel {
+    background: rgba(255,255,255,.9);
+    border: 1.5px solid rgba(43,143,255,.4);
+    box-shadow: inset 0 0 26px rgba(43,143,255,.3), inset 0 0 6px rgba(43,143,255,.16);
+  }
+  .opt.sel .tick {
+    color: #fff; border-color: transparent;
+    background: linear-gradient(140deg, #5CB4FF, #1666E0);
+    box-shadow: inset 0 1px 3px rgba(255,255,255,.45);
+  }
+
+  /* ── футер: Назад · шаги · Дальше ──────────────────────────────── */
+  .foot {
+    margin-top: auto; display: flex; align-items: center; gap: 16px;
+    padding: 12px 14px; border-radius: 16px;
+    background: rgba(229,232,251,.92);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,.7);
+    /* липкий к низу области прокрутки — «Дальше» всегда виден, даже если
+       вопрос длинный и контент не помещается по высоте */
+    position: sticky; bottom: 0; z-index: 3;
+  }
+  .q-card:last-of-type { margin-bottom: 24px; }
+  /* «Назад»: чистая белая кнопка с легкой обводкой */
+  .btn-back {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid rgba(120,120,200,.2); border-radius: 13px; cursor: pointer;
+    background: #fff; color: #3A3A55; font: 600 14px 'Onest', sans-serif;
+    padding: 12px 18px;
+  }
+  .btn-back:hover { background: #F2F3FC; }
+  .foot-mid { flex: 1; display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .foot-step { font-size: 12px; color: var(--ink-sub); white-space: nowrap; }
+  /* прогресс-точки: чистая дорожка с сияющим текущим узлом */
+  .dots { display: flex; align-items: center; }
+  .dots .ln { width: 6px; height: 3px; border-radius: 2px; background: #D3D8F0; }
+  .dots .d {
+    width: 8px; height: 8px; border-radius: 50%; flex: none;
+    background: #fff; box-shadow: inset 0 0 0 1.5px #C4CAE6;
+  }
+  .dots .d.done { background: var(--violet); box-shadow: none; }
+  .dots .d.cur {
+    width: 15px; height: 15px; border-radius: 50%; background: var(--violet); border: 0;
+    box-shadow: 0 0 0 4px rgba(43,143,255,.22), inset 0 0 0 3px rgba(255,255,255,.92);
+  }
+  /* «Дальше»: чистая кнопка без градиента, со свечением ВНУТРИ */
+  .btn-next {
+    display: inline-flex; align-items: center; gap: 9px;
+    border: 0; border-radius: 13px; cursor: pointer;
+    background: #2073E6; color: #fff; font: 700 14px 'Onest', sans-serif;
+    padding: 13px 22px; white-space: nowrap; flex-shrink: 0;
+    box-shadow: inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
+    transition: background .12s;
+  }
+  .btn-next:hover { background: #2B8FFF; }
+  .btn-next svg, .btn-back svg { transform: rotate(-45deg); }
+
+  /* ════ СЛОЙ 3 · Панель «Твой путь» — ЛЕЖИТ на светлой плашке ═══ */
+  .path {
+    position: absolute; top: 16px; right: 16px; bottom: 16px; width: 312px;
+    background: var(--panel); border: 1px solid rgba(43,143,255,.18);
+    border-radius: 20px; padding: 20px 18px;
+    color: var(--tx); /* панель лежит на светлой плашке — не наследуем ее ink */
+    display: flex; flex-direction: column; min-height: 0; overflow-y: auto;
+  }
+  .path::-webkit-scrollbar { width: 0; }
+  .path-kicker { font-size: 12.5px; color: var(--tx-mute); }
+  .path-title {
+    font-family: 'Arkhip', 'Poiret One', 'Onest', sans-serif;
+    font-size: 25px; font-weight: 400; margin-top: 6px; letter-spacing: -.8px;
+  }
+
+  /* блок горы: ВСЕ векторное (силуэт + гребень + точки + звезда) в одном SVG.
+     Никакого растрового ассета — точки и звезда совпадают с горой by design. */
+  .path-mtn {
+    position: relative; height: 142px; margin: 20px 0 0; border-radius: 14px; overflow: hidden;
+    background:
+      radial-gradient(58% 80% at 77% 22%, rgba(43,143,255,.22), transparent 62%),
+      linear-gradient(180deg, #08133A 0%, #050B22 100%);
+  }
+  .path-mtn svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .path-mtn img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; object-position: center; }
+
+  .path-prog { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .path-track { flex: 1; height: 6px; border-radius: 99px; background: #07112E; overflow: hidden; }
+  .path-fill {
+    position: relative; width: 14%; height: 100%; border-radius: 99px; overflow: hidden;
+    background: linear-gradient(90deg, var(--violet-soft), var(--violet-2));
+    box-shadow: 0 0 10px rgba(43,143,255,.8);
+    transition: width .65s cubic-bezier(.45,.05,.2,1);
+  }
+  /* бегущий блик по заполненной части */
+  .path-fill::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: 0; width: 45%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+    transform: translateX(-160%); animation: pathSheen 2.4s ease-in-out infinite;
+  }
+  @keyframes pathSheen { 0% { transform: translateX(-160%); } 55%, 100% { transform: translateX(320%); } }
+  .path-pct { font-size: 12px; font-weight: 700; transition: color .3s; }
+
+  .steps { display: flex; flex-direction: column; gap: 7px; margin-top: 14px; }
+  .step {
+    position: relative;
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    padding: 8px 12px; border-radius: 13px; border: 1px solid transparent;
+  }
+  .step + .step::before {
+    content: ''; position: absolute; left: 24px; top: -9px; height: 9px;
+    border-left: 1px dashed rgba(255,255,255,.14);
+  }
+  .step-n {
+    width: 25px; height: 25px; border-radius: 50%; flex: none;
+    display: inline-flex; align-items: center; justify-content: center;
+    border: 1px solid rgba(255,255,255,.18);
+    font: 600 12px/1 'Onest', sans-serif; color: var(--tx-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .step span { font-size: 13.5px; font-weight: 500; color: var(--tx-soft); }
+  .step .now { margin-left: auto; font-size: 11px; color: var(--tx-mute); }
+  .step.active {
+    background: linear-gradient(120deg, #133A6E, #0D2C62 75%);
+    border-color: rgba(60,150,250,.45);
+    box-shadow: inset 0 0 18px rgba(30,114,240,.22), inset 0 1px 0 rgba(255,255,255,.1);
+  }
+  .step.active .step-n {
+    border: 0; color: #fff;
+    background: linear-gradient(140deg, var(--violet-2), var(--violet-deep));
+    box-shadow: 0 0 12px rgba(55,140,248,.8);
+  }
+  .step.active span { color: #fff; font-weight: 600; }
+  .step.active .now { color: #9FCBFF; }
+  .step.done .step-n {
+    border: 0; color: #EAF2FF;
+    background: rgba(43,143,255,.18);
+    box-shadow: inset 0 0 12px rgba(43,143,255,.7), inset 0 0 3px rgba(160,205,255,.6);
+  }
+  .step.done span { color: var(--tx-soft); }
+
+  /* навигатор: свечение ВНУТРИ, без внешнего ореола, текст компактнее */
+  .nav-card {
+    margin-top: auto; position: relative; overflow: hidden;
+    display: flex; align-items: center; gap: 12px;
+    background: #07153C; border: 1px solid rgba(43,143,255,.28); border-radius: 14px;
+    padding: 14px 14px;
+    box-shadow: inset 0 0 26px rgba(43,143,255,.22), inset 0 1px 0 rgba(255,255,255,.06);
+  }
+  .nav-card-text { flex: 1; min-width: 0; }
+  .nav-card-head { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; }
+  .nav-card-head svg { flex: none; color: #86C4FF; }
+  .nav-card p { margin-top: 6px; font-size: 11.5px; line-height: 1.42; color: var(--tx-soft); }
+  .nav-compass {
+    flex: none; width: 56px; height: 56px;
+    border-radius: 50%; overflow: hidden; display: block;
+  }
+  .nav-compass img { width: 156%; height: 156%; margin: -28% 0 0 -28%; display: block; }
+
+  /* ════ НОВЫЕ КОНТРОЛЫ (чипсы · инпут · сегмент · шкала · textarea) ══
+     Те же материалы, что и карточки-опции: легкая белая вуаль + тонкая
+     обводка, выбранное — с тем же свечением ВНУТРИ. ─────────────────── */
+  .q-control { margin-top: 20px; }
+
+  /* чипсы — пилюли с внутренним свечением как у карточек */
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; }
+  .chip {
+    padding: 13px 20px; border-radius: 14px; cursor: pointer;
+    background: rgba(255,255,255,.66);
+    border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05);
+    font: 600 15px 'Onest', sans-serif; color: var(--ink-2);
+    transition: border-color .15s, background .15s, box-shadow .15s, color .15s;
+  }
+  .chip:hover { background: rgba(255,255,255,.65); border-color: rgba(43,143,255,.45); }
+  .chip.on {
+    background: rgba(255,255,255,.92); color: #1D3A72;
+    border: 1.5px solid rgba(43,143,255,.4);
+    box-shadow: inset 0 0 18px rgba(43,143,255,.28), inset 0 0 5px rgba(43,143,255,.16);
+  }
+  /* мягкий «не знаю / не уверен» — пунктирный выход */
+  .chip.soft { background: rgba(255,255,255,.28); border-style: dashed;
+    border-color: rgba(120,120,200,.4); color: var(--ink-sub); }
+  .chip.soft.on { background: rgba(255,255,255,.9); border-style: solid;
+    border-color: rgba(43,143,255,.4); color: #1D3A72;
+    box-shadow: inset 0 0 16px rgba(43,143,255,.24); }
+
+  /* текстовый / числовой инпут */
+  .input {
+    width: 100%; padding: 15px 18px; border-radius: 14px;
+    background: rgba(255,255,255,.55);
+    border: 1.5px solid rgba(74,98,150,.22);
+    font: 500 16px 'Onest', sans-serif; color: var(--ink); outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s;
+  }
+  .input::placeholder { color: #9A9FBC; }
+  .input:focus { border-color: rgba(43,143,255,.5); background: rgba(255,255,255,.85);
+    box-shadow: inset 0 0 16px rgba(43,143,255,.14); }
+  .input:disabled { opacity: .5; cursor: default; }
+
+  /* сегмент-переключатель (из 5 / из 100) */
+  .seg { display: inline-flex; gap: 4px; padding: 4px; border-radius: 13px;
+    background: rgba(255,255,255,.66); border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05); }
+  .seg button { padding: 11px 18px; border-radius: 10px; border: 0; cursor: pointer;
+    background: transparent; color: var(--ink-sub); font: 600 15px 'Onest', sans-serif; transition: .15s; }
+  .seg button.on { background: #2073E6; color: #fff;
+    box-shadow: inset 0 0 14px rgba(120,190,255,.7), inset 0 1px 0 rgba(255,255,255,.25); }
+
+  /* шкала уровня (A1…C2) */
+  .scale { display: flex; gap: 10px; }
+  .sc-btn { flex: 1; padding: 17px 0; border-radius: 14px; cursor: pointer; text-align: center;
+    background: rgba(255,255,255,.66); border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05);
+    font: 700 17px 'Onest', sans-serif; color: var(--ink-2); transition: .15s; }
+  .sc-btn:hover { background: rgba(255,255,255,.65); border-color: rgba(43,143,255,.45); }
+  .sc-btn.on { background: rgba(255,255,255,.92); color: #1D3A72;
+    border: 1.5px solid rgba(43,143,255,.4);
+    box-shadow: inset 0 0 18px rgba(43,143,255,.3), inset 0 0 5px rgba(43,143,255,.16); }
+  .scale-cap { margin-top: 12px; font-size: 13.5px; color: var(--ink-sub); }
+
+  /* textarea */
+  .textarea { width: 100%; min-height: 150px; resize: vertical; padding: 16px 18px; border-radius: 16px;
+    background: rgba(255,255,255,.55); border: 1.5px solid rgba(74,98,150,.22);
+    font: 500 15.5px/1.5 'Onest', sans-serif; color: var(--ink); outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s; }
+  .textarea::placeholder { color: #9A9FBC; }
+  .textarea:focus { border-color: rgba(43,143,255,.5); background: rgba(255,255,255,.85);
+    box-shadow: inset 0 0 16px rgba(43,143,255,.14); }
+
+  .btn-back:disabled { opacity: .4; cursor: default; }
+  .btn-back:disabled:hover { background: #fff; }
+
+  /* ── Адаптация под невысокие/ужатые экраны (ноутбуки, увеличенный текст
+     в macOS, зум браузера). Сжимаем вертикальный ритм, заголовок, карточки,
+     гору и панель, чтобы футер «Дальше» и карточка-навигатор не уезжали за
+     низ и не обрезались. Внутренние панели и так скроллятся, это лишь делает
+     посадку плотнее, чтобы все помещалось без прокрутки. ─────────────────── */
+  @media (max-height: 860px), (max-width: 1240px) {
+    .shell { gap: 12px; padding: 12px; }
+    .plate-scroll { padding: 51px 40px 18px 40px; margin-right: 320px; }
+    .h1 { font-size: 30px; letter-spacing: -2px; }
+    .sub { font-size: 14px; margin-top: 6px; }
+    .q-card { margin-top: 14px; padding: 16px 18px; }
+    .q-card:last-of-type { margin-bottom: 16px; }
+    .opts { gap: 10px; }
+    .opt { padding: 13px 15px; }
+    .opt b { font-size: 14px; }
+    .opt span { font-size: 12px; margin-top: 5px; }
+    .foot { padding: 10px 12px; gap: 12px; }
+    .btn-next { padding: 11px 20px; }
+    .btn-back { padding: 10px 16px; }
+    .path { width: 296px; top: 12px; right: 12px; bottom: 12px; padding: 16px 15px; }
+    .path-title { font-size: 22px; }
+    .path-mtn { height: 104px; margin-top: 14px; }
+    .steps { gap: 5px; margin-top: 12px; }
+    .step { padding: 6px 12px; }
+    .step-n { width: 23px; height: 23px; }
+    .step span { font-size: 13px; }
+    .nav-card { padding: 11px 12px; gap: 10px; }
+    .nav-card p { font-size: 10.5px; }
+    .nav-compass { width: 50px; height: 50px; }
+  }
+
+  /* ── Большие экраны: каркас не разъезжается. Весь продукт центрируется
+     как цельная композиция (сайдбар + плашка + панель держатся вместе),
+     контент дышит, вопрос центрируется по вертикали — без пустот ──────── */
+  @media (min-width: 1600px) {
+    /* боковую панель держим у левого края: каркас на всю ширину, центрируем только контент */
+    .plate-col { max-width: 940px; }
+    .plate-mid { justify-content: center; }
+    .h1 { font-size: 44px; }
+  }
+
+  /* совсем низкие экраны — ужимаем еще плотнее */
+  @media (max-height: 720px) {
+    .plate-scroll { padding-top: 22px; }
+    .h1 { font-size: 26px; }
+    .q-card { margin-top: 12px; padding: 14px 16px; }
+    .path-mtn { height: 84px; margin-top: 12px; }
+    .steps { gap: 3px; margin-top: 10px; }
+    .step { padding: 5px 11px; }
+  }
+
+  /* ── модалка подтверждения выхода ── */
+  .modal-ov { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; padding: 20px;
+    /* #deleteModal поднимается выше настроек ниже по файлу */
+    background: rgba(3,6,18,.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .modal-ov.open { display: flex; }
+  .modal { width: 100%; max-width: 380px; border-radius: 20px; padding: 26px 26px 22px;
+    background: linear-gradient(150deg, rgba(43,143,255,.14), rgba(43,143,255,.03) 60%), #07102C;
+    border: 1px solid rgba(60,150,250,.34); box-shadow: 0 24px 70px rgba(2,5,20,.6), inset 0 1px 0 rgba(255,255,255,.08);
+    color: var(--tx); text-align: center; animation: modalIn .18s cubic-bezier(.3,.7,.3,1); }
+  @keyframes modalIn { from { opacity: 0; transform: translateY(10px) scale(.97); } to { opacity: 1; transform: none; } }
+  .modal-ic { width: 52px; height: 52px; margin: 0 auto 14px; border-radius: 15px; display: grid; place-items: center; color: #FFDDDD;
+    background: linear-gradient(140deg, rgba(255,90,90,.22), rgba(255,70,70,.06)); border: 1px solid rgba(255,110,110,.4);
+    box-shadow: inset 0 0 18px rgba(255,85,85,.55); }
+  .modal-ic svg { width: 24px; height: 24px; }
+  .modal h3 { font-family: 'Arkhip','Poiret One','Onest',sans-serif; font-size: 21px; font-weight: 400; letter-spacing: .3px; color: var(--tx); }
+  .modal p { margin-top: 8px; font-size: 13.5px; line-height: 1.45; color: var(--tx-soft); }
+  .modal-act { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-btn { flex: 1; padding: 12px 14px; border-radius: 13px; cursor: pointer; font: 600 14px 'Onest', sans-serif; border: 1px solid transparent; transition: background .14s, border-color .14s; }
+  .modal-btn.cancel { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.12); color: var(--tx-soft); }
+  .modal-btn.cancel:hover { background: rgba(255,255,255,.1); color: #fff; }
+  .modal-btn.confirm { background: linear-gradient(135deg, #FF6B6B, #E23B3B); color: #fff; box-shadow: inset 0 0 16px rgba(255,140,140,.45), 0 6px 18px rgba(226,59,59,.32); }
+  .modal-btn.confirm:hover { background: linear-gradient(135deg, #FF7E7E, #E84848); }
+
+  /* ── попап Настроек ── */
+  /* модалка удаления лежит ПОВЕРХ попапа настроек, чтобы «Отмена» вернула в настройки */
+  #deleteModal { z-index: 100; }
+  .stg-ov { position: fixed; inset: 0; z-index: 90; display: none; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(3,6,18,.65); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); }
+  .stg-ov.open { display: flex; }
+  .stg-modal { width: 100%; max-width: 560px; max-height: calc(100vh - 40px); border-radius: 24px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background: linear-gradient(160deg, rgba(20,50,120,.28), rgba(5,12,40,.96) 55%), #060F2A;
+    border: 1px solid rgba(60,150,250,.28); box-shadow: 0 28px 80px rgba(2,5,20,.7), inset 0 1px 0 rgba(255,255,255,.07);
+    color: var(--tx); animation: modalIn .18s cubic-bezier(.3,.7,.3,1); }
+  #stgMain { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+  /* тост-подтверждение после сохранения */
+  .stg-toast { position: fixed; left: 50%; bottom: 36px; transform: translateX(-50%) translateY(20px); z-index: 95;
+    display: flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 14px; opacity: 0; pointer-events: none;
+    background: linear-gradient(140deg, rgba(43,143,255,.2), rgba(10,20,50,.96)); border: 1px solid rgba(60,150,250,.4);
+    box-shadow: 0 18px 44px rgba(2,6,22,.6); color: #fff; font: 600 14px 'Onest',sans-serif; transition: opacity .25s, transform .25s; }
+  .stg-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .stg-toast .tic { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    background: linear-gradient(140deg, #5CB4FF, #1666E0); color: #fff; }
+  .stg-toast .tic svg { width: 13px; height: 13px; }
+  .stg-head { flex: none; display: flex; align-items: center; gap: 14px; padding: 22px 24px 18px; border-bottom: 1px solid rgba(255,255,255,.07); }
+  .stg-head-ic { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; flex: none;
+    background: linear-gradient(140deg, rgba(43,143,255,.28), rgba(43,143,255,.08)); border: 1px solid rgba(60,150,250,.35); color: var(--violet-2); }
+  .stg-head-ic svg { width: 22px; height: 22px; }
+  .stg-head-txt { flex: 1; }
+  .stg-head-txt b { font-family: 'Arkhip','Onest',sans-serif; font-size: 19px; font-weight: 400; letter-spacing: .2px; display: block; }
+  .stg-head-txt span { font-size: 12.5px; color: var(--tx-mute); margin-top: 2px; display: block; }
+  .stg-close { width: 34px; height: 34px; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.06);
+    cursor: pointer; display: grid; place-items: center; color: var(--tx-soft); transition: background .14s; }
+  .stg-close:hover { background: rgba(255,255,255,.12); }
+  .stg-close svg { width: 16px; height: 16px; }
+  .stg-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; overflow-y: auto; }
+  /* дети тела НЕ сжимаются — при нехватке высоты тело скроллится, а не «жует» карточки */
+  .stg-body > * { flex: none; }
+  .stg-body::-webkit-scrollbar { width: 6px; }
+  .stg-body::-webkit-scrollbar-thumb { background: rgba(120,150,230,.3); border-radius: 99px; }
+  /* блок-карточка */
+  .stg-card { border-radius: 16px; border: 1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); overflow: hidden; }
+  .stg-card-head { display: flex; align-items: center; gap: 11px; padding: 18px 20px 14px; }
+  .stg-card-head .ic { width: 26px; height: 26px; display: grid; place-items: center; color: var(--violet-2); flex: none; }
+  .stg-card-head .ic svg { width: 20px; height: 20px; }
+  .stg-card-head b { font-size: 16px; font-weight: 600; }
+  /* тема — 3 карточки */
+  .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 20px 20px; }
+  .theme-opt { position: relative; border-radius: 13px; border: 1.5px solid rgba(255,255,255,.1); background: rgba(255,255,255,.03);
+    padding: 20px 10px 16px; min-height: 104px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: border-color .15s, background .15s; color: var(--tx); font-family: inherit; }
+  .theme-opt:hover { background: rgba(255,255,255,.06); }
+  .theme-opt svg { width: 24px; height: 24px; color: var(--tx-soft); }
+  .theme-opt b { font-size: 14px; font-weight: 500; }
+  .theme-opt small { font-size: 11px; color: var(--tx-mute); }
+  .theme-opt.on { border-color: rgba(124,108,255,.7); background: rgba(124,108,255,.1); box-shadow: inset 0 0 20px rgba(124,108,255,.12); }
+  .theme-opt .tk { position: absolute; top: 9px; right: 9px; width: 18px; height: 18px; border-radius: 50%; display: none; place-items: center;
+    background: linear-gradient(140deg, #8B7CFF, #5B45E0); color: #fff; }
+  .theme-opt .tk svg { width: 11px; height: 11px; color: #fff; }
+  .theme-opt.on .tk { display: grid; }
+  /* уведомления */
+  .stg-notif { display: flex; align-items: center; gap: 13px; padding: 18px 20px; }
+  .stg-notif .ic { width: 26px; height: 26px; display: grid; place-items: center; color: var(--violet-2); flex: none; }
+  .stg-notif .ic svg { width: 20px; height: 20px; }
+  .stg-notif-txt { flex: 1; }
+  .stg-notif-txt b { font-size: 14.5px; font-weight: 600; display: block; }
+  .stg-notif-txt small { font-size: 12px; color: var(--tx-mute); display: block; margin-top: 2px; }
+  .stg-switch { width: 46px; height: 26px; border-radius: 14px; border: 0; flex: none; cursor: pointer; position: relative;
+    background: rgba(255,255,255,.16); transition: background .18s; }
+  .stg-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .18s; }
+  .stg-switch.on { background: linear-gradient(135deg, #8B7CFF, #5B45E0); }
+  .stg-switch.on::after { transform: translateX(20px); }
+  /* аккаунт: слева подпись, справа строки */
+  .stg-acc { display: flex; align-items: stretch; }
+  .stg-acc-side { width: 150px; flex: none; display: flex; align-items: flex-start; gap: 11px; padding: 18px 20px; }
+  .stg-acc-side .ic { width: 26px; height: 26px; display: grid; place-items: center; color: var(--violet-2); flex: none; }
+  .stg-acc-side .ic svg { width: 20px; height: 20px; }
+  .stg-acc-side b { font-size: 16px; font-weight: 600; padding-top: 2px; }
+  .stg-acc-rows { flex: 1; border-left: 1px solid rgba(255,255,255,.08); }
+  .stg-acc-row { display: flex; align-items: center; padding: 18px 20px; cursor: pointer; border: 0; background: transparent; width: 100%; text-align: left; color: var(--tx); font-family: inherit; transition: background .14s; }
+  .stg-acc-row + .stg-acc-row { border-top: 1px solid rgba(255,255,255,.08); }
+  .stg-acc-row:hover { background: rgba(255,255,255,.05); }
+  .stg-acc-row span.t { flex: 1; font-size: 14.5px; font-weight: 500; }
+  /* строка-ссылка (политика, правила, удалить) */
+  .stg-linkrow { display: flex; align-items: center; gap: 13px; padding: 18px 20px; cursor: pointer; border: 0; background: transparent; width: 100%; text-align: left; color: var(--tx); font-family: inherit; transition: background .14s; }
+  .stg-linkrow:hover { background: rgba(255,255,255,.05); }
+  .stg-linkrow .ic { width: 26px; height: 26px; display: grid; place-items: center; color: var(--violet-2); flex: none; }
+  .stg-linkrow .ic svg { width: 20px; height: 20px; }
+  .stg-linkrow b { flex: 1; font-size: 15px; font-weight: 600; }
+  .stg-chev { color: var(--tx-mute); flex: none; display: grid; place-items: center; }
+  .stg-chev svg { width: 16px; height: 16px; }
+  .stg-card.danger { border-color: rgba(255,80,80,.22); }
+  .stg-card.danger .stg-linkrow b { color: #FF6B6B; }
+  .stg-card.danger .stg-linkrow .ic { color: #FF6B6B; }
+  .stg-card.danger .stg-chev { color: #FF6B6B; }
+  /* вложенный экран настроек (смена имени, пароля) */
+  .stg-sub { display: none; padding: 22px 24px 24px; }
+  .stg-sub.on { display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
+  .stg-sub::-webkit-scrollbar { width: 6px; }
+  .stg-sub::-webkit-scrollbar-thumb { background: rgba(120,150,230,.3); border-radius: 99px; }
+  /* подвал вкладки: кнопки прижаты вниз, «Назад» — справа */
+  .stg-sub-foot { margin-top: auto; padding-top: 22px; display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+  .stg-sub-foot.has-save { justify-content: space-between; }
+  .stg-back { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 13px;
+    border: 1px solid rgba(120,150,230,.3); background: rgba(255,255,255,.05); color: var(--tx-soft); cursor: pointer;
+    font: 600 14px 'Onest',sans-serif; transition: background .14s, color .12s, border-color .14s; }
+  .stg-back:hover { background: rgba(255,255,255,.1); color: #fff; border-color: rgba(120,150,230,.5); }
+  .stg-back svg { width: 15px; height: 15px; }
+  .stg-sub-title { font-family: 'Arkhip','Onest',sans-serif; font-size: 18px; font-weight: 400; letter-spacing: .2px; margin-bottom: 4px; }
+  .stg-sub-hint { font-size: 12.5px; color: var(--tx-mute); margin-bottom: 20px; }
+  .stg-field-lbl { font-size: 12px; font-weight: 700; color: var(--tx-soft); margin-bottom: 7px; display: block; letter-spacing: .3px; }
+  .stg-field { margin-bottom: 14px; }
+  .stg-inp { width: 100%; height: 50px; padding: 0 16px; border-radius: 13px;
+    background: rgba(255,255,255,.06); border: 1.5px solid rgba(100,150,255,.2); color: #fff;
+    font: 500 15px 'Onest',sans-serif; outline: none; transition: border-color .15s, background .15s; }
+  .stg-inp::placeholder { color: rgba(255,255,255,.22); font-weight: 400; }
+  .stg-inp:focus { border-color: rgba(43,143,255,.6); background: rgba(43,143,255,.08); }
+  .stg-sub-foot .stg-save { width: auto; margin-top: 0; padding: 12px 24px; }
+  .stg-save { width: 100%; margin-top: 6px; padding: 14px; border-radius: 13px; border: 0; cursor: pointer;
+    background: linear-gradient(135deg, #2B8FFF, #1666E0); color: #fff; font: 700 15px 'Onest',sans-serif;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 18px rgba(30,100,220,.32); transition: background .14s; }
+  .stg-save:hover { background: linear-gradient(135deg, #3D9FFF, #1E72E6); }
+  .stg-warn { margin-top: 10px; padding: 12px 14px; border-radius: 11px; font-size: 12.5px; line-height: 1.45; color: var(--tx-soft);
+    background: rgba(255,180,50,.08); border: 1px solid rgba(255,180,50,.2); }
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ════ Сайдбар ════ -->
+  <aside class="sb">
+    <div class="sb-brand">
+      <img class="sb-logo-img" src="assets/logo-dark.png" alt="ИстСайд.рф — языковой центр" />
+    </div>
+
+    <nav class="sb-nav">
+      <a class="sb-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5.5 9.5V20a1 1 0 001 1H10v-5.5h4V21h3.5a1 1 0 001-1V9.5"/></svg>
+      Анкета</a>
+      <a class="sb-item locked">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13a9 9 0 0118 0"/><path d="M12 13l4-4"/><circle cx="12" cy="13" r="1.4" fill="currentColor" stroke="none"/></svg>
+      Диагностика<span class="lock"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></a>
+      <a class="sb-item locked">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4L3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4z"/><path d="M9 4v14M15 6v14"/></svg>
+      Дорожная карта<span class="lock"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></a>
+    </nav>
+
+    <div class="sb-profile">
+      <span class="sb-mascot"><img id="mascotImg" src="assets/mascot-cut.png" alt="Артем" /></span>
+      <div class="sb-meta">
+        <b id="mascotName">Артем</b>
+        <small>Путь к поступлению</small>
+      </div>
+    </div>
+
+    <div class="sb-foot">
+      <button class="sb-mini" id="btnSettings" type="button">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M5 12h14M5 17h14"/><circle cx="9" cy="7" r="2.1" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="2.1" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="2.1" fill="currentColor" stroke="none"/></svg></span>
+        Настройки
+      </button>
+      <button class="sb-mini exit" id="btnExit" type="button">
+        <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H6.5a1 1 0 00-1 1v14a1 1 0 001 1H14"/><path d="M10.5 12H21M17.5 8.5L21 12l-3.5 3.5"/></svg></span>
+        Выйти
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════ Светлая плашка ════ -->
+  <main class="plate">
+    <div class="plate-scroll">
+     <div class="plate-col">
+
+      <div class="plate-mid">
+        <h1 class="h1" id="h1"></h1>
+
+        <div id="qhost"></div>
+      </div>
+
+      <div class="foot">
+        <button class="btn-back" id="back">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Назад
+        </button>
+        <div class="foot-mid">
+          <span class="foot-step" id="footstep">Шаг 1 из 7</span>
+          <span class="dots" id="dots"></span>
+        </div>
+        <button class="btn-next" id="next">
+          Дальше
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+      </div>
+
+     </div>
+    </div>
+
+  <!-- ════ Панель «Твой путь» — лежит НА светлой плашке ════ -->
+  <aside class="path">
+    <div class="path-kicker">Ваш путь</div>
+    <div class="path-title" id="pathTitle">Анкета 1 / 7</div>
+
+    <div class="path-mtn">
+      <img src="assets/path-mountain-2.png" alt="" />
+    </div>
+
+    <div class="path-prog">
+      <div class="path-track"><div class="path-fill" id="pathFill"></div></div>
+      <span class="path-pct" id="pathPct">14%</span>
+    </div>
+
+    <div class="steps" id="stepsHost"></div>
+
+  </aside>
+  </main>
+
+</div>
+
+<div class="modal-ov" id="logoutModal" role="dialog" aria-modal="true" aria-labelledby="logoutTitle">
+  <div class="modal">
+    <div class="modal-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H6.5a1 1 0 00-1 1v14a1 1 0 001 1H14"/><path d="M10.5 12H21M17.5 8.5L21 12l-3.5 3.5"/></svg>
+    </div>
+    <h3 id="logoutTitle">Выйти из аккаунта?</h3>
+    <p>Прогресс сохранится — вы продолжите с того же места, когда вернетесь.</p>
+    <div class="modal-act">
+      <button class="modal-btn cancel" id="logoutCancel" type="button">Остаться</button>
+      <button class="modal-btn confirm" id="logoutConfirm" type="button">Выйти</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ Попап Настроек ════ -->
+<div class="stg-ov" id="settingsModal" role="dialog" aria-modal="true">
+  <div class="stg-modal">
+
+    <!-- главный экран -->
+    <div id="stgMain">
+      <div class="stg-head">
+        <div class="stg-head-ic">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div class="stg-head-txt">
+          <b>Настройки</b>
+          <span>Настройте платформу под себя</span>
+        </div>
+        <button class="stg-close" id="stgClose" type="button" aria-label="Закрыть">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="stg-body">
+
+        <!-- Тема -->
+        <div class="stg-card">
+          <div class="stg-card-head">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/><path d="M12 22a10 10 0 110-20 8 8 0 010 16h-1.5a2 2 0 00-1 3.75A2 2 0 0112 22z"/></svg></span>
+            <b>Тема</b>
+          </div>
+          <div class="theme-grid">
+            <button class="theme-opt" id="themeLight" type="button" data-theme="light">
+              <span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+              <b>Светлая</b>
+            </button>
+            <button class="theme-opt on" id="themeDark" type="button" data-theme="dark">
+              <span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+              <b>Темная</b>
+            </button>
+            <button class="theme-opt" id="themeSystem" type="button" data-theme="system">
+              <span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg></span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg>
+              <b>По умолчанию</b>
+              <small>Как в системе</small>
+            </button>
+          </div>
+        </div>
+
+        <!-- Уведомления -->
+        <div class="stg-card">
+          <div class="stg-notif">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg></span>
+            <span class="stg-notif-txt"><b>Отключить уведомления от бота</b><small>Подсказки, напоминания и полезные сообщения</small></span>
+            <button class="stg-switch" id="stgNotif" type="button" aria-label="Отключить уведомления"></button>
+          </div>
+        </div>
+
+        <!-- Аккаунт -->
+        <div class="stg-card">
+          <div class="stg-acc">
+            <div class="stg-acc-side">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+              <b>Аккаунт</b>
+            </div>
+            <div class="stg-acc-rows">
+              <button class="stg-acc-row" id="stgOpenName" type="button">
+                <span class="t">Имя</span>
+                <span class="stg-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+              </button>
+              <button class="stg-acc-row" id="stgOpenPw" type="button">
+                <span class="t">Пароль</span>
+                <span class="stg-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Политика конфиденциальности -->
+        <div class="stg-card">
+          <button class="stg-linkrow" id="stgPrivacy" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9.5 12l1.8 1.8 3.7-3.8"/></svg></span>
+            <b>Политика конфиденциальности</b>
+            <span class="stg-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+          </button>
+        </div>
+
+        <!-- Правила использования -->
+        <div class="stg-card">
+          <button class="stg-linkrow" id="stgTerms" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg></span>
+            <b>Правила использования</b>
+            <span class="stg-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+          </button>
+        </div>
+
+        <!-- Удалить аккаунт -->
+        <div class="stg-card danger">
+          <button class="stg-linkrow" id="stgOpenDelete" type="button">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg></span>
+            <b>Удалить аккаунт</b>
+            <span class="stg-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg></span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- экран: изменить имя -->
+    <div id="stgName" class="stg-sub">
+      <div class="stg-sub-title">Изменение имени</div>
+      <div class="stg-sub-hint">Это имя будет отображаться в вашем профиле.</div>
+      <div class="stg-field">
+        <label class="stg-field-lbl" for="stgNameInp">Имя</label>
+        <input class="stg-inp" id="stgNameInp" type="text" placeholder="Например, Анастасия" maxlength="40" autocomplete="given-name" />
+      </div>
+      <div class="stg-sub-foot has-save">
+        <button class="stg-save" id="stgSaveName" type="button">Сохранить</button>
+        <button class="stg-back" id="stgBackName" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Назад
+        </button>
+      </div>
+    </div>
+
+    <!-- экран: изменить пароль -->
+    <div id="stgPw" class="stg-sub">
+      <div class="stg-sub-title">Изменение пароля</div>
+      <div class="stg-sub-hint">Минимум 8 символов. Новый пароль начнет действовать сразу.</div>
+      <div class="stg-field">
+        <label class="stg-field-lbl" for="stgPwCur">Текущий пароль</label>
+        <input class="stg-inp" id="stgPwCur" type="password" placeholder="Текущий пароль" autocomplete="current-password" />
+      </div>
+      <div class="stg-field">
+        <label class="stg-field-lbl" for="stgPwNew">Новый пароль</label>
+        <input class="stg-inp" id="stgPwNew" type="password" placeholder="Новый пароль" autocomplete="new-password" />
+      </div>
+      <div class="stg-field">
+        <label class="stg-field-lbl" for="stgPwConf">Подтвердить пароль</label>
+        <input class="stg-inp" id="stgPwConf" type="password" placeholder="Повторите новый пароль" autocomplete="new-password" />
+      </div>
+      <div class="stg-sub-foot has-save">
+        <button class="stg-save" id="stgSavePw" type="button">Сохранить</button>
+        <button class="stg-back" id="stgBackPw" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Назад
+        </button>
+      </div>
+    </div>
+
+    <!-- экран: политика конфиденциальности -->
+    <div id="stgPrivacy2" class="stg-sub">
+      <div class="stg-sub-title">Политика конфиденциальности</div>
+      <div class="stg-sub-hint">Коротко о том, как мы работаем с вашими данными.</div>
+      <p style="font-size:13.5px;line-height:1.6;color:var(--tx-soft)">Мы используем ваши ответы только для расчета диагностики и подбора программ. Не передаем данные третьим лицам без вашего согласия. Вы можете удалить аккаунт и все данные в любой момент. Полная версия документа — на сайте центра.</p>
+      <div class="stg-sub-foot">
+        <button class="stg-back" id="stgBackPrivacy" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Назад
+        </button>
+      </div>
+    </div>
+
+    <!-- экран: правила использования -->
+    <div id="stgTerms2" class="stg-sub">
+      <div class="stg-sub-title">Правила использования</div>
+      <div class="stg-sub-hint">Основные условия работы с платформой.</div>
+      <p style="font-size:13.5px;line-height:1.6;color:var(--tx-soft)">Платформа помогает оценить шансы на поступление и спланировать подготовку. Результаты диагностики носят рекомендательный характер. Указывайте достоверные данные — от этого зависит точность расчета. Полная версия документа — на сайте центра.</p>
+      <div class="stg-sub-foot">
+        <button class="stg-back" id="stgBackTerms" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Назад
+        </button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- модалка подтверждения удаления аккаунта — в стиле модалки выхода -->
+<div class="modal-ov" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteTitle">
+  <div class="modal">
+    <div class="modal-ic">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+    </div>
+    <h3 id="deleteTitle">Удалить аккаунт?</h3>
+    <p>Все данные, прогресс анкеты и результаты диагностики будут удалены безвозвратно — восстановить их не получится.</p>
+    <div class="modal-act">
+      <button class="modal-btn cancel" id="deleteCancel" type="button">Отмена</button>
+      <button class="modal-btn confirm" id="deleteConfirm" type="button">Удалить</button>
+    </div>
+  </div>
+</div>
+
+<!-- тост-подтверждение -->
+<div class="stg-toast" id="stgToast">
+  <span class="tic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg></span>
+  <span id="stgToastTxt">Сохранено</span>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Данные (1:1 из боевой anketa.jsx) ───────────────────────────── */
+  var GRADE = [
+    ['g5_7', '5–7 класс', 'Времени достаточно — можно подготовиться спокойно'],
+    ['g8_9', '8–9 класс', 'Подходящий момент, чтобы выбрать траекторию'],
+    ['g10_11', '10–11 класс', 'Самое время готовить документы и язык'],
+    ['student', 'Студент вуза', 'Скорее всего речь о магистратуре'],
+    ['working', 'Уже работаю', 'Хочу поступить в Китай и сменить траекторию'],
+    ['enrolled', 'Уже поступил(а)', 'Поможем с визой, документами и переездом'],
+  ];
+  var READY = [
+    ['decided', 'Решил — хочу учиться в&nbsp;Китае', 'Готов(а) готовиться к&nbsp;поступлению'],
+    ['considering', 'Присматриваюсь, еще&nbsp;думаю', 'Интересно, но решения пока&nbsp;нет'],
+    ['lost', 'Пока не знаю, кем&nbsp;быть', 'Хочу понять направление и&nbsp;варианты'],
+  ];
+  var DIRS = ['IT и программирование', 'Бизнес и менеджмент', 'Экономика и финансы', 'Инженерия',
+    'Медицина', 'Международные отношения', 'Дизайн', 'Архитектура', 'Маркетинг и реклама',
+    'Лингвистика', 'Юриспруденция', 'Психология', 'Журналистика', 'Биотехнологии', 'Туризм и сервис'];
+  var PROGRAM = [
+    ['bach', 'Бакалавриат', 'Первое высшее, как правило 4 года'],
+    ['mag', 'Магистратура', 'После бакалавриата, 2–3 года'],
+    ['lang', 'Языковой год', 'Год китайского, а затем поступление на программу'],
+    ['summ', 'Летняя программа', 'Короткий курс на 4–8 недель'],
+    ['idk', 'Пока выбираю', 'Подскажем вариант под вашу цель'],
+  ];
+  var STUDYLANG = [
+    ['en', 'На английском', 'Международные программы — китайский не потребуется'],
+    ['zh', 'На китайском', 'Понадобится HSK 4–5, часто после языкового года'],
+    ['both', 'Рассматриваю оба', 'Подберем программы под каждый из вариантов'],
+  ];
+  var YEARS = [['2026', '2026'], ['2027', '2027'], ['2028', '2028'], ['2029', '2029'], ['2030', '2030 и позже'], ['undecided', 'Пока не решил']];
+  var SUBJECTS = ['Математика', 'Физика', 'Информатика', 'Английский', 'Китайский', 'Биология', 'Химия', 'История', 'Экономика', 'Литература', 'Обществознание', 'География'];
+  var EN_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  var EN_CAP = {
+    A1: 'начальный — отдельные слова',
+    A2: 'элементарный — простые фразы',
+    B1: 'средний — свободно на бытовые темы',
+    B2: 'выше среднего — уверенно по своей теме',
+    C1: 'продвинутый — почти свободно',
+    C2: 'на уровне носителя',
+  };
+  var CERT = [
+    ['none', 'Сертификата пока нет, но готов сдать', 'Поможем подготовиться и сдать до подачи'],
+    ['ielts', 'IELTS', 'Международный экзамен по английскому'],
+    ['toefl', 'TOEFL', 'Американский аналог IELTS — тоже подходит'],
+    ['duo', 'Duolingo English Test', 'Онлайн-формат из дома, быстрее и доступнее'],
+    ['skip', 'Пока не планирую', 'Подберем программы, где он не требуется'],
+  ];
+  var ZH = [['none', 'Пока не изучаю'], ['beg', 'Начальный — несколько фраз'], ['mid', 'Средний — могу поддержать разговор'], ['adv', 'Свободно']];
+  var HSK = ['Нет', 'HSK 1', 'HSK 2', 'HSK 3', 'HSK 4', 'HSK 5', 'HSK 6'];
+  var ACH = [
+    ['yes', 'Да, есть что показать', 'Олимпиады, проекты, опыт'],
+    ['no', 'Нет или пока не уверен', 'Это не критично'],
+  ];
+
+  /* ── Состояние (с дефолтами, чтобы каждый шаг сразу выглядел живым) ─ */
+  var S = {
+    grade: 'g5_7',
+    dirs: ['IT и программирование'], dirOther: '',
+    program: 'bach', studyLang: 'en', year: '2027',
+    gpa: '4.6', gpaScale: '5', gpaUnknown: false,
+    subjects: ['Математика', 'Информатика'], subjectsSkip: false,
+    enLevel: 'B2', enUnknown: false, enCert: 'ielts',
+    zhLevel: 'beg', hsk: 'Нет',
+    portfolio: '',
+  };
+  var idx = 0;
+  // 7 тематических глав — показываются в панели «Твой путь» справа
+  var SIDE = ['Где вы сейчас', 'Что изучать', 'Язык и сроки', 'Оценки', 'Английский', 'Китайский', 'О вас'];
+  // заголовок + подзаголовок для каждой главы (общие для всех ее вопросов)
+  var GROUPS = [
+    { h: 'Где вы сейчас?', sub: 'Начнем с вашего этапа — от него зависят наши рекомендации.' },
+    { h: 'Что хотите изучать', sub: 'По направлению и ступени мы подберем подходящие вузы и стипендии.' },
+    { h: 'Язык и сроки', sub: 'Расскажите, на каком языке планируете учиться и когда хотите начать.' },
+    { h: 'Оценки и предметы', sub: 'Они влияют на список доступных вузов. Указывайте как есть — это останется между нами.' },
+    { h: 'Английский язык', sub: 'Для программ на английском это один из ключевых параметров.' },
+    { h: 'Китайский язык', sub: 'Нужен для программ на китайском и части стипендий. Если не изучали — ничего страшного.' },
+    { h: 'Немного о вас', sub: 'Портфолио и пара слов о себе помогут сделать разбор точнее.' },
+  ];
+
+  /* ── Иконки ──────────────────────────────────────────────────────── */
+  var CHECK = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.5l5 5L19.5 7"/></svg>';
+  var ARROW_FWD = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+  /* ── Хелперы рендера контролов ───────────────────────────────────── */
+  function esc(s) { return s; }
+
+  function q(label, hint, body) {
+    return '<section class="q-card"><div class="q-label">' + label + '</div>' +
+      (hint ? '<p class="q-hint">' + hint + '</p>' : '') +
+      '<div class="q-control">' + body + '</div></section>';
+  }
+
+  // карточки-опции (один выбор на группу), cols — число колонок
+  function cards(group, opts, cols) {
+    var sel = S[group];
+    var items = opts.map(function (o) {
+      var v = o[0], t = o[1], sub = o[2];
+      return '<div class="opt' + (sel === v ? ' sel' : '') + '" data-card="' + group + '" data-v="' + v + '" tabindex="0">' +
+        '<span class="tick">' + CHECK + '</span><b>' + t + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>';
+    }).join('');
+    return '<div class="opts cols-' + cols + '" style="grid-template-columns:repeat(' + cols + ',1fr)">' + items + '</div>';
+  }
+
+  // чипсы — множественный выбор
+  function chipsMulti(group, opts) {
+    var arr = S[group] || [];
+    return '<div class="chips">' + opts.map(function (v) {
+      return '<button class="chip' + (arr.indexOf(v) > -1 ? ' on' : '') + '" data-multi="' + group + '" data-v="' + v + '">' + v + '</button>';
+    }).join('') + '</div>';
+  }
+
+  // чипсы — один выбор; opts = [[value,label],…]
+  function chipsSingle(group, opts) {
+    var sel = S[group];
+    return '<div class="chips">' + opts.map(function (o) {
+      return '<button class="chip' + (sel === o[0] ? ' on' : '') + '" data-single="' + group + '" data-v="' + o[0] + '">' + o[1] + '</button>';
+    }).join('') + '</div>';
+  }
+
+  // мягкий выход «не знаю» (булев тоггл)
+  function softChip(flag, label) {
+    return '<div class="chips" style="margin-top:12px"><button class="chip soft' + (S[flag] ? ' on' : '') + '" data-toggle="' + flag + '">' + label + '</button></div>';
+  }
+
+  function input(name, ph, opt) {
+    opt = opt || {};
+    return '<input class="input" data-input="' + name + '" placeholder="' + ph + '" value="' + (S[name] || '') + '"' +
+      (opt.mode ? ' inputmode="' + opt.mode + '"' : '') +
+      (opt.disabled ? ' disabled' : '') +
+      (opt.max ? ' style="max-width:' + opt.max + 'px"' : '') + '>';
+  }
+
+  function seg(name, opts) {
+    var sel = S[name] || opts[0][0];
+    return '<div class="seg">' + opts.map(function (o) {
+      return '<button class="' + (sel === o[0] ? 'on' : '') + '" data-seg="' + name + '" data-v="' + o[0] + '">' + o[1] + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function scale(name, opts, caps) {
+    var sel = S[name] || 'B1';
+    var btns = opts.map(function (v) {
+      return '<button class="sc-btn' + (sel === v ? ' on' : '') + '" data-single="' + name + '" data-v="' + v + '">' + v + '</button>';
+    }).join('');
+    return '<div class="scale">' + btns + '</div><p class="scale-cap">' + (caps[sel] || '') + '</p>';
+  }
+
+  function textarea(name, ph) {
+    return '<textarea class="textarea" data-input="' + name + '" placeholder="' + ph + '">' + (S[name] || '') + '</textarea>';
+  }
+
+  /* ── Шаги: один вопрос — один шаг. g — индекс главы в SIDE/GROUPS ──── */
+  var STEPS = [
+    // глава 0 — Где ты сейчас
+    { g: 0, s: 'Где вы сейчас', body: function () {
+      return q('В каком классе или на каком курсе вы учитесь', 'От этого зависит, что доступно вам уже сейчас.', cards('grade', GRADE, 3));
+    } },
+    // глава 1 — Что изучать
+    { g: 1, s: 'Направление', body: function () {
+      return q('Какое направление вам ближе', 'Можно выбрать несколько или вписать свое. Если еще не определились — отметьте то, что нравится.',
+        chipsMulti('dirs', DIRS) + '<div style="margin-top:12px">' + input('dirOther', 'Свое направление — впишите сюда') + '</div>');
+    } },
+    { g: 1, s: 'Формат обучения', body: function () {
+      return q('Какой формат обучения вам подходит', 'Если пока выбираете — так и отметьте, поможем определиться.', cards('program', PROGRAM, 3));
+    } },
+    // глава 2 — Язык и сроки
+    { g: 2, s: 'Язык обучения', body: function () {
+      return q('На каком языке хотите учиться', 'Имеется в виду язык лекций, а не тот, что вы знаете сейчас. В Китае много программ на английском — китайский для них не нужен.', cards('studyLang', STUDYLANG, 3));
+    } },
+    { g: 2, s: 'Сроки', body: function () {
+      return q('Когда планируете поступать', 'Достаточно примерного года начала учебы — точная дата не нужна.', chipsSingle('year', YEARS));
+    } },
+    // глава 3 — Оценки и предметы
+    { g: 3, s: 'Средний балл', body: function () {
+      return q('Какой у вас средний балл', 'Балл аттестата или зачетки. В китайскую шкалу мы переведем сами — округлять не нужно.',
+        '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">' +
+        input('gpa', S.gpaScale === '100' ? '90' : '4.6', { max: 160, mode: 'decimal', disabled: S.gpaUnknown }) +
+        seg('gpaScale', [['5', 'из 5'], ['100', 'из 100']]) + '</div>' +
+        softChip('gpaUnknown', 'Точно не помню'));
+    } },
+    { g: 3, s: 'Сильные предметы', body: function () {
+      return q('В каких предметах вы сильны', 'Сильные стороны работают на вашу заявку — отметьте, что дается лучше всего.',
+        chipsMulti('subjects', SUBJECTS) + softChip('subjectsSkip', 'Пока думаю'));
+    } },
+    // глава 4 — Английский (уровень + сертификат на одном шаге)
+    { g: 4, s: 'Английский', body: function () {
+      return q('Английский — какой у вас уровень', 'Оцените честно: это напрямую влияет на расчет.',
+        scale('enLevel', EN_LEVELS, EN_CAP) + softChip('enUnknown', 'Не знаю свой уровень')) +
+        q('Есть ли сертификат по английскому', 'IELTS, TOEFL или другой — его просят многие вузы. Если нет, это нормально.', cards('enCert', CERT, 1));
+    } },
+    // глава 5 — Китайский (уровень + HSK на одном шаге)
+    { g: 5, s: 'Китайский', body: function () {
+      var hskRows = HSK.map(function (x) { return [x, x]; });
+      return q('Знаете ли вы китайский', 'Даже базовый уровень — плюс к заявке. Если не изучали — отметьте «Пока не изучаю».', chipsSingle('zhLevel', ZH)) +
+        q('Сдавали ли вы HSK', 'HSK — это экзамен по китайскому, уровни от 1 до 6. Если не сдавали — выберите «Нет».', chipsSingle('hsk', hskRows));
+    } },
+    // глава 6 — Портфолио
+    { g: 6, s: 'Портфолио', body: function () {
+      return q('Портфолио и достижения', 'Олимпиады, проекты, волонтерство, стажировки, спорт — расскажите о том, чем гордитесь. Заполнять необязательно, но это помогает разбору.',
+        textarea('portfolio', 'Например: призер олимпиады по биологии, волонтер в детском лагере, свой проект на Python…'));
+    } },
+  ];
+  // ОДИН ШАГ = ОДИН ВОПРОС: idx бегает по вопросам (0..13), на экране один вопрос.
+  // Нижняя панель и счетчик считают вопросы (14), правый список — 7 глав
+  // (активна та глава, к которой относится текущий вопрос).
+  var QTOTAL = STEPS.length;   // всего вопросов — нижняя панель «Шаг X из 14»
+  var CHTOTAL = SIDE.length;   // всего глав — правый список «Твой путь»
+  function curCh() { return STEPS[idx].g; }   // глава текущего вопроса
+
+  /* ── Рендер ──────────────────────────────────────────────────────── */
+  var $ = function (id) { return document.getElementById(id); };
+
+  function renderFoot() {
+    $('footstep').textContent = 'Шаг ' + (idx + 1) + ' из ' + QTOTAL;
+    var h = '';
+    for (var i = 0; i < QTOTAL; i++) {
+      var cls = i < idx ? 'd done' : (i === idx ? 'd cur' : 'd');
+      h += '<i class="' + cls + '"></i>';
+      if (i < QTOTAL - 1) h += '<i class="ln"></i>';
+    }
+    $('dots').innerHTML = h;
+    $('back').disabled = (idx === 0);
+    $('next').innerHTML = (idx === QTOTAL - 1 ? 'Узнать шансы' : 'Дальше') + ARROW_FWD;
+  }
+
+  function renderSide() {
+    var grp = curCh();
+    $('pathTitle').textContent = 'Анкета ' + (idx + 1) + ' / ' + QTOTAL;
+    var pct = Math.round((idx + 1) / QTOTAL * 100);
+    $('pathFill').style.width = pct + '%';
+    $('pathPct').textContent = pct + '%';
+    // правый список — ВСЕ шаги анкеты (метка s у каждого STEP), активен текущий
+    $('stepsHost').innerHTML = STEPS.map(function (st, i) {
+      var active = i === idx;
+      var done = i < idx;
+      return '<div class="step' + (active ? ' active' : '') + (done ? ' done' : '') + '" data-step="' + i + '"><span class="step-n">' + (i + 1) + '</span>' +
+        '<span>' + st.s + '</span>' + (active ? '<span class="now">сейчас</span>' : '') + '</div>';
+    }).join('');
+    // восхождение по горе: главы до текущей горят ярко, будущие приглушены
+    for (var i = 0; i < CHTOTAL; i++) {
+      var d = $('mdot-' + i);
+      if (d) d.style.opacity = (i <= grp ? 1 : 0.28);
+    }
+    var star = $('mstar');
+    if (star) star.style.opacity = (idx === QTOTAL - 1 ? 1 : 0.5);
+  }
+
+  function render(resetScroll) {
+    // заголовок = краткое имя блока (совпадает с пунктом в правой панели)
+    $('h1').textContent = STEPS[idx].s;
+    // один вопрос на экране (один шаг = один вопрос)
+    $('qhost').innerHTML = STEPS[idx].body();
+    renderFoot();
+    renderSide();
+    // скролл сбрасываем ТОЛЬКО при смене шага, не при выборе чипса/карточки
+    if (resetScroll) { var ps = document.querySelector('.plate-scroll'); if (ps) ps.scrollTop = 0; }
+  }
+
+  /* ── Делегированные события (привязываются один раз) ──────────────── */
+  var qhost = $('qhost');
+  qhost.addEventListener('click', function (e) {
+    var el;
+    if ((el = e.target.closest('[data-card]')))   { S[el.dataset.card] = el.dataset.v; render(); return; }
+    if ((el = e.target.closest('[data-single]')))  { S[el.dataset.single] = el.dataset.v; render(); return; }
+    if ((el = e.target.closest('[data-seg]')))     { S[el.dataset.seg] = el.dataset.v; render(); return; }
+    if ((el = e.target.closest('[data-toggle]')))  {
+      var f = el.dataset.toggle; S[f] = !S[f];
+      if (f === 'gpaUnknown' && S[f]) S.gpa = '';
+      render(); return;
+    }
+    if ((el = e.target.closest('[data-multi]')))   {
+      var g = el.dataset.multi, v = el.dataset.v, arr = (S[g] || []).slice();
+      var at = arr.indexOf(v);
+      if (at > -1) arr.splice(at, 1); else arr.push(v);
+      S[g] = arr; render(); return;
+    }
+  });
+  // текстовые поля — только пишем в стейт, без ре-рендера (не теряем фокус)
+  qhost.addEventListener('input', function (e) {
+    var el = e.target.closest('[data-input]');
+    if (el) S[el.dataset.input] = el.value;
+  });
+
+  $('next').addEventListener('click', function () {
+    if (idx < QTOTAL - 1) { idx++; render(true); }
+    else { window.location.href = 'loading-dark.html'; }  // финал анкеты → экран генерации
+  });
+  $('back').addEventListener('click', function () { if (idx > 0) { idx--; render(true); } });
+
+  // выход из анкеты → модалка подтверждения → экран входа
+  (function () {
+    var btn = $('btnExit'), ov = $('logoutModal');
+    if (!btn || !ov) return;
+    var cancel = $('logoutCancel'), confirmB = $('logoutConfirm');
+    btn.addEventListener('click', function () { ov.classList.add('open'); });
+    cancel.addEventListener('click', function () { ov.classList.remove('open'); });
+    ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('open'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ov.classList.remove('open'); });
+    confirmB.addEventListener('click', function () { window.location.href = 'login-dark.html'; });
+  })();
+
+  // навигация по списку шагов справа (клик — переход на конкретный шаг)
+  $('stepsHost').addEventListener('click', function (e) {
+    var row = e.target.closest('.step');
+    if (!row) return;
+    var i = parseInt(row.getAttribute('data-step'), 10);
+    if (isNaN(i) || i < 0 || i >= STEPS.length) return;
+    idx = i;
+    render(true);
+  });
+
+  // переход с диагностики кнопкой «Назад» — открыть анкету на последнем вопросе
+  if (location.hash === '#last' || /[?&]step=last\b/.test(location.search)) {
+    idx = QTOTAL - 1;
+  }
+
+  render();
+})();
+</script>
+<script>
+/* ── Попап Настроек ─────────────────────────────────────────────── */
+(function () {
+  var ov = document.getElementById('settingsModal');
+  if (!ov) return;
+  var main = document.getElementById('stgMain');
+  var subs = ['stgName', 'stgPw', 'stgPrivacy2', 'stgTerms2'].map(function (id) { return document.getElementById(id); });
+  var $ = function (id) { return document.getElementById(id); };
+
+  function showMain() { main.style.display = ''; subs.forEach(function (s) { s.classList.remove('on'); }); }
+  function showSub(el) { main.style.display = 'none'; subs.forEach(function (s) { s.classList.remove('on'); }); el.classList.add('on'); }
+  function open() { ov.classList.add('open'); showMain(); }
+  function close() { ov.classList.remove('open'); }
+
+  // тост-подтверждение
+  var toast = $('stgToast'), toastTxt = $('stgToastTxt'), toastTimer = null;
+  function toastShow(msg) {
+    toastTxt.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2400);
+  }
+
+  var btnSettings = $('btnSettings');
+  if (btnSettings) btnSettings.addEventListener('click', open);
+  $('stgClose').addEventListener('click', close);
+  ov.addEventListener('click', function (e) { if (e.target === ov) close(); });
+  document.addEventListener('keydown', function (e) {
+    // Esc не закрывает настройки, если поверх открыта модалка удаления (ее закроет свой обработчик)
+    if (e.key === 'Escape' && ov.classList.contains('open') && !delModal.classList.contains('open')) close();
+  });
+
+  // ── Тема ──
+  try {
+    var savedTheme = localStorage.getItem('es_theme') || 'dark';
+    ['light', 'dark', 'system'].forEach(function (t) {
+      var el = $('theme' + t.charAt(0).toUpperCase() + t.slice(1));
+      if (el) el.classList.toggle('on', t === savedTheme);
+    });
+  } catch (e) {}
+  document.querySelectorAll('.theme-opt').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      document.querySelectorAll('.theme-opt').forEach(function (o) { o.classList.remove('on'); });
+      opt.classList.add('on');
+      try { localStorage.setItem('es_theme', opt.dataset.theme); } catch (e) {}
+      var names = { light: 'Светлая', dark: 'Темная', system: 'Системная' };
+      toastShow('Тема: ' + names[opt.dataset.theme]);
+    });
+  });
+
+  // ── Уведомления (тоггл «отключить») ──
+  var notif = $('stgNotif');
+  try { if (localStorage.getItem('es_notif_off') === '1') notif.classList.add('on'); } catch (e) {}
+  notif.addEventListener('click', function () {
+    notif.classList.toggle('on');
+    var off = notif.classList.contains('on');
+    try { localStorage.setItem('es_notif_off', off ? '1' : '0'); } catch (e) {}
+    toastShow(off ? 'Уведомления включены' : 'Уведомления отключены');
+  });
+
+  // ── Имя ──
+  $('stgOpenName').addEventListener('click', function () {
+    var nm = $('mascotName'), inp = $('stgNameInp');
+    try { inp.value = localStorage.getItem('es_name') || (nm ? nm.textContent : ''); } catch (e) {}
+    showSub($('stgName'));
+    setTimeout(function () { inp.focus(); }, 60);
+  });
+  $('stgBackName').addEventListener('click', showMain);
+  $('stgSaveName').addEventListener('click', function () {
+    var val = $('stgNameInp').value.trim();
+    if (!val) return;
+    try { localStorage.setItem('es_name', val); } catch (e) {}
+    var nm = $('mascotName');
+    if (nm) nm.textContent = val;
+    showMain();
+    toastShow('Имя изменено');
+  });
+
+  // ── Пароль ──
+  $('stgOpenPw').addEventListener('click', function () {
+    $('stgPwCur').value = ''; $('stgPwNew').value = ''; $('stgPwConf').value = '';
+    showSub($('stgPw'));
+    setTimeout(function () { $('stgPwCur').focus(); }, 60);
+  });
+  $('stgBackPw').addEventListener('click', showMain);
+  $('stgSavePw').addEventListener('click', function () {
+    var cur = $('stgPwCur').value, nw = $('stgPwNew').value, cf = $('stgPwConf').value;
+    if (!cur) { toastShow('Введите текущий пароль'); return; }
+    if (nw.length < 8) { toastShow('Минимум 8 символов'); return; }
+    if (nw !== cf) { toastShow('Пароли не совпадают'); return; }
+    showMain();
+    toastShow('Пароль изменен');
+  });
+
+  // ── Политика / Правила ──
+  $('stgPrivacy').addEventListener('click', function () { showSub($('stgPrivacy2')); });
+  $('stgBackPrivacy').addEventListener('click', showMain);
+  $('stgTerms').addEventListener('click', function () { showSub($('stgTerms2')); });
+  $('stgBackTerms').addEventListener('click', showMain);
+
+  // ── Удаление аккаунта — отдельная модалка в стиле выхода ──
+  var delModal = $('deleteModal');
+  $('stgOpenDelete').addEventListener('click', function () {
+    // НЕ закрываем настройки — модалка ложится сверху, «Отмена» вернет в настройки
+    delModal.classList.add('open');
+  });
+  $('deleteCancel').addEventListener('click', function () { delModal.classList.remove('open'); });
+  delModal.addEventListener('click', function (e) { if (e.target === delModal) delModal.classList.remove('open'); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') delModal.classList.remove('open'); });
+  $('deleteConfirm').addEventListener('click', function () {
+    try { localStorage.clear(); } catch (e) {}
+    window.location.href = 'login-dark.html';
+  });
+})();
+</script>
+<script>
+/* подставляем выбранного на gender-dark персонажа и введенное имя в профиль сайдбара */
+(function () {
+  var g, name;
+  try { g = localStorage.getItem('es_gender'); name = localStorage.getItem('es_name'); } catch (e) {}
+  var img = document.getElementById('mascotImg'), nm = document.getElementById('mascotName');
+  if (g === 'girl' && img) { img.src = 'assets/mascot-girl-cut.png'; img.alt = 'Профиль'; }
+  if (nm && name && name.trim()) nm.textContent = name.trim();
+})();
+</script>
+</body>
+</html>

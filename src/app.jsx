@@ -49,6 +49,9 @@
 
     // клиентский контур
     '/student': S.CabinetStudent,             // дашборд ученика «что делать сейчас»
+    '/plan': S.StudentPlan,                    // этапы: кинематографичная лента
+    '/stage': S.StudentStage,                  // детали одного этапа
+    '/stage-b': S.StudentStageB,               // детали этапа — вариант B (моя версия, для сравнения)
     '/parent': S.CabinetParent,               // кабинет родителя + дети
     '/diagnostics': S.Diagnostics,            // результаты диагностики (просмотр)
     '/documents': S.Documents,                // документы клиентского среза
@@ -84,6 +87,9 @@
     '/auth': true, '/landing': true, '/anketa': true, '/result': true,
     '/partner': true, '/crm': true, '/crm/client': true, '/crm/funnel': true,
     '/student': true, // дашборд ученика несёт свой тоггл (рейл/статус) + FAB ассистента
+    '/plan': true,    // этапы — своя тёмная раскладка, без плавающего тоггла
+    '/stage': true,   // детали этапа — своя тёмная раскладка
+    '/stage-b': true, // вариант B деталей этапа
     '/parent': true,  // дашборд родителя несёт свой тоггл (рейл/статус) + FAB ассистента
   };
 

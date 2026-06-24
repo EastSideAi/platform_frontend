@@ -1,847 +1,535 @@
 /* ============================================================================
    EastSide — Кабинет ученика · ГЛАВНАЯ (window.EScreens.CabinetStudent · #/student)
-   РЕБИЛД 3: Light Premium Dashboard + Dark Roadmap
+   ----------------------------------------------------------------------------
+   Премиальный дрим-пульт 2026: тонкая типографика SF Pro Display, глазморфизм,
+   мягкое свечение, дрим-картинки бренда (гора-восхождение). Минимум коробок,
+   максимум воздуха и визуала.
+
+   Состав: воздушный текстовый статус (как идем + общий прогресс) → широкий
+   баннер текущего этапа (дрим-гора) + список задач (стекло) → роадмап-путь с
+   дрим-героем и целью-вершиной → полезное про переезд. Каркас — ESStudentShell.
    ============================================================================ */
 (function () {
   'use strict';
-  const { createElement: h } = window.React || React;
+  const { createElement: h, useState } = window.React || React;
   const EScreens = (window.EScreens = window.EScreens || {});
-  const U = window.EUI, Ic = window.EIcons;
+  const Ic = window.EIcons || {};
+  const SH = window.ESStudentShell;
+  const arr = (s) => Ic.ArrowRight ? h(Ic.ArrowRight, { size: s || 16, className: 'sd-arr' }) : null;
+  const mute = { fontSize: '13px', fontWeight: 500, color: 'var(--sd-ink-mute)' };
+  const goStage = () => SH.onNav({ label: 'Этап', to: '/stage' });
+  const goLearn = () => SH.onNav({ label: 'Обучение', to: '/learning/schedule' });
+  const goDiag = () => SH.onNav({ label: 'Диагностика', to: '/diagnostics' });
 
-  const dashboardStyles = `
-    /* Глобальный сброс для этого экрана */
-    .ds-layout {
-      min-height: 100vh;
-      display: flex;
-      background-color: #F4F6F9; /* Дорогой светлый фон */
-      color: #1C1C28;
-      font-family: 'Inter', system-ui, sans-serif;
-    }
+  // ── Текущий этап. status: 'ok' (зеленый) | 'urgent' (янтарный) | 'late' (красный)
+  const STAGE = {
+    n: 3, total: 8, title: 'Сбор документов', daysLeft: 7, deadline: '28 июня',
+    status: 'urgent',
+    say: 'Медсправку нужно переделать до завтра — это сейчас главное. Остальное идет по графику.',
+    banner: 'Собираем пакет под грант CSC. Осталось переоформить медсправку и загрузить фото — и переходим к подаче.',
+  };
 
-    /* Сайдбар (тёмный) */
-    .ds-sidebar {
-      width: 260px;
-      flex-shrink: 0;
-      background: #110F19;
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      flex-direction: column;
-      padding: 24px;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      box-sizing: border-box;
-      color: #FFF;
-    }
-    .ds-logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 40px;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-    .ds-logo-box {
-      width: 32px;
-      height: 32px;
-      background: linear-gradient(135deg, #613EEA 0%, #A282FF 100%);
-      border-radius: 8px;
-    }
-    .ds-nav {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .ds-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      color: #8C8A97;
-      font-size: 15px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: transparent;
-      border: none;
-      text-align: left;
-    }
-    .ds-nav-item:hover {
-      color: #FFF;
-      background: rgba(255, 255, 255, 0.03);
-    }
-    .ds-nav-item.is-active {
-      color: #FFF;
-      background: rgba(97, 62, 234, 0.15);
-    }
-    .ds-nav-item.is-active .ds-nav-icon {
-      color: #A282FF;
-    }
-    .ds-badge {
-      margin-left: auto;
-      background: #613EEA;
-      color: #FFF;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 100px;
-    }
-
-    /* Основной контент (светлый) */
-    .ds-main {
-      flex: 1;
-      overflow-y: auto;
-      padding: 40px 0;
-      position: relative;
-    }
-    .ds-container {
-      max-width: 950px;
-      margin: 0 auto;
-      padding: 0 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 40px;
-    }
-
-    /* Общие компоненты */
-    .ds-block-title {
-      font-size: 18px;
-      color: #1C1C28;
-      margin: 0 0 16px 0;
-      font-weight: 700;
-    }
-    .ds-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px 20px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      border: none;
-      transition: all 0.2s ease;
-    }
-    .ds-btn.primary {
-      background: #E8EDFF;
-      color: #4361EE;
-    }
-    .ds-btn.primary:hover {
-      background: #D4DFFF;
-      transform: translateY(-1px);
-    }
-    .ds-btn.white {
-      background: #FFF;
-      color: #1C1C28;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .ds-btn.white:hover {
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-      transform: translateY(-1px);
-    }
-
-    /* BLOCK 1: TODAY (Что нужно от тебя) */
-    .ds-today-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .ds-tcard {
-      position: relative;
-      background: linear-gradient(145deg, #FFFFFF, #F8FAFF);
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 12px 30px rgba(67, 97, 238, 0.08);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.8);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .ds-tcard:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 16px 40px rgba(67, 97, 238, 0.12);
-    }
-    .ds-tcard-bg {
-      position: absolute;
-      top: -20px;
-      right: -20px;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle, rgba(67,97,238,0.1) 0%, rgba(255,255,255,0) 70%);
-      border-radius: 50%;
-      z-index: 0;
-    }
-    .ds-tcard.is-purple .ds-tcard-bg {
-      background: radial-gradient(circle, rgba(162,130,255,0.15) 0%, rgba(255,255,255,0) 70%);
-    }
-    .ds-tcard-content {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-    }
-    .ds-tcard-top {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .ds-tcard-num {
-      width: 32px;
-      height: 32px;
-      background: #E8EDFF;
-      color: #4361EE;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .ds-tcard.is-purple .ds-tcard-num {
-      background: #F3EFFF;
-      color: #8C52FF;
-    }
-    .ds-tcard-icon-l {
-      color: #4361EE;
-    }
-    .ds-tcard.is-purple .ds-tcard-icon-l {
-      color: #8C52FF;
-    }
-    .ds-tcard h3 {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0 0 8px 0;
-      color: #1C1C28;
-    }
-    .ds-tcard p {
-      font-size: 14px;
-      color: #6C6A7B;
-      margin: 0 0 24px 0;
-      line-height: 1.4;
-    }
-    .ds-tcard-meta {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: #8C8A97;
-      margin-bottom: 16px;
-    }
-
-    /* ROW 2: PREPARATION & CONTINUE */
-    .ds-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .ds-pcard {
-      background: #FFFFFF;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.04);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
-      overflow: hidden;
-    }
-    .ds-pcard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-      position: relative;
-      z-index: 1;
-    }
-    .ds-pcard-tag {
-      background: #613EEA;
-      color: #FFF;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-    .ds-pcard-stat {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-    }
-    .ds-pcard-num {
-      font-size: 42px;
-      font-weight: 800;
-      color: #1C1C28;
-      letter-spacing: -1px;
-    }
-    .ds-pcard-lbl {
-      color: #8C8A97;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    /* Декоративный график для HSK */
-    .ds-pcard-graph {
-      position: absolute;
-      bottom: 0; left: 0; right: 0; height: 80px;
-      background: linear-gradient(180deg, rgba(162,130,255,0.1) 0%, rgba(255,255,255,0) 100%);
-      border-top: 2px solid #D9CBFF;
-      border-radius: 100% 100% 0 0 / 100% 100% 0 0;
-      transform: scaleX(1.2) translateY(20px);
-    }
-    .ds-pcard-footer {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-top: auto;
-    }
-    .ds-pcard-meta {
-      font-size: 13px;
-      color: #6C6A7B;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .ds-ccard-icon {
-      width: 48px;
-      height: 48px;
-      background: #F3EFFF;
-      color: #8C52FF;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-    .ds-ccard-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin: 0 0 8px 0;
-    }
-    .ds-ccard-desc {
-      color: #6C6A7B;
-      font-size: 14px;
-      margin: 0 0 20px 0;
-    }
-
-    /* BLOCK: HELP */
-    .ds-help-banner {
-      background: linear-gradient(135deg, #1C153B 0%, #302070 100%);
-      border-radius: 24px;
-      padding: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #FFF;
-      box-shadow: 0 16px 32px rgba(28, 21, 59, 0.2);
-      position: relative;
-      overflow: hidden;
-    }
-    .ds-help-banner::before {
-      content: '';
-      position: absolute;
-      top: -50px; right: 10%;
-      width: 150px; height: 150px;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-    .ds-help-info h3 {
-      margin: 0 0 8px 0;
-      font-size: 24px;
-      font-weight: 700;
-    }
-    .ds-help-info p {
-      margin: 0;
-      font-size: 15px;
-      color: #B5B3C0;
-    }
-    .ds-help-actions {
-      display: flex;
-      gap: 16px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* ROADMAP (ТЁМНЫЙ ЭМОЦИОНАЛЬНЫЙ ЦЕНТР) */
-    .ds-roadmap {
-      display: flex;
-      flex-direction: column;
-      margin-top: 20px;
-      padding-bottom: 80px;
-    }
-    .ds-rm-row {
-      display: flex;
-      gap: 24px;
-      min-height: 80px;
-      position: relative;
-    }
-    .ds-rm-timeline {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 32px;
-      position: relative;
-      flex-shrink: 0;
-    }
-    .ds-rm-node {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-      z-index: 2;
-      box-sizing: border-box;
-      margin-top: 24px;
-    }
-    /* Завершено */
-    .ds-rm-row.completed .ds-rm-node {
-      background: #34C759;
-      color: #FFF;
-      box-shadow: 0 0 0 4px #F4F6F9;
-    }
-    /* Активный */
-    .ds-rm-row.active .ds-rm-node {
-      background: #613EEA;
-      color: #FFF;
-      box-shadow: 0 0 0 4px #F4F6F9, 0 0 24px rgba(97, 62, 234, 0.6);
-    }
-    /* Заблокировано */
-    .ds-rm-row.locked .ds-rm-node {
-      background: #E2E4EB;
-      color: #8C8A97;
-      box-shadow: 0 0 0 4px #F4F6F9;
-    }
-    .ds-rm-subnode {
-      width: 16px;
-      height: 16px;
-      background: #34C759;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #FFF;
-      z-index: 2;
-      margin-top: 16px;
-      box-shadow: 0 0 0 4px #F4F6F9;
-    }
-    .ds-rm-line {
-      position: absolute;
-      top: 56px;
-      bottom: -24px;
-      width: 2px;
-      background: #E2E4EB;
-      z-index: 1;
-    }
-    .ds-rm-row.completed .ds-rm-line {
-      background: #34C759;
-    }
-    .ds-rm-row:last-child .ds-rm-line {
-      display: none;
-    }
-
-    /* Карточка Roadmap (Темная) */
-    .ds-rm-card {
-      flex: 1;
-      background: #161423; /* Темный фон карточки на светлом фоне страницы */
-      border-radius: 20px;
-      overflow: hidden;
-      position: relative;
-      margin-bottom: 24px;
-      border: 1px solid rgba(0,0,0,0.1);
-      box-shadow: 0 16px 32px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-      color: #FFF; /* Текст внутри карточки белый */
-    }
-    .ds-rm-row.active .ds-rm-card {
-      border: 1px solid #613EEA;
-      box-shadow: 0 20px 40px rgba(97, 62, 234, 0.2);
-    }
-    .ds-rm-bg {
-      position: absolute;
-      top: 0; right: 0; bottom: 0; left: 0;
-      background-size: cover;
-      background-position: center;
-      z-index: 0;
-      opacity: 0.4;
-      filter: grayscale(80%) contrast(120%);
-      transition: all 0.4s ease;
-    }
-    .ds-rm-row.active .ds-rm-bg {
-      opacity: 0.8;
-      filter: none;
-    }
-    .ds-rm-overlay {
-      position: absolute;
-      top: 0; right: 0; bottom: 0; left: 0;
-      background: linear-gradient(90deg, #161423 40%, rgba(22, 20, 35, 0.7) 70%, transparent 100%);
-      z-index: 1;
-    }
-    .ds-rm-row.active .ds-rm-overlay {
-      background: linear-gradient(90deg, #1C153B 35%, rgba(28, 21, 59, 0.6) 70%, transparent 100%);
-    }
-
-    .ds-rm-content {
-      position: relative;
-      z-index: 2;
-      padding: 24px 32px;
-      width: 65%;
-    }
-    .ds-rm-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-    .ds-rm-badge {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-    }
-    .ds-rm-badge.completed { background: rgba(52, 199, 89, 0.15); color: #34C759; }
-    .ds-rm-badge.active { background: #613EEA; color: #FFF; }
-    .ds-rm-badge.locked { background: transparent; color: transparent; }
-    
-    .ds-rm-toggle {
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      color: #FFF;
-      width: 32px; height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      position: absolute;
-      right: -40%;
-    }
-
-    .ds-rm-title {
-      font-size: 20px;
-      font-weight: 600;
-      margin: 0 0 8px 0;
-      color: #FFF;
-    }
-    .ds-rm-row.locked .ds-rm-title {
-      color: #A4A1B5;
-    }
-    .ds-rm-desc {
-      font-size: 14px;
-      color: #8C8A97;
-      margin: 0;
-      line-height: 1.5;
-    }
-
-    .ds-rm-tasks {
-      margin-top: 32px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .ds-rm-task {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 14px;
-    }
-    .ds-rm-ticon {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.2);
-      display: flex; align-items: center; justify-content: center;
-      color: transparent;
-    }
-    .ds-rm-ticon.done {
-      background: #613EEA; border-color: #613EEA; color: #FFF;
-    }
-    .ds-rm-ticon.waiting {
-      border-color: rgba(255,255,255,0.2);
-    }
-    .ds-rm-tname {
-      color: #E2E0EB;
-      flex: 1;
-    }
-    .ds-rm-tstate {
-      font-size: 12px;
-      color: #8C8A97;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .ds-rm-tstate.done { color: #A282FF; }
-    .ds-rm-tstate.action { color: #FF453A; font-weight: 600; }
-    
-    .ds-rm-tdot {
-      width: 6px; height: 6px; border-radius: 50%;
-    }
-    .ds-rm-tstate.done .ds-rm-tdot { background: #A282FF; box-shadow: 0 0 8px #A282FF; }
-    .ds-rm-tstate.action .ds-rm-tdot { background: #FF453A; box-shadow: 0 0 8px #FF453A; }
-
-    .ds-rm-cta {
-      margin-top: 24px;
-      align-self: flex-start;
-      background: #613EEA;
-      color: #FFF;
-    }
-    .ds-rm-cta:hover { background: #7353F5; color: #FFF; }
-  `;
-
-  // Подключение стилей в head (один раз)
-  if (!document.getElementById('cabinet-student-styles')) {
-    const styleEl = document.createElement('style');
-    styleEl.id = 'cabinet-student-styles';
-    styleEl.innerHTML = dashboardStyles;
-    document.head.appendChild(styleEl);
-  }
-
-  const roadmapStages = [
+  // ── Под-шаги текущего этапа (для списка задач и попапа) ─────────────────────
+  const STEPS = [
+    { owner: 'us', status: 'done', title: 'Проверили аттестат и оценки',
+      sub: 'Аттестат и оценки проходят по требованиям гранта.',
+      desc: 'Сверили твой аттестат и баллы с требованиями CSC — все в порядке, документ готов к пакету.' },
     {
-      id: 1, title: 'Выбор программы и университета', desc: 'Мы помогли выбрать подходящую программу и университет в Китае',
-      status: 'completed', image: 'https://images.unsplash.com/photo-1543097692-fa13c6cd8595?auto=format&fit=crop&q=80&w=1200'
+      owner: 'you', status: 'current', side: 'you', title: 'Переоформить медсправку',
+      dl: 'завтра', dlState: 'late', prio: 'высокий', time: '5-10 минут на загрузку',
+      why: 'Старую справку не приняли — нужна новая по форме CSC с переводом.',
+      card: 'Нужна новая справка по форме CSC с переводом.',
+      desc: 'Нужна новая медсправка по форме CSC (Foreigner Physical Examination Form) с печатями и переводом. Сделай в клинике, потом загрузи фото или скан — проверим за 1-2 дня. Если что-то непонятно по пунктам — спроси AI.',
+      cta: 'Перейти к задаче',
+      flow: [
+        { t: 'Получаешь справку в клинике', s: 'По форме CSC, с переводом', st: 'current' },
+        { t: 'Загружаешь сюда', s: 'Фото или скан' },
+        { t: 'Мы проверяем и добавляем в пакет', s: 'Обычно 1-2 дня' },
+      ],
     },
     {
-      id: 2, title: 'Подтвердили уровень языка (HSK)', desc: 'Подтвердили ваш уровень и участие в гранте',
-      status: 'completed', image: 'https://images.unsplash.com/photo-1546525848-3ce03ca516f6?auto=format&fit=crop&q=80&w=1200'
+      owner: 'you', status: 'upcoming', side: 'you', title: 'Загрузить фото 33x48', dl: '28 июня', dlState: 'ok', time: '5 минут',
+      sub: 'Белый фон, ровный свет, нейтральное выражение лица.',
+      desc: 'Фото 33x48 мм: строго белый фон, ровный свет, нейтральное выражение лица, без аксессуаров.',
+      cta: 'Загрузить фото',
+      flow: [{ t: 'Ты загружаешь фото', st: 'current' }, { t: 'Мы проверяем', s: 'Скажем сразу, если надо переснять' }],
     },
-    {
-      id: 3, title: 'Сбор документов', desc: 'Собираем все необходимые документы и проверяем их на соответствие требованиям гранта CSC.',
-      status: 'active', image: 'https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&q=80&w=1200',
-      tasks: [
-        { id: 1, name: 'Медицинская справка', state: 'В работе', type: 'done' },
-        { id: 2, name: 'Фото 3x4', state: 'От тебя', type: 'action' },
-        { id: 3, name: 'Скан паспорта', state: 'Ожидает', type: 'waiting' },
-        { id: 4, name: 'Аттестат / диплом', state: 'Ожидает', type: 'waiting' },
-        { id: 5, name: 'Рекомендательные письма', state: 'Ожидает', type: 'waiting' },
-        { id: 6, name: 'Мотивационное письмо', state: 'Ожидает', type: 'waiting' },
-        { id: 7, name: 'Справка о несудимости', state: 'Ожидает', type: 'waiting' },
-      ]
-    },
-    {
-      id: 4, title: 'Подача документов на грант', desc: 'Подготовим ваш пакет документов и отправим заявку на грант CSC от вашего университета',
-      status: 'locked', image: 'https://images.unsplash.com/photo-1508804185872-d7bad80009e9?auto=format&fit=crop&q=80&w=1200'
-    },
-    {
-      id: 5, title: 'Ожидание результата от CSC', desc: 'CSC рассматривает вашу заявку и принимает решение о предоставлении гранта',
-      status: 'locked', image: 'https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?auto=format&fit=crop&q=80&w=1200'
-    },
-    {
-      id: 6, title: 'Получение приглашения от университета', desc: 'Университет отправляет вам официальное приглашение для оформления визы и проживания',
-      status: 'locked', image: 'https://images.unsplash.com/photo-1474181487882-5abf3f0ba6c2?auto=format&fit=crop&q=80&w=1200'
-    },
-    {
-      id: 7, title: 'Оформление визы и подготовка к поездке', desc: 'Оформляем студенческую визу и готовим вас к переезду в Китай',
-      status: 'locked', image: 'https://images.unsplash.com/photo-1551009175-15bdf9dcb580?auto=format&fit=crop&q=80&w=1200'
-    },
-    {
-      id: 8, title: 'Приезд в Китай 🇨🇳', desc: 'Вы приезжаете в Китай, заселяетесь в кампус и начинаете обучение',
-      status: 'locked', image: 'https://images.unsplash.com/photo-1505440484611-23c171ad6e96?auto=format&fit=crop&q=80&w=1200'
-    }
+    { owner: 'us', status: 'upcoming', title: 'Проверка пакета и подача на грант', time: '1-2 дня',
+      sub: 'Соберем пакет и подадим заявку — от тебя ничего не нужно.',
+      desc: 'Проверим все документы, соберем пакет и подадим заявку на грант CSC от твоего имени. От тебя ничего не нужно.' },
   ];
 
-  // --- КОМПОНЕНТЫ БЛОКОВ ---
+  // ── Все этапы пути. У каждого: lead (d), у активного — full (read more) и tasks (STEPS),
+  //    у пройденных — done-задачи, у будущих — превью will + after ──────────────────────────
+  const STAGES = [
+    { n: 1, t: 'Выбор университета', st: 'done', sub: 'Подобрали программу и вуз под твой профиль.',
+      d: 'Разобрали твой профиль и подобрали программу и вуз, где у тебя реальные шансы на грант.',
+      tasks: [
+        { status: 'done', owner: 'us', title: 'Собрали профиль и цели', sub: 'Разобрали интересы, баллы и цель по стране.' },
+        { status: 'done', owner: 'us', title: 'Подобрали вуз и программу', sub: 'Вуз и направление, где реальны шансы на грант.' },
+      ] },
+    { n: 2, t: 'Уровень языка HSK', st: 'done', sub: 'Подтвердили уровень языка и участие в гранте.',
+      d: 'Зафиксировали твой уровень языка и подтвердили, что ты проходишь по требованиям гранта.',
+      tasks: [
+        { status: 'done', owner: 'you', title: 'Прошел диагностику уровня', sub: 'Зафиксировали твой текущий уровень языка.' },
+        { status: 'done', owner: 'us', title: 'Подтвердили участие в гранте', sub: 'Профиль проходит по требованиям CSC.' },
+      ] },
+    { n: 3, t: 'Сбор документов', st: 'active', sub: 'Собираем пакет под требования гранта CSC.',
+      d: 'Собираем пакет под требования гранта CSC и проверяем каждый файл перед подачей. Сейчас в фокусе медсправка.',
+      full: [
+        'Готовим все, что комиссия CSC потребует при подаче: аттестат с оценками, сертификат HSK, медсправку по форме CSC, фото на документы, скан паспорта и письма.',
+        'Важно собрать пакет заранее и без брака: неверная форма справки или фото не по стандарту приводят к возврату, а окно подачи открывается раз в год.',
+        'На выходе — готовый проверенный пакет, который мы подаем на грант от твоего имени. Сейчас от тебя нужны два документа, остальное берем на себя.',
+      ],
+      tasks: STEPS },
+    { n: 4, t: 'Подача на грант', st: 'locked', sub: 'Подадим заявку на грант CSC от твоего имени.',
+      d: 'Когда пакет готов, подаем заявку на грант CSC от твоего имени и следим за статусом.',
+      after: 3, will: ['Финальная проверка пакета', 'Подача заявки от твоего имени', 'Подтверждение приема заявки'] },
+    { n: 5, t: 'Решение CSC', st: 'locked', sub: 'Комиссия рассматривает твою заявку.',
+      d: 'Комиссия рассматривает заявку. Держим тебя в курсе и готовим к следующему шагу.',
+      after: 4, will: ['Отслеживаем статус заявки', 'Готовим к возможному интервью', 'Сообщаем решение комиссии'] },
+    { n: 6, t: 'Приглашение вуза', st: 'locked', sub: 'Вуз присылает официальное приглашение.',
+      d: 'После одобрения гранта вуз присылает официальное приглашение для визы.',
+      after: 5, will: ['Получаем приглашение от вуза', 'Проверяем данные в документе', 'Готовим пакет на визу'] },
+    { n: 7, t: 'Виза и переезд', st: 'locked', sub: 'Оформляем визу и готовим к переезду.',
+      d: 'Оформляем учебную визу и готовим тебя к переезду: жилье, билеты, первые дни.',
+      after: 6, will: ['Подаем на визу X1/X2', 'Бронируем общежитие', 'Помогаем с билетами и страховкой'] },
+    { n: 8, t: 'Приезд в Китай', st: 'locked', sub: 'Кампус, заселение и старт учебы.',
+      d: 'Ты на вершине: кампус, заселение, старт учебы. Цель достигнута, мы рядом на месте.',
+      after: 7, will: ['Заселение в общежитие', 'Регистрация и документы на месте', 'Старт учебы и адаптация'] },
+  ];
 
-  function BlockToday() {
-    return h('div', { className: 'ds-block ds-block-today' },
-      h('h2', { className: 'ds-block-title' }, 'Что нужно от тебя'),
-      h('div', { className: 'ds-today-grid' },
-        h('div', { className: 'ds-tcard' },
-          h('div', { className: 'ds-tcard-bg' }),
-          h('div', { className: 'ds-tcard-content' },
-            h('div', { className: 'ds-tcard-top' },
-              h('div', { className: 'ds-tcard-num' }, '1'),
-              h('div', { className: 'ds-tcard-icon-l' }, h(Ic.User, { size: 36 }))
-            ),
-            h('h3', null, 'Фото 33x48'),
-            h('p', null, 'Строго белый фон, без улыбки и аксессуаров'),
-            h('div', { className: 'ds-tcard-meta' }, h(Ic.Clock, { size: 14 }), '≈ 5 минут'),
-            h('div', { style: { marginTop: 'auto' } },
-              h('button', { className: 'ds-btn primary', style: { width: '100%' } }, 'Загрузить фото', h(Ic.ArrowUpRight, { size: 16 }))
-            )
-          )
-        ),
-        h('div', { className: 'ds-tcard is-purple' },
-          h('div', { className: 'ds-tcard-bg' }),
-          h('div', { className: 'ds-tcard-content' },
-            h('div', { className: 'ds-tcard-top' },
-              h('div', { className: 'ds-tcard-num' }, '2'),
-              h('div', { className: 'ds-tcard-icon-l' }, h(Ic.Doc, { size: 36 }))
-            ),
-            h('h3', null, 'Медицинская справка'),
-            h('p', null, 'Требуется переоформление или дополнение'),
-            h('div', { className: 'ds-tcard-meta' }, h(Ic.Clock, { size: 14 }), 'Дедлайн: 1 день'),
-            h('div', { style: { marginTop: 'auto' } },
-              h('button', { className: 'ds-btn primary', style: { width: '100%', background: '#F3EFFF', color: '#8C52FF' } }, 'Что делать?', h(Ic.ArrowRight, { size: 16 }))
-            )
-          )
-        )
-      )
-    );
+  // ── База знаний «Про переезд» (попап) ───────────────────────────────────────
+  const KNOW = [
+    { cap: 'Переезд', title: 'Как устроено жилье для студентов в Китае', dur: '6 мин чтения', icon: Ic.Home, image: 'assets/mountain-light.png',
+      body: ['Большинство студентов живут в кампусе — это дешево и близко к учебе.', 'Есть варианты подороже: студии и квартиры рядом с вузом.', 'Заселение мы поможем оформить на этапе переезда.'] },
+    { cap: 'Виза', title: 'Студенческая виза X1: что нужно знать', dur: '5 мин чтения', icon: Ic.Doc, image: 'assets/cosmos.png',
+      body: ['Виза X1 — для долгой учебы (больше 180 дней). Оформляется после приглашения от вуза.', 'Нужны приглашение, загранпаспорт, фото и анкета.', 'В Китае в первые 30 дней оформляешь вид на жительство — поможем.'] },
+    { cap: 'Быт', title: 'Деньги, связь и транспорт в первый месяц', dur: '4 мин чтения', icon: Ic.Clock, image: 'assets/ascent-lit.png',
+      body: ['Основные платежи в Китае — через WeChat и Alipay, наличные почти не нужны.', 'Сразу оформи местную симку и студенческий проездной.', 'На первый месяц заложи бюджет на залог и бытовые мелочи.'] },
+    { cap: 'Учеба', title: 'Что важно знать про учебу в китайском вузе', dur: '5 мин чтения', icon: Ic.Book, image: 'assets/ascent-night.png',
+      body: ['Учебный год начинается в сентябре, есть строгая посещаемость.', 'Часть программ на английском, часть на китайском — зависит от вуза.', 'Гранты CSC часто покрывают обучение, проживание и стипендию.'] },
+  ];
+
+  const taskOf = (s) => Object.assign({}, s, { title: s.title, desc: s.desc || s.why });
+  const statusV = () => { const st = STAGE.status; return st === 'late' ? 'late' : st === 'urgent' ? 'warn' : 'ok'; };
+  const USER = (SH && SH.USER) || {};
+
+  /* ── Герой: крупный привет + заголовок в 2 строки, большая гора справа ──── */
+  function Hero() {
+    const v = statusV();
+    const br = h('br', { key: 'br' });
+    const line = v === 'late'
+      ? ['Есть просрочка —', br, h('span', { key: 1, className: 'sd-hero2__em' }, 'нагони сроки')]
+      : v === 'warn'
+      ? ['Идешь по графику,', br, h('span', { key: 1, className: 'sd-hero2__em' }, 'горит только медсправка')]
+      : ['Идешь по графику,', br, h('span', { key: 1, className: 'sd-hero2__em' }, 'все по плану')];
+    const heart = () => Ic.Heart ? h(Ic.Heart, { size: 14 }) : null;
+    return h('section', { className: 'sd-hero2 ' + v },
+      h('div', { className: 'sd-hero2__main' },
+        h('div', { className: 'sd-hero2__hi' }, 'Привет, ' + (USER.first || 'Дима') + '!'),
+        h('h1', { className: 'sd-hero2__h' }, line),
+        h('div', { className: 'sd-hero2__re' }, heart(), 'Ты справишься. Мы рядом', heart()),
+        h('div', { className: 'sd-hero2__stats' },
+          h('div', { className: 'sd-stat' },
+            h('div', { className: 'sd-stat__ic' }, Ic.Calendar ? h(Ic.Calendar, { size: 20 }) : null),
+            h('div', { className: 'sd-stat__b' },
+              h('div', { className: 'sd-stat__lab' }, 'До дедлайна медсправки'),
+              h('div', { className: 'sd-stat__val' }, '1 день'),
+              h('div', { className: 'sd-stat__sub' }, 'Твоя задача — в фокусе'))),
+          h('div', { className: 'sd-stat' },
+            h('div', { className: 'sd-stat__ic' }, Ic.Spark ? h(Ic.Spark, { size: 20 }) : null),
+            h('div', { className: 'sd-stat__b' },
+              h('div', { className: 'sd-stat__lab' }, 'Твой прогресс'),
+              h('div', { className: 'sd-stat__val' }, STAGE.n + ' из ' + STAGE.total + ' этапов'),
+              h('div', { className: 'sd-stat__bar' }, h('i', { style: { width: (100 * STAGE.n / STAGE.total) + '%' } })))))),
+      h('div', { className: 'sd-hero2__mtwrap' },
+        h('img', { className: 'sd-hero2__mt', src: 'assets/mountain-peak.png', alt: '' })));
   }
 
-  function BlockPreparation() {
-    return h('div', { className: 'ds-block ds-block-prep' },
-      h('h2', { className: 'ds-block-title' }, 'Твоя подготовка'),
-      h('div', { className: 'ds-pcard' },
-        h('div', { className: 'ds-pcard-header' },
-          h('span', { className: 'ds-pcard-tag' }, 'HSK 4')
-        ),
-        h('div', { className: 'ds-pcard-stat' },
-          h('span', { className: 'ds-pcard-num' }, '82'),
-          h('span', { className: 'ds-pcard-lbl' }, '% прогресс')
-        ),
-        h('div', { className: 'ds-pcard-graph' }),
-        h('div', { className: 'ds-pcard-footer' },
-          h('div', { className: 'ds-pcard-meta' },
-            h('span', null, 'До экзамена: ', h('b', { style: { color: '#1C1C28' } }, '24 дня')),
-            h('span', null, 'След. урок: Тоны')
-          ),
-          h('button', { className: 'ds-btn primary' }, 'Открыть обучение', h(Ic.ArrowRight, { size: 16 }))
-        )
-      )
-    );
+  /* ── Верхний ряд: карточка текущего этапа (слева) + задачи (справа) ──────── */
+  function TopRow() {
+    const taskClick = (p) => (p.owner === 'you' && (p.desc || p.why)) ? SH.openTask(taskOf(p)) : goStage();
+    const pending = STEPS.filter((p) => p.status !== 'done');
+    const meta = (p) => (p.owner === 'you' ? 'Твоя задача' : 'Наша задача') + (p.dl ? ' · срок ' + p.dl : p.time ? ' · ' + p.time : '');
+    return h('section', { className: 'sd-sec sd-toprow-sec' },
+      h('div', { className: 'sd-toprow' },
+        // карточка этапа — стеклянный медальон с папкой слева + текст
+        h('div', { className: 'sd-glass sd-stagecard' },
+          h('div', { className: 'sd-stagecard__head' },
+            h('div', { className: 'sd-stagecard__kick' }, 'Текущий этап'),
+            h('div', { className: 'sd-stagecard__chip' }, STAGE.n + ' / ' + STAGE.total)),
+          h('div', { className: 'sd-stagecard__body' },
+            h('div', { className: 'sd-stagecard__orb' }, h('img', { src: 'assets/docs-banner.png', alt: '' })),
+            h('div', { className: 'sd-stagecard__txt' },
+              h('h3', { className: 'sd-stagecard__t' }, STAGE.title),
+              h('p', { className: 'sd-stagecard__d' }, STAGE.banner),
+              h('button', { type: 'button', className: 'sd-btn sd-btn--primary sd-stagecard__cta', onClick: goStage }, 'Продолжить этап', arr())))),
+        // задачи — без кнопки, только незавершенные
+        h('div', { className: 'sd-glass sd-tasks' },
+          h('div', { className: 'sd-tasks__h' },
+            h('span', null, 'Что сейчас нужно сделать'),
+            h('span', { className: 'sd-tasks__count' }, String(pending.length))),
+          h('div', { className: 'sd-tasks__list' },
+            pending.map((p, j) => h('div', { key: j, className: 'sd-tk ' + p.status + (p.status === 'current' && p.dlState === 'late' ? ' late' : ''), onClick: () => taskClick(p) },
+              h('span', { className: 'sd-tk__dot' }, null),
+              h('div', { className: 'sd-tk__b' },
+                h('div', { className: 'sd-tk__t' }, p.title),
+                h('div', { className: 'sd-tk__m' + (p.dlState === 'late' ? ' late' : '') }, meta(p))),
+              h('span', { className: 'sd-tk__go' }, Ic.ChevronRight ? h(Ic.ChevronRight, { size: 17 }) : '›')))))));
   }
 
-  function BlockContinue() {
-    return h('div', { className: 'ds-block ds-block-cont' },
-      h('h2', { className: 'ds-block-title' }, 'Текущий этап'),
-      h('div', { className: 'ds-pcard' },
+  /* ── Баннер AI — темная атмосфера на всю ширину ─────────────────────────── */
+  function AiBanner() {
+    return h('section', { className: 'sd-sec' },
+      h('div', { className: 'sd-aibn', onClick: () => SH.openChat() },
+        h('div', { className: 'sd-aibn__c' },
+          h('div', { className: 'sd-aibn__kick' }, 'AI-наставник'),
+          h('div', { className: 'sd-aibn__t' }, 'Рядом, когда нужен ответ'),
+          h('div', { className: 'sd-aibn__d' }, 'Завис на шаге, горит срок или непонятно с документами — напиши, и получишь четкий разбор за секунды. Без ожидания куратора, в любое время.'),
+          h('button', { type: 'button', className: 'sd-btn sd-btn--primary', onClick: (e) => { e.stopPropagation(); SH.openChat(); } }, 'Спросить AI', arr())),
+        h('img', { className: 'sd-aibn__img', src: 'assets/robot-ai.png', alt: '' })));
+  }
+
+  /* ── «Твой путь в Китай» — master-detail (рейл этапов + панель выбранного) ──
+     Чисто и воздушно: монохром-сапфир, без зеленого/красного, без выпуклых теней
+     и пилюль. Выбранный этап слева — стеклянный контейнер с треугольником-язычком
+     к панели. Текущие задачи раскрываются, у самой панели есть «читать подробнее».  */
+  function injectJourneyCSS() {
+    if (document.getElementById('es-journey-css')) return;
+    const el = document.createElement('style');
+    el.id = 'es-journey-css';
+    el.textContent = `
+    /* блок «Путь в Китай» занимает почти всю ширину рабочего полотна */
+    .sd-main--light:has(.sd-jp2) .sd-wrap{max-width:1320px;}
+    .sd-jp2{position:relative;display:grid;grid-template-columns:404px minmax(0,1fr);gap:36px;align-items:start;margin-top:16px;}
+
+    /* ── ЛЕВО: рейл-контейнер со своей легкой границей и гранью сверху ──── */
+    .sd-jp2-rail{position:relative;overflow:visible;display:flex;flex-direction:column;gap:5px;
+      padding:18px 16px;border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.16));
+      border:1px solid rgba(22,32,59,.07);border-top-color:rgba(22,32,59,.12);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+    /* непрерывная линия-роадмап по центру узлов */
+    .sd-jp2-rail::before{content:'';position:absolute;z-index:0;left:41px;top:54px;bottom:54px;width:2px;border-radius:2px;
+      background:linear-gradient(180deg,var(--sd-acc) 0%,var(--sd-acc) var(--jp-fill,32%),rgba(22,32,59,.1) var(--jp-fill,32%),rgba(22,32,59,.1) 100%);}
+
+    .sd-jp2-st{position:relative;z-index:1;display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;
+      background:transparent;border:0;padding:0;}
+    .sd-jp2-noden{flex:0 0 50px;display:flex;align-items:flex-start;justify-content:center;padding-top:15px;}
+    .sd-jp2-node{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
+      font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;position:relative;}
+    .sd-jp2-st.done .sd-jp2-node{color:var(--sd-acc-deep);background:#EAF2FF;box-shadow:inset 0 0 0 1px rgba(43,143,255,.3);}
+    .sd-jp2-st.active .sd-jp2-node{color:#fff;background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));
+      box-shadow:inset 0 0 12px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.45),0 5px 14px rgba(43,143,255,.3);}
+    .sd-jp2-st.locked .sd-jp2-node{color:var(--sd-ink-mute);background:#fff;box-shadow:inset 0 0 0 1.5px rgba(22,32,59,.12);}
+
+    .sd-jp2-st__b{flex:1 1 auto;min-width:0;position:relative;
+      padding:13px 16px;border-radius:15px;border:1px solid transparent;
+      transition:background .2s,border-color .2s,box-shadow .2s,margin .26s cubic-bezier(.23,1,.32,1);}
+    .sd-jp2-st:not(.is-sel):hover .sd-jp2-st__b{background:rgba(43,143,255,.05);}
+    .sd-jp2-st__top{display:flex;align-items:baseline;gap:12px;}
+    .sd-jp2-st__t{flex:1 1 auto;min-width:0;font-size:15px;font-weight:600;color:var(--sd-ink);letter-spacing:-.2px;line-height:1.3;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .sd-jp2-st.locked .sd-jp2-st__t{color:var(--sd-ink-sub);font-weight:500;}
+    .sd-jp2-st__st{flex:0 0 auto;font-size:11.5px;font-weight:600;color:var(--sd-ink-mute);letter-spacing:.005em;}
+    .sd-jp2-st.done .sd-jp2-st__st,.sd-jp2-st.active .sd-jp2-st__st{color:var(--sd-acc-deep);}
+    .sd-jp2-st__d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+      font-size:12.5px;font-weight:500;color:var(--sd-ink-mute);line-height:1.45;margin-top:5px;}
+
+    /* выбранный этап — светлая заливка изнутри, без тени, наезжает на панель */
+    .sd-jp2-st.is-sel{z-index:6;}
+    .sd-jp2-st.is-sel .sd-jp2-st__b{margin-right:-60px;background:rgba(255,255,255,.97);border-color:rgba(43,143,255,.32);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 40px rgba(43,143,255,.1);}
+    .sd-jp2-st.is-sel .sd-jp2-st__b::after{content:'';position:absolute;right:-7px;top:23px;width:14px;height:14px;
+      transform:rotate(45deg);background:rgba(255,255,255,.99);
+      border-top:1px solid rgba(43,143,255,.32);border-right:1px solid rgba(43,143,255,.32);border-radius:0 4px 0 0;}
+
+    /* ── ПРАВО: панель этапа — воздушная плашка, заливка изнутри, без тени ─ */
+    .sd-jp2-panel{position:relative;overflow:hidden;z-index:2;border-radius:26px;padding:40px 44px 36px;
+      background:linear-gradient(157deg,rgba(255,255,255,.82),rgba(244,247,255,.6));border:1px solid rgba(43,111,224,.12);
+      -webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 0 70px rgba(43,143,255,.045);
+      animation:jp-fade .28s cubic-bezier(.23,1,.32,1);}
+    @keyframes jp-fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+    .sd-jp2-art{position:absolute;z-index:0;right:-8px;top:-18px;width:258px;pointer-events:none;opacity:.92;
+      filter:drop-shadow(0 20px 42px rgba(43,90,200,.14));
+      -webkit-mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);}
+    .sd-jp2-art.locked{opacity:.3;filter:grayscale(.5) drop-shadow(0 14px 30px rgba(43,90,200,.1));}
+    .sd-jp2-panel__head{position:relative;z-index:1;max-width:60%;}
+    .sd-jp2-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sd-ink-mute);}
+    .sd-jp2-eyebrow.active{color:var(--sd-acc-deep);}
+    .sd-jp2-panel__t{font-weight:700;font-size:32px;letter-spacing:-1.1px;line-height:1.06;color:#15203B;margin:13px 0 0;text-wrap:balance;}
+    .sd-jp2-panel__d{font-size:15.5px;line-height:1.62;color:var(--sd-ink-sub);margin:14px 0 0;max-width:54ch;}
+    .sd-jp2-more{overflow:hidden;max-height:0;opacity:0;transition:max-height .3s cubic-bezier(.23,1,.32,1),opacity .22s;}
+    .sd-jp2-more.open{max-height:640px;opacity:1;}
+    .sd-jp2-more p{font-size:14px;line-height:1.62;color:var(--sd-ink-sub);margin:13px 0 0;max-width:64ch;}
+    .sd-jp2-readmore{margin-top:15px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--sd-acc-deep);
+      background:0;border:0;cursor:pointer;padding:0;transition:opacity .15s;}
+    .sd-jp2-readmore:hover{opacity:.7;}
+    .sd-jp2-readmore svg{transition:transform .2s cubic-bezier(.23,1,.32,1);}
+    .sd-jp2-readmore.open svg{transform:rotate(180deg);}
+
+    /* прогресс — своя скругленная карточка с легкой границей (не разделитель) */
+    .sd-jp2-prog{position:relative;z-index:1;margin-top:30px;padding:22px 24px;border-radius:18px;
+      border:1px solid rgba(22,32,59,.08);background:rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+    .sd-jp2-prog__top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
+    .sd-jp2-prog__lab{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sd-ink-mute);}
+    .sd-jp2-prog__pct{font-size:40px;font-weight:700;letter-spacing:-1.4px;line-height:1;color:var(--sd-acc-deep);font-variant-numeric:tabular-nums;margin-top:9px;}
+    .sd-jp2-prog__of{font-size:13px;font-weight:600;color:var(--sd-ink-mute);font-variant-numeric:tabular-nums;}
+    .sd-jp2-prog__track{margin-top:18px;height:8px;border-radius:99px;background:rgba(22,32,59,.07);overflow:hidden;}
+    .sd-jp2-prog__fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sd-acc-2),var(--sd-acc-deep));transform-origin:left;transition:transform .4s cubic-bezier(.23,1,.32,1);}
+
+    /* ── задачи — каждая своя карточка с границей, без разделителей ──────── */
+    .sd-jp2-tasks{position:relative;z-index:1;margin-top:14px;display:flex;flex-direction:column;gap:11px;}
+    .sd-jp2-task{border:1px solid rgba(22,32,59,.08);border-radius:16px;background:rgba(255,255,255,.5);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .2s,background .2s;}
+    .sd-jp2-task.done:hover,.sd-jp2-task.upcoming:hover{border-color:rgba(43,143,255,.22);background:rgba(255,255,255,.66);}
+    .sd-jp2-task__row{display:flex;align-items:center;gap:15px;padding:16px 18px;}
+    .sd-jp2-task.done .sd-jp2-task__row,.sd-jp2-task.upcoming .sd-jp2-task__row{cursor:pointer;}
+    .sd-jp2-task__mk{flex:0 0 36px;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;}
+    .sd-jp2-task.done .sd-jp2-task__mk{color:var(--sd-acc-deep);background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2);}
+    .sd-jp2-task.upcoming .sd-jp2-task__mk{color:var(--sd-ink-mute);background:rgba(22,32,59,.04);box-shadow:inset 0 0 0 1px rgba(22,32,59,.07);}
+    .sd-jp2-task__b{flex:1 1 auto;min-width:0;}
+    .sd-jp2-task__t{font-size:15px;font-weight:600;color:var(--sd-ink);letter-spacing:-.2px;line-height:1.3;}
+    .sd-jp2-task.done .sd-jp2-task__t{color:var(--sd-ink-sub);}
+    .sd-jp2-task.upcoming .sd-jp2-task__t{color:var(--sd-ink-sub);}
+    .sd-jp2-task__sub{font-size:12.5px;font-weight:500;color:var(--sd-ink-mute);line-height:1.45;margin-top:3px;}
+    .sd-jp2-task__st{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sd-ink-mute);}
+    .sd-jp2-task.done .sd-jp2-task__st{color:var(--sd-acc-deep);}
+    .sd-jp2-task__chev{flex:0 0 auto;color:var(--sd-ink-mute);display:inline-flex;transition:transform .25s cubic-bezier(.23,1,.32,1);}
+    .sd-jp2-task.is-open .sd-jp2-task__chev{transform:rotate(180deg);}
+    /* текущая задача от тебя — единственный акцент */
+    .sd-jp2-task.current{border:1.5px solid var(--sd-acc-line);
+      background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(244,247,255,.76));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 48px rgba(43,143,255,.1);}
+    .sd-jp2-task.current .sd-jp2-task__row{padding:20px 22px;cursor:pointer;}
+    .sd-jp2-task.current .sd-jp2-task__mk{flex:0 0 42px;width:42px;height:42px;border-radius:13px;color:#fff;
+      background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));box-shadow:inset 0 0 13px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.4);}
+    .sd-jp2-task.current .sd-jp2-task__t{font-size:17px;font-weight:700;color:var(--sd-ink);}
+    .sd-jp2-meta{display:flex;align-items:center;flex-wrap:wrap;margin-top:7px;font-size:13px;font-weight:500;color:var(--sd-ink-mute);}
+    .sd-jp2-meta b{color:var(--sd-acc-deep);font-weight:600;}
+    .sd-jp2-meta__sep{margin:0 9px;width:3px;height:3px;border-radius:50%;background:rgba(22,32,59,.2);}
+    .sd-jp2-task__cta{flex:0 0 auto;}
+    /* раскрытие задачи */
+    .sd-jp2-exp{overflow:hidden;max-height:0;opacity:0;transition:max-height .32s cubic-bezier(.23,1,.32,1),opacity .24s;}
+    .sd-jp2-exp.open{max-height:520px;opacity:1;}
+    .sd-jp2-exp__in{padding:0 18px 18px 69px;}
+    .sd-jp2-task.current .sd-jp2-exp__in{padding:2px 22px 20px 79px;}
+    .sd-jp2-exp__d{font-size:13.5px;line-height:1.6;color:var(--sd-ink-sub);max-width:62ch;}
+    .sd-jp2-flow{margin-top:14px;}
+    .sd-jp2-flowstep{display:flex;gap:12px;align-items:flex-start;padding:8px 0;}
+    .sd-jp2-flowstep__mk{flex:0 0 22px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;
+      color:var(--sd-acc-deep);background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.22);font-variant-numeric:tabular-nums;}
+    .sd-jp2-flowstep__t{font-size:13.5px;font-weight:600;color:var(--sd-ink);}
+    .sd-jp2-flowstep__s{font-size:12.5px;color:var(--sd-ink-mute);margin-top:2px;}
+
+    /* ── locked-этап: тихий превью своей карточкой ──────────────────────── */
+    .sd-jp2-soon{position:relative;z-index:1;margin-top:22px;padding:22px 24px;border-radius:18px;
+      border:1px solid rgba(22,32,59,.08);background:rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+    .sd-jp2-soon__h{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--sd-ink-sub);}
+    .sd-jp2-soon__h svg{color:var(--sd-ink-mute);}
+    .sd-jp2-soon__list{margin-top:15px;display:flex;flex-direction:column;gap:12px;}
+    .sd-jp2-soon__it{display:flex;gap:11px;align-items:flex-start;font-size:13.5px;color:var(--sd-ink-sub);line-height:1.4;}
+    .sd-jp2-soon__dot{flex:0 0 5px;width:5px;height:5px;border-radius:50%;background:rgba(43,143,255,.42);margin-top:7px;}
+
+    @media (max-width:920px){
+      .sd-jp2{grid-template-columns:1fr;gap:18px;}
+      .sd-jp2-st.is-sel .sd-jp2-st__b{margin-right:0;}
+      .sd-jp2-st.is-sel .sd-jp2-st__b::after{display:none;}
+      .sd-jp2-panel__head{max-width:100%;}
+      .sd-jp2-art{opacity:.45;width:150px;}
+    }`;
+    document.head.appendChild(el);
+  }
+
+  // мета текущей задачи — словом, сапфиром, без красного и пилюль
+  function jpMeta(t) {
+    const parts = [];
+    if (t.dl) parts.push(h('span', { key: 'dl' }, 'Срок: ', h('b', null, t.dl)));
+    if (t.prio) parts.push(h('span', { key: 'pr' }, 'Приоритет: ', h('b', null, t.prio)));
+    if (t.time && !t.dl) parts.push(h('span', { key: 'tm' }, t.time));
+    const out = [];
+    parts.forEach((p, k) => { if (k > 0) out.push(h('span', { key: 's' + k, className: 'sd-jp2-meta__sep' })); out.push(p); });
+    return h('div', { className: 'sd-jp2-meta' }, out);
+  }
+
+  const chevDown = () => h('span', { className: 'sd-jp2-task__chev' }, Ic.ChevronDown ? h(Ic.ChevronDown, { size: 18 }) : 'v');
+
+  function JpTask(s, t, i, openTask, setOpenTask) {
+    const isOpen = openTask === i;
+    const toggle = () => setOpenTask(isOpen ? -1 : i);
+    const flowOf = (t.flow && t.flow.length) ? h('div', { className: 'sd-jp2-flow' },
+      t.flow.map((f, k) => h('div', { key: k, className: 'sd-jp2-flowstep' },
+        h('span', { className: 'sd-jp2-flowstep__mk' }, k + 1),
         h('div', null,
-          h('div', { className: 'ds-ccard-icon' }, h(Ic.Target, { size: 24 })),
-          h('h3', { className: 'ds-ccard-title' }, 'Сбор документов'),
-          h('p', { className: 'ds-ccard-desc' }, '5 из 7 документов одобрено. Нужно загрузить медицинскую справку.')
-        ),
-        h('div', { className: 'ds-pcard-footer' },
-          h('button', { className: 'ds-btn primary', style: { alignSelf: 'flex-start' } }, 'Продолжить', h(Ic.ArrowRight, { size: 16 }))
-        )
-      )
-    );
+          h('div', { className: 'sd-jp2-flowstep__t' }, f.t),
+          f.s ? h('div', { className: 'sd-jp2-flowstep__s' }, f.s) : null)))) : null;
+
+    if (t.status === 'done') {
+      const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
+        h('div', { className: 'sd-jp2-exp__in' }, h('div', { className: 'sd-jp2-exp__d' }, t.desc || t.sub || 'Готово.')));
+      return h('div', { key: i, className: 'sd-jp2-task done' + (isOpen ? ' is-open' : '') },
+        h('div', { className: 'sd-jp2-task__row', onClick: toggle },
+          h('span', { className: 'sd-jp2-task__mk' }, Ic.Check ? h(Ic.Check, { size: 16, strokeWidth: 2.6 }) : '✓'),
+          h('div', { className: 'sd-jp2-task__b' },
+            h('div', { className: 'sd-jp2-task__t' }, t.title),
+            t.sub ? h('div', { className: 'sd-jp2-task__sub' }, t.sub) : null),
+          h('span', { className: 'sd-jp2-task__st' }, 'Завершено'),
+          chevDown()),
+        exp);
+    }
+
+    if (t.status === 'current') {
+      const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
+        h('div', { className: 'sd-jp2-exp__in' },
+          t.desc ? h('div', { className: 'sd-jp2-exp__d' }, t.desc) : null,
+          flowOf));
+      return h('div', { key: i, className: 'sd-jp2-task current' + (isOpen ? ' is-open' : '') },
+        h('div', { className: 'sd-jp2-task__row', onClick: toggle },
+          h('span', { className: 'sd-jp2-task__mk' }, Ic.Spark ? h(Ic.Spark, { size: 18 }) : '•'),
+          h('div', { className: 'sd-jp2-task__b' },
+            h('div', { className: 'sd-jp2-task__t' }, t.title),
+            jpMeta(t)),
+          h('div', { className: 'sd-jp2-task__cta' },
+            h('button', { type: 'button', className: 'sd-btn sd-btn--primary sd-btn--sm', onClick: (e) => { e.stopPropagation(); SH.openTask(taskOf(t)); } },
+              t.cta || 'Перейти к задаче', arr(15))),
+          chevDown()),
+        exp);
+    }
+
+    // upcoming
+    const st = t.owner === 'us' ? 'Наша задача' : t.dl ? 'Срок: ' + t.dl : 'Ожидает';
+    const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
+      h('div', { className: 'sd-jp2-exp__in' },
+        h('div', { className: 'sd-jp2-exp__d' }, t.desc || 'Откроется, когда дойдем до этого шага.'),
+        flowOf));
+    return h('div', { key: i, className: 'sd-jp2-task upcoming' + (isOpen ? ' is-open' : '') },
+      h('div', { className: 'sd-jp2-task__row', onClick: toggle },
+        h('span', { className: 'sd-jp2-task__mk' }, Ic.Lock ? h(Ic.Lock, { size: 15 }) : '·'),
+        h('div', { className: 'sd-jp2-task__b' },
+          h('div', { className: 'sd-jp2-task__t' }, t.title),
+          t.sub ? h('div', { className: 'sd-jp2-task__sub' }, t.sub) : null),
+        h('span', { className: 'sd-jp2-task__st' }, st),
+        chevDown()),
+      exp);
   }
 
-  function BlockHelp() {
-    return h('div', { className: 'ds-help-banner' },
-      h('div', { className: 'ds-help-info' },
-        h('h3', null, 'Возник вопрос?'),
-        h('p', null, 'Мы рядом и готовы помочь!')
-      ),
-      h('div', { className: 'ds-help-actions' },
-        h('button', { className: 'ds-btn white' }, h(Ic.Spark, { size: 18 }), 'Спросить AI'),
-        h('button', { className: 'ds-btn white', style: { background: 'rgba(255,255,255,0.15)', color: '#FFF' } }, h(Ic.Chat, { size: 18 }), 'Написать куратору')
-      )
-    );
-  }
-
-  function Roadmap() {
-    return h('div', { className: 'ds-roadmap' },
-      h('h2', { className: 'ds-block-title', style: { marginTop: 20, marginBottom: 30 } }, 'Твой путь в Китай'),
-      roadmapStages.map((stage, i) => {
-        const isLast = i === roadmapStages.length - 1;
-        return h('div', { className: 'ds-rm-row ' + stage.status, key: stage.id },
-          h('div', { className: 'ds-rm-timeline' },
-            h('div', { className: 'ds-rm-node' }, 
-              stage.status === 'locked' ? h(Ic.Lock, { size: 14 }) : stage.id
-            ),
-            stage.status === 'completed' && h('div', { className: 'ds-rm-subnode' }, h(Ic.Check, { size: 10, strokeWidth: 3 })),
-            !isLast && h('div', { className: 'ds-rm-line' })
-          ),
-          h('div', { className: 'ds-rm-card' },
-            h('div', { className: 'ds-rm-bg', style: { backgroundImage: 'url(' + stage.image + ')' } }),
-            h('div', { className: 'ds-rm-overlay' }),
-            h('div', { className: 'ds-rm-content' },
-              h('div', { className: 'ds-rm-header' },
-                stage.status !== 'locked' && h('div', { className: 'ds-rm-badge ' + stage.status }, 
-                  stage.status === 'completed' ? 'Завершено' : 'В процессе'
-                ),
-                h('button', { className: 'ds-rm-toggle' }, h(Ic.ChevronDown, { size: 18 }))
-              ),
-              h('h3', { className: 'ds-rm-title' }, stage.title),
-              h('p', { className: 'ds-rm-desc' }, stage.desc),
-              
-              stage.status === 'active' && h('div', { className: 'ds-rm-tasks' },
-                stage.tasks.map(t => h('div', { className: 'ds-rm-task', key: t.id },
-                  h('div', { className: 'ds-rm-ticon ' + t.type }, 
-                    t.type === 'done' ? h(Ic.Check, { size: 12, strokeWidth: 3 }) : null
-                  ),
-                  h('span', { className: 'ds-rm-tname' }, t.name),
-                  h('span', { className: 'ds-rm-tstate ' + t.type }, t.state,
-                    t.type !== 'waiting' && h('span', { className: 'ds-rm-tdot' })
-                  )
-                )),
-                h('button', { className: 'ds-btn ds-rm-cta' }, 'Перейти к этапу', h(Ic.ArrowRight, { size: 16 }))
-              )
-            )
-          )
-        );
-      })
-    );
-  }
-
-  function Sidebar() {
-    const navItems = [
-      { icon: Ic.Home, label: 'Главная', active: true },
-      { icon: Ic.Map, label: 'Мой путь' },
-      { icon: Ic.CheckCircle, label: 'Задачи', badge: 2 },
-      { icon: Ic.Doc, label: 'Документы' },
-      { icon: Ic.Book, label: 'Обучение' },
-      { icon: Ic.Star, label: 'Гранты' },
-      { icon: Ic.Users, label: 'Куратор' },
-      { icon: Ic.Chat, label: 'Сообщество' },
+  function JpDetail(props) {
+    const s = props.s;
+    const locked = s.st === 'locked';
+    const art = locked ? 'assets/mountain-peak.png' : 'assets/folder-glass.png';
+    const eyebrow = locked ? 'Скоро' : s.st === 'done' ? 'Этап завершен' : 'Текущий этап';
+    const head = [
+      h('div', { key: 'e', className: 'sd-jp2-eyebrow' + (s.st === 'active' ? ' active' : '') }, eyebrow),
+      h('h4', { key: 't', className: 'sd-jp2-panel__t' }, s.t),
+      h('p', { key: 'd', className: 'sd-jp2-panel__d' }, s.d),
+      s.full ? h('div', { key: 'm', className: 'sd-jp2-more' + (props.moreOpen ? ' open' : '') }, s.full.map((p, i) => h('p', { key: i }, p))) : null,
+      s.full ? h('button', { key: 'b', type: 'button', className: 'sd-jp2-readmore' + (props.moreOpen ? ' open' : ''), onClick: () => props.setMoreOpen(!props.moreOpen) },
+        props.moreOpen ? 'Свернуть' : 'Читать подробнее', Ic.ChevronDown ? h(Ic.ChevronDown, { size: 15 }) : 'v') : null,
     ];
-    return h('aside', { className: 'ds-sidebar' },
-      h('div', { className: 'ds-logo' },
-        h('div', { className: 'ds-logo-box' }),
-        h('span', null, 'EastSide')
-      ),
-      h('div', { className: 'ds-nav' },
-        navItems.map((it, i) => h('button', { key: i, className: 'ds-nav-item' + (it.active ? ' is-active' : '') },
-          h('span', { className: 'ds-nav-icon' }, h(it.icon, { size: 20 })),
-          h('span', null, it.label),
-          it.badge && h('span', { className: 'ds-badge' }, it.badge)
-        ))
-      ),
-      h('div', { style: { marginTop: 'auto' } },
-        h('div', { className: 'ds-nav-item', style: { background: 'rgba(255,255,255,0.03)', marginTop: 10 } },
-          h('div', { style: { width: 32, height: 32, borderRadius: '50%', background: '#613EEA', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FFF', fontSize: 14, fontWeight: 'bold' } }, 'Д'),
-          h('div', { style: { display: 'flex', flexDirection: 'column' } },
-            h('span', { style: { color: '#FFF', fontSize: 14 } }, 'Дима Соколов'),
-            h('span', { style: { color: '#8C8A97', fontSize: 12 } }, 'ID: 4892')
-          )
-        )
-      )
-    );
+
+    if (locked) {
+      const prev = STAGES[s.after - 1];
+      return h('section', { className: 'sd-jp2-panel' },
+        h('img', { className: 'sd-jp2-art locked', src: art, alt: '' }),
+        h('div', { className: 'sd-jp2-panel__head' }, head),
+        h('div', { className: 'sd-jp2-soon' },
+          h('div', { className: 'sd-jp2-soon__h' }, Ic.Lock ? h(Ic.Lock, { size: 15 }) : null,
+            'Откроется после этапа ' + s.after + (prev ? ' · «' + prev.t + '»' : '')),
+          h('div', { className: 'sd-jp2-soon__list' },
+            (s.will || []).map((w, i) => h('div', { key: i, className: 'sd-jp2-soon__it' },
+              h('span', { className: 'sd-jp2-soon__dot' }), w)))));
+    }
+
+    const tasks = s.tasks || [];
+    const doneN = tasks.filter((t) => t.status === 'done').length;
+    const pct = s.st === 'done' ? 100 : Math.round((doneN / (tasks.length || 1)) * 100);
+    return h('section', { className: 'sd-jp2-panel' },
+      h('img', { className: 'sd-jp2-art', src: art, alt: '' }),
+      h('div', { className: 'sd-jp2-panel__head' }, head),
+      h('div', { className: 'sd-jp2-prog' + (s.st === 'done' ? ' done' : '') },
+        h('div', { className: 'sd-jp2-prog__top' },
+          h('div', null,
+            h('div', { className: 'sd-jp2-prog__lab' }, 'Прогресс этапа'),
+            h('div', { className: 'sd-jp2-prog__pct' }, pct + '%')),
+          h('div', { className: 'sd-jp2-prog__of' }, doneN + ' из ' + tasks.length + ' задач')),
+        h('div', { className: 'sd-jp2-prog__track' },
+          h('div', { className: 'sd-jp2-prog__fill', style: { transform: 'scaleX(' + (pct / 100) + ')' } }))),
+      h('div', { className: 'sd-jp2-tasks' }, tasks.map((t, i) => JpTask(s, t, i, props.openTask, props.setOpenTask))));
   }
 
-  // --- ГЛАВНЫЙ РЕНДЕР ---
+  function JPath() {
+    injectJourneyCSS();
+    const activeN = (STAGES.find((s) => s.st === 'active') || STAGES[0]).n;
+    const [sel, setSel] = useState(activeN);
+    const [moreOpen, setMoreOpen] = useState(false);
+    const [openTask, setOpenTask] = useState(-1);
+    const s = STAGES.find((x) => x.n === sel) || STAGES[0];
+    const activeIdx = STAGES.findIndex((x) => x.st === 'active');
+    const fill = Math.round(((activeIdx + 0.5) / STAGES.length) * 100);
+    const select = (n) => { setSel(n); setMoreOpen(false); setOpenTask(-1); };
+
+    return h('section', { className: 'sd-sec' },
+      h('div', { className: 'sd-sec__head' },
+        h('h3', { className: 'sd-sec__title' }, 'Твой путь в Китай'),
+        h('span', { style: mute }, 'Этап ' + STAGE.n + ' из ' + STAGE.total)),
+      h('div', { className: 'sd-jp2' },
+        h('div', { className: 'sd-jp2-rail', style: { '--jp-fill': fill + '%' } },
+          STAGES.map((st) => {
+            const isSel = st.n === sel;
+            const node = st.st === 'done' ? (Ic.Check ? h(Ic.Check, { size: 15, strokeWidth: 2.6 }) : '✓')
+              : st.st === 'locked' ? (Ic.Lock ? h(Ic.Lock, { size: 13 }) : st.n)
+              : st.n;
+            const stWord = st.st === 'done' ? 'Завершено' : st.st === 'active' ? 'Сейчас' : 'Ожидает';
+            return h('button', { key: st.n, type: 'button', className: 'sd-jp2-st ' + st.st + (isSel ? ' is-sel' : ''), onClick: () => select(st.n) },
+              h('span', { className: 'sd-jp2-noden' }, h('span', { className: 'sd-jp2-node' }, node)),
+              h('span', { className: 'sd-jp2-st__b' },
+                h('span', { className: 'sd-jp2-st__top' },
+                  h('span', { className: 'sd-jp2-st__t' }, st.t),
+                  h('span', { className: 'sd-jp2-st__st' }, stWord)),
+                st.sub ? h('span', { className: 'sd-jp2-st__d' }, st.sub) : null));
+          })),
+        h(JpDetail, { key: sel, s: s, moreOpen: moreOpen, setMoreOpen: setMoreOpen, openTask: openTask, setOpenTask: setOpenTask })));
+  }
+
+  /* ── Полезное про переезд (попап) ──────────────────────────────────────── */
+  function Knowledge() {
+    const feat = KNOW[0];
+    const rest = KNOW.slice(1);
+    const chev = (s) => Ic.ChevronRight ? h(Ic.ChevronRight, { size: s || 16 }) : '›';
+    return h('section', { className: 'sd-sec' },
+      h('div', { className: 'sd-sec__head' },
+        h('h3', { className: 'sd-sec__title' }, 'Полезное про переезд'),
+        h('button', { type: 'button', className: 'sd-sec__link', onClick: goLearn }, 'Вся база', arr(14))),
+      h('div', { className: 'sd-know' },
+        h('div', { className: 'sd-feat', onClick: () => SH.openArticle(feat) },
+          h('img', { className: 'sd-feat__bg', src: feat.image, alt: '' }),
+          h('div', { className: 'sd-feat__scrim' }),
+          h('div', { className: 'sd-feat__body' },
+            h('div', { className: 'sd-feat__cap' }, feat.cap),
+            h('div', { className: 'sd-feat__title' }, feat.title),
+            h('div', { className: 'sd-feat__meta' },
+              h('span', null, feat.dur),
+              h('span', { className: 'sd-feat__go' }, 'Читать', arr(14))))),
+        h('div', { className: 'sd-know__list' },
+          rest.map((a, i) => h('div', { key: i, className: 'sd-aitem', onClick: () => SH.openArticle(a) },
+            h('div', { className: 'sd-aitem__icw' }, a.icon ? h(a.icon, { size: 19 }) : null),
+            h('div', { className: 'sd-aitem__b' },
+              h('div', { className: 'sd-aitem__cap' }, a.cap + ' · ' + a.dur),
+              h('div', { className: 'sd-aitem__title' }, a.title)),
+            h('div', { className: 'sd-aitem__go' }, chev(18)))))));
+  }
+
   function CabinetStudent() {
-    return h('div', { className: 'ds-layout' },
-      h(Sidebar, null),
-      h('main', { className: 'ds-main' },
-        h('div', { className: 'ds-container' },
-          h(BlockToday, null),
-          h('div', { className: 'ds-grid-2' },
-            h(BlockPreparation, null),
-            h(BlockContinue, null)
-          ),
-          h(BlockHelp, null),
-          h(Roadmap, null)
-        )
-      )
-    );
+    if (!SH) return h('div', { style: { padding: 40, color: '#fff' } }, 'Скелет ученика не загружен');
+    return h(SH.Shell, { active: 'home', surface: 'light', hideTopBar: true },
+      h(Hero, null),
+      h(TopRow, null),
+      h(AiBanner, null),
+      h(JPath, null),
+      h(Knowledge, null));
   }
 
-  // Регистрируем экран в глобальном объекте
   EScreens.CabinetStudent = CabinetStudent;
 })();

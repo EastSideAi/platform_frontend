@@ -1,0 +1,315 @@
+<!doctype html>
+<!-- login-dark.html — вход/регистрация в языке платформы (design.md): фулл-скрин
+     темный космос-арт (assets/login-bg.png: фигура + светящаяся тропа к звезде)
+     справа, слева фростед-стеклянная карточка с формой. Таб Вход/Регистрация,
+     почта, пароль с глазом, кнопка «Войти». Без буквы «е». -->
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EastSide — Вход</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&family=Poiret+One&display=swap" rel="stylesheet" />
+<style>
+  @font-face {
+    font-family: 'Arkhip';
+    src: url('assets/fonts/arkhip/Arkhip_font.otf') format('opentype'),
+         url('assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  :root {
+    --base: #03081C;
+    --violet: #2676e7; --violet-2: #5CB4FF; --violet-deep: #1E72E6; --violet-soft: #9FCBFF;
+    --tx: #FFFFFF; --tx-soft: #C5CBE3; --tx-mute: #8B93B8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { font-family: 'Manrope', 'Segoe UI', sans-serif; color: var(--tx); overflow: hidden; background: var(--base); }
+
+  /* нарезка в 3 слоя — в темноте по очереди: 1) дорога подсвечивается снизу
+     вверх → 2) зажигается звезда → 3) проявляется все остальное (фигура + фон).
+     Слой дороги — только трасса; фигура с рукой целиком в «остальном». */
+  .art, .art-road, .art-star { position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-repeat: no-repeat; background-position: center right; background-size: cover; }
+  /* 1+2) ОДИН непрерывный проход снизу вверх. Дорога и свечение звезды открываются
+     ОДНОЙ и той же маской (riseUp), синхронно, и проход НЕ останавливается на середине
+     звезды — он доходит до самого верха (inset 12%, выше верхних лучей ~15%), показывая
+     звезду ЦЕЛИКОМ. Никакой отдельной доводки прозрачностью больше нет. Замедление к
+     верху (ease-out) мягко открывает ядро звезды без рывка. Свечение — на прозрачном
+     слое (screen), полос на экране не оставляет. */
+  .art-road { background-image: url('assets/bg-road.png'); clip-path: inset(100% 0 0 0);
+    animation: riseUp 2.5s cubic-bezier(.3,.55,.5,1) 4.4s forwards, shake .5s linear 6.9s; }
+  .art-star { background-image: url('assets/bg-star.png'); opacity: .6; clip-path: inset(100% 0 0 0); mix-blend-mode: screen;
+    animation: riseUp 2.5s cubic-bezier(.3,.55,.5,1) 4.4s forwards, starTwinkle 3.8s ease-in-out infinite 7.3s, shake .5s linear 6.9s; }
+  @keyframes riseUp { to { clip-path: inset(12% 0 0 0); } }
+  /* легкая вибрация сцены от вспышки: ЧАСТЫЙ мелкий тремор (~1px), именно дрожь-вибрация,
+     а не толчок — много быстрых колебаний с затуханием. Форма не дрожит.
+     Крошечный overscan (scale ~1.003), чтобы по краям не вылезал фон */
+  @keyframes shake {
+    0%   { transform: scale(1)      translate(0, 0); }
+    6%   { transform: scale(1.003)  translate(-1px, 0.7px); }
+    12%  { transform: scale(1.003)  translate(1px, -0.7px); }
+    18%  { transform: scale(1.003)  translate(-0.9px, -0.6px); }
+    24%  { transform: scale(1.0028) translate(0.9px, 0.6px); }
+    30%  { transform: scale(1.0026) translate(-0.85px, 0.6px); }
+    36%  { transform: scale(1.0024) translate(0.8px, -0.5px); }
+    42%  { transform: scale(1.0022) translate(-0.7px, -0.5px); }
+    48%  { transform: scale(1.002)  translate(0.65px, 0.45px); }
+    54%  { transform: scale(1.0018) translate(-0.55px, 0.4px); }
+    60%  { transform: scale(1.0015) translate(0.5px, -0.35px); }
+    66%  { transform: scale(1.0012) translate(-0.4px, -0.3px); }
+    72%  { transform: scale(1.001)  translate(0.32px, 0.25px); }
+    78%  { transform: scale(1.0008) translate(-0.25px, 0.2px); }
+    84%  { transform: scale(1.0005) translate(0.18px, -0.13px); }
+    90%  { transform: scale(1.0003) translate(-0.1px, 0.08px); }
+    100% { transform: scale(1)      translate(0, 0); }
+  }
+  @keyframes starTwinkle { 0%,100% { opacity: .55; } 50% { opacity: .66; } }
+  /* 3) КАК ТОЛЬКО проход дошел доверху и звезда показана вся (5.4s) — сразу вспышка,
+     и тем же моментом коротким фейдом проявляется весь остальной космос с фигурой */
+  .art { background-image: url('assets/login-bg.png'); opacity: 0;
+    animation: restIn .8s ease-out 6.9s forwards, shake .5s linear 6.9s; }
+  @keyframes restIn { to { opacity: 1; } }
+  /* голубой свет, РАСХОДЯЩИЙСЯ ОТ ЗВЕЗДЫ. Слой — это КРУГ (border-radius 50%) с центром
+     ровно на звезде (left 83% / top 22%, элемент центрируется на эту точку отрицательными
+     margin). Радиальное свечение гаснет задолго до края круга (transparent к 68% радиуса),
+     поэтому видимой границы-прямоугольника нет в принципе — только мягкое круглое пятно.
+     Свет зарождается крошечной точкой в звезде (scale .05) и концентрически РАЗРАСТАЕТСЯ
+     во все стороны (до scale ~1.1), заливая весь космос. Яркость держится высокой по ходу
+     роста (заливка светом, не кольцо) → это разрастание света, а НЕ взрыв.
+     Цвет светло-голубой, тон-в-тон со свечением звезды. */
+  /* z-index 2: слой вспышки выше затемняющей вуали (z1), поэтому свет достает и левую
+     часть экрана, но НИЖЕ карточки/wrap (z2, рисуется позже в DOM) — текст читаем.
+     Пятно широкое (240vmax) и стопы пологие (видимый свет до ~82% радиуса), чтобы
+     свечение дотягивалось влево, а не обрывалось у звезды. */
+  .art-burst { position: fixed; z-index: 2; pointer-events: none;
+    left: 83%; top: 22%; width: 240vmax; height: 240vmax; margin: -120vmax 0 0 -120vmax;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(64,146,251,.62) 0%, rgba(40,112,248,.46) 20%, rgba(28,86,244,.3) 40%, rgba(22,70,240,.15) 62%, transparent 82%);
+    opacity: 0; transform: scale(.05); transform-origin: center; mix-blend-mode: screen;
+    animation: burst 1.7s cubic-bezier(.22,.55,.3,1) 6.9s forwards; }
+  /* рост непрерывный до ПОЛНОГО покрытия экрана, затем ДОЛГИЙ плавный хвост-рассеивание:
+     яркость снижается постепенно через всю вторую половину (а не обрывается резко в конце),
+     поэтому свет мягко растворяется, а не пропадает рывком. */
+  @keyframes burst { 0% { opacity: 0; transform: scale(.05); } 8% { opacity: .82; transform: scale(.12); } 40% { opacity: .78; transform: scale(.9); } 62% { opacity: .5; transform: scale(1.5); } 100% { opacity: 0; transform: scale(2.2); } }
+
+  /* затемнение левой части под карточку + общая глубина */
+  .veil { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(90deg, rgba(3,8,28,.92) 0%, rgba(3,8,28,.7) 30%, rgba(3,8,28,.15) 55%, transparent 70%),
+      radial-gradient(120% 90% at 50% 120%, rgba(2,5,18,.6), transparent 60%); }
+
+  .wrap { position: relative; z-index: 2; height: 100vh; display: flex; align-items: center;
+    padding: clamp(24px, 5vh, 56px) clamp(64px, 9vw, 150px); }
+
+  /* ── фростед-карточка ── */
+  .card { width: 100%; max-width: 424px; padding: 44px; border-radius: 24px;
+    background: linear-gradient(160deg, rgba(40,62,116,.07), rgba(16,30,68,.09));
+    border: 1px solid rgba(160,195,255,.2);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1);
+    animation: cardIn .7s ease both .2s; }
+  @keyframes cardIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .logo { position: fixed; z-index: 3; top: clamp(34px, 5vh, 54px); left: clamp(36px, 4vw, 72px);
+    width: 150px; aspect-ratio: 941 / 364; height: auto; display: block;
+    background: url('assets/logo-dark.png') no-repeat left center / contain;
+    filter: drop-shadow(0 1px 8px rgba(38,118,231,.32)); }
+
+  .hi { font-family: 'Manrope', 'Segoe UI', sans-serif; font-size: clamp(27px, 3vw, 36px); font-weight: 600; line-height: 1.06; letter-spacing: -0.5px; color: #fff; }
+  .hi em { font-style: normal; color: #2676e7; }
+  .hi #hiTail { display: block; }  /* «пожаловать!» всегда со второй строки */
+  .desc { margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--tx-soft); max-width: 40ch; }
+
+  /* ── таб Вход / Регистрация ── */
+  .tabs { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 4px;
+    border-radius: 13px; background: rgba(18,32,68,.26); border: 1px solid rgba(160,195,255,.18);
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
+  .tab { border: 1px solid transparent; cursor: pointer; font: 700 13.5px 'Manrope', sans-serif; padding: 10px 0; border-radius: 10px;
+    background: transparent; color: var(--tx-soft); transition: color .18s, background .18s, box-shadow .18s; }
+  .tab:not(.on):hover { color: #fff; }
+  .tab.on { color: #fff; background: #2676e7; border: 1px solid rgba(120,185,255,.6);
+    box-shadow: inset 0 0 22px rgba(175,215,255,.9), inset 0 0 6px rgba(255,255,255,.45), inset 0 1px 0 rgba(255,255,255,.5); }
+
+  /* ── поля ── */
+  .field { margin-top: 16px; }
+  .field:first-of-type { margin-top: 20px; }
+  .lbl { display: block; font-size: 12.5px; font-weight: 700; color: var(--tx-soft); margin-bottom: 8px; }
+  .inp-wrap { position: relative; }
+  .inp { width: 100%; height: 46px; padding: 0 16px; border-radius: 13px;
+    background: rgba(3,9,28,.55); border: 1.5px solid rgba(150,185,255,.18); color: #fff;
+    font: 500 14.5px 'Manrope', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s, background .15s; }
+  .inp::placeholder { color: #5C6488; }
+  .inp:focus { border-color: rgba(38,118,231,.7); background: rgba(8,16,44,.7);
+    box-shadow: inset 0 0 18px rgba(38,118,231,.2), 0 0 0 3px rgba(38,118,231,.14); }
+  .inp.pw { padding-right: 50px; }
+  .eye { position: absolute; right: 7px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px;
+    display: grid; place-items: center; border: 0; background: transparent; color: var(--tx-mute); cursor: pointer;
+    border-radius: 10px; transition: color .15s, background .15s; }
+  .eye:hover { color: #fff; background: rgba(38,118,231,.14); }
+  .eye svg { width: 20px; height: 20px; }
+
+  .row-min { display: flex; justify-content: flex-end; margin-top: 12px; }
+  .row-min a { font-size: 13px; font-weight: 600; color: var(--tx-mute); text-decoration: none; transition: color .15s; }
+  .row-min a:hover { color: var(--violet-soft); }
+
+  /* ── кнопка (как «Дальше» в анкете: плоский сапфир + внутреннее свечение) ── */
+  .btn { margin-top: 24px; width: 100%; height: 48px; border: 0; border-radius: 14px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    font: 700 15.5px 'Manrope', sans-serif; color: #fff; background: #2676e7;
+    box-shadow: inset 0 0 24px rgba(175,215,255,.95), inset 0 0 8px rgba(255,255,255,.5), inset 0 1px 0 rgba(255,255,255,.5);
+    transition: background .12s, transform .08s; }
+  .btn:hover { background: #3A85F0; }
+  .btn:active { transform: translateY(1px); }
+
+  .foot { margin-top: 16px; text-align: center; font-size: 12.5px; color: var(--tx-mute); }
+  .foot a { font-weight: 700; color: var(--violet-2); text-decoration: none; }
+  .foot a:hover { color: var(--violet-soft); }
+
+  @media (max-width: 720px) {
+    body { background-position: center top; }
+    .veil { background: linear-gradient(180deg, rgba(3,8,28,.6), rgba(3,8,28,.92) 45%); }
+    .wrap { justify-content: center; padding: 24px 18px; }
+    .card { backdrop-filter: blur(18px); }
+  }
+
+  /* крупнее на больших ноутбуках */
+  @media (min-width: 1500px) {
+    .wrap { padding-left: clamp(60px, 9vw, 168px); }
+    .card { max-width: 484px; padding: 36px 48px 34px; border-radius: 26px; }
+    .logo { width: 184px; margin-bottom: 30px; }
+    .hi { font-size: 49px; letter-spacing: -0.8px; }
+    .desc { font-size: 15px; margin-top: 15px; }
+    .tabs { margin-top: 28px; }
+    .tab { padding: 12px 0; font-size: 14px; }
+    .field { margin-top: 17px; }
+    .field:first-of-type { margin-top: 23px; }
+    .lbl { font-size: 13px; margin-bottom: 8px; }
+    .inp { height: 54px; font-size: 15px; border-radius: 14px; }
+    .btn { height: 56px; font-size: 16px; margin-top: 24px; border-radius: 15px; }
+    .foot { font-size: 13px; margin-top: 20px; }
+  }
+
+  /* совсем большие экраны */
+  @media (min-width: 1850px) {
+    .card { max-width: 548px; padding: 42px 56px 40px; border-radius: 28px; }
+    .logo { width: 204px; margin-bottom: 34px; }
+    .hi { font-size: 56px; }
+    .desc { font-size: 16px; margin-top: 17px; }
+    .field { margin-top: 19px; }
+    .field:first-of-type { margin-top: 26px; }
+    .inp { height: 58px; font-size: 15.5px; }
+    .btn { height: 60px; font-size: 17px; margin-top: 26px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .art { animation: none; opacity: 1; }
+    .art-road { animation: none; clip-path: inset(0 0 0 0); }
+    .art-star { animation: none; opacity: 0; }
+    .art-burst { animation: none; opacity: 0; }
+    .card { animation: none; opacity: 1; }
+  }
+  /* ── сплэш: значок + печатающееся название ── */
+  .splash { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: var(--base);
+    animation: splashOut .7s ease 3.6s forwards; }
+  .splash-logo3 { display: flex; align-items: center; gap: clamp(12px, 1.6vw, 22px); }
+  .splash-icon { flex: none; position: relative; top: -16px; width: 49px; height: 110px;
+    background: url('assets/logo-dark.png') no-repeat 0 center / 284px 110px;
+    filter: drop-shadow(0 2px 14px rgba(43,143,255,.45));
+    opacity: 0; transform: scale(.85); animation: iconIn .55s cubic-bezier(.22,.61,.36,1) .15s forwards; }
+  .splash-text { display: flex; flex-direction: column; align-items: center; }
+  .splash-name { display: flex; align-items: stretch; font-family: 'Arkhip','Poiret One','Manrope',sans-serif;
+    font-weight: 400; font-size: clamp(40px, 7vw, 78px); letter-spacing: 1.5px; color: #fff; line-height: 1.02; }
+  .splash-name span { display: inline-block; opacity: 0; transform: translateY(20px); filter: blur(7px);
+    animation: typeIn .45s cubic-bezier(.22,.61,.36,1) forwards; }
+  .splash-caret { width: .07em; background: #2B8FFF; margin-left: .1em; border-radius: 2px;
+    animation: caretBlink .5s steps(1) infinite, caretOut .3s ease 2.1s forwards; }
+  .splash-sub { margin-top: 9px; font-family: 'Arkhip','Poiret One','Onest',sans-serif; font-size: clamp(12px, 1.4vw, 17px);
+    font-weight: 400; letter-spacing: .18em; text-transform: uppercase; color: var(--tx-soft); text-align: center;
+    opacity: 0; animation: subIn .55s ease 2.1s forwards; }
+  @keyframes iconIn { to { opacity: 1; transform: scale(1); } }
+  @keyframes typeIn { to { opacity: 1; transform: none; filter: blur(0); } }
+  @keyframes subIn { to { opacity: 1; } }
+  @keyframes caretBlink { 0% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes caretOut { to { opacity: 0; } }
+  @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+</style>
+</head>
+<body>
+<div class="art-road"></div>
+<div class="art"></div>
+<div class="art-star"></div>
+<div class="art-burst"></div>
+<div class="splash" id="splash"><div class="splash-logo3"><span class="splash-icon"></span><div class="splash-text"><div class="splash-name" aria-label="ИСТСАЙД.РФ"><span style="animation-delay:0.50s">И</span><span style="animation-delay:0.61s">С</span><span style="animation-delay:0.72s">Т</span><span style="animation-delay:0.83s">С</span><span style="animation-delay:0.94s">А</span><span style="animation-delay:1.05s">Й</span><span style="animation-delay:1.16s">Д</span><span style="animation-delay:1.27s">.</span><span style="animation-delay:1.38s">Р</span><span style="animation-delay:1.49s">Ф</span></div><div class="splash-sub">языковой центр</div></div></div></div>
+<div class="veil"></div>
+
+<div class="wrap">
+  <div class="card">
+    <h1 class="hi">Добро <span id="hiTail">пожаловать<em>!</em></span></h1>
+    <p class="desc" id="desc">Войдите, чтобы сохранить результаты и продолжить подготовку к поступлению за рубеж.</p>
+
+    <div class="tabs">
+      <button class="tab on" id="tabLogin" type="button">Вход</button>
+      <button class="tab" id="tabReg" type="button">Регистрация</button>
+    </div>
+
+    <form id="form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <label class="lbl" for="email">Почта</label>
+        <div class="inp-wrap"><input class="inp" id="email" type="email" placeholder="you@example.com" /></div>
+      </div>
+
+      <div class="field">
+        <label class="lbl" for="pass">Пароль</label>
+        <div class="inp-wrap">
+          <input class="inp pw" id="pass" type="password" placeholder="ваш пароль" />
+          <button class="eye" id="eye" type="button" aria-label="Показать пароль">
+            <svg id="eyeOpen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg id="eyeOff" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" style="display:none"><path d="M3 3l18 18"/><path d="M10.6 6.1A9 9 0 0112 6c6 0 9.5 6 9.5 6a16 16 0 01-3.3 3.8M6.2 7.2A16 16 0 002.5 12s3.5 6.5 9.5 6.5a8.8 8.8 0 003.3-.6"/><path d="M9.5 10.5a3 3 0 004 4"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn" id="submit" type="submit"><span id="btnTxt">Войти</span></button>
+    </form>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var reg = false;
+  var tabLogin = document.getElementById('tabLogin'), tabReg = document.getElementById('tabReg');
+  var btnTxt = document.getElementById('btnTxt');
+
+  // Левый блок (заголовок + подзаголовок) единый для обеих вкладок — не меняется
+  // при переключении. Меняется только подсветка вкладки и текст кнопки действия.
+  function setMode(r) {
+    reg = r;
+    tabLogin.classList.toggle('on', !r);
+    tabReg.classList.toggle('on', r);
+    btnTxt.textContent = r ? 'Создать аккаунт' : 'Войти';
+  }
+  tabLogin.addEventListener('click', function () { setMode(false); });
+  tabReg.addEventListener('click', function () { setMode(true); });
+
+  // глаз
+  var pass = document.getElementById('pass'), eOpen = document.getElementById('eyeOpen'), eOff = document.getElementById('eyeOff');
+  document.getElementById('eye').addEventListener('click', function () {
+    var show = pass.type === 'password';
+    pass.type = show ? 'text' : 'password';
+    eOpen.style.display = show ? 'none' : 'block';
+    eOff.style.display = show ? 'block' : 'none';
+  });
+
+  // сабмит → выбор персонажа. Дальше цепочка: выбор → анкета → loading → диагностика
+  document.getElementById('submit').addEventListener('click', function () {
+    window.location.href = 'gender-dark.html';
+  });
+})();
+</script>
+<script>
+  setTimeout(function () { var sp = document.getElementById('splash'); if (sp) sp.remove(); }, 4600);
+</script>
+</body>
+</html>
