@@ -107,7 +107,12 @@
         h(Ic.ChevronRight, { size: 18, style: { color: 'var(--plate-ink-sub)', flex: '0 0 auto' } })),
       h('p', { className: 'e-tile__meta', style: { margin: 0, lineHeight: 'var(--lh-normal)' } }, r.meta),
       h('div', { className: 'u-flex u-items-center u-justify-between u-gap-3' },
-        h('span', { className: 'e-btn e-btn--glow e-btn--sm', style: { pointerEvents: 'none' } },
+        h('span', {
+          className: 'e-btn e-btn--glow e-btn--sm',
+          style: r.id === 'student'
+            ? { pointerEvents: 'none', background: '#F5C84C', borderColor: '#F5C84C', color: '#15203B', boxShadow: 'none' }
+            : { pointerEvents: 'none' },
+        },
           h('span', null, r.cta), h(Ic.ArrowRight, { size: 14 })),
         h('span', {
           role: 'button', tabIndex: 0,

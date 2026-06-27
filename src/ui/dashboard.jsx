@@ -245,18 +245,153 @@
     );
   }
 
-  // ── AssistantFab — глобальная плавашка ─────────────────────────────────
-  // props: onClick
-  function AssistantFab(props) {
-    const { onClick, label = 'Ассистент' } = props;
-    const Ic = window.EIcons || {};
-    return h('button', { type: 'button', className: 'e-fab', onClick, 'aria-label': 'Открыть ассистента' },
-      h('span', { className: 'e-fab__dot', 'aria-hidden': 'true' }),
-      h(Ic.Spark, { size: 22, key: 'i' }),
-      h('span', { className: 'e-fab__label', key: 'l' }, label));
+  // ── Ассистент EastSide — премиум-чат (светлая Apple-модалка по центру) ──
+  // Чистый опрятный глассморфизм: морозная белая панель по центру экрана над
+  // размытым затемнённым фоном. БЕЗ drop-теней — отделение даёт блюр фона и
+  // hairline-канты; глубина — стеклом и тонкими линиями, как просили. Светлая
+  // палитра (design.md §4.2) задана жёстко, чтобы модалка не перекрашивалась под
+  // тему кабинета; шрифты/радиусы/отступы — токены. Аватар — AI-искра (своя SVG),
+  // не «солнце». Стили инъектируются один раз; контракт пропсов 1:1 — чат везде один.
+  const ASSIST_CSS = `
+.esa-scope{
+  --esa-ink:#15203B; --esa-ink-soft:rgba(21,32,59,.64); --esa-ink-mute:rgba(21,32,59,.45);
+  --esa-line:rgba(21,32,59,.08); --esa-line-2:rgba(21,32,59,.13);
+  --esa-accent:#2073E6; --esa-accent-hi:#2B8FFF; --esa-accent-ink:#1763C8; --esa-accent-soft:rgba(43,143,255,.10);
+  --esa-ease:cubic-bezier(.23,1,.32,1);
+}
+/* затемнение + чистый ровный блюр (без saturate, чтобы фон не «горел») */
+.esa-backdrop{ position:fixed; inset:0; z-index:var(--z-modal); display:grid; place-items:center; padding:var(--sp-6);
+  background:rgba(10,15,32,.32);
+  backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
+  animation:esa-fade .2s ease both; }
+/* центрированная панель — плотное морозное стекло, ОДНА общая граница */
+.esa-panel{ position:relative; width:min(720px, 100%); height:min(720px, calc(100vh - 2*var(--sp-6)));
+  display:flex; flex-direction:column; overflow:hidden; border-radius:28px;
+  font-family:var(--font-text); color:var(--esa-ink);
+  background:linear-gradient(180deg, rgba(255,255,255,.975), rgba(248,250,254,.95));
+  backdrop-filter:blur(44px) saturate(180%); -webkit-backdrop-filter:blur(44px) saturate(180%);
+  border:1px solid rgba(21,32,59,.10);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9); /* стеклянный кант грани, не тень */
+  animation:esa-rise .26s var(--esa-ease) both; }
+/* шапка — без делителя, отделяется воздухом (одна общая граница у панели) */
+.esa-head{ display:flex; align-items:center; gap:var(--sp-3); padding:18px 20px 12px; }
+.esa-ava{ flex:none; width:40px; height:40px; border-radius:13px; display:grid; place-items:center; color:#fff;
+  background:linear-gradient(155deg, var(--esa-accent-hi), var(--esa-accent));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.45); }
+.esa-h-name{ font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:-.01em; line-height:1.2; color:var(--esa-ink); }
+.esa-h-status{ display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; color:var(--esa-ink-mute); }
+.esa-live{ flex:none; width:6px; height:6px; border-radius:50%; background:var(--esa-accent-hi); }
+.esa-close{ flex:none; margin-left:auto; width:32px; height:32px; border-radius:10px; display:grid; place-items:center;
+  color:var(--esa-ink-mute); background:transparent; border:0; cursor:pointer;
+  transition:transform .15s var(--esa-ease), background .15s, color .15s; }
+.esa-close:hover{ background:rgba(21,32,59,.06); color:var(--esa-ink); }
+.esa-close:active{ transform:scale(.92); }
+/* чип контекста этапа */
+.esa-ctx{ align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin:14px 18px 0;
+  padding:6px 11px; border-radius:999px; font-size:12px; color:var(--esa-accent-ink);
+  background:var(--esa-accent-soft); border:1px solid rgba(43,143,255,.18); }
+/* лента сообщений */
+.esa-feed{ flex:1; min-height:0; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px;
+  scrollbar-width:thin; scrollbar-color:rgba(21,32,59,.18) transparent; }
+.esa-feed::-webkit-scrollbar{ width:9px; }
+.esa-feed::-webkit-scrollbar-thumb{ background:rgba(21,32,59,.16); border-radius:99px; border:3px solid transparent; background-clip:content-box; }
+.esa-feed::-webkit-scrollbar-track{ background:transparent; }
+.esa-row{ display:flex; animation:esa-pop .22s var(--esa-ease) both; }
+.esa-row.is-ai{ justify-content:flex-start; }
+.esa-row.is-me{ justify-content:flex-end; }
+.esa-bub{ max-width:min(82%, 560px); padding:11px 15px; font-size:15px; line-height:1.55; letter-spacing:-.003em; border-radius:18px; }
+.esa-bub.is-ai{ background:#EFF2FA; color:#15203B; border-top-left-radius:7px; }
+.esa-bub.is-me{ background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent)); color:#fff; border-top-right-radius:7px; }
+.esa-bub.is-soft{ background:#F2F5FB; color:var(--esa-ink-soft); }
+/* typing «печатает» */
+.esa-bub.esa-typing{ display:inline-flex; align-items:center; gap:5px; padding:13px 15px; }
+.esa-typing i{ width:6px; height:6px; border-radius:50%; background:var(--esa-ink-mute); opacity:.4;
+  animation:esa-blink 1.2s infinite ease-in-out; }
+.esa-typing i:nth-child(2){ animation-delay:.18s; } .esa-typing i:nth-child(3){ animation-delay:.36s; }
+/* чипы-стартеры */
+.esa-chips{ display:flex; flex-wrap:wrap; gap:8px; padding:0 20px 14px; }
+.esa-chip{ font-family:var(--font-text); font-size:13px; font-weight:500; color:var(--esa-accent-ink);
+  padding:8px 14px; border-radius:999px; background:rgba(43,143,255,.09); border:0; cursor:pointer;
+  transition:transform .15s var(--esa-ease), background .15s; }
+.esa-chip:hover{ background:rgba(43,143,255,.16); }
+.esa-chip:active{ transform:scale(.97); }
+/* композер: поле сверху, действия снизу. БЕЗ своей рамки и фокус-кольца —
+   одна общая граница у панели; на фокусе меняется только мягкий фон поля. */
+.esa-compose{ padding:4px 16px 16px; }
+.esa-composer{ border-radius:16px; background:rgba(21,32,59,.04); padding:12px 12px 10px; transition:background .15s; }
+.esa-composer:focus-within{ background:rgba(21,32,59,.055); }
+.esa-input{ display:block; width:100%; min-height:24px; max-height:160px; resize:none; overflow-y:auto;
+  background:transparent; border:0; outline:0; color:var(--esa-ink);
+  font-family:var(--font-text); font-size:15px; line-height:1.5; padding:2px 6px; }
+.esa-input::placeholder{ color:var(--esa-ink-mute); }
+.esa-input::-webkit-scrollbar{ width:8px; }
+.esa-input::-webkit-scrollbar-thumb{ background:rgba(21,32,59,.14); border-radius:99px; border:2px solid transparent; background-clip:content-box; }
+.esa-bar{ display:flex; align-items:center; gap:4px; margin-top:8px; }
+.esa-tool{ flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
+  color:var(--esa-ink-mute); background:transparent; border:0; cursor:pointer;
+  transition:transform .15s var(--esa-ease), background .15s, color .15s; }
+.esa-tool:hover{ background:rgba(21,32,59,.07); color:var(--esa-ink); }
+.esa-tool:active{ transform:scale(.92); }
+.esa-send{ flex:none; margin-left:auto; height:38px; padding:0 17px; border-radius:11px; display:inline-flex; align-items:center; gap:7px;
+  color:#fff; border:0; cursor:pointer; font-family:var(--font-text); font-weight:600; font-size:13.5px; letter-spacing:-.005em;
+  background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30);
+  transition:transform .15s var(--esa-ease), filter .15s, opacity .15s; }
+.esa-send:hover{ filter:brightness(1.06); }
+.esa-send:active{ transform:scale(.96); }
+.esa-send:disabled{ opacity:.4; cursor:default; filter:none; }
+/* FAB — единственная сапфировая кнопка, чистая, без тени */
+.esa-fab{ position:fixed; right:var(--sp-6); bottom:var(--sp-6); z-index:var(--z-sticky);
+  display:inline-flex; align-items:center; gap:9px; padding:10px 16px 10px 11px; border-radius:999px; border:0; cursor:pointer; color:#fff;
+  font-family:var(--font-text); font-weight:600; font-size:14px; letter-spacing:-.005em;
+  background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
+  transition:transform .18s cubic-bezier(.23,1,.32,1), filter .18s; }
+.esa-fab:hover{ transform:translateY(-1px); filter:brightness(1.05); }
+.esa-fab:active{ transform:translateY(0) scale(.97); }
+.esa-fab:focus-visible{ outline:none; box-shadow:inset 0 1px 0 rgba(255,255,255,.28), 0 0 0 3px rgba(43,143,255,.35); }
+.esa-fab__ic{ flex:none; display:grid; place-items:center; width:28px; height:28px; border-radius:50%; color:#fff; background:rgba(255,255,255,.18); }
+@media (max-width:520px){
+  .esa-backdrop{ padding:0; place-items:end stretch; }
+  .esa-panel{ width:100%; height:90vh; border-radius:24px 24px 0 0; }
+  .esa-fab{ right:var(--sp-4); bottom:calc(64px + env(safe-area-inset-bottom) + var(--sp-3)); }
+}
+@media (max-width:380px){ .esa-fab__label{ display:none; } .esa-fab{ padding:11px; } }
+@keyframes esa-fade{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes esa-rise{ from{ opacity:0; transform:translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
+@keyframes esa-pop{ from{ opacity:0; transform:translateY(5px); } to{ opacity:1; transform:none; } }
+@keyframes esa-blink{ 0%,80%,100%{ opacity:.35; transform:translateY(0); } 40%{ opacity:1; transform:translateY(-2px); } }
+@media (prefers-reduced-motion: reduce){
+  .esa-backdrop,.esa-panel,.esa-row{ animation:none !important; }
+  .esa-typing i{ animation:none !important; }
+}
+`;
+  (function ensureAssistCss() {
+    if (typeof document === 'undefined') return;
+    if (document.getElementById('esa-assist-css')) return;
+    const s = document.createElement('style');
+    s.id = 'esa-assist-css';
+    s.textContent = ASSIST_CSS;
+    document.head.appendChild(s);
+  })();
+
+  // ── Sparkle — аватар-искра ассистента (4 луча, читается как AI, не «солнце») ──
+  function Sparkle(size) {
+    return h('svg', { width: size, height: size, viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': 'true' },
+      h('path', { d: 'M12 2.2c.42 0 .79.28.9.68l1.06 3.74a4.2 4.2 0 0 0 2.92 2.92l3.74 1.06a.94.94 0 0 1 0 1.8l-3.74 1.06a4.2 4.2 0 0 0-2.92 2.92l-1.06 3.74a.94.94 0 0 1-1.8 0l-1.06-3.74a4.2 4.2 0 0 0-2.92-2.92L3.4 12.4a.94.94 0 0 1 0-1.8l3.74-1.06a4.2 4.2 0 0 0 2.92-2.92l1.06-3.74c.11-.4.48-.68.9-.68z' }));
   }
 
-  // ── AssistantPopup — drawer-чат, контекстный ───────────────────────────
+  // ── AssistantFab — плавающий вызов ассистента (одна сапфировая кнопка) ──
+  // props: onClick, label
+  function AssistantFab(props) {
+    const { onClick, label = 'Ассистент' } = props;
+    return h('div', { className: 'esa-scope' },
+      h('button', { type: 'button', className: 'esa-fab', onClick, 'aria-label': 'Открыть ассистента EastSide' },
+        h('span', { className: 'esa-fab__ic', 'aria-hidden': 'true', key: 'i' }, Sparkle(15)),
+        h('span', { className: 'esa-fab__label', key: 'l' }, label)));
+  }
+
+  // ── AssistantPopup — премиум-чат с AI (стеклянная панель «Атмосфера») ───
   // props: open, onClose, stage (контекст этапа|null), seeds (assistantSeeds)
   function AssistantPopup(props) {
     const { open, onClose, stage, seeds } = props;
@@ -267,39 +402,90 @@
     const seed = seedFor(stage);
     const [msgs, setMsgs] = useState([]);
     const [text, setText] = useState('');
+    const [typing, setTyping] = useState(false);
     const feedRef = useRef(null);
+    const inputRef = useRef(null);
+    const fileRef = useRef(null);
 
-    // при открытии/смене контекста — сбрасываем нить на приветствие этапа
+    // при открытии / смене контекста — нить начинается с приветствия этапа
     useEffect(() => {
       if (!open) return;
       setMsgs([{ from: 'ai', text: seed.hello }]);
       setText('');
+      setTyping(false);
+      const t = setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 140);
+      return () => clearTimeout(t);
     }, [open, stage && (stage.id || stage.stageId), seed.hello]);
 
+    // лента всегда прокручена к последнему сообщению
     useEffect(() => {
       if (feedRef.current) feedRef.current.scrollTop = feedRef.current.scrollHeight;
-    }, [msgs]);
+    }, [msgs, typing]);
+
+    // Escape закрывает, фон под чатом не скроллится
+    useEffect(() => {
+      if (!open) return;
+      const onKey = (e) => { if (e.key === 'Escape' && onClose) onClose(); };
+      document.addEventListener('keydown', onKey);
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.removeEventListener('keydown', onKey); document.body.style.overflow = prev; };
+    }, [open, onClose]);
+
+    if (!open) return null;
 
     const send = (val) => {
       const t = (val != null ? val : text).trim();
       if (!t) return;
       setMsgs((m) => m.concat({ from: 'user', text: t }));
       setText('');
-      // мозги вне скоупа — мягкая заглушка
-      setTimeout(() => setMsgs((m) => m.concat({ from: 'ai', text: 'Скоро отвечу — ассистент пока учится. Куратор тоже видит этот вопрос.', soft: true })), 420);
+      if (inputRef.current) inputRef.current.style.height = 'auto';
+      setTyping(true);
+      // мозги вне скоупа — живая заглушка: «печатает», затем мягкий ответ
+      setTimeout(() => {
+        setTyping(false);
+        setMsgs((m) => m.concat({ from: 'ai', soft: true, text: 'Я еще учусь отвечать сам, но твой вопрос уже у куратора: он на связи и поможет. Скоро буду отвечать прямо здесь.' }));
+      }, 950);
     };
 
-    return h(EUI.Drawer, { open, onClose, side: 'right', title: 'Ассистент EastSide', className: 'e-assist-drawer' },
-      stage ? h('div', { className: 'e-assist__ctx' },
-        h(Ic.Pin, { size: 13, key: 'i' }), h('span', { key: 't' }, 'Контекст: ' + stage.title)) : null,
-      h('div', { className: 'e-assist__feed', ref: feedRef },
-        msgs.map((m, i) => h('div', { key: i, className: cx('e-assist__bubble', m.from === 'user' ? 'is-me' : 'is-ai', m.soft && 'is-soft') }, m.text))),
-      (seed.chips && seed.chips.length) ? h('div', { className: 'e-assist__chips' },
-        seed.chips.map((c, i) => h('button', { key: i, type: 'button', className: 'e-assist__chip', onClick: () => send(c) }, c))) : null,
-      h('form', { className: 'e-assist__compose', onSubmit: (e) => { e.preventDefault(); send(); } },
-        h('input', { className: 'e-input', placeholder: 'Спроси что угодно про поступление', value: text, onChange: (e) => setText(e.target.value), 'aria-label': 'Сообщение' }),
-        h('button', { type: 'submit', className: 'e-icon-btn e-icon-btn--solid', 'aria-label': 'Отправить' }, Ic.Send ? h(Ic.Send, { size: 18 }) : '→'))
-    );
+    const showChips = seed.chips && seed.chips.length && msgs.length <= 1 && !typing;
+
+    // авто-рост поля; Enter — отправить, Shift+Enter — перенос строки
+    const grow = () => { const el = inputRef.current; if (!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 132) + 'px'; };
+    const onKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } };
+    const resetThread = () => { setMsgs([{ from: 'ai', text: seed.hello }]); setText(''); setTyping(false); if (inputRef.current) { inputRef.current.style.height = 'auto'; inputRef.current.focus(); } };
+    const onAttach = (e) => { const f = e.target.files && e.target.files[0]; if (f && window.EToast) window.EToast.push({ tone: 'info', title: 'Файл выбран', text: f.name + ' — прикреплю к диалогу, когда ассистент заработает.' }); e.target.value = ''; };
+
+    return h('div', { className: 'esa-scope' },
+      h('div', { className: 'esa-backdrop', onMouseDown: (e) => { if (e.target === e.currentTarget && onClose) onClose(); } },
+        h('section', { className: 'esa-panel', role: 'dialog', 'aria-modal': 'true', 'aria-label': 'Ассистент EastSide' },
+          h('header', { className: 'esa-head', key: 'h' },
+            h('div', { className: 'esa-ava', 'aria-hidden': 'true', key: 'a' }, Sparkle(20)),
+            h('div', { className: 'esa-h-meta', key: 'm' },
+              h('div', { className: 'esa-h-name' }, 'Ассистент EastSide'),
+              h('div', { className: 'esa-h-status' },
+                h('span', { className: 'esa-live', 'aria-hidden': 'true', key: 'd' }),
+                h('span', { key: 't' }, 'на связи'))),
+            h('button', { type: 'button', className: 'esa-close', 'aria-label': 'Закрыть', onClick: onClose, key: 'x' },
+              Ic.Close ? h(Ic.Close, { size: 18 }) : '×')),
+          stage ? h('div', { className: 'esa-ctx', key: 'c' },
+            Ic.Pin ? h(Ic.Pin, { size: 13, key: 'i' }) : null, h('span', { key: 't' }, 'Контекст: ' + stage.title)) : null,
+          h('div', { className: 'esa-feed', ref: feedRef, key: 'f' },
+            msgs.map((m, i) => h('div', { key: i, className: cx('esa-row', m.from === 'user' ? 'is-me' : 'is-ai') },
+              h('div', { className: cx('esa-bub', m.from === 'user' ? 'is-me' : 'is-ai', m.soft && 'is-soft') }, m.text))),
+            typing ? h('div', { className: 'esa-row is-ai', key: 'typ' },
+              h('div', { className: 'esa-bub is-ai esa-typing' }, h('i', { key: 1 }), h('i', { key: 2 }), h('i', { key: 3 }))) : null),
+          showChips ? h('div', { className: 'esa-chips', key: 'ch' },
+            seed.chips.map((c, i) => h('button', { key: i, type: 'button', className: 'esa-chip', onClick: () => send(c) }, c))) : null,
+          h('form', { className: 'esa-compose', key: 'cmp', onSubmit: (e) => { e.preventDefault(); send(); } },
+            h('input', { type: 'file', ref: fileRef, onChange: onAttach, style: { display: 'none' }, 'aria-hidden': 'true', key: 'file' }),
+            h('div', { className: 'esa-composer', key: 'box' },
+              h('textarea', { className: 'esa-input', ref: inputRef, rows: 1, placeholder: 'Спроси про вузы, гранты, сроки…', value: text, onChange: (e) => { setText(e.target.value); grow(); }, onKeyDown: onKey, 'aria-label': 'Сообщение ассистенту' }),
+              h('div', { className: 'esa-bar', key: 'bar' },
+                h('button', { type: 'button', className: 'esa-tool', 'aria-label': 'Новый диалог', title: 'Новый диалог', onClick: resetThread, key: 'new' }, Ic.Plus ? h(Ic.Plus, { size: 18 }) : '+'),
+                h('button', { type: 'button', className: 'esa-tool', 'aria-label': 'Прикрепить файл', title: 'Прикрепить файл', onClick: () => fileRef.current && fileRef.current.click(), key: 'att' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 18 }) : '📎'),
+                h('button', { type: 'submit', className: 'esa-send', 'aria-label': 'Отправить', disabled: !text.trim(), key: 'sb' },
+                  h('span', { key: 't' }, 'Отправить'), Ic.Send ? h(Ic.Send, { size: 16, key: 'i' }) : '→')))))));
   }
 
   Object.assign(EUI, {

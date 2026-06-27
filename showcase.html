@@ -27,29 +27,7 @@
 <body>
   <div id="app"></div>
 
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Те же tokens/styles/ui, что и index. Запуск по HTTP (см. index.html).
-       Грузим через ELoad (своя область на файл) — иначе Babel-helpers коллизируют. -->
-  <script src="src/lib/loader.js"></script>
-  <script>
-    window.ELoad([
-      'src/lib/icons.jsx',
-      'src/lib/mock.jsx',
-      'src/lib/api.jsx',
-      'src/lib/router.jsx',
-      'src/lib/theme.jsx',
-      'src/ui/primitives.jsx',
-      'src/ui/forms.jsx',
-      'src/ui/surfaces.jsx',
-      'src/ui/overlays.jsx',
-      'src/ui/navigation.jsx',
-      'src/showcase-gallery.jsx'
-    ]);
-  </script>
-  <!-- старые babel-теги удалены ниже -->
-
+  <!-- Vite-сборка: те же lib+ui, что и продукт, плюс showcase-gallery. -->
+  <script type="module" src="/src/showcase-main.js"></script>
 </body>
 </html>

@@ -90,9 +90,9 @@
   /* Arkhip — фирменный ДИСПЛЕЙНЫЙ шрифт, ТОЛЬКО крупные заголовки (h1/hero/
      панель-титул). Onest — подзаголовки, числа, акцентная типографика.
      Manrope — основной текст, интерфейсные подписи. @font-face Arkhip — в styles.css. */
-  --font-arkhip:  'Arkhip', 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-text:    'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-arkhip:  'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --font-text:    'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
   --font-mono:    'Onest', ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
 
   /* ---- ТИПОГРАФИКА · размеры (шкала, rem от 16px корня) ----------------- */

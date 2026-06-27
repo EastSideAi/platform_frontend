@@ -18,7 +18,7 @@
   const arr = (s) => Ic.ArrowRight ? h(Ic.ArrowRight, { size: s || 16, className: 'sd-arr' }) : null;
   const mute = { fontSize: '13px', fontWeight: 500, color: 'var(--sd-ink-mute)' };
   const goStage = () => SH.onNav({ label: 'Этап', to: '/stage' });
-  const goLearn = () => SH.onNav({ label: 'Обучение', to: '/learning/schedule' });
+  const goLearn = () => SH.onNav({ label: 'Обучение', to: '/learn' });
   const goDiag = () => SH.onNav({ label: 'Диагностика', to: '/diagnostics' });
 
   // ── Текущий этап. status: 'ok' (зеленый) | 'urgent' (янтарный) | 'late' (красный)
@@ -41,11 +41,35 @@
       card: 'Нужна новая справка по форме CSC с переводом.',
       desc: 'Нужна новая медсправка по форме CSC (Foreigner Physical Examination Form) с печатями и переводом. Сделай в клинике, потом загрузи фото или скан — проверим за 1-2 дня. Если что-то непонятно по пунктам — спроси AI.',
       cta: 'Перейти к задаче',
-      flow: [
-        { t: 'Получаешь справку в клинике', s: 'По форме CSC, с переводом', st: 'current' },
-        { t: 'Загружаешь сюда', s: 'Фото или скан' },
-        { t: 'Мы проверяем и добавляем в пакет', s: 'Обычно 1-2 дня' },
+      // Три части попапа: что и зачем -> инструкция с материалами -> выполнение.
+      wizard: [
+        { title: 'Что это за задача', body: [
+          'Старую медсправку не приняли: она была не по той форме. Для гранта CSC нужна справка строго по форме Foreigner Physical Examination Form — с печатями клиники и переводом.',
+          'Это последнее, что держит твой пакет документов. Закроем справку — и переходим к подаче на грант.',
+        ] },
+        { title: 'Как сделать',
+          body: ['Несколько простых шагов по порядку. Бланк можно скачать ниже и принести с собой в клинику.'],
+          bullets: [
+            'Скачай бланк формы CSC и распечатай его.',
+            'Пройди осмотр в клинике — врач заполнит бланк и заверит его печатями.',
+            'Сделай перевод справки, если она на русском.',
+            'Сфотографируй или отсканируй готовый документ — на последнем шаге загрузишь его сюда.',
+          ],
+          materials: [
+            { kind: 'pdf', name: 'Форма CSC — Foreigner Physical Examination Form', meta: 'PDF · бланк для клиники' },
+            { kind: 'guide', name: 'Как заполнить: пример и частые ошибки', meta: 'Памятка · 2 минуты' },
+          ],
+          note: { type: 'tip', text: 'Проверь, чтобы все печати и текст на справке читались на фото. Размытый скан — главная причина возврата.' },
+        },
       ],
+      action: {
+        type: 'upload',
+        heading: 'Загрузи готовую справку',
+        hint: 'Прикрепи фото или скан заполненной и заверенной формы. Проверим за 1-2 дня и добавим в пакет.',
+        formats: 'JPG, PNG или PDF, до 20 МБ',
+        label: 'Отправить на проверку',
+        doneText: 'Спасибо! Справка ушла на проверку. Обычно это занимает 1-2 дня — если что-то нужно поправить, дадим знать прямо здесь. Можно закрыть окно.',
+      },
     },
     {
       owner: 'you', status: 'upcoming', side: 'you', title: 'Загрузить фото 33x48', dl: '28 июня', dlState: 'ok', time: '5 минут',
@@ -100,15 +124,88 @@
   ];
 
   // ── База знаний «Про переезд» (попап) ───────────────────────────────────────
+  // У featured-статьи body — типизированные блоки (lead/h/p/list/tip/quote),
+  // их рендерит светлый редакторский попап. У остальных body — простые абзацы.
   const KNOW = [
-    { cap: 'Переезд', title: 'Как устроено жилье для студентов в Китае', dur: '6 мин чтения', icon: Ic.Home, image: 'assets/mountain-light.png',
-      body: ['Большинство студентов живут в кампусе — это дешево и близко к учебе.', 'Есть варианты подороже: студии и квартиры рядом с вузом.', 'Заселение мы поможем оформить на этапе переезда.'] },
-    { cap: 'Виза', title: 'Студенческая виза X1: что нужно знать', dur: '5 мин чтения', icon: Ic.Doc, image: 'assets/cosmos.png',
+    { cap: 'Переезд', title: 'Как устроено жилье для студентов в Китае',
+      dur: '5 мин чтения', read: 5, icon: Ic.Home, image: 'assets/cosmos.png', thumbPos: '60% 36%', tint: '#2B8FFF',
+      dek: 'Кампус или аренда, сколько это стоит и что выбрать на первый семестр.',
+      body: [
+        { type: 'lead', text: 'Жилье — первое, что станет твоим домом в Китае. Разберемся спокойно: какие есть варианты, сколько стоят и что выбрать на первый семестр, чтобы думать про учебу, а не про быт.' },
+        { type: 'stats', items: [
+          { v: '800–2000 ¥', l: 'в месяц за общежитие' },
+          { v: '1–4', l: 'соседа в комнате' },
+          { v: 'от 1 года', l: 'и можно на аренду' },
+        ] },
+        { type: 'p', text: 'Почти все студенты начинают с общежития на кампусе. Это самый простой путь: дешево, рядом с парами и сразу с соседями, которые проходят ровно то же, что и ты.' },
+        { type: 'h', text: 'Общежитие на кампусе' },
+        { type: 'p', text: 'Комнаты бывают на двоих, троих или четверых. Для иностранных студентов часто есть отдельные корпуса получше — со своим санузлом, кондиционером и интернетом. Кровать, стол и шкаф обычно уже стоят.' },
+        { type: 'list', items: [
+          'Комната на 1-2 человека — тише и дороже, удобно для учебы.',
+          'Комната на 3-4 человека — дешевле и быстрее заводишь друзей.',
+          'Общие кухни и прачечные — на этаже или в корпусе.',
+        ] },
+        { type: 'figure', src: 'assets/ascent-night.png', cap: 'От брони до заселения этот путь мы проходим вместе — комната ждет к началу семестра.' },
+        { type: 'h', text: 'Общежитие или аренда' },
+        { type: 'p', text: 'Оба варианта рабочие — разница в цене, приватности и хлопотах с документами. Коротко, чтобы было с чем сравнить:' },
+        { type: 'table', head: ['Что сравниваем', 'Общежитие', 'Аренда'], rows: [
+          ['Цена в месяц', '800–2000 ¥', 'от 2500 ¥'],
+          ['Приватность', 'Сосед или соседи', 'Свое пространство'],
+          ['Как заехать', 'Бронируем заранее', 'Ищешь сам'],
+          ['Договор и депозит', 'Берем на себя', 'Оформляешь сам'],
+          ['Кому подходит', 'Первый год', 'Со второго года'],
+        ] },
+        { type: 'tip', text: 'Заложи отдельный бюджет на первый месяц: депозит, постельное белье и бытовые мелочи. Дальше расходы выравниваются и становятся предсказуемыми.' },
+        { type: 'h', text: 'Сколько это стоит' },
+        { type: 'p', text: 'Общежитие — самый бюджетный вариант. Гранты CSC часто покрывают проживание полностью или дают стипендию, из которой это легко закрыть.' },
+        { type: 'quote', text: 'Первый семестр поживи в общежитии. Так проще влиться, найти своих и понять район, прежде чем снимать жилье самому.' },
+        { type: 'h', text: 'Что сделать заранее' },
+        { type: 'list', items: [
+          'Определись: кампус или аренда — от этого зависят бюджет и документы.',
+          'Уточни у нас, что именно покрывает твой грант по проживанию.',
+          'Собери на первый месяц сумму на депозит и быт.',
+        ] },
+        { type: 'p', text: 'Когда дойдем до переезда, мы оформим заселение, подскажем по документам на месте и будем на связи в первые дни. Твоя задача — собраться спокойно, остальное берем на себя.' },
+      ] },
+    { cap: 'Виза', title: 'Студенческая виза X1: что нужно знать',
+      dur: '5 мин чтения', read: 5, icon: Ic.Doc, image: 'assets/ascent-night.png', thumbPos: '50% 40%', tint: '#3AAE8F',
+      dek: 'Когда оформлять, какие документы нужны и что делать в первые 30 дней.',
       body: ['Виза X1 — для долгой учебы (больше 180 дней). Оформляется после приглашения от вуза.', 'Нужны приглашение, загранпаспорт, фото и анкета.', 'В Китае в первые 30 дней оформляешь вид на жительство — поможем.'] },
-    { cap: 'Быт', title: 'Деньги, связь и транспорт в первый месяц', dur: '4 мин чтения', icon: Ic.Clock, image: 'assets/ascent-lit.png',
+    { cap: 'Быт', title: 'Деньги, связь и транспорт в первый месяц',
+      dur: '4 мин чтения', read: 4, icon: Ic.Clock, image: 'assets/mountain-dark.png', thumbPos: '50% 46%', tint: '#E08A5B',
+      dek: 'WeChat и Alipay вместо наличных, местная симка и проездной — все за первую неделю.',
       body: ['Основные платежи в Китае — через WeChat и Alipay, наличные почти не нужны.', 'Сразу оформи местную симку и студенческий проездной.', 'На первый месяц заложи бюджет на залог и бытовые мелочи.'] },
-    { cap: 'Учеба', title: 'Что важно знать про учебу в китайском вузе', dur: '5 мин чтения', icon: Ic.Book, image: 'assets/ascent-night.png',
+    { cap: 'Учеба', title: 'Что важно знать про учебу в китайском вузе',
+      dur: '5 мин чтения', read: 5, icon: Ic.Book, image: 'assets/ascent-lit.png', thumbPos: '50% 38%', tint: '#9B7BE6',
+      dek: 'Когда начинается год, на каком языке учат и что покрывают гранты CSC.',
       body: ['Учебный год начинается в сентябре, есть строгая посещаемость.', 'Часть программ на английском, часть на китайском — зависит от вуза.', 'Гранты CSC часто покрывают обучение, проживание и стипендию.'] },
+    { cap: 'Культура', title: 'Китайские традиции, праздники и адаптация',
+      dur: '4 мин чтения', read: 4, icon: Ic.Heart, image: 'assets/mountain-path.png', thumbPos: '50% 50%', tint: '#56A8E0',
+      dek: 'Праздники, привычки и негласные правила, к которым стоит привыкнуть заранее.',
+      body: [
+        { type: 'lead', text: 'Переезд — это не только документы и жилье. Другая культура поначалу удивляет, но к ней быстро привыкаешь. Собрали то, что стоит знать заранее, чтобы первые недели прошли спокойно.' },
+        { type: 'h', text: 'Праздники и ритм года' },
+        { type: 'p', text: 'Главные даты — китайский Новый год зимой и Праздник середины осени. В эти дни кампус пустеет, многие студенты уезжают домой, а магазины и службы работают по особому графику. Поездки и закупки лучше планировать заранее.' },
+        { type: 'h', text: 'Как принято общаться' },
+        { type: 'p', text: 'К иностранным студентам относятся дружелюбно и охотно помогают. Даже пара фраз на китайском от новичка располагает людей. Не бойся ошибаться: попытка говорить важнее идеального произношения.' },
+        { type: 'list', items: [
+          'Выучи 10-15 бытовых фраз — приветствие, заказ еды, благодарность.',
+          'Поставь переводчик с камерой — выручает с меню и вывесками.',
+          'Уважай очередь и личное пространство в транспорте.',
+        ] },
+        { type: 'tip', text: 'Первый месяц держись поближе к землякам и студсообществу вуза — так проще освоиться, а потом сам не заметишь, как заведешь местных друзей.' },
+        { type: 'quote', text: 'Культурный шок проходит. Дай себе пару недель — и чужой город начнет казаться своим.' },
+      ] },
+  ];
+
+  // Лента категорий под карточками (фильтр базы знаний)
+  const CATS = [
+    { t: 'Жилье', n: 8, icon: Ic.Home, tint: '#2B8FFF' },
+    { t: 'Документы', n: 8, icon: Ic.Doc, tint: '#9B7BE6' },
+    { t: 'Финансы', n: 9, icon: Ic.Wallet, tint: '#3AAE8F' },
+    { t: 'Учеба', n: 11, icon: Ic.Book, tint: '#E08A5B' },
+    { t: 'Быт', n: 10, icon: Ic.Compass, tint: '#E0656E' },
+    { t: 'Здоровье', n: 6, icon: Ic.Heart, tint: '#E06A9C' },
   ];
 
   const taskOf = (s) => Object.assign({}, s, { title: s.title, desc: s.desc || s.why });
@@ -493,32 +590,138 @@
         h(JpDetail, { key: sel, s: s, moreOpen: moreOpen, setMoreOpen: setMoreOpen, openTask: openTask, setOpenTask: setOpenTask })));
   }
 
-  /* ── Полезное про переезд (попап) ──────────────────────────────────────── */
+  /* ── Полезное про переезд — журнальная сетка как в рефе: ВСЕ карточки
+       full-bleed (картинка на весь размер карточки), текст/чип/время/кнопка
+       лежат ПОВЕРХ. Слева крупная обложка на всю высоту, справа сетка 2×2.
+       Под ними — лента-навигатор по категориям. Цвет: сапфир + лёгкие
+       оттенки по рубрикам (чип, стрелка, иконка категории). ── */
+  function injectKnowledgeCSS() {
+    if (document.getElementById('es-kb-css')) return;
+    const el = document.createElement('style');
+    el.id = 'es-kb-css';
+    el.textContent = `
+    .kb-headwrap{min-width:0;}
+    .sd-sec__sub{font-size:13.5px;font-weight:500;color:var(--sd-ink-mute);margin-top:5px;}
+    .kb{display:grid;grid-template-columns:1.34fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:452px;}
+
+    /* ═══ КАРТОЧКА (общий full-bleed): картинка на весь размер + оверлей ═══ */
+    .kb-c{position:relative;overflow:hidden;cursor:pointer;text-align:left;font-family:inherit;padding:0;border:0;width:100%;background:#070E2A;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 36px rgba(8,16,44,.16);
+      transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s;}
+    .kb-c:hover{transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 26px 58px rgba(8,16,44,.3);}
+    .kb-c__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
+    .kb-c:hover .kb-c__img{transform:scale(1.05);}
+    .kb-c__scrim{position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(157deg,rgba(4,9,26,.6) 0%,rgba(4,9,26,.16) 40%,rgba(4,9,26,.12) 60%,rgba(4,9,26,.62) 100%);}
+    .kb-c__b{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:space-between;}
+    .kb-c__top{display:flex;flex-direction:column;align-items:flex-start;min-width:0;}
+    /* чип рубрики — лёгкий оттенок категории, текст белый */
+    .kb-chip{display:inline-flex;align-items:center;border-radius:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;
+      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);
+      text-shadow:0 1px 2px rgba(4,9,28,.4);}
+    .kb-time{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:rgba(232,239,255,.9);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(4,9,28,.5);}
+    .kb-time svg{color:rgba(170,202,255,.95);}
+    .kb-c__ttl{font-weight:600;color:#fff;letter-spacing:-.3px;text-wrap:balance;text-shadow:0 2px 10px rgba(4,9,28,.35);}
+    /* белая «скруглённая квадратная» кнопка со стрелкой в цвет рубрики */
+    .kb-sq{flex:0 0 auto;display:grid;place-items:center;background:#fff;border-radius:12px;
+      box-shadow:0 7px 18px rgba(4,9,28,.3),inset 0 1px 0 rgba(255,255,255,.9);transition:transform .18s,box-shadow .18s;}
+    .kb-sq svg{transition:transform .2s;}
+    .kb-c:hover .kb-sq{transform:translateY(-2px);box-shadow:0 11px 24px rgba(4,9,28,.42);}
+    .kb-c:hover .kb-sq svg{transform:translateX(2px);}
+
+    /* — крупная обложка слева — */
+    .kb-feat{grid-column:1;grid-row:1 / span 2;border-radius:24px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 22px 56px rgba(8,16,44,.24);}
+    .kb-feat .kb-c__b{padding:28px 30px 26px;}
+    .kb-feat .kb-chip{font-size:11px;padding:6px 13px;}
+    .kb-feat .kb-c__ttl{font-size:29px;line-height:1.13;letter-spacing:-.8px;margin-top:13px;max-width:14ch;}
+    .kb-feat .kb-time{font-size:12.5px;margin-top:12px;}
+    .kb-feat__cta{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;padding:12px 12px 12px 20px;border-radius:99px;background:#fff;color:#15203B;
+      font-size:14px;font-weight:600;letter-spacing:-.1px;box-shadow:0 10px 24px rgba(4,9,28,.3);transition:transform .18s,box-shadow .18s;}
+    .kb-feat:hover .kb-feat__cta{transform:translateY(-1px);box-shadow:0 14px 30px rgba(4,9,28,.42);}
+    .kb-feat__cta i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--sd-acc-deep);color:#fff;
+      box-shadow:inset 0 0 12px rgba(175,215,255,.7),inset 0 1px 0 rgba(255,255,255,.5);}
+    .kb-feat__cta i svg{transition:transform .2s;}
+    .kb-feat:hover .kb-feat__cta i svg{transform:translateX(2px);}
+
+    /* — мелкие карточки 2×2 — */
+    .kb-sm{border-radius:20px;}
+    .kb-sm .kb-c__b{padding:15px 16px;}
+    .kb-sm .kb-chip{font-size:9.5px;padding:4px 10px;}
+    .kb-sm .kb-c__ttl{font-size:15px;line-height:1.26;margin-top:10px;max-width:17ch;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .kb-sm .kb-time{font-size:11px;margin-top:8px;}
+    .kb-sm .kb-sq{width:36px;height:36px;}
+
+    /* ═══ ЛЕНТА КАТЕГОРИЙ под карточками ══════════════════════════════════ */
+    .kb-cats{display:flex;align-items:stretch;gap:10px;margin-top:16px;overflow-x:auto;padding:2px 1px 4px;scrollbar-width:none;}
+    .kb-cats::-webkit-scrollbar{height:0;}
+    .kb-cat{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px 11px 12px;border-radius:15px;cursor:pointer;font-family:inherit;
+      background:rgba(255,255,255,.62);border:1px solid rgba(22,32,59,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 16px rgba(8,16,44,.05);
+      transition:transform .16s cubic-bezier(.23,1,.32,1),border-color .16s,background .16s;}
+    .kb-cat:hover{transform:translateY(-2px);background:#fff;border-color:rgba(43,143,255,.26);}
+    .kb-cat.is-on{background:linear-gradient(160deg,rgba(43,143,255,.13),rgba(43,143,255,.05));border-color:rgba(43,143,255,.34);}
+    .kb-cat__ic{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;}
+    .kb-cat__b{display:flex;flex-direction:column;}
+    .kb-cat__t{font-size:13.5px;font-weight:600;color:var(--sd-ink);letter-spacing:-.1px;line-height:1.15;}
+    .kb-cat__n{font-size:11px;font-weight:500;color:var(--sd-ink-mute);margin-top:2px;font-variant-numeric:tabular-nums;}
+    .kb-cats__nav{flex:0 0 auto;align-self:center;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:var(--sd-ink-mute);
+      background:rgba(255,255,255,.62);border:1px solid rgba(22,32,59,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.85);transition:transform .15s,background .15s,color .15s;}
+    .kb-cats__nav:hover{background:#fff;color:var(--sd-ink);transform:translateY(-1px);}
+
+    @media (max-width:1040px){
+      .kb{grid-template-columns:1fr 1fr;grid-template-rows:auto;min-height:0;}
+      .kb-feat{grid-column:1 / span 2;grid-row:auto;min-height:300px;}
+      .kb-sm{min-height:188px;}
+    }
+    @media (max-width:620px){
+      .kb{grid-template-columns:1fr;}
+      .kb-feat{grid-column:1;}
+      .kb-feat .kb-c__ttl{font-size:24px;}
+      .kb-sm{min-height:172px;}
+    }`;
+    document.head.appendChild(el);
+  }
+
   function Knowledge() {
+    injectKnowledgeCSS();
     const feat = KNOW[0];
-    const rest = KNOW.slice(1);
-    const chev = (s) => Ic.ChevronRight ? h(Ic.ChevronRight, { size: s || 16 }) : '›';
+    const rest = KNOW.slice(1, 5);
+    const open = (a) => SH.openArticle(a, KNOW);
+    const clock = (s) => Ic.Clock ? h(Ic.Clock, { size: s || 13 }) : null;
+    const arrR = (s) => Ic.ArrowRight ? h(Ic.ArrowRight, { size: s || 16 }) : '→';
+    const hexA = (hex, a) => { const n = parseInt((hex || '#2B8FFF').slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
+
+    // full-bleed карточка: картинка на весь размер + оверлей (чип, заголовок, время, кнопка)
+    const card = (a, cls, label, key) => h('button', { key: key, type: 'button', className: 'kb-c ' + cls, onClick: () => open(a) },
+      h('img', { className: 'kb-c__img', src: a.image, alt: '', style: { objectPosition: a.thumbPos || '50% 42%' } }),
+      h('span', { className: 'kb-c__scrim' }),
+      h('span', { className: 'kb-c__b' },
+        h('span', { className: 'kb-c__top' },
+          h('span', { className: 'kb-chip', style: { background: hexA(a.tint, .34), borderColor: hexA(a.tint, .55) } }, label || a.cap),
+          h('span', { className: 'kb-c__ttl' }, a.title),
+          h('span', { className: 'kb-time' }, clock(cls === 'kb-feat' ? 13 : 12), a.dur)),
+        cls === 'kb-feat'
+          ? h('span', { className: 'kb-feat__cta' }, 'Читать статью', h('i', null, arrR(16)))
+          : h('span', { className: 'kb-sq', style: { color: a.tint } }, arrR(17))));
+
     return h('section', { className: 'sd-sec' },
       h('div', { className: 'sd-sec__head' },
-        h('h3', { className: 'sd-sec__title' }, 'Полезное про переезд'),
+        h('div', { className: 'kb-headwrap' },
+          h('h3', { className: 'sd-sec__title' }, 'Полезное про переезд',
+            Ic.Spark ? h(Ic.Spark, { size: 16, style: { marginLeft: 9, color: 'var(--sd-acc)', verticalAlign: 'middle' } }) : null),
+          h('div', { className: 'sd-sec__sub' }, 'Подготовься к жизни и учебе в Китае')),
         h('button', { type: 'button', className: 'sd-sec__link', onClick: goLearn }, 'Вся база', arr(14))),
-      h('div', { className: 'sd-know' },
-        h('div', { className: 'sd-feat', onClick: () => SH.openArticle(feat) },
-          h('img', { className: 'sd-feat__bg', src: feat.image, alt: '' }),
-          h('div', { className: 'sd-feat__scrim' }),
-          h('div', { className: 'sd-feat__body' },
-            h('div', { className: 'sd-feat__cap' }, feat.cap),
-            h('div', { className: 'sd-feat__title' }, feat.title),
-            h('div', { className: 'sd-feat__meta' },
-              h('span', null, feat.dur),
-              h('span', { className: 'sd-feat__go' }, 'Читать', arr(14))))),
-        h('div', { className: 'sd-know__list' },
-          rest.map((a, i) => h('div', { key: i, className: 'sd-aitem', onClick: () => SH.openArticle(a) },
-            h('div', { className: 'sd-aitem__icw' }, a.icon ? h(a.icon, { size: 19 }) : null),
-            h('div', { className: 'sd-aitem__b' },
-              h('div', { className: 'sd-aitem__cap' }, a.cap + ' · ' + a.dur),
-              h('div', { className: 'sd-aitem__title' }, a.title)),
-            h('div', { className: 'sd-aitem__go' }, chev(18)))))));
+      h('div', { className: 'kb' },
+        card(feat, 'kb-feat', 'Главное', 'f'),
+        rest.map((a, i) => card(a, 'kb-sm', null, i))),
+      h('div', { className: 'kb-cats' },
+        CATS.map((c, i) => h('button', { key: i, type: 'button', className: 'kb-cat' + (i === 0 ? ' is-on' : '') },
+          h('span', { className: 'kb-cat__ic', style: { color: c.tint, background: hexA(c.tint, .12), boxShadow: 'inset 0 0 0 1px ' + hexA(c.tint, .22) } }, c.icon ? h(c.icon, { size: 19 }) : null),
+          h('span', { className: 'kb-cat__b' },
+            h('span', { className: 'kb-cat__t' }, c.t),
+            h('span', { className: 'kb-cat__n' }, c.n + ' материалов')))),
+        h('button', { type: 'button', className: 'kb-cats__nav', 'aria-label': 'Дальше' }, Ic.ChevronRight ? h(Ic.ChevronRight, { size: 18 }) : '›')));
   }
 
   function CabinetStudent() {

@@ -61,8 +61,11 @@
   /* ── Сайдбар ─────────────────────────────────────────────────────────── */
   .sd-side{
     flex:0 0 236px; width:236px; height:100%; box-sizing:border-box;
-    background:transparent; border:0;
-    display:flex; flex-direction:column; padding:6px 6px 4px;
+    /* floating-панель: меню парит отдельной карточкой, заодно со светлой .sd-main */
+    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
+    border:1px solid rgba(255,255,255,.10); border-radius:26px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+    display:flex; flex-direction:column; padding:18px 14px 14px;
   }
   .sd-brand{display:flex; align-items:center; gap:11px; padding:4px 8px; margin-bottom:24px;}
   .sd-brand__mark{
@@ -1049,7 +1052,7 @@
   /* ── Попапы (overlay + модалка + чат-дровер) ────────────────────────── */
   .sd-ov{position:fixed;inset:0;z-index:1000;display:flex;background:rgba(8,14,34,.46);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);animation:sdFade .2s ease;}
   @keyframes sdFade{from{opacity:0}to{opacity:1}}
-  .sd-ov--center{align-items:center;justify-content:center;padding:24px;}
+  .sd-ov--center{align-items:center;justify-content:center;padding:34px;}
   .sd-ov--right{justify-content:flex-end;}
   .sd-modal{width:100%;max-width:540px;max-height:86vh;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;
     background:linear-gradient(180deg,#0C1230,#0A0F26);border:1px solid rgba(70,140,240,.28);box-shadow:0 30px 80px rgba(0,0,0,.5);animation:sdRise .24s cubic-bezier(.16,1,.3,1);}
@@ -1360,7 +1363,7 @@
     { key: 'home',   label: 'Главная',    icon: Ic.Home,        to: '/student' },
     { key: 'tasks',  label: 'Задачи',     icon: Ic.CheckCircle, badge: 2, soon: true },
     { key: 'docs',   label: 'Документы',  icon: Ic.Doc,         to: '/documents' },
-    { key: 'learn',  label: 'Обучение',   icon: Ic.Book,        to: '/learning/schedule' },
+    { key: 'learn',  label: 'Обучение',   icon: Ic.Book,        to: '/learn' },
     { key: 'grants', label: 'Гранты',     icon: Ic.Star,        soon: true },
     { key: 'curator',label: 'Куратор',    icon: Ic.Users,       soon: true },
     { key: 'social', label: 'Сообщество', icon: Ic.Chat,        soon: true },
@@ -1450,7 +1453,7 @@
   const _pop = { set: null };
   function openPopup(p) { if (_pop.set) _pop.set(p); }
   const openChat = (ctx) => openPopup({ kind: 'chat', ctx: ctx || null });
-  const openArticle = (a) => openPopup({ kind: 'article', data: a });
+  const openArticle = (a, all) => openPopup({ kind: 'article', data: a, all: all || (a && a.more) || null });
   const openTask = (t) => openPopup({ kind: 'task', data: t });
   const closePopup = () => openPopup(null);
   // Ответы навигатора (бэк еще не подключен — отвечаем по теме вопроса).
@@ -1519,22 +1522,198 @@
         h('button', { type: 'submit', className: 'sd-ai__send', disabled: !text.trim(), 'aria-label': 'Отправить' }, Ic.Send ? h(Ic.Send, { size: 18 }) : '→')));
   }
 
+  /* ── Светлый редакторский «лист для чтения» (Режим B, стекло + блёр) ──────
+     Бренд-небо в шапке мягко растворяется в молочном листе; колонка контента
+     с выверенной типографикой: лид, подзаголовки, списки, врезка-совет, цитата.
+     body — массив строк (простые абзацы) ИЛИ типизированных блоков
+     {type:'lead'|'h'|'p'|'list'|'tip'|'quote'}.  ───────────────────────────── */
+  function injectArticleCSS() {
+    if (typeof document === 'undefined' || document.getElementById('es-article-css')) return;
+    const el = document.createElement('style');
+    el.id = 'es-article-css';
+    el.textContent = `
+    .ar{position:relative;width:100%;max-width:840px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
+      border-radius:30px;font-family:'Manrope','Segoe UI',system-ui,-apple-system,sans-serif;color:#16203B;
+      background:
+        radial-gradient(720px 480px at 88% -10%,rgba(43,143,255,.13),transparent 62%),
+        radial-gradient(560px 400px at -6% 110%,rgba(43,111,224,.07),transparent 60%),
+        linear-gradient(180deg,#FCFDFF 0%,#F6F8FD 62%,#EEF1FA 100%);
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 70px rgba(255,255,255,.4),0 36px 96px rgba(8,16,44,.42),0 2px 8px rgba(8,16,44,.16);
+      -webkit-backdrop-filter:blur(30px) saturate(150%);backdrop-filter:blur(30px) saturate(150%);
+      animation:arRise .3s cubic-bezier(.16,1,.3,1);-webkit-font-smoothing:antialiased;}
+    @keyframes arRise{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .ar *{box-sizing:border-box;}
+
+    /* плавающая кнопка закрытия — тихая, поверх листа */
+    .ar__x{position:absolute;z-index:6;top:20px;right:20px;width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;
+      color:rgba(22,32,59,.55);background:rgba(255,255,255,.64);border:1px solid rgba(22,32,59,.1);
+      -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(8,16,44,.1);transition:transform .15s,background .15s,color .15s;}
+    .ar__x:hover{background:#fff;color:#15203B;transform:translateY(-1px);}
+    .ar__x:active{transform:scale(.94);}
+
+    /* прокручиваемый лист */
+    .ar__body{position:relative;z-index:1;flex:1 1 auto;overflow-y:auto;padding:0;}
+    .ar__body::-webkit-scrollbar{width:10px;}
+    .ar__body::-webkit-scrollbar-thumb{background:rgba(22,32,59,.14);border-radius:99px;border:3px solid transparent;background-clip:padding-box;}
+    .ar__body::-webkit-scrollbar-thumb:hover{background:rgba(22,32,59,.24);background-clip:padding-box;}
+
+    /* ══ СИСТЕМА (прописана и соблюдается, всё по сетке design.md) ══════════
+       Колонка: 648px, поля 64px — единая левая ось у всех блоков.
+       РИТМ по вертикали (кратно 4):
+         flow  24  — базовый шаг между блоками (owl-селектор ниже)
+         sect  48  — перед новым подзаголовком (разрыв секции)
+         tight 16  — первый блок сразу под подзаголовком
+         + точечно: kick→title 12, title→картинка 32, картинка→текст 24
+       ТИПОРАЗМЕРЫ (из шкалы design.md): title 32 / h 19 / lead 16 / body 15
+         / table 14 / meta 13 / micro 11. */
+    .ar__col{margin:0 auto;padding:56px 72px 64px;}
+    .ar__col > * + *{margin-top:24px;}        /* flow */
+    .ar__title{margin-top:12px;}              /* kick → title */
+    .ar__title + *{margin-top:32px;}          /* title → картинка / первый блок */
+    .ar__img + *{margin-top:24px;}            /* картинка → текст */
+    .ar__h{margin-top:48px;}                  /* sect */
+    .ar__h + *{margin-top:16px;}              /* tight под подзаголовком */
+    /* Лист шире, но текст держим в читаемой мере (≈70 знаков) на той же левой
+       оси; картинки, статы и таблица занимают всю ширину колонки. */
+    .ar__kick,.ar__title,.ar__lead,.ar__h,.ar__p,.ar__list,.ar__quote{max-width:620px;}
+
+    .ar__kick{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(22,32,59,.38);}
+    .ar__kick b{color:var(--sd-acc-deep,#2073E6);font-weight:700;}
+    .ar__kick i{width:3px;height:3px;border-radius:99px;background:rgba(22,32,59,.28);}
+    .ar__title{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;
+      font-weight:300;font-size:32px;letter-spacing:-.03em;line-height:1.14;color:#15203B;text-wrap:balance;}
+    .ar__img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:20px;background:#0A1538;
+      border:1px solid rgba(22,32,59,.08);box-shadow:0 26px 64px rgba(8,16,44,.18),inset 0 1px 0 rgba(255,255,255,.4);}
+    .ar__lead{font-size:16px;line-height:1.62;color:rgba(22,32,59,.74);font-weight:400;letter-spacing:-.003em;}
+    .ar__h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;line-height:1.3;color:#15203B;}
+    .ar__p{font-size:15px;line-height:1.72;color:rgba(22,32,59,.76);}
+    .ar__list{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px;}
+    .ar__li{display:flex;gap:13px;align-items:flex-start;font-size:15px;line-height:1.55;color:rgba(22,32,59,.8);}
+    .ar__li-mk{flex:0 0 24px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;color:var(--sd-acc-deep,#2073E6);margin-top:1px;
+      background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2);}
+
+    /* метрики — тройка сапфировых плашек с фирменным внутренним белым свечением
+       (та же подпись, что у главной кнопки .sd-btn--primary), числа табличные */
+    .ar__stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .ar__stat{padding:17px 18px;border-radius:14px;background:var(--sd-acc-deep,#2073E6);
+      border:1px solid rgba(43,111,224,.5);
+      box-shadow:inset 0 0 28px rgba(175,215,255,.6),inset 0 0 8px rgba(255,255,255,.32),inset 0 1px 0 rgba(255,255,255,.5),0 12px 28px rgba(43,90,200,.22);}
+    .ar__stat-v{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:500;font-size:22px;letter-spacing:-.02em;
+      color:#fff;font-variant-numeric:tabular-nums;line-height:1.1;white-space:nowrap;text-shadow:0 1px 1px rgba(6,18,52,.22);}
+    .ar__stat-l{font-size:11px;line-height:1.4;color:rgba(255,255,255,.82);margin-top:8px;}
+
+    /* вторая картинка с подписью */
+    .ar__fig img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 32%;border-radius:16px;background:#0A1538;
+      border:1px solid rgba(22,32,59,.08);box-shadow:0 20px 50px rgba(8,16,44,.15),inset 0 1px 0 rgba(255,255,255,.35);}
+    .ar__fig figcaption{margin:12px auto 0;max-width:52ch;text-align:center;font-size:13px;line-height:1.5;color:rgba(22,32,59,.46);}
+
+    /* таблица-сравнение — стеклянная, тонкие полупрозрачные разделители */
+    .ar__tablewrap{border-radius:16px;overflow:hidden;border:1px solid rgba(22,32,59,.1);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 14px 36px rgba(8,16,44,.07);
+      background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(244,247,255,.42));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+    .ar__table{width:100%;border-collapse:collapse;font-size:14px;}
+    .ar__table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(22,32,59,.5);padding:13px 18px;}
+    .ar__table thead tr{background:rgba(43,111,224,.06);}
+    .ar__table th:nth-child(2){color:var(--sd-acc-deep,#2073E6);}
+    .ar__table td{padding:13px 18px;border-top:1px solid rgba(22,32,59,.08);color:rgba(22,32,59,.78);vertical-align:top;line-height:1.45;}
+    .ar__table td:first-child{font-weight:600;color:#15203B;}
+    .ar__table td:nth-child(2){color:#173a78;font-weight:500;}
+    .ar__table tbody tr:nth-child(odd){background:rgba(255,255,255,.28);}
+
+    .ar__tip{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:12px;
+      background:linear-gradient(150deg,rgba(43,143,255,.09),rgba(43,143,255,.03));border:1px solid rgba(43,143,255,.2);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+    .ar__tip-ic{flex:0 0 34px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;margin-top:1px;
+      background:linear-gradient(150deg,#5CB4FF,#2073E6);box-shadow:inset 0 0 12px rgba(175,215,255,.6),0 5px 14px rgba(43,143,255,.28);}
+    .ar__tip-tx{flex:1 1 auto;min-width:0;font-size:14.5px;line-height:1.6;color:rgba(22,32,59,.8);}
+    .ar__quote{position:relative;padding:4px 0 4px 22px;border-left:3px solid #2B8FFF;
+      font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-size:19px;font-weight:300;line-height:1.45;letter-spacing:-.015em;color:#1B2747;text-wrap:balance;}
+
+    /* «Читать дальше» — карточки других материалов на всю ширину колонки */
+    .ar__more{margin-top:60px;padding-top:34px;border-top:1px solid rgba(22,32,59,.09);}
+    .ar__more-h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;color:#15203B;margin-bottom:18px;}
+    .ar__more-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+    .ar__more-card{display:flex;flex-direction:column;text-align:left;cursor:pointer;font-family:inherit;padding:0;overflow:hidden;
+      border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.7),rgba(244,247,255,.46));
+      border:1px solid rgba(43,111,224,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 26px rgba(8,16,44,.06);
+      transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s,border-color .2s;}
+    .ar__more-card:hover{transform:translateY(-3px);border-color:rgba(43,143,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 18px 40px rgba(43,90,200,.12);}
+    .ar__more-thumb{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:#0A1538;}
+    .ar__more-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1);}
+    .ar__more-card:hover .ar__more-thumb img{transform:scale(1.06);}
+    .ar__more-thumb__tint{position:absolute;inset:0;background:radial-gradient(85% 70% at 28% 16%,rgba(43,143,255,.2),transparent 70%);}
+    .ar__more-cap{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sd-acc-deep,#2073E6);padding:14px 15px 0;}
+    .ar__more-title{font-size:14px;font-weight:600;color:#15203B;letter-spacing:-.2px;line-height:1.34;padding:6px 15px 0;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .ar__more-meta{display:flex;align-items:center;gap:7px;padding:9px 15px 15px;margin-top:auto;font-size:11.5px;font-weight:500;color:rgba(22,32,59,.5);font-variant-numeric:tabular-nums;}
+    .ar__more-meta svg{color:rgba(43,111,224,.7);}
+
+    @media (prefers-reduced-motion: reduce){ .ar{animation:none;} }
+    @media (max-width:760px){
+      .ar{max-width:100%;border-radius:22px;}
+      .ar__col{padding:52px 22px 44px;}
+      .ar__title{font-size:27px;}
+      .ar__stats{grid-template-columns:1fr;}
+      .ar__table{font-size:13px;}
+      .ar__more-cards{grid-template-columns:1fr;}
+    }`;
+    document.head.appendChild(el);
+  }
+
   function ArticleModal(props) {
+    injectArticleCSS();
     const a = props.data || {};
-    return h('div', { className: 'sd-modal', onMouseDown: (e) => e.stopPropagation() },
-      a.image ? h('div', { className: 'sd-modal__media' },
-        h('div', { className: 'sd-modal__media-bg', style: { backgroundImage: 'url(' + a.image + ')' } }),
-        h('div', { className: 'sd-modal__media-sh' })) : null,
-      h('div', { className: 'sd-modal__head' },
-        h('div', null,
-          h('div', { className: 'sd-modal__cap' }, a.cap || 'Статья'),
-          h('div', { className: 'sd-modal__title' }, a.title)),
-        h('button', { className: 'sd-x', onClick: closePopup, 'aria-label': 'Закрыть' }, Ic.Close ? h(Ic.Close, { size: 17 }) : '×')),
-      h('div', { className: 'sd-modal__body' },
-        (a.body || ['Скоро здесь будет полный текст статьи.']).map((p, i) => h('p', { key: i }, p))),
-      h('div', { className: 'sd-modal__foot' },
-        h('button', { className: 'sd-btn sd-btn--ghost', onClick: () => { closePopup(); openChat({ label: a.title }); } },
-          Ic.Spark ? h(Ic.Spark, { size: 16 }) : null, 'Спросить AI по теме')));
+    const all = props.all || [];
+    const more = all.filter((x) => x && x !== a).slice(0, 3);
+    const body = a.body && a.body.length ? a.body : [{ type: 'p', text: 'Скоро здесь будет полный текст статьи.' }];
+    const check = Ic.Check ? h(Ic.Check, { size: 14, strokeWidth: 2.6 }) : '✓';
+    const clock = (s) => Ic.Clock ? h(Ic.Clock, { size: s || 12 }) : null;
+    const block = (b, i) => {
+      if (typeof b === 'string') return h('p', { className: 'ar__p', key: i }, b);
+      switch (b.type) {
+        case 'lead': return h('p', { className: 'ar__lead', key: i }, b.text);
+        case 'h': return h('h2', { className: 'ar__h', key: i }, b.text);
+        case 'list': return h('ul', { className: 'ar__list', key: i },
+          (b.items || []).map((it, j) => h('li', { className: 'ar__li', key: j },
+            h('span', { className: 'ar__li-mk' }, check), h('span', null, it))));
+        case 'stats': return h('div', { className: 'ar__stats', key: i },
+          (b.items || []).map((s, j) => h('div', { className: 'ar__stat', key: j },
+            h('div', { className: 'ar__stat-v' }, s.v), h('div', { className: 'ar__stat-l' }, s.l))));
+        case 'figure': return h('figure', { className: 'ar__fig', key: i },
+          h('img', { src: b.src, alt: '' }), b.cap ? h('figcaption', null, b.cap) : null);
+        case 'table': return h('div', { className: 'ar__tablewrap', key: i },
+          h('table', { className: 'ar__table' },
+            b.head ? h('thead', null, h('tr', null, b.head.map((c, j) => h('th', { key: j }, c)))) : null,
+            h('tbody', null, (b.rows || []).map((r, j) => h('tr', { key: j }, r.map((c, k) => h('td', { key: k }, c)))))));
+        case 'tip': return h('div', { className: 'ar__tip', key: i },
+          h('span', { className: 'ar__tip-ic' }, Ic.Spark ? h(Ic.Spark, { size: 17 }) : '★'),
+          h('div', { className: 'ar__tip-tx' }, b.text));
+        case 'quote': return h('blockquote', { className: 'ar__quote', key: i }, b.text);
+        default: return h('p', { className: 'ar__p', key: i }, b.text);
+      }
+    };
+    return h('div', { className: 'ar', onMouseDown: (e) => e.stopPropagation(), role: 'dialog', 'aria-modal': 'true', 'aria-label': a.title || 'Статья' },
+      h('button', { className: 'ar__x', onClick: closePopup, 'aria-label': 'Закрыть' }, Ic.Close ? h(Ic.Close, { size: 18 }) : '×'),
+      h('div', { className: 'ar__body' },
+        h('div', { className: 'ar__col' },
+          h('div', { className: 'ar__kick' },
+            h('b', null, a.cap || 'Статья'),
+            a.dur ? h('i', null) : null,
+            a.dur ? a.dur : null),
+          h('h1', { className: 'ar__title' }, a.title),
+          a.image ? h('img', { className: 'ar__img', src: a.image, alt: '' }) : null,
+          body.map(block),
+          more.length ? h('div', { className: 'ar__more' },
+            h('div', { className: 'ar__more-h' }, 'Читать дальше'),
+            h('div', { className: 'ar__more-cards' },
+              more.map((m, i) => h('button', { key: i, type: 'button', className: 'ar__more-card', onClick: () => openArticle(m, all) },
+                h('span', { className: 'ar__more-thumb' },
+                  h('img', { src: m.image, alt: '', style: { objectPosition: m.thumbPos || '50% 42%' } }),
+                  h('span', { className: 'ar__more-thumb__tint' })),
+                h('span', { className: 'ar__more-cap' }, m.cap),
+                h('span', { className: 'ar__more-title' }, m.title),
+                h('span', { className: 'ar__more-meta' }, clock(12), m.dur))))) : null)));
   }
 
   function TaskModal(props) {
@@ -1570,7 +1749,7 @@
     if (!p) return null;
     return h('div', { className: 'sd-ov sd-ov--center', onMouseDown: closePopup },
       p.kind === 'chat' ? h(Chat, { ctx: p.ctx })
-        : p.kind === 'article' ? h(ArticleModal, { data: p.data })
+        : p.kind === 'article' ? h(ArticleModal, { key: (p.data && p.data.title) || 'ar', data: p.data, all: p.all })
           : p.kind === 'task'
             ? (window.ESTaskModal
               ? h(window.ESTaskModal, { data: p.data, close: closePopup, openChat: openChat })

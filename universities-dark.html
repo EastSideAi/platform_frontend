@@ -10,10 +10,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=Poiret+One&display=swap" rel="stylesheet" />
 <style>
-  @font-face { font-family: 'Arkhip'; src: url('assets/fonts/arkhip/Arkhip_font.otf') format('opentype'), url('assets/fonts/arkhip/Arkhip_font.ttf') format('truetype'); font-weight: 400; font-display: swap; }
+/* единый шрифт интерфейса — менять тут одной строкой */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif}
+*,*::before,*::after{font-family:var(--font-display)!important}
+
+  @font-face { font-family: 'Arkhip'; src: url('funnel-assets/fonts/arkhip/Arkhip_font.otf') format('opentype'), url('funnel-assets/fonts/arkhip/Arkhip_font.ttf') format('truetype'); font-weight: 400; font-display: swap; }
   :root {
     --base: #03081C; --panel: #060D28; --violet: #2B8FFF; --violet-2: #5CB4FF; --violet-deep: #1E72E6; --violet-soft: #9FCBFF;
-    --ink: #15151F; --ink-2: #434252; --ink-sub: #616080; --ink-faint: #8A8AA0;
+    --ink: #15151F; --ink-2: #15151F; --ink-sub: #15151F; --ink-faint: #15151F;
     --tx: #FFFFFF; --tx-soft: #C5CBE3; --tx-mute: #8B93B8; --acc-ink: #1E6FD6; --jade-ink: #1C7E54;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -24,23 +28,23 @@
 
   .shell { position: relative; display: grid; grid-template-columns: 240px 1fr; gap: 16px; height: 100vh; padding: 16px; }
   /* сайдбар */
-  .sb { display: flex; flex-direction: column; padding: 6px 4px; height: 100%; min-height: 0; overflow: hidden; }
-  .sb-brand { display: flex; align-items: center; padding: 0 6px 4px; flex: none; }
+  .sb { display: flex; flex-direction: column; padding: 8px 4px; height: 100%; min-height: 0; overflow: hidden; }
+  .sb-brand { display: flex; align-items: center; padding: 0 8px 4px; flex: none; }
   .sb-logo-img { width: 158px; height: auto; display: block; }
-  .sb-nav { display: flex; flex-direction: column; gap: 6px; margin-top: 20px; }
-  .sb-item { display: flex; align-items: center; gap: 12px; padding: 10px 13px; font-size: 14px; font-weight: 600; border-radius: 12px; color: var(--tx-mute); text-decoration: none; }
+  .sb-nav { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; }
+  .sb-item { display: flex; align-items: center; gap: 12px; padding: 12px 12px; font-size: 14px; font-weight: 600; border-radius: 12px; color: var(--tx-mute); text-decoration: none; }
   .sb-item svg { width: 19px; height: 19px; }
   .sb-item.active { color: #fff; background: linear-gradient(150deg, rgba(43,143,255,.22), rgba(43,143,255,.05)); border: 1px solid rgba(60,150,250,.3); }
   .sb-item .lock { margin-left: auto; opacity: .6; }
-  .sb-profile { flex: none; margin-top: auto; margin-bottom: 14px; position: relative; overflow: visible;
-    display: flex; align-items: center; min-height: 104px; padding: 14px 12px 14px 108px;
+  .sb-profile { flex: none; margin-top: auto; margin-bottom: 16px; position: relative; overflow: visible;
+    display: flex; align-items: center; min-height: 104px; padding: 16px 16px 16px 100px;
     background: linear-gradient(150deg, rgba(43,143,255,.2), rgba(43,143,255,.05) 60%), #07143A; border: 1px solid rgba(60,150,250,.34); border-radius: 20px; }
-  .sb-mascot { position: absolute; left: -18px; bottom: 0; width: 128px; height: 182px; pointer-events: none; }
+  .sb-mascot { position: absolute; left: 0; bottom: 0; width: 96px; height: 182px; pointer-events: none; }
   .sb-mascot img { width: 100%; height: 100%; object-fit: contain; object-position: bottom center; filter: drop-shadow(0 6px 14px rgba(4,6,26,.65)); }
-  .sb-meta b { display: block; font-family: 'Onest', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -.2px; }
-  .sb-meta small { display: block; font-size: 10.5px; color: var(--tx-soft); margin-top: 5px; }
+  .sb-meta b { display: block; font-family: 'Onest', sans-serif; font-size: 18px; font-weight: 600; letter-spacing: -.2px; text-transform: capitalize; }
+  .sb-meta small { display: block; font-size: 15px; line-height: 1.2; color: var(--tx-soft); margin: 0 0 2px; }
   .sb-foot { display: flex; gap: 8px; flex: none; }
-  .sb-mini { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 11px 8px; border-radius: 13px; cursor: pointer;
+  .sb-mini { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 8px; border-radius: 13px; cursor: pointer;
     background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); color: var(--tx-soft); font: 600 12.5px 'Onest', sans-serif; text-decoration: none; }
   .sb-mini.exit { color: #FF8E8E; border-color: rgba(255,110,110,.3); background: rgba(255,90,90,.08); }
   .sb-mini svg { width: 16px; height: 16px; }
@@ -50,15 +54,15 @@
     background: linear-gradient(150deg, #EEF0FB 0%, #E7EAF8 48%, #DfE4F6 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
   .plate-scroll { height: 100%; overflow-y: auto; padding: 40px 44px 28px; }
   .plate-scroll::-webkit-scrollbar { width: 0; }
-  .crumb { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-sub); }
+  .crumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-sub); }
   .crumb a { color: var(--ink-sub); text-decoration: none; }
   .crumb a:hover { color: var(--acc-ink); }
   .crumb svg { width: 14px; height: 14px; }
   .crumb b { color: var(--ink); font-weight: 700; }
-  .h1 { margin-top: 14px; font-family: 'Onest', sans-serif; font-size: 40px; font-weight: 800; letter-spacing: -1.6px; color: var(--ink); }
-  .lead { margin-top: 14px; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); max-width: 64ch; }
+  .h1 { margin-top: 16px; font-family: 'Onest', sans-serif; font-size: 40px; font-weight: 700; letter-spacing: -1.6px; color: var(--ink); }
+  .lead { margin-top: 16px; font-size: 15.5px; line-height: 1.6; color: var(--ink-2); max-width: 64ch; }
 
-  .ulist { margin-top: 30px; display: flex; flex-direction: column; gap: 20px; }
+  .ulist { margin-top: 32px; display: flex; flex-direction: column; gap: 20px; }
   .ucard { display: flex; flex-direction: column; border-radius: 22px; overflow: hidden;
     background: linear-gradient(150deg, rgba(255,255,255,.86), rgba(255,255,255,.6)); border: 1px solid rgba(120,140,210,.24);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.8); transition: border-color .18s ease; }
@@ -67,32 +71,32 @@
   .uc-photo { position: relative; height: 224px; flex: none; background: #0A1330 50% 42% / cover no-repeat; }
   .uc-photo::after { content: ''; position: absolute; inset: 0; box-shadow: inset 0 0 0 1px rgba(36,40,90,.06);
     background: linear-gradient(180deg, rgba(3,8,28,.18) 0%, transparent 26%, transparent 70%, rgba(255,255,255,.55) 100%); }
-  .uc-main { padding: 22px 28px 26px; min-width: 0; }
-  .uc-head { display: flex; align-items: flex-start; gap: 14px; }
+  .uc-main { padding: 24px 28px 28px; min-width: 0; }
+  .uc-head { display: flex; align-items: flex-start; gap: 16px; }
   .uc-tt { flex: 1; min-width: 0; }
-  .uc-name { font-size: 20px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; line-height: 1.15; }
+  .uc-name { font-size: 20px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; line-height: 1.15; }
   .uc-zh { font-size: 12.5px; color: var(--ink-faint); margin-top: 4px; }
-  .uc-tag { font-size: 10.5px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; padding: 5px 12px; border-radius: 99px; border: 1px solid; flex: none; white-space: nowrap; }
+  .uc-tag { font-size: 10.5px; font-weight: 700; letter-spacing: 0; text-transform: none; padding: 4px 12px; border-radius: 99px; border: 1px solid; flex: none; white-space: nowrap; }
   .uc-tag.match { color: #1C7E54; border-color: rgba(46,160,110,.4); background: rgba(46,160,110,.08); }
   .uc-tag.reach { color: #B26A00; border-color: rgba(220,150,40,.4); background: rgba(220,150,40,.08); }
   .uc-tag.safe  { color: #2C7FBE; border-color: rgba(63,155,230,.4); background: rgba(63,155,230,.08); }
-  .uc-desc { margin-top: 14px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
-  .uc-facts { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .uc-fact { border-radius: 12px; padding: 11px 14px; background: rgba(36,40,90,.04); border: 1px solid rgba(36,40,90,.07); }
-  .uc-fact .k { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-faint); }
+  .uc-desc { margin-top: 16px; font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+  .uc-facts { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .uc-fact { border-radius: 12px; padding: 12px 16px; background: rgba(36,40,90,.04); border: 1px solid rgba(36,40,90,.07); }
+  .uc-fact .k { font-size: 10.5px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
   .uc-fact .v { margin-top: 4px; font-size: 14px; font-weight: 700; color: var(--ink); }
   .uc-fact .v.good { color: var(--jade-ink); }
   /* подробный блок: общежитие, быт, стипендия, учеба — две колонки, без визуального шума */
-  .uc-detail { margin-top: 18px; padding-top: 17px; border-top: 1px solid rgba(36,40,90,.1);
-    display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 17px 28px; }
-  .uc-d-h { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--acc-ink); }
+  .uc-detail { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(36,40,90,.1);
+    display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px 28px; }
+  .uc-d-h { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--acc-ink); }
   .uc-d-h svg { width: 15px; height: 15px; flex: none; }
-  .uc-d-t { margin-top: 7px; font-size: 12.8px; line-height: 1.58; color: var(--ink-2); }
+  .uc-d-t { margin-top: 8px; font-size: 12.8px; line-height: 1.58; color: var(--ink-2); }
   .uc-d-t b { font-weight: 700; color: var(--ink); }
   @media (max-width: 1140px) { .uc-photo { height: 188px; } .uc-facts { grid-template-columns: 1fr 1fr; }
     .uc-detail { grid-template-columns: 1fr; } }
 
-  .dbar { position: sticky; bottom: 0; z-index: 6; margin-top: 32px; display: flex; align-items: center; gap: 16px; padding: 13px 16px; border-radius: 18px;
+  .dbar { position: sticky; bottom: 0; z-index: 6; margin-top: 32px; display: flex; align-items: center; gap: 16px; padding: 12px 16px; border-radius: 18px;
     background: rgba(229,232,251,.82); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.72);
     box-shadow: 0 14px 34px rgba(8,16,48,.16); }
   .btn-back { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgba(120,120,200,.22); border-radius: 13px; cursor: pointer;
@@ -108,15 +112,15 @@
 <div class="shell">
   <!-- сайдбар -->
   <aside class="sb">
-    <div class="sb-brand"><img class="sb-logo-img" src="assets/logo-dark.png" alt="ИстСайд.рф — языковой центр" /></div>
+    <div class="sb-brand"><img class="sb-logo-img" src="funnel-assets/logo-dark.png" alt="ИстСайд.рф — языковой центр" /></div>
     <nav class="sb-nav">
       <a class="sb-item" href="anketa-dark.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9"/></svg>Анкета</a>
       <a class="sb-item active" href="diagnostic-dark.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1018 0"/><path d="M12 12l4-3"/></svg>Диагностика</a>
       <a class="sb-item" href="diagnostic-dark.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a1 1 0 011-1h14a1 1 0 011 1v14"/><path d="M8 8h8M8 12h5"/></svg>Дорожная карта <span class="lock"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 018 0v3"/></svg></span></a>
     </nav>
     <div class="sb-profile">
-      <span class="sb-mascot"><img id="mascotImg" src="assets/mascot-cut.png" alt="Профиль" /></span>
-      <div class="sb-meta"><b id="mascotName">Артем</b><small>Профиль разобран</small></div>
+      <span class="sb-mascot"><img id="mascotImg" src="funnel-assets/mascot-cut.png" alt="Профиль" /></span>
+      <div class="sb-meta"><small>Привет,</small><b id="mascotName">Артем</b></div>
     </div>
     <div class="sb-foot">
       <a class="sb-mini" href="diagnostic-dark.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>К диагностике</a>
@@ -139,7 +143,7 @@
       <div class="ulist">
 
         <div class="ucard">
-          <div class="uc-photo" style="background-image:url('assets/universities/fudan.jpg')"></div>
+          <div class="uc-photo" style="background-image:url('funnel-assets/universities/fudan.jpg')"></div>
           <div class="uc-main">
             <div class="uc-head">
               <span class="uc-tt"><span class="uc-name">Фуданьский университет</span><span class="uc-zh">复旦大学 · Fudan University · Шанхай</span></span>
@@ -179,7 +183,7 @@
         </div>
 
         <div class="ucard">
-          <div class="uc-photo" style="background-image:url('assets/universities/zhejiang.jpg')"></div>
+          <div class="uc-photo" style="background-image:url('funnel-assets/universities/zhejiang.jpg')"></div>
           <div class="uc-main">
             <div class="uc-head">
               <span class="uc-tt"><span class="uc-name">Чжэцзянский университет</span><span class="uc-zh">浙江大学 · Zhejiang University · Ханчжоу</span></span>
@@ -219,7 +223,7 @@
         </div>
 
         <div class="ucard">
-          <div class="uc-photo" style="background-image:url('assets/universities/nanjing.jpg')"></div>
+          <div class="uc-photo" style="background-image:url('funnel-assets/universities/nanjing.jpg')"></div>
           <div class="uc-main">
             <div class="uc-head">
               <span class="uc-tt"><span class="uc-name">Нанкинский университет</span><span class="uc-zh">南京大学 · Nanjing University · Нанкин</span></span>
@@ -259,7 +263,7 @@
         </div>
 
         <div class="ucard">
-          <div class="uc-photo" style="background-image:url('assets/universities/harbin.jpg')"></div>
+          <div class="uc-photo" style="background-image:url('funnel-assets/universities/harbin.jpg')"></div>
           <div class="uc-main">
             <div class="uc-head">
               <span class="uc-tt"><span class="uc-name">Харбинский политехнический</span><span class="uc-zh">哈尔滨工业大学 · HIT · Харбин</span></span>
@@ -299,7 +303,7 @@
         </div>
 
         <div class="ucard">
-          <div class="uc-photo" style="background-image:url('assets/universities/qingdao.jpg')"></div>
+          <div class="uc-photo" style="background-image:url('funnel-assets/universities/qingdao.jpg')"></div>
           <div class="uc-main">
             <div class="uc-head">
               <span class="uc-tt"><span class="uc-name">Циндаоский университет</span><span class="uc-zh">青岛大学 · Qingdao University · Циндао</span></span>
@@ -351,10 +355,10 @@
 
 <!-- модалка выхода -->
 <div class="modal-ov" id="logoutModal" style="position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(3,6,18,.62);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)">
-  <div style="width:100%;max-width:380px;border-radius:20px;padding:26px;background:linear-gradient(150deg,rgba(43,143,255,.14),rgba(43,143,255,.03) 60%),#07102C;border:1px solid rgba(60,150,250,.34);box-shadow:0 24px 70px rgba(2,5,20,.6);color:var(--tx);text-align:center">
-    <h3 style="font-family:'Onest',sans-serif;font-size:21px;font-weight:800;letter-spacing:-.4px">Выйти из аккаунта?</h3>
+  <div style="width:100%;max-width:380px;border-radius:20px;padding:28px;background:linear-gradient(150deg,rgba(43,143,255,.14),rgba(43,143,255,.03) 60%),#07102C;border:1px solid rgba(60,150,250,.34);box-shadow:0 24px 70px rgba(2,5,20,.6);color:var(--tx);text-align:center">
+    <h3 style="font-family:'Onest',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.4px">Выйти из аккаунта?</h3>
     <p style="margin-top:8px;font-size:13.5px;line-height:1.45;color:var(--tx-soft)">Прогресс сохранится — вы продолжите с того же места, когда вернетесь.</p>
-    <div style="display:flex;gap:10px;margin-top:20px">
+    <div style="display:flex;gap:12px;margin-top:20px">
       <button id="logoutCancel" type="button" style="flex:1;padding:12px;border-radius:13px;cursor:pointer;font:600 14px 'Onest',sans-serif;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:var(--tx-soft)">Остаться</button>
       <a id="logoutConfirm" href="login-dark.html" style="flex:1;padding:12px;border-radius:13px;cursor:pointer;font:600 14px 'Onest',sans-serif;background:linear-gradient(135deg,#FF6B6B,#E23B3B);color:#fff;border:0;text-decoration:none;display:inline-flex;align-items:center;justify-content:center">Выйти</a>
     </div>
@@ -366,7 +370,7 @@
   var g, name;
   try { g = localStorage.getItem('es_gender'); name = localStorage.getItem('es_name'); } catch (e) {}
   var img = document.getElementById('mascotImg'), nm = document.getElementById('mascotName');
-  if (g === 'girl' && img) { img.src = 'assets/mascot-girl-cut.png'; img.alt = 'Профиль'; }
+  if (g === 'girl' && img) { img.src = 'funnel-assets/mascot-girl-cut.png'; img.alt = 'Профиль'; }
   if (nm && name && name.trim()) nm.textContent = name.trim();
   var ov = document.getElementById('logoutModal');
   document.getElementById('btnExit').addEventListener('click', function () { ov.style.display = 'flex'; });

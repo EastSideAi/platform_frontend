@@ -91,7 +91,7 @@
       { icon: Ic.Wallet, label: 'Финансы', to: '/payments' },
       { icon: Ic.Doc, label: 'Документы', to: '/documents' },
       { icon: Ic.Target, label: 'Диагностика', to: '/diagnostics' },
-      { icon: Ic.Book, label: 'Обучение', to: '/learning/progress' },
+      { icon: Ic.Book, label: 'Обучение', to: '/learn' },
       { icon: Ic.Plus, label: 'Добавить ребенка', onClick: onAdd },
     ];
     const navEl = (it, i) => {
@@ -257,7 +257,7 @@
     // Карточка ребенка: материал .ec-card, layout инлайном на токенах. Выбранный —
     // inset-свечение (--glow-sel-* / --jade-line). Без внешних теней.
     const kidStyle = (selKid) => ({
-      display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: '14px 16px',
+      display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: '16px',
       textAlign: 'left', cursor: 'pointer', width: '100%',
       border: selKid ? '1.5px solid var(--glow-sel-br)' : '1px solid var(--line)',
       background: selKid ? 'var(--glow-sel-bg)' : 'var(--surface)',
@@ -270,7 +270,7 @@
         list.length ? h('span', { className: 'ec-sec__c u-tnum' }, list.length + (list.length === 1 ? ' ребенок' : list.length < 5 ? ' ребенка' : ' детей')) : null,
         h('button', { type: 'button', className: 'ec-sec__all', onClick: openAdd }, '+ Добавить ребенка')),
       list.length
-        ? h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '14px' } },
+        ? h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '16px' } },
           list.map((c) => {
             const cst = STATUS[c.status] || STATUS.on_track;
             const selKid = child && c.id === child.id;
@@ -288,7 +288,7 @@
           }),
           // карточка-приглашение «добавить»
           h('button', { type: 'button', onClick: openAdd, 'aria-label': 'Добавить ребенка',
-            style: { display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: '14px 16px', textAlign: 'left', cursor: 'pointer', width: '100%', border: '1px dashed var(--line-strong)', background: 'transparent', borderRadius: 'var(--r-xl)', font: 'inherit', color: 'var(--ink)' } },
+            style: { display: 'flex', alignItems: 'center', gap: 'var(--sp-3)', padding: '16px', textAlign: 'left', cursor: 'pointer', width: '100%', border: '1px dashed var(--line-strong)', background: 'transparent', borderRadius: 'var(--r-xl)', font: 'inherit', color: 'var(--ink)' } },
             h('span', { 'aria-hidden': 'true', className: 'e-chip-glow', style: { flex: 'none', width: '42px', height: '42px' } }, h(Ic.Plus, { size: 20 })),
             h('span', { style: { minWidth: 0 } },
               h('span', { style: { display: 'block', fontFamily: 'var(--font-display)', fontWeight: 'var(--fw-bold)', color: 'var(--ink)' } }, 'Добавить ребенка'),
@@ -423,11 +423,11 @@
         h('span', { className: 'ec-sec__t' }, 'Финансы'),
         h('button', { type: 'button', className: 'ec-sec__all', onClick: () => nav('/payments') }, 'Чеки и история →')),
       h('div', { className: 'ec-card ec-work', style: { gridTemplateColumns: '1.6fr 1fr' } },
-        h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '14px' } },
+        h('div', { style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '16px' } },
           [{ l: billing.nextPayment.label, v: rub(billing.nextPayment.amount), accent: true },
            { l: 'Дата платежа', v: humanDate(billing.nextPayment.date) },
            { l: 'Занятия в пакете', v: billing.lessonsLeft + ' из ' + billing.lessonsTotal }].map((s, i) =>
-            h('div', { key: i, style: { padding: '14px 16px', borderRadius: '14px', border: '1px solid var(--line)', background: 'var(--surface-2)' } },
+            h('div', { key: i, style: { padding: '16px', borderRadius: 'var(--r-lg)', border: '1px solid var(--line)', background: 'var(--surface-2)' } },
               h('div', { style: { fontSize: '12px', color: 'var(--ink-mute)' } }, s.l),
               h('div', { className: 'u-tnum', style: { marginTop: '4px', fontSize: '18px', fontWeight: 'var(--fw-black)', color: s.accent ? 'var(--jade-ink)' : 'var(--ink)' } }, s.v)))),
         h('div', { className: 'ec-cur' },

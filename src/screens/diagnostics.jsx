@@ -155,7 +155,7 @@
     const navItems = [
       { icon: Ic.Home, label: 'Главная', to: '/student' },
       { icon: Ic.Doc, label: 'Документы', to: '/documents' },
-      { icon: Ic.Book, label: 'Обучение', to: '/learning/progress' },
+      { icon: Ic.Book, label: 'Обучение', to: '/learn' },
       { icon: Ic.Star, label: 'Гранты', to: '/diagnostics' },
       { icon: Ic.Target, label: 'Диагностика', to: '/diagnostics', active: true },
       { icon: Ic.Flag, label: 'Достижения', onClick: onSettings },
@@ -248,7 +248,7 @@
         h(Ring, { pct: chance })));
 
     // ── Точка А / Точка Б ────────────────────────────────────────────────
-    const pointCard = (icon, cap, text, hint) => h('div', { className: 'ec-card', style: { padding: '22px 24px' } },
+    const pointCard = (icon, cap, text, hint) => h('div', { className: 'ec-card', style: { padding: '24px' } },
       h('div', { className: 'u-flex u-items-center u-gap-3' },
         h('span', { className: 'es-assist-ic', 'aria-hidden': 'true' }, h(icon, { size: 20 })),
         h('div', null,
@@ -264,7 +264,7 @@
     // ── Разбор шанса (метрики + 3 категории) ─────────────────────────────
     const chanceBlock = h(React.Fragment, null,
       secHead('Из чего сложился шанс'),
-      h('div', { className: 'ec-card', style: { padding: '24px 26px' } },
+      h('div', { className: 'ec-card', style: { padding: '24px' } },
         h('div', { className: 'u-cols-2' },
           METRICS.map((mt) => h(ProgressBar, { key: mt.label, value: mt.value, tone: 'jade', label: mt.label, showPct: true }))),
         h('div', { className: 'u-cols-3', style: { marginTop: 'var(--sp-5)' } },
@@ -302,14 +302,14 @@
     };
     const uniBlock = h(React.Fragment, null,
       secHead('Куда реально поступить', { count: UNIS.length + ' вуза', allLabel: 'Весь подбор →', onAll: () => nav('/result') }),
-      h('p', { className: 'u-prose', style: { margin: '-6px 2px 14px', color: 'var(--ink-soft)', fontSize: 'var(--fs-sm)', maxWidth: '62ch' } },
+      h('p', { className: 'u-prose', style: { margin: '-8px 2px 16px', color: 'var(--ink-soft)', fontSize: 'var(--fs-sm)', maxWidth: '62ch' } },
         'Только реальные вузы Китая из базы. Разложили по уровню риска: амбиция, цель, подстраховка.'),
       h('div', { className: 'u-stack-3' }, UNIS.map(uniCard)));
 
     // ── Сильные стороны ──────────────────────────────────────────────────
     const strengthsBlock = h(React.Fragment, null,
       secHead('На что опираемся'),
-      h('div', { className: 'ec-card', style: { padding: '24px 26px' } },
+      h('div', { className: 'ec-card', style: { padding: '24px' } },
         h('div', { className: 'u-cols-2' },
           STRENGTHS.map((s, i) => h('div', { key: i, className: 'u-flex u-items-start u-gap-3' },
             h('span', { 'aria-hidden': 'true', style: { color: 'var(--success-ink)', flexShrink: 0, marginTop: '1px' } }, h(Ic.CheckCircle, { size: 19 })),
@@ -326,7 +326,7 @@
     // ── Что улучшить (зоны роста с пробным режимом → модалка) ─────────────
     const improveBlock = h(React.Fragment, null,
       secHead('Что улучшить', { count: GROWTH.length + (GROWTH.length === 1 ? ' зона' : ' зоны') }),
-      h('p', { className: 'u-prose', style: { margin: '-6px 2px 14px', color: 'var(--ink-soft)', fontSize: 'var(--fs-sm)', maxWidth: '62ch' } },
+      h('p', { className: 'u-prose', style: { margin: '-8px 2px 16px', color: 'var(--ink-soft)', fontSize: 'var(--fs-sm)', maxWidth: '62ch' } },
         'Каждая зона роста связана с продуктом. Можно попробовать в пробном режиме, без оплаты.'),
       h('div', { className: 'u-stack-3' },
         GROWTH.map((z, i) => h(Card, { key: i, variant: 'inset' },
@@ -344,7 +344,7 @@
     // ── Стратегия (нумерованные шаги) ────────────────────────────────────
     const strategyBlock = h(React.Fragment, null,
       secHead('Рекомендуемая стратегия'),
-      h('div', { className: 'ec-card', style: { padding: '24px 26px' } },
+      h('div', { className: 'ec-card', style: { padding: '24px' } },
         h('div', { style: { marginBottom: 'var(--sp-4)' } }, h(Pill, { tone: 'success' }, STRATEGY.headline)),
         h('div', { className: 'u-stack-3' },
           STRATEGY.steps.map((s, i) => h('div', { key: i, className: 'u-flex u-items-start u-gap-3' },
@@ -401,7 +401,7 @@
     const bn = h('nav', { className: 'ec-bn', 'aria-label': 'Навигация' },
       [{ icon: Ic.Home, label: 'Главная', to: '/student' },
        { icon: Ic.Doc, label: 'Документы', to: '/documents' },
-       { icon: Ic.Book, label: 'Обучение', to: '/learning/progress' },
+       { icon: Ic.Book, label: 'Обучение', to: '/learn' },
        { icon: Ic.Target, label: 'Диагностика', to: '/diagnostics', active: true }].map((it, i) => {
         const cls = 'ec-bn__item' + (it.active ? ' is-active' : '');
         const inner = [h(it.icon, { size: 22, key: 'i' }), h('span', { key: 'l' }, it.label)];

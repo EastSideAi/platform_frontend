@@ -57,10 +57,10 @@
     '/documents': S.Documents,                // документы клиентского среза
     '/payments': S.Payments,                  // оплаты/финансы — ТОЛЬКО зона родителя
 
-    // обучение-связка
-    '/learning/schedule': S.LearningSchedule,
-    '/learning/lesson': S.LearningLesson,
-    '/learning/progress': S.LearningProgress,
+    // образовательная платформа
+    '/learn': S.LearnHub,                     // хаб курса ученика
+    '/learn/lesson': S.LearnLesson,           // интерактивный урок-тренажёр
+    '/learn/build': S.LearnBuilder,           // конструктор урока (преподаватель)
 
     // Ассистент — НЕ первичная навигация (он FAB + попап). Маршрут-оболочку
     // оставляем как overlay-точку входа для устаревших ссылок из ещё не
@@ -87,6 +87,9 @@
     '/auth': true, '/landing': true, '/anketa': true, '/result': true,
     '/partner': true, '/crm': true, '/crm/client': true, '/crm/funnel': true,
     '/student': true, // дашборд ученика несёт свой тоггл (рейл/статус) + FAB ассистента
+    '/learn': true,        // хаб обучения несёт каркас ученика (FAB ассистента в Shell)
+    '/learn/lesson': true, // урок-тренажёр — иммерсивный полноэкранный, свой выход
+    '/learn/build': true,  // конструктор — полноэкранный, своя верхняя панель
     '/plan': true,    // этапы — своя тёмная раскладка, без плавающего тоггла
     '/stage': true,   // детали этапа — своя тёмная раскладка
     '/stage-b': true, // вариант B деталей этапа
@@ -102,9 +105,6 @@
   const cabinetNeedsFab = {
     '/documents': true,
     '/diagnostics': true,
-    '/learning/schedule': true,
-    '/learning/lesson': true,
-    '/learning/progress': true,
   };
 
   // Плавающий переключатель темы — только там, где экран не дал свой.

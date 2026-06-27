@@ -392,7 +392,7 @@
     return h('section', { className: 'sd-sec' },
       h('div', { className: 'sd-sec__head' },
         h('h3', { className: 'sd-sec__title' }, 'Полезное по этапу'),
-        h('button', { type: 'button', className: 'sd-sec__link', onClick: () => SH.onNav({ label: 'Обучение', to: '/learning/schedule' }) },
+        h('button', { type: 'button', className: 'sd-sec__link', onClick: () => SH.onNav({ label: 'Обучение', to: '/learn' }) },
           'Вся база', ic('ArrowRight', { size: 14, className: 'sd-arr' }))),
       h('div', { className: 'sd-know' },
         h('div', { className: 'sd-feat', onClick: () => SH.openArticle(feat) },

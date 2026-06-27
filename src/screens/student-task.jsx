@@ -56,7 +56,7 @@
     --et-line:rgba(22,32,59,.09); --et-line-acc:rgba(43,111,224,.16);
     --et-jade:#2EA06E; --et-jade-hi:#3EE08F; --et-jade-deep:#1C7E52;
     --et-rose:#D2604F; --et-rose-ink:#B23B2A; --et-gold:#C9923E;
-    width:100%; max-width:692px; max-height:92vh; display:flex; flex-direction:column;
+    width:100%; max-width:768px; max-height:92vh; display:flex; flex-direction:column;
     position:relative; border-radius:28px; overflow:hidden;
     font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;
     color:var(--et-ink);
@@ -119,29 +119,62 @@
   .et__pane{animation:etPane .26s cubic-bezier(.16,1,.3,1);}
   @keyframes etPane{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-  /* якорь-PNG шага: крупный, тихий, на мягком стеклянном медальоне с радиальным
-     сапфировым свечением позади — картинка живет в атмосфере, не лежит наклейкой */
-  .et__anchor{position:relative;display:flex;align-items:center;gap:30px;padding:34px 40px 6px;}
-  .et__anchor::before{content:'';position:absolute;z-index:0;left:18px;top:8px;width:198px;height:198px;border-radius:50%;pointer-events:none;
-    background:radial-gradient(circle at 50% 42%, rgba(43,143,255,.16), transparent 66%);}
-  .et__anchor--jade::before{background:radial-gradient(circle at 50% 42%, rgba(46,160,110,.16), transparent 66%);}
-  .et__orb{position:relative;z-index:1;flex:0 0 154px;width:154px;height:154px;border-radius:40px;display:grid;place-items:center;overflow:hidden;
+  /* якорь-PNG шага: PNG на стеклянном медальоне со свечением-ядром позади,
+     отражением-полом (картинка «стоит», а не висит), верхним бликом-гранью и
+     чипом-номером шага в углу — кадр, а не пустой квадрат. Рядом — эйбрау-метка
+     контекста, заголовок, лид и компактные плашки-факты шага. */
+  .et__anchor{position:relative;display:flex;align-items:center;gap:30px;padding:32px 40px 12px;}
+  .et__anchor::before{content:'';position:absolute;z-index:0;left:14px;top:4px;width:216px;height:216px;border-radius:50%;pointer-events:none;
+    background:radial-gradient(circle at 50% 42%, rgba(43,143,255,.18), transparent 64%);}
+  .et__anchor--jade::before{background:radial-gradient(circle at 50% 42%, rgba(46,160,110,.17), transparent 64%);}
+
+  .et__orbwrap{position:relative;z-index:1;flex:0 0 156px;width:156px;height:156px;}
+  .et__orb{position:relative;width:156px;height:156px;border-radius:42px;display:grid;place-items:center;overflow:hidden;
     background:
-      radial-gradient(78% 70% at 50% 30%, rgba(255,255,255,.96), rgba(232,239,255,.55)),
-      linear-gradient(160deg, rgba(43,143,255,.08), rgba(43,143,255,.02));
-    border:1px solid rgba(43,111,224,.18);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 0 36px rgba(43,143,255,.14),0 16px 34px rgba(43,90,200,.14);}
-  .et__orb--jade{background:radial-gradient(78% 70% at 50% 30%, rgba(255,255,255,.96), rgba(228,247,237,.55)),linear-gradient(160deg, rgba(46,160,110,.08), rgba(46,160,110,.02));
-    border-color:rgba(28,126,82,.2);box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 0 36px rgba(46,160,110,.14),0 16px 34px rgba(28,126,82,.14);}
-  .et__orb img{width:120px;height:120px;object-fit:contain;filter:drop-shadow(0 12px 22px rgba(40,60,140,.22));}
-  .et__orb--jade img{filter:drop-shadow(0 10px 18px rgba(40,55,90,.2));}
+      radial-gradient(82% 76% at 50% 24%, rgba(255,255,255,.99), rgba(229,238,255,.55) 68%, rgba(212,224,250,.42) 100%),
+      linear-gradient(158deg, rgba(43,143,255,.12), rgba(43,143,255,.02));
+    border:1px solid rgba(43,111,224,.2);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 0 44px rgba(43,143,255,.16),0 18px 38px rgba(43,90,200,.16);}
+  /* отражение-пол: мягкая сапфировая тень-эллипс под фигурой */
+  .et__orb::before{content:'';position:absolute;z-index:0;left:50%;bottom:15px;width:108px;height:30px;transform:translateX(-50%);
+    border-radius:50%;background:radial-gradient(closest-side, rgba(43,90,200,.24), transparent 80%);}
+  /* верхний блик-грань стекла */
+  .et__orb::after{content:'';position:absolute;z-index:2;inset:0;pointer-events:none;border-radius:inherit;
+    background:linear-gradient(177deg, rgba(255,255,255,.72) 0%, rgba(255,255,255,0) 32%);}
+  .et__orb--jade{background:radial-gradient(82% 76% at 50% 24%, rgba(255,255,255,.99), rgba(227,247,237,.55) 68%, rgba(208,238,224,.42) 100%),linear-gradient(158deg, rgba(46,160,110,.12), rgba(46,160,110,.02));
+    border-color:rgba(28,126,82,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,1),inset 0 0 44px rgba(46,160,110,.16),0 18px 38px rgba(28,126,82,.16);}
+  .et__orb--jade::before{background:radial-gradient(closest-side, rgba(28,126,82,.22), transparent 80%);}
+  .et__orb img{position:relative;z-index:1;width:122px;height:122px;object-fit:contain;filter:drop-shadow(0 14px 22px rgba(40,60,140,.24));}
+  .et__orb--jade img{filter:drop-shadow(0 12px 18px rgba(40,55,90,.2));}
   /* маскот — фигура целиком, низом упирается в дно медальона (живее, чем по центру) */
-  .et__orb--mascot img{width:134px;height:166px;object-fit:contain;object-position:bottom;margin-bottom:-16px;align-self:end;}
+  .et__orb--mascot img{width:136px;height:168px;object-fit:contain;object-position:bottom;margin-bottom:-16px;align-self:end;}
   /* компас — крупнее, как ориентир */
-  .et__orb--compass img{width:128px;height:128px;}
+  .et__orb--compass img{width:130px;height:130px;}
+  /* чип-номер шага в углу медальона — узел восхождения */
+  .et__orbstep{position:absolute;z-index:3;right:-9px;bottom:-9px;min-width:34px;height:34px;padding:0 9px;border-radius:13px;
+    display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;font-variant-numeric:tabular-nums;letter-spacing:.01em;
+    background:linear-gradient(150deg,var(--et-acc2),var(--et-deep));
+    box-shadow:inset 0 0 12px rgba(175,215,255,.6),inset 0 1px 0 rgba(255,255,255,.55),0 7px 16px rgba(43,143,255,.42),0 0 0 4.5px #FBFCFF;}
+  .et__anchor--jade .et__orbstep{background:linear-gradient(150deg,var(--et-jade-hi),var(--et-jade-deep));
+    box-shadow:inset 0 0 12px rgba(190,255,225,.55),inset 0 1px 0 rgba(255,255,255,.5),0 7px 16px rgba(28,126,82,.4),0 0 0 4.5px #FBFCFF;}
+
   .et__anchortx{position:relative;z-index:1;flex:1 1 auto;min-width:0;}
-  .et__h{font-weight:700;font-size:23px;letter-spacing:-.5px;line-height:1.18;color:var(--et-ink);text-wrap:balance;}
-  .et__lead{font-size:15px;line-height:1.62;color:var(--et-sub);margin-top:11px;}
+  /* эйбрау-метка контекста шага — editorial, с тонкой ведущей чертой */
+  .et__eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:10.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--et-ink-acc);margin-bottom:12px;}
+  .et__eyebrow::before{content:'';width:16px;height:1.5px;border-radius:2px;background:linear-gradient(90deg,var(--et-acc),rgba(43,143,255,0));}
+  .et__anchor--jade .et__eyebrow{color:var(--et-jade-deep);}
+  .et__anchor--jade .et__eyebrow::before{background:linear-gradient(90deg,var(--et-jade),rgba(46,160,110,0));}
+  .et__h{font-weight:700;font-size:24px;letter-spacing:-.6px;line-height:1.16;color:var(--et-ink);text-wrap:balance;}
+  .et__lead{font-size:15px;line-height:1.6;color:var(--et-sub);margin-top:11px;}
+  /* плашки-факты шага — компактные подписи рядом с якорем */
+  .et__facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;}
+  .et__fact{display:inline-flex;align-items:center;gap:7px;height:30px;padding:0 12px;border-radius:10px;
+    font-size:12px;font-weight:600;color:var(--et-sub);white-space:nowrap;
+    background:rgba(255,255,255,.66);border:1px solid var(--et-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+  .et__fact svg{flex:0 0 auto;color:var(--et-ink-acc);}
+  .et__fact b{color:var(--et-ink);font-weight:700;}
+  .et__anchor--jade .et__fact svg{color:var(--et-jade-deep);}
 
   /* контент-секция шага под якорем — много воздуха */
   .et__sect{padding:22px 40px 36px;}
@@ -154,6 +187,24 @@
   .et__bnode{width:28px;height:28px;flex:0 0 28px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--et-deep);margin-top:1px;
     background:rgba(43,143,255,.10);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2),inset 0 0 12px rgba(43,143,255,.12);}
   .et__btext{flex:1 1 auto;min-width:0;font-size:14.5px;line-height:1.55;color:var(--et-ink);}
+
+  /* приложенные материалы — стеклянные карточки-вложения с сапфировым медальоном */
+  .et__mats{margin-top:24px;display:flex;flex-direction:column;gap:10px;}
+  .et__mats-h{font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--et-mute);margin-bottom:2px;}
+  .et__mat{display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;font-family:inherit;
+    padding:14px 15px;border-radius:15px;background:rgba(255,255,255,.66);border:1px solid var(--et-line);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85);transition:transform .15s,border-color .15s,box-shadow .15s;}
+  .et__mat:hover{transform:translateY(-1px);border-color:rgba(43,143,255,.4);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 9px 24px rgba(43,90,200,.1);}
+  .et__mat:active{transform:translateY(0);}
+  .et__mat-ic{flex:0 0 42px;width:42px;height:42px;border-radius:13px;display:grid;place-items:center;color:#fff;
+    background:linear-gradient(150deg,var(--et-acc2),var(--et-deep));
+    box-shadow:inset 0 0 12px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.5),0 5px 14px rgba(43,143,255,.26);}
+  .et__mat-b{flex:1 1 auto;min-width:0;}
+  .et__mat-t{font-size:14px;font-weight:600;color:var(--et-ink);line-height:1.32;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .et__mat-m{font-size:12px;color:var(--et-mute);margin-top:2px;}
+  .et__mat-go{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--et-ink-acc);
+    background:rgba(43,143,255,.08);box-shadow:inset 0 0 0 1px rgba(43,143,255,.16);transition:background .15s;}
+  .et__mat:hover .et__mat-go{background:rgba(43,143,255,.16);}
 
   /* лента «как это происходит» — метафора восхождения по шагам */
   .et__flow{display:flex;flex-direction:column;margin:4px 0 2px;}
@@ -230,12 +281,16 @@
   .et__inp::placeholder,.et__area::placeholder{color:var(--et-mute);}
   .et__inp:focus,.et__area:focus{border-color:var(--et-acc);box-shadow:inset 0 0 16px rgba(43,143,255,.08),0 0 0 4px rgba(43,143,255,.12);}
 
-  /* ── Низ: навигация + AI ──────────────────────────────────────────────── */
-  .et__foot{position:relative;z-index:2;display:flex;align-items:center;gap:11px;padding:20px 40px;
-    border-top:1px solid rgba(22,32,59,.08);background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.5));}
+  /* ── Низ: плашка-док навигации (Назад / AI / Далее) ───────────────────── */
+  .et__foot{position:relative;z-index:2;display:flex;align-items:center;gap:11px;padding:17px 28px;
+    border-top:1px solid rgba(22,32,59,.1);
+    background:linear-gradient(180deg,rgba(244,247,253,.45),rgba(244,247,253,.9));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.92);}
   .et__btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;border:0;white-space:nowrap;
-    font-family:inherit;font-size:14.5px;font-weight:600;padding:14px 24px;border-radius:14px;transition:transform .15s;}
-  .et__btn:disabled{opacity:.42;cursor:not-allowed;}
+    font-family:inherit;font-size:14.5px;font-weight:600;padding:14px 22px;border-radius:14px;transition:transform .15s,background .15s,box-shadow .15s,color .15s,opacity .15s;}
+  .et__btn:disabled{opacity:.4;cursor:not-allowed;}
+  .et__btn--ghost svg:first-child{transition:transform .15s;}
+  .et__btn--ghost:not(:disabled):hover svg:first-child{transform:translateX(-2px);}
   .et__btn--primary{background:var(--et-deep);color:#fff;font-weight:700;
     box-shadow:inset 0 0 24px rgba(175,215,255,.95),inset 0 0 8px rgba(255,255,255,.5),inset 0 1px 0 rgba(255,255,255,.5);}
   .et__btn--primary:hover:not(:disabled){background:#3A85F0;transform:translateY(-1px);}
@@ -271,10 +326,13 @@
     .et__head,.et__steps,.et__stepmeta,.et__anchor,.et__sect,.et__foot,.et__done{padding-left:24px;padding-right:24px;}
     .et__anchor{gap:20px;}
     .et__anchor::before{display:none;}
-    .et__orb{flex:0 0 104px;width:104px;height:104px;border-radius:28px;}
-    .et__orb img{width:82px;height:82px;}
-    .et__orb--compass img{width:88px;height:88px;}
-    .et__orb--mascot img{width:92px;height:114px;}
+    .et__orbwrap{flex:0 0 106px;width:106px;height:106px;}
+    .et__orb{width:106px;height:106px;border-radius:30px;}
+    .et__orb img{width:84px;height:84px;}
+    .et__orb--compass img{width:90px;height:90px;}
+    .et__orb--mascot img{width:94px;height:116px;}
+    .et__orbstep{min-width:30px;height:30px;font-size:13px;right:-7px;bottom:-7px;border-radius:11px;}
+    .et__facts{margin-top:13px;}
     .et__title{font-size:22px;max-width:100%;}
     .et__h{font-size:21px;}
     .et__foot{flex-wrap:wrap;}
@@ -350,6 +408,7 @@
         note: w.note || null,
         bullets: Array.isArray(w.bullets) ? w.bullets : null,
         flow: Array.isArray(w.flow) ? w.flow : null,
+        materials: Array.isArray(w.materials) ? w.materials : null,
       }));
     } else {
       const intro = d.intro || d.desc || d.why || '';
@@ -508,22 +567,71 @@
       return h(R.Fragment, null,
         h('div', { className: 'et__steps' }, segs),
         h('div', { className: 'et__stepmeta' },
-          h('span', { className: 'et__stepcap' },
-            onAction ? (act.type === 'info' ? 'Что дальше' : 'Последний шаг') : 'Знакомимся с задачей'),
           h('span', { className: 'et__stepcount et__num' }, 'Шаг ' + (idx + 1) + ' из ' + total)));
     }
 
-    /* ── якорь шага: PNG-медальон + заголовок + лид ───────────────────── */
+    /* русское склонение «шаг/шага/шагов» по числу */
+    function numWord(n, one, few, many) {
+      const m10 = n % 10, m100 = n % 100;
+      if (m10 === 1 && m100 !== 11) return n + ' ' + one;
+      if (m10 >= 2 && m10 <= 4 && (m100 < 10 || m100 >= 20)) return n + ' ' + few;
+      return n + ' ' + many;
+    }
+
+    /* эйбрау-метка контекста шага (несет смысл якоря, не дублирует прогресс) */
+    function eyebrowFor(kind) {
+      if (kind === 'upload') return 'Загрузка документа';
+      if (kind === 'form' || kind === 'text') return 'Заполнение';
+      if (kind === 'info') return 'На нашей стороне';
+      if (kind === 'flow') return ownerUs ? 'Наш процесс' : 'Путь задачи';
+      if (kind === 'explain') return 'Порядок действий';
+      return ownerUs ? 'Что делаем мы' : 'Знакомство с задачей';
+    }
+
+    /* плашки-факты шага — только реальные данные, без выдумок */
+    function factsFor(step, kind) {
+      const out = [];
+      if (kind === 'intro') {
+        if (total > 1) out.push({ ic: 'Flag', text: numWord(total, 'шаг', 'шага', 'шагов') });
+        out.push(act.type === 'upload' ? { ic: 'Upload', text: 'В конце — загрузка' }
+          : act.type === 'info' ? { ic: 'Check', text: 'Делаем сами' }
+            : { ic: 'Edit', text: 'В конце — пара полей' });
+      } else if (kind === 'flow') {
+        const n = (step && step.flow && step.flow.length) || 0;
+        if (n) out.push({ ic: 'Route', text: numWord(n, 'шаг', 'шага', 'шагов') });
+        out.push(ownerUs ? { ic: 'Check', text: 'На нашей стороне' } : { ic: 'User', text: 'Твой ход' });
+      } else if (kind === 'upload') {
+        out.push({ ic: 'Paperclip', text: 'JPG · PNG · PDF' });
+        out.push({ ic: 'File', text: 'до 20 МБ' });
+      } else if (kind === 'form' || kind === 'text') {
+        out.push({ ic: 'Edit', text: 'Пара коротких полей' });
+      } else if (kind === 'info') {
+        out.push({ ic: 'Check', text: 'Без действий с твоей стороны' });
+      }
+      return out;
+    }
+
+    /* ── якорь шага: PNG-медальон (свечение, пол, номер) + эйбрау/заголовок/
+       лид/плашки-факты ─────────────────────────────────────────────────── */
     function Anchor(step, kind, heading, lead) {
       const a = anchorForStep(step, kind, ownerUs);
       const jade = a.tone === 'jade';
       const toneCls = (a.tone && a.tone !== 'jade') ? ' et__orb--' + a.tone : '';
+      const facts = factsFor(step, kind);
       return h('div', { className: 'et__anchor' + (jade ? ' et__anchor--jade' : '') },
-        h('div', { className: 'et__orb' + toneCls + (jade ? ' et__orb--jade' : '') },
-          h('img', { src: a.img, alt: '', draggable: false })),
+        h('div', { className: 'et__orbwrap' },
+          h('div', { className: 'et__orb' + toneCls + (jade ? ' et__orb--jade' : '') },
+            h('img', { src: a.img, alt: '', draggable: false })),
+          h('span', { className: 'et__orbstep et__num' }, idx + 1)),
         h('div', { className: 'et__anchortx' },
+          h('div', { className: 'et__eyebrow' }, eyebrowFor(kind)),
           h('div', { className: 'et__h' }, heading),
-          lead ? h('div', { className: 'et__lead' }, lead) : null));
+          lead ? h('div', { className: 'et__lead' }, lead) : null,
+          facts.length
+            ? h('div', { className: 'et__facts' },
+                facts.map((f, i) => h('span', { className: 'et__fact', key: 'fa' + i },
+                  icon(f.ic, { size: 13 }), f.text)))
+            : null));
     }
 
     /* ── шаг-объяснение ───────────────────────────────────────────────── */
@@ -543,6 +651,20 @@
                 step.bullets.filter(Boolean).map((b, i) => h('div', { className: 'et__bullet', key: 'b' + i },
                   h('span', { className: 'et__bnode' }, icon('Check', { size: 15, strokeWidth: 2.6 })),
                   h('span', { className: 'et__btext' }, b))))
+            : null,
+          step.materials && step.materials.length
+            ? h('div', { className: 'et__mats' },
+                h('div', { className: 'et__mats-h' }, 'Материалы к задаче'),
+                step.materials.filter(Boolean).map((m, i) => {
+                  const mi = m.kind === 'guide' ? 'Book' : 'Doc';
+                  const go = m.kind === 'pdf' ? 'Download' : 'ArrowRight';
+                  return h('button', { className: 'et__mat', type: 'button', key: 'm' + i },
+                    h('span', { className: 'et__mat-ic' }, icon(mi, { size: 18 })),
+                    h('span', { className: 'et__mat-b' },
+                      h('span', { className: 'et__mat-t' }, m.name),
+                      m.meta ? h('span', { className: 'et__mat-m et__num' }, m.meta) : null),
+                    h('span', { className: 'et__mat-go' }, icon(go, { size: 16 })));
+                }))
             : null,
           step.flow && step.flow.length
             ? h('div', { className: 'et__flow' },
@@ -592,7 +714,7 @@
               h('div', { className: 'et__dropt' }, 'Перетащи сюда или ', h('b', null, 'выбери файл')),
               h('div', { className: 'et__droph' },
                 icon('Paperclip', { size: 14 }),
-                act.formats || 'JPG, PNG или PDF, до 20 МБ. Сделай так, чтобы текст и печати читались.'),
+                act.formats || 'Сделай так, чтобы текст и печати на документе читались.'),
               h('input', {
                 ref: fileInput, type: 'file', style: { display: 'none' },
                 accept: act.accept || 'image/*,.pdf',
@@ -691,10 +813,8 @@
               h('button', { className: 'et__btn et__btn--primary', type: 'button', onClick: close },
                 'Закрыть', icon('Check', { size: 16 })))
           : h(R.Fragment, null,
-              idx > 0
-                ? h('button', { className: 'et__btn et__btn--ghost', type: 'button', onClick: back },
-                    icon('ChevronLeft', { size: 16 }), 'Назад')
-                : null,
+              h('button', { className: 'et__btn et__btn--ghost', type: 'button', onClick: back, disabled: idx === 0 },
+                icon('ChevronLeft', { size: 16 }), 'Назад'),
               h('button', { className: 'et__btn et__btn--ai', type: 'button', onClick: () => { close(); openChat({ label: model.title }); } },
                 icon('Spark', { size: 16 }), 'Спросить AI'),
               h('span', { className: 'et__spacer' }),

@@ -20,9 +20,14 @@ Thumbs.db
 # dev throwaway: screenshot/probe scripts, inbox, raw image sources, mockups
 /_*.mjs
 /_*.js
+/_*.cjs
 /_*.html
 shot.js
 .inbox/
 assets/_*
 *.orig.png
 *.src.jpg
+.env*
+
+# build output (Vite)
+dist/

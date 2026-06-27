@@ -23,12 +23,12 @@
   <!-- Шрифты: Onest (заголовки/числа) + Manrope (текст) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-  <!-- Дизайн-токены, затем базовые стили (порядок важен). ?v — бастер кеша:
-       бампай число при правках CSS, чтобы браузер брал свежий файл. -->
-  <link rel="stylesheet" href="tokens.css?v=18" />
-  <link rel="stylesheet" href="styles.css?v=19" />
+  <!-- Дизайн-токены, затем базовые стили (порядок важен). Хешируются на сборке
+       (Vite), бастер кеша вручную больше не нужен. -->
+  <link rel="stylesheet" href="tokens.css" />
+  <link rel="stylesheet" href="styles.css" />
 
   <!-- Конфигурация: база бэка. Пусто => фронт живет на mock (graceful-fallback). -->
   <script>
@@ -40,57 +40,8 @@
   <a class="u-skip-link" href="#main">Перейти к содержимому</a>
   <div id="app"></div>
 
-  <!-- React 18 + ReactDOM (UMD) + Babel standalone (no-build) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- ВАЖНО: запуск только по HTTP (статик-сервер), не file:// (CORS блокирует fetch .jsx):
-         python -m http.server 5173   (из папки frontend), открывать http://localhost:5173
-       Загрузчик ELoad компилирует каждый .jsx в своей области (см. src/lib/loader.js) —
-       это чинит коллизию Babel-helpers между файлами. -->
-  <script src="src/lib/loader.js"></script>
-  <script>
-    // Порядок строгий: lib -> ui -> screens -> app. Каждый файл регистрирует себя в window.
-    window.ELoad([
-      'src/lib/icons.jsx',
-      'src/lib/mock.jsx',
-      'src/lib/api.jsx',
-      'src/lib/router.jsx',
-      'src/lib/theme.jsx',
-      'src/ui/primitives.jsx',
-      'src/ui/forms.jsx',
-      'src/ui/surfaces.jsx',
-      'src/ui/overlays.jsx',
-      'src/ui/navigation.jsx',
-      'src/ui/shell.jsx',
-      'src/ui/dashboard.jsx',
-      'src/screens/landing.jsx',
-      'src/screens/anketa.jsx',
-      'src/screens/result.jsx',
-      'src/screens/auth.jsx',
-      'src/screens/diagnostics.jsx',
-      'src/screens/documents.jsx',
-      'src/screens/payments.jsx',
-      'src/screens/partner.jsx',
-      'src/screens/assistant.jsx',
-      'src/screens/home.jsx',
-      'src/screens/cabinet-parent.jsx',
-      'src/screens/student-shell.jsx',
-      'src/screens/student-task.jsx',
-      'src/screens/cabinet-student.jsx',
-      'src/screens/student-plan.jsx',
-      'src/screens/student-stage.jsx',
-      'src/screens/student-stage-b.jsx',
-      'src/screens/student-task.jsx',
-      'src/screens/crm-clients.jsx',
-      'src/screens/crm-client.jsx',
-      'src/screens/crm-funnel.jsx',
-      'src/screens/learning-schedule.jsx',
-      'src/screens/learning-lesson.jsx',
-      'src/screens/learning-progress.jsx',
-      'src/app.jsx'
-    ]);
-  </script>
+  <!-- Vite-сборка: один минифицированный бандл, React внутри. Babel из браузера
+       убран (JSX в коде нет). Порядок модулей задан в src/main.js. -->
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>

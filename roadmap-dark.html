@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<!-- roadmap-dark.html — «Твое восхождение» (design.md, режим А «Атмосфера»):
+     ОКНО-попап с пропорцией картинки (3:2): гора заполняет окно целиком и ничего
+     не режется, слева — стеклянная карточка этапа. Прожиг тропы снизу вверх,
+     в финале НЕ взрыв, а голубое ОЗАРЕНИЕ всего попапа. Узлы привязаны к окну
+     (не к вьюпорту). Без частиц. Embed: postMessage 'roadmap-close'.
+     Русский без буквы «е». -->
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>EastSide — Твое восхождение</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+/* единый шрифт интерфейса — менять тут одной строкой */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif}
+*,*::before,*::after{font-family:var(--font-display)!important}
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --sapphire: #2B8FFF; --sapphire-2: #5CB4FF; --sapphire-bright: #5CB4FF; --sapphire-deep: #1E72E6;
+    --sapphire-btn: #2073E6; --sapphire-soft: #9FCBFF;
+    --star-1: #F5C84C; --star-2: #E2A52E;
+    --tx: #FFFFFF; --tx-soft: #C5CBE3; --tx-mute: #8B93B8;
+    --line: rgba(255,255,255,.10); --line-strong: rgba(255,255,255,.18);
+    --font-ui: 'Onest', 'Segoe UI', sans-serif;
+  }
+  ::selection { background: rgba(43,143,255,0.35); }
+  button { -webkit-tap-highlight-color: transparent; font-family: var(--font-ui); }
+  button:focus-visible { outline: 2px solid var(--sapphire-2); outline-offset: 3px; }
+  html, body { height: 100%; }
+  body { background: #010208; font-family: var(--font-ui); overflow: hidden;
+         display: grid; place-items: center;
+         -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+  /* ============ ОКНО-попап: пропорция картинки 3:2 ============ */
+  .popup {
+    position: relative; overflow: hidden;
+    width: min(96vw, calc(94vh * 1.5)); aspect-ratio: 1536 / 1024;
+    border-radius: 26px; background: #03081C;
+    border: 1px solid var(--line);
+    box-shadow: 0 50px 130px rgba(0,2,12,0.72), inset 0 1px 0 rgba(255,255,255,0.06);
+  }
+  /* как модалка: рамку и пропорцию задает родитель, попап просто заполняет ее */
+  body.embed { background: transparent; }
+  body.embed .popup { width: 100%; height: 100%; border-radius: 0; border: 0; box-shadow: none; }
+
+  .stage { position: absolute; inset: 0; will-change: transform; }
+  .stage svg.scene { display: block; width: 100%; height: 100%; }
+
+  /* затемнение — мягкое, бережет боковое свечение-обруч вокруг горы */
+  .vignette {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 150% 130% at 60% 42%, transparent 70%, rgba(0,1,6,0.5) 100%),
+      linear-gradient(0deg, rgba(0,1,6,0.4), transparent 22%);
+  }
+  /* голубое ОЗАРЕНИЕ всего попапа в финале (не взрыв) */
+  .wash {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+    background: radial-gradient(62% 50% at 60% 13%, rgba(86,165,255,0.5), rgba(43,143,255,0.16) 46%, transparent 72%);
+  }
+  .grain {
+    position: absolute; inset: -40px; pointer-events: none; opacity: 0.04; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============ крестик выхода — всегда на попапе ============ */
+  .close {
+    position: absolute; top: 18px; right: 18px; z-index: 9;
+    width: 42px; height: 42px; border-radius: 50%; cursor: pointer; border: 1px solid var(--line);
+    display: grid; place-items: center; color: var(--tx-soft);
+    background: rgba(4,8,22,0.55); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 26px rgba(0,2,10,0.4);
+    opacity: 0; transition: color 180ms ease, border-color 180ms ease, transform 180ms ease, background 180ms ease, opacity 500ms ease;
+  }
+  .close.in { opacity: 1; }
+  .close:hover { color: #fff; border-color: var(--line-strong); background: rgba(12,22,54,0.7); }
+  .close:active { transform: scale(0.93); }
+  .close svg { width: 17px; height: 17px; }
+
+  /* ============ ЛЕВАЯ ПАНЕЛЬ: описание выбранного этапа (прозрачное стекло, без блюра) ============ */
+  .card {
+    position: absolute; top: 22px; bottom: 22px; left: clamp(18px, 3%, 46px);
+    z-index: 6; width: clamp(364px, 33%, 474px);
+    display: flex; flex-direction: column;
+    padding: 36px 34px 24px; border-radius: 24px;
+    background: linear-gradient(180deg, rgba(8,16,42,0.72), rgba(4,8,22,0.58));
+    border: 1px solid var(--line-strong);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 110px rgba(43,143,255,0.10), 0 40px 90px rgba(0,1,8,0.6);
+    opacity: 0; transform: translateY(18px);
+    transition: opacity 700ms cubic-bezier(0.23,1,0.32,1), transform 700ms cubic-bezier(0.23,1,0.32,1);
+  }
+  .card.in { opacity: 1; transform: translateY(0); }
+
+  /* тело: описание выбранного этапа на всю высоту карточки */
+  .c-body { flex: 1 1 auto; min-height: 0; overflow-y: auto; overflow-x: hidden; margin-right: -10px; padding-right: 10px;
+            display: flex; flex-direction: column;
+            scrollbar-width: thin; scrollbar-color: rgba(120,170,255,0.22) transparent;
+            transition: opacity 180ms ease, transform 180ms ease; }
+  .c-body::-webkit-scrollbar { width: 5px; }
+  .c-body::-webkit-scrollbar-thumb { background: rgba(120,170,255,0.18); border-radius: 99px; }
+  .c-body.swap { opacity: 0; transform: translateY(8px); }
+
+  .c-kicker { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700;
+              letter-spacing: 0; text-transform: none; color: var(--sapphire-soft); font-variant-numeric: tabular-nums; }
+  .c-kicker .dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+  .c-kicker .when { color: var(--tx-mute); letter-spacing: 0.07em; }
+  .c-kicker.goal { color: var(--star-1); }
+  .c-title { margin-top: 16px; font-size: clamp(29px, 2.5vw, 37px); font-weight: 600; color: #fff;
+             letter-spacing: -0.028em; line-height: 1.04; text-wrap: balance; }
+  .c-lead { margin-top: 20px; font-size: 15.5px; line-height: 1.66; color: #DEE5F6; max-width: 38ch; }
+
+  /* «что вас ждет» — пункты этапа строками с обводкой и тихим свечением изнутри */
+  .c-points { margin-top: 30px; display: flex; flex-direction: column; gap: 9px; }
+  .c-pt-h { font-size: 10.5px; font-weight: 700; letter-spacing: 0; text-transform: none;
+            color: var(--tx-mute); margin-bottom: 6px; }
+  .cpoint { display: flex; padding: 13px 16px; border-radius: 13px;
+            background: rgba(43,143,255,0.07); border: 1px solid rgba(92,180,255,0.16);
+            box-shadow: inset 0 0 32px rgba(43,143,255,0.22), inset 0 1px 0 rgba(255,255,255,0.06);
+            font-size: 14px; line-height: 1.42; color: var(--tx-soft); }
+  .c-points.goal .cpoint { background: rgba(245,200,76,0.055); border-color: rgba(245,200,76,0.16);
+            box-shadow: inset 0 0 32px rgba(245,200,76,0.16), inset 0 1px 0 rgba(255,255,255,0.06); }
+
+  /* «итог этапа» — что получаете на выходе, прижат к низу карточки */
+  .c-main { display: flex; flex-direction: column; }
+  .c-result { margin-top: auto; padding: 16px 18px; border-radius: 14px;
+              background: rgba(43,143,255,0.08); border: 1px solid rgba(43,143,255,0.32);
+              box-shadow: inset 0 0 52px rgba(43,143,255,0.30), inset 0 1px 0 rgba(255,255,255,0.07); }
+  .c-result .lbl { display: inline-flex; align-items: center; gap: 7px; font-size: 10px; font-weight: 700;
+                   letter-spacing: 0; text-transform: none; color: var(--sapphire-soft); }
+  .c-result .lbl::before { content: ''; width: 13px; height: 1px; background: currentColor; opacity: 0.6; }
+  .c-result .val { display: block; margin-top: 9px; font-size: 14px; line-height: 1.48; color: #E6ECFA; }
+  .c-result.goal { background: rgba(245,200,76,0.07); border-color: rgba(245,200,76,0.3);
+                   box-shadow: inset 0 0 52px rgba(245,200,76,0.22), inset 0 1px 0 rgba(255,255,255,0.07); }
+  .c-result.goal .lbl { color: var(--star-1); }
+
+  /* ——— футер: 1:1 с anketa-dark (форма кнопок, дотсы, стрелки rotate -45),
+         только «Назад» тёмная вместо белой и контейнер в гамме карточки ——— */
+  .foot { margin-top: 22px; flex: none; display: flex; align-items: center; gap: 10px;
+          padding: 8px; border: 1px solid var(--line); border-radius: 16px;
+          background: rgba(255,255,255,0.018);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.04); }
+  /* «Назад»: та же кнопка, что в анкете, но тёмная */
+  .btn-back { display: inline-flex; align-items: center; gap: 8px;
+              border: 1px solid var(--line-strong); border-radius: 13px; cursor: pointer;
+              background: rgba(255,255,255,0.05); color: var(--tx-soft); font: 600 14px var(--font-ui);
+              padding: 12px 18px;
+              transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease, opacity 0.15s ease; }
+  .btn-back:hover:not(:disabled) { background: rgba(255,255,255,0.10); color: #fff; }
+  .btn-back:disabled { opacity: 0.32; cursor: default; }
+  .foot-mid { flex: 1; display: flex; justify-content: center; align-items: center; min-width: 0; }
+  .foot-step { font-size: 12.5px; font-weight: 500; color: var(--tx-mute); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  /* «Дальше»: 1:1 с анкетой — сапфир, свечение ВНУТРИ */
+  .btn-next { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 13px; cursor: pointer;
+              background: var(--sapphire-btn); color: #fff; font: 700 14px var(--font-ui); padding: 12px 22px; white-space: nowrap;
+              box-shadow: inset 0 0 18px rgba(120,190,255,0.85), inset 0 1px 0 rgba(255,255,255,0.3);
+              transition: background 0.12s ease, opacity 0.15s ease; }
+  .btn-next:hover:not(:disabled) { background: var(--sapphire); }
+  .btn-next:disabled { opacity: 0.4; cursor: default; }
+  .btn-back svg, .btn-next svg { width: 15px; height: 15px; flex: none; transform: rotate(-45deg); }
+
+  /* ============ маркеры этапов: бусина-веха на тропе + подпись-чип сбоку (арт не перекрываем) ============ */
+  .node { position: absolute; z-index: 7; width: 0; height: 0; pointer-events: none;
+          opacity: 0; transition: opacity 460ms ease; }
+  .node.in { opacity: 1; }
+  /* бусина — деликатная светящаяся веха прямо на тропе */
+  .node .bead { position: absolute; left: 0; top: 0; transform: translate(-50%, -50%);
+        width: 9px; height: 9px; border-radius: 50%; cursor: pointer; pointer-events: auto;
+        background: var(--sapphire-bright);
+        box-shadow: 0 0 0 3px rgba(4,9,24,0.6), 0 0 11px 2px rgba(92,180,255,0.55);
+        transition: transform 220ms cubic-bezier(0.23,1,0.32,1), background 220ms ease, box-shadow 220ms ease; }
+  /* подпись — прозрачный стеклянный чип, уводится в сторону от тропы */
+  .node .tag { position: absolute; top: 0; transform: translateY(-50%); white-space: nowrap;
+        display: inline-flex; align-items: center; gap: 9px; cursor: pointer; pointer-events: auto;
+        padding: 6px 13px 6px 7px; border-radius: 12px; opacity: 0.92;
+        background: rgba(7,12,28,0.66); border: 1px solid rgba(140,185,255,0.28);
+        backdrop-filter: blur(20px) saturate(1.1); -webkit-backdrop-filter: blur(20px) saturate(1.1);
+        box-shadow: 0 10px 26px rgba(0,2,12,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+        transition: transform 220ms cubic-bezier(0.23,1,0.32,1), background 220ms ease, border-color 220ms ease, box-shadow 220ms ease, opacity 220ms ease; }
+  .node.r .tag { left: 17px; }
+  .node.l .tag { right: 17px; }
+  .node .tag::before { content: ''; position: absolute; top: 50%; transform: translateY(-50%); width: 13px; height: 1px; }
+  .node.r .tag::before { right: 100%; background: linear-gradient(90deg, rgba(150,190,255,0.05), rgba(150,190,255,0.5)); }
+  .node.l .tag::before { left: 100%; background: linear-gradient(90deg, rgba(150,190,255,0.5), rgba(150,190,255,0.05)); }
+  .node .tag .n { flex: none; width: 19px; height: 19px; border-radius: 6px; display: grid; place-items: center;
+        font-size: 11.5px; font-weight: 700; font-variant-numeric: tabular-nums;
+        color: var(--sapphire-soft); background: rgba(43,143,255,0.18); }
+  .node .tag .t { font-size: 13px; font-weight: 600; color: #EAF1FF; letter-spacing: -0.01em; }
+
+  .node:hover .tag { opacity: 1; border-color: rgba(160,205,255,0.40); transform: translateY(-50%) scale(1.03); }
+  .node:hover .bead { transform: translate(-50%, -50%) scale(1.28); }
+
+  .node.sel .bead { background: #fff; transform: translate(-50%, -50%) scale(1.32);
+        box-shadow: 0 0 0 3px rgba(4,9,24,0.6), 0 0 18px 4px rgba(92,180,255,0.85); }
+  .node.sel .tag { opacity: 1; border-color: rgba(150,195,255,0.55);
+        background: linear-gradient(180deg, rgba(30,72,152,0.66), rgba(14,40,98,0.52));
+        box-shadow: 0 10px 28px rgba(0,4,20,0.5), 0 0 20px rgba(43,143,255,0.32), inset 0 1px 0 rgba(255,255,255,0.14); }
+  .node.sel .tag .n { background: var(--sapphire); color: #fff; }
+  .node.sel .tag .t { color: #fff; }
+
+  .node.goal .bead { background: var(--star-1); box-shadow: 0 0 0 3px rgba(4,9,24,0.6), 0 0 13px 3px rgba(245,200,76,0.6); }
+  .node.goal .tag .n { color: var(--star-1); background: rgba(245,200,76,0.16); }
+  .node.goal.sel .bead { background: #FFE9A8; box-shadow: 0 0 0 3px rgba(4,9,24,0.6), 0 0 18px 5px rgba(245,200,76,0.85); }
+  .node.goal.sel .tag { border-color: rgba(245,210,130,0.6);
+        background: linear-gradient(180deg, rgba(118,88,22,0.58), rgba(66,48,10,0.46));
+        box-shadow: 0 10px 28px rgba(0,4,20,0.5), 0 0 20px rgba(245,200,76,0.28), inset 0 1px 0 rgba(255,255,255,0.14); }
+  .node.goal.sel .tag .n { background: var(--star-2); color: #3A2A07; }
+
+  @media (prefers-reduced-motion: reduce) { .card, .close, .node { transition: opacity 1ms; } }
+</style>
+</head>
+<body>
+<div class="popup" id="popup">
+  <div class="stage" id="stage">
+    <svg class="scene" id="svg" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <filter id="softRise" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>
+        <mask id="mRise"><rect id="riseRect" x="-220" width="1976" y="1024" height="320" fill="#fff" filter="url(#softRise)"/></mask>
+        <radialGradient id="flare">
+          <stop offset="0"    stop-color="#BFE2FF" stop-opacity="0.92"/>
+          <stop offset="0.18" stop-color="#6FC0FF" stop-opacity="0.8"/>
+          <stop offset="0.48" stop-color="#2B8FFF" stop-opacity="0.32"/>
+          <stop offset="1"    stop-color="#2B8FFF" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <rect width="1536" height="1024" fill="#03081C"/>
+      <image id="imgBase" width="1536" height="1024" opacity="0"/>
+      <image id="imgFull" width="1536" height="1024" opacity="0" style="filter: brightness(1.16) saturate(1.1);"/>
+      <g mask="url(#mRise)" style="mix-blend-mode: screen;">
+        <image id="imgGlow" width="1536" height="1024" style="filter: brightness(1.14) saturate(1.12);"/>
+      </g>
+      <circle id="climaxFlare" r="580" fill="url(#flare)" opacity="0" style="mix-blend-mode: screen;"/>
+      <circle id="peakFlare"   r="250"  fill="url(#flare)" opacity="0" style="mix-blend-mode: screen;"/>
+    </svg>
+
+    <div class="vignette" id="vig"></div>
+    <div class="grain"></div>
+    <div class="wash" id="wash"></div>
+    <div class="ui" id="uiNodes"></div>
+  </div>
+
+  <button class="close" id="btnClose" type="button" aria-label="Закрыть">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+  </button>
+
+  <aside class="card" id="uiCard">
+    <div class="c-body" id="cBody">
+      <div class="c-main">
+        <div class="c-kicker" id="cKicker"></div>
+        <h2 class="c-title" id="cTitle"></h2>
+        <p class="c-lead" id="cLead"></p>
+        <div class="c-points" id="cPoints"></div>
+      </div>
+      <div class="c-result" id="cResult"></div>
+    </div>
+    <div class="foot">
+      <button class="btn-back" id="navPrev" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+        Назад
+      </button>
+      <div class="foot-mid">
+        <span class="foot-step" id="cStep"></span>
+      </div>
+      <button class="btn-next" id="navNext" type="button">
+        Дальше
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+  </aside>
+</div>
+
+<script>
+const IMG_W = 1536, IMG_H = 1024;
+const IMG_NIGHT = 'funnel-assets/prototypes/v2/mtn-night-hd.png';
+const IMG_GLOW  = 'funnel-assets/prototypes/v2/road-clean.png';
+const IMG_FULL  = 'funnel-assets/prototypes/v2/mtn-lit-hd.png';
+
+const EMBED = window.self !== window.top;
+if (EMBED) document.body.classList.add('embed');
+function closeEmbed() { try { parent.postMessage({ type: 'roadmap-close' }, '*'); } catch (e) {} }
+function doClose() { if (EMBED) closeEmbed(); else location.href = 'diagnostic-dark.html'; }
+
+const STAR = { x: 1044, y: 128 };
+
+/* 7 этапов + вершина-цель. pos — точка-веха на тропе у иконки (viewBox 1536x1024).
+   side — куда уходит подпись-чип ('r' вправо, 'l' влево), чтобы не лезть на тропу/арт.
+   lead — суть этапа; points — что конкретно в него входит. */
+const STAGES = [
+  { pos: [946, 856], side: 'r', nudge: [78, -8], title: 'Знакомство и анализ', date: 'Июнь 2026',
+    lead: 'Знакомимся с вами и смотрим на ситуацию целиком: оценки, уровень языка, желаемая специальность, город и бюджет. На этом фундаменте строится весь дальнейший путь.',
+    points: ['Оцениваем профиль и сильные стороны', 'Подбираем реалистичный уровень вузов', 'Считаем шансы на грант', 'Намечаем сроки всего пути'],
+    result: 'Понятная картина ваших шансов, уровня вузов и направления, с которым стоит работать.' },
+  { pos: [850, 708], side: 'l', title: 'Стратегия', date: 'Июль 2026',
+    lead: 'Превращаем ваш профиль в конкретный план поступления — с понятным списком вузов, грантов и порядком действий. Вы видите, куда идете и почему именно туда.',
+    points: ['Шорт-лист вузов под вас', 'Гранты и стипендии, на которые идем', 'Сроки и порядок подачи', 'Запасные варианты на всякий случай'],
+    result: 'Готовый план поступления: список вузов, грантов и четкая последовательность шагов.' },
+  { pos: [1080, 620], side: 'r', nudge: [44, 0], title: 'Подготовка документов', date: 'Авг — ноя 2026',
+    lead: 'Собираем и оформляем весь пакет для вузов и грантов. Самый объемный этап — ведем вас по каждому документу, чтобы ничего не потерялось.',
+    points: ['Паспорт, аттестат, выписка оценок, фото', 'Сертификат языка: HSK, IELTS или Duolingo', 'Мотивационное письмо и рекомендации', 'Нотариальные переводы и анкеты'],
+    result: 'Полный пакет документов, готовый к подаче и принятый вузами без замечаний.' },
+  { pos: [898, 540], side: 'l', nudge: [-6, 4], title: 'Подача заявок', date: 'Декабрь 2026',
+    lead: 'Подаем готовый пакет во все вузы из стратегии — точно в сроки каждой приемной комиссии. Вам не нужно следить за дедлайнами, это берем на себя.',
+    points: ['Подача точно в сроки комиссий', 'Следим за статусами заявок', 'Отвечаем на запросы вузов', 'Держим связь с приемными комиссиями'],
+    result: 'Заявки поданы во все целевые вузы вовремя и по правилам каждого из них.' },
+  { pos: [1086, 440], side: 'r', nudge: [38, 0], title: 'Интервью и экзамены', date: 'Янв — мар 2027',
+    lead: 'Готовим вас к собеседованиям и вступительным испытаниям, чтобы вы пришли уверенно и спокойно. Разбираем формат каждого вуза заранее.',
+    points: ['Репетируем ответы на частые вопросы', 'Разбираем формат каждого вуза', 'Поддерживаем перед интервью', 'Подтягиваем язык до нужного уровня'],
+    result: 'Вы готовы к интервью и экзаменам и понимаете, чего ждать на каждом.' },
+  { pos: [1012, 344], side: 'l', title: 'Результат и выбор', date: 'Апр — май 2027',
+    lead: 'Приходят ответы от вузов — вместе разбираем офферы и выбираем лучший вариант именно для вас. Решение принимаем без спешки и давления.',
+    points: ['Разбираем каждый оффер и условия гранта', 'Сравниваем вузы, города и стоимость', 'Выбираем сильнейшее предложение', 'Помогаем принять решение спокойно'],
+    result: 'Выбран лучший оффер с грантом под ваши цели и бюджет.' },
+  { pos: [1086, 224], side: 'r', nudge: [38, 0], title: 'Виза и переезд', date: 'Июнь — авг 2027',
+    lead: 'Оформляем студенческую визу и готовим вас к переезду — спокойно и по шагам, без суеты в последний момент. Вы заранее знаете весь маршрут.',
+    points: ['Студенческая виза', 'Билеты и маршрут до кампуса', 'Подготовка к регистрации в вузе', 'Чек-лист вещей и документов в дорогу'],
+    result: 'Виза на руках, переезд спланирован — от вылета до заселения в кампус.' },
+  { pos: [990, 150], side: 'l', goal: true, title: 'Вы в Китае', date: 'Сентябрь 2027',
+    lead: 'Вершина восхождения: вы студент китайского вуза. Мы рядом весь первый семестр, пока вы обживаетесь на новом месте.',
+    points: ['Заселение в кампус', 'Старт учебы', 'Знакомство с университетом и городом', 'Сопровождение весь первый семестр'],
+    result: 'Вы учитесь в Китае — и не остаетесь одни на старте новой жизни.' },
+];
+const N_STEPS = STAGES.filter(s => !s.goal).length;
+
+const $ = id => document.getElementById(id);
+const svg = $('svg');
+const riseRect = $('riseRect');
+$('peakFlare').setAttribute('cx', STAR.x); $('peakFlare').setAttribute('cy', STAR.y);
+$('climaxFlare').setAttribute('cx', STAR.x); $('climaxFlare').setAttribute('cy', STAR.y);
+
+const RISE_BOTTOM = IMG_H + 80, RISE_TOP = STAR.y - 8;
+function frontYFor(f) { return f <= 0 ? RISE_BOTTOM + 40 : RISE_BOTTOM - f * (RISE_BOTTOM - RISE_TOP); }
+setReveal(0);
+
+/* ============ маркеры этапов на горе: нумерованная точка рядом с каждой иконкой ============ */
+const uiNodes = $('uiNodes');
+const nodes = [];
+let selected = -1;
+
+STAGES.forEach((s, i) => {
+  const el = document.createElement('div');
+  el.className = 'node ' + (s.side === 'l' ? 'l' : 'r') + (s.goal ? ' goal' : '');
+  el.innerHTML = '<div class="bead"></div>' +
+    '<div class="tag"><span class="n">' + (s.goal ? '★' : (i + 1)) + '</span>' +
+    '<span class="t">' + s.title + '</span></div>';
+  if (s.goal) el.style.zIndex = 8;
+  el.addEventListener('click', () => select(i));
+  uiNodes.appendChild(el);
+  nodes.push(el);
+});
+
+/* узлы лежат внутри .stage (== бокс попапа), считаются ОТ окна. pos — веха на тропе у
+   иконки; бусина садится точно на неё, подпись-чип уводится в сторону (side) CSS-ом.
+   preserveAspectRatio=meet → масштаб + центрирующий отступ; камера (.stage scale)
+   масштабирует их вместе с картинкой. */
+function placeMarks() {
+  const pr = $('popup').getBoundingClientRect();
+  const scale = Math.min(pr.width / IMG_W, pr.height / IMG_H);
+  const offX = (pr.width - IMG_W * scale) / 2;
+  const offY = (pr.height - IMG_H * scale) / 2;
+  STAGES.forEach((s, i) => {
+    const n = s.nudge || [0, 0];
+    nodes[i].style.left = (offX + (s.pos[0] + n[0]) * scale) + 'px';
+    nodes[i].style.top = (offY + (s.pos[1] + n[1]) * scale) + 'px';
+  });
+}
+function watchSize() {
+  if (window.ResizeObserver) new ResizeObserver(placeMarks).observe($('popup'));
+  window.addEventListener('resize', placeMarks);
+}
+
+/* ============ левая карточка: описание выбранного этапа + футер ============ */
+const ARROW_FWD = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+
+/* футер «Назад · точки · Дальше» — как в анкете */
+function renderFoot(i) {
+  $('cStep').textContent = STAGES[i].goal ? 'Вершина восхождения' : ('Этап ' + (i + 1) + ' из ' + N_STEPS);
+  $('navPrev').disabled = i <= 0;
+  $('navNext').disabled = i >= STAGES.length - 1;
+  $('navNext').innerHTML = (STAGES[i].goal ? 'Готово' : (i === STAGES.length - 2 ? 'К вершине' : 'Дальше')) + ARROW_FWD;
+}
+
+function select(i, opts) {
+  if (i < 0 || i >= STAGES.length) return;
+  selected = i;
+  nodes.forEach((n, j) => n.classList.toggle('sel', j === i));
+  const s = STAGES[i];
+  const body = $('cBody');
+  const apply = () => {
+    $('cKicker').className = 'c-kicker' + (s.goal ? ' goal' : '');
+    $('cKicker').innerHTML = '<span>' + (s.goal ? 'Вершина' : 'Этап ' + (i + 1)) + '</span>' +
+      '<span class="dot"></span><span class="when">' + s.date + '</span>';
+    $('cTitle').textContent = s.title;
+    $('cLead').textContent = s.lead;
+    $('cPoints').className = 'c-points' + (s.goal ? ' goal' : '');
+    $('cPoints').innerHTML = '<div class="c-pt-h">Что вас ждет</div>' +
+      s.points.map(p => '<div class="cpoint"><span>' + p + '</span></div>').join('');
+    $('cResult').className = 'c-result' + (s.goal ? ' goal' : '');
+    $('cResult').innerHTML = '<span class="lbl">' + (s.goal ? 'Итог пути' : 'Итог этапа') + '</span>' +
+      '<span class="val">' + s.result + '</span>';
+    renderFoot(i);
+    body.scrollTop = 0;
+  };
+  if (opts && opts.instant) { apply(); return; }
+  body.classList.add('swap');
+  setTimeout(() => { apply(); body.classList.remove('swap'); }, 150);
+}
+
+$('navPrev').addEventListener('click', () => { if (selected > 0) select(selected - 1); });
+$('navNext').addEventListener('click', () => { if (selected < STAGES.length - 1) select(selected + 1); });
+$('btnClose').addEventListener('click', doClose);
+window.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { doClose(); return; }
+  if (selected < 0) return;
+  if (e.key === 'ArrowLeft' && selected > 0) select(selected - 1);
+  if (e.key === 'ArrowRight' && selected < STAGES.length - 1) select(selected + 1);
+});
+
+/* ============ кадры ============ */
+const load = src => new Promise(res => { const i = new Image(); i.onload = () => res(src); i.onerror = () => res(null); i.src = src; });
+async function initImages() {
+  const [night, glow, full] = await Promise.all([load(IMG_NIGHT), load(IMG_GLOW), load(IMG_FULL)]);
+  $('imgBase').setAttribute('href', night || glow);
+  $('imgGlow').setAttribute('href', glow || night);
+  $('imgFull').setAttribute('href', full || night);
+}
+
+/* ============ камера (тихий наезд, без тряски — это озарение, не взрыв) ============ */
+function applyStage(cam) { $('stage').style.transform = `scale(${(cam || 1).toFixed(4)})`; }
+
+/* ============ тайминги ============ */
+const easeOut3 = t => 1 - Math.pow(1 - t, 3);
+const clamp01 = t => Math.max(0, Math.min(1, t));
+const accel = t => Math.pow(t, 1.7);   // прожиг: сначала медленно, потом быстро
+
+const T_DRAW = 4600, T_STAR = 820, T_GLOW = 2700;   // озарение: сначала вспышка, потом вскрытие горы
+const T_LEAD = 320;
+let raf = null, lastT = 0, glowOn = false, cardShown = false;
+
+function setReveal(f) {
+  const frontY = frontYFor(f);
+  riseRect.setAttribute('y', frontY);
+  riseRect.setAttribute('height', (IMG_H - frontY) + 460);
+}
+
+function play() {
+  cancelAnimationFrame(raf);
+  placeMarks();
+  glowOn = cardShown = false;
+  setReveal(0);
+  $('climaxFlare').setAttribute('opacity', 0);
+  $('peakFlare').setAttribute('opacity', 0);
+  $('imgBase').setAttribute('opacity', 0);   /* гора скрыта: сначала рисуется только тропа в темноте */
+  $('imgFull').setAttribute('opacity', 0);
+  $('wash').style.opacity = 0;
+  $('vig').style.opacity = 0;   /* затемнение приходит вместе с горой, не на пустом фоне */
+  $('stage').style.transform = '';
+  $('btnClose').classList.remove('in');
+  $('uiCard').classList.remove('in');
+  nodes.forEach(n => n.classList.remove('in', 'sel'));
+  selected = -1;
+
+  const t0 = performance.now() + 420;
+  lastT = performance.now();
+
+  function tick(now) {
+    const t = now - t0;
+    if (t < 0) { raf = requestAnimationFrame(tick); return; }
+
+    if (t > 120 && !$('btnClose').classList.contains('in')) $('btnClose').classList.add('in');
+
+    const fRaw = clamp01((t - T_LEAD) / T_DRAW);
+    const f = accel(fRaw);
+    setReveal(f);
+
+    const cam = 1.05 - 0.05 * easeOut3(clamp01(t / (T_LEAD + T_DRAW + T_STAR)));
+
+    const tRoadEnd = T_LEAD + T_DRAW;
+    const sRaw = clamp01((t - tRoadEnd + 360) / T_STAR);   // звезда занимается к концу дороги
+    const gRaw = clamp01((t - tRoadEnd - T_STAR) / T_GLOW); // ОЗАРЕНИЕ
+
+    if (gRaw <= 0) {
+      $('peakFlare').setAttribute('opacity', (0.42 * easeOut3(sRaw)).toFixed(3));
+    } else {
+      glowOn = true;
+      const g = easeOut3(gRaw);
+      /* СНАЧАЛА вспышка-озарение на тёмной сцене с тропой — гора ещё скрыта */
+      const swell = Math.sin(clamp01(gRaw) * Math.PI);
+      $('wash').style.opacity = (0.05 * g + 0.30 * swell).toFixed(3);
+      $('climaxFlare').setAttribute('opacity', (0.13 * g + 0.46 * swell).toFixed(3));
+      $('peakFlare').setAttribute('opacity', (0.28 + 0.16 * g).toFixed(3));
+      /* гору ВСКРЫВАЕТ свет — она проявляется только ПОСЛЕ пика вспышки (2-я половина озарения) */
+      const rev = easeOut3(clamp01((gRaw - 0.48) / 0.52));
+      $('imgBase').setAttribute('opacity', rev.toFixed(3));
+      $('imgFull').setAttribute('opacity', easeOut3(clamp01((gRaw - 0.56) / 0.44)).toFixed(3));
+      $('vig').style.opacity = (0.42 * rev).toFixed(3);
+
+      /* карточка и подписи — только когда гора уже вскрыта светом */
+      if (gRaw > 0.78 && !cardShown) {
+        cardShown = true;
+        $('uiCard').classList.add('in');
+        select(0, { instant: true });
+        nodes.forEach((n, k) => setTimeout(() => n.classList.add('in'), 160 + k * 95));
+      }
+    }
+
+    applyStage(cam);
+    if (t < tRoadEnd + T_STAR + T_GLOW + 500) raf = requestAnimationFrame(tick);
+    else idle(now);
+  }
+  raf = requestAnimationFrame(tick);
+}
+
+/* финал живет тихо: звезда мягко дышит, гора остается озаренной */
+function idle(t0) {
+  function loop(now) {
+    const s = (now - t0) / 1000;
+    $('peakFlare').setAttribute('opacity', (0.26 + 0.045 * Math.sin(s * 1.1)).toFixed(3));
+    $('climaxFlare').setAttribute('opacity', (0.13 + 0.025 * Math.sin(s * 0.9)).toFixed(3));
+    $('wash').style.opacity = (0.035 + 0.015 * Math.sin(s * 0.9)).toFixed(3);
+    raf = requestAnimationFrame(loop);
+  }
+  raf = requestAnimationFrame(loop);
+}
+
+function finalState() {
+  placeMarks();
+  setReveal(1);
+  $('imgBase').setAttribute('opacity', 1);
+  $('imgFull').setAttribute('opacity', 1);
+  $('peakFlare').setAttribute('opacity', 0.26);
+  $('climaxFlare').setAttribute('opacity', 0.13);
+  $('wash').style.opacity = 0.035;
+  $('vig').style.opacity = 0.42;
+  $('btnClose').classList.add('in');
+  $('uiCard').classList.add('in');
+  nodes.forEach(n => n.classList.add('in'));
+  select(0, { instant: true });
+  idle(performance.now());
+}
+
+initImages().then(() => {
+  watchSize();
+  placeMarks();
+  if (location.search.includes('final')) finalState();
+  else setTimeout(play, 280);
+});
+</script>
+</body>
+</html>

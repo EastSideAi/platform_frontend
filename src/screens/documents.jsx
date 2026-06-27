@@ -123,7 +123,7 @@
     const navItems = [
       { icon: Ic.Home, label: 'Главная', to: '/student' },
       { icon: Ic.Doc, label: 'Документы', to: '/documents', active: true, badge: todoCount || undefined },
-      { icon: Ic.Book, label: 'Обучение', to: '/learning/progress' },
+      { icon: Ic.Book, label: 'Обучение', to: '/learn' },
       { icon: Ic.Star, label: 'Гранты', to: '/diagnostics' },
       { icon: Ic.Target, label: 'Диагностика', to: '/diagnostics' },
       { icon: Ic.Flag, label: 'Достижения', onClick: onSettings },
@@ -169,7 +169,7 @@
     return h('div', {
       className: 'u-flex u-items-center u-gap-3',
       style: {
-        padding: '10px 12px', borderRadius: 'var(--r-md)',
+        padding: '12px', borderRadius: 'var(--r-md)',
         background: 'var(--surface-2)', border: '1px solid var(--line)',
       },
     },
@@ -259,7 +259,7 @@
         h('div', { className: 'u-grow', style: { minWidth: 0 }, key: 't' },
           h('div', { style: { fontSize: 'var(--fs-2xs)', fontWeight: 'var(--fw-bold)', letterSpacing: 'var(--tracking-wider)', textTransform: 'uppercase', color: 'var(--ink-mute)' } }, doc.kind || 'Документ'),
           h('div', { style: { fontFamily: 'var(--font-display)', fontSize: 'var(--fs-lg)', fontWeight: 'var(--fw-bold)', color: 'var(--ink)', letterSpacing: '-.01em', marginTop: '3px' } }, doc.name),
-          note ? h('p', { style: { marginTop: '5px', fontSize: 'var(--fs-sm)', lineHeight: 'var(--lh-normal)', color: 'var(--ink-soft)', maxWidth: '54ch' } }, note) : null),
+          note ? h('p', { style: { marginTop: '4px', fontSize: 'var(--fs-sm)', lineHeight: 'var(--lh-normal)', color: 'var(--ink-soft)', maxWidth: '54ch' } }, note) : null),
         h(Pill, { tone: st.tone, key: 'p' }, st.label)),
 
       // дедлайн-ориентир
@@ -276,7 +276,7 @@
       doc.status === 'needs_fix' && detail.review ? h('div', {
         key: 'rev', className: 'u-flex u-items-start u-gap-3',
         style: {
-          marginTop: 'var(--sp-3)', padding: '12px 14px', borderRadius: 'var(--r-md)',
+          marginTop: 'var(--sp-3)', padding: '12px 16px', borderRadius: 'var(--r-md)',
           background: 'var(--warning-soft)', borderLeft: '3px solid var(--ochre)',
         },
       },
@@ -527,7 +527,7 @@
     const bn = h('nav', { className: 'ec-bn', 'aria-label': 'Навигация' },
       [{ icon: Ic.Home, label: 'Главная', to: '/student' },
        { icon: Ic.Doc, label: 'Документы', to: '/documents', active: true },
-       { icon: Ic.Book, label: 'Обучение', to: '/learning/progress' },
+       { icon: Ic.Book, label: 'Обучение', to: '/learn' },
        { icon: Ic.Target, label: 'Диагностика', to: '/diagnostics' }].map((it, i) => {
         const cls = 'ec-bn__item' + (it.active ? ' is-active' : '');
         const inner = [h(it.icon, { size: 22, key: 'i' }), h('span', { key: 'l' }, it.label)];

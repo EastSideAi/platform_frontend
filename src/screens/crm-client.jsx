@@ -388,7 +388,7 @@
       { label: 'Работа', items: [
         { icon: Ic.Doc, label: 'Документы', to: '/crm' },
         { icon: Ic.Wallet, label: 'Оплаты', to: '/crm' },
-        { icon: Ic.Cap, label: 'Обучение', to: '/learning/schedule' },
+        { icon: Ic.Cap, label: 'Обучение', to: '/learn' },
         { icon: Ic.Chat, label: 'Диалоги', to: '/crm', badge: 3 },
       ] },
       { label: 'База', items: [
