@@ -299,46 +299,46 @@
     el.textContent = `
     /* блок «Путь в Китай» занимает почти всю ширину рабочего полотна */
     .sd-main--light:has(.sd-jp2) .sd-wrap{max-width:1320px;}
-    .sd-jp2{position:relative;display:grid;grid-template-columns:404px minmax(0,1fr);gap:36px;align-items:start;margin-top:16px;}
+    .sd-jp2{position:relative;display:grid;grid-template-columns:468px minmax(0,1fr);gap:36px;align-items:start;margin-top:16px;}
 
     /* ── ЛЕВО: рейл-контейнер со своей легкой границей и гранью сверху ──── */
-    .sd-jp2-rail{position:relative;overflow:visible;display:flex;flex-direction:column;gap:5px;
-      padding:18px 16px;border-radius:24px;
+    .sd-jp2-rail{position:relative;overflow:visible;display:flex;flex-direction:column;gap:6px;
+      padding:20px 18px;border-radius:24px;
       background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.16));
       border:1px solid rgba(22,32,59,.07);border-top-color:rgba(22,32,59,.12);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
     /* непрерывная линия-роадмап по центру узлов */
-    .sd-jp2-rail::before{content:'';position:absolute;z-index:0;left:41px;top:54px;bottom:54px;width:2px;border-radius:2px;
+    .sd-jp2-rail::before{content:'';position:absolute;z-index:0;left:52px;top:68px;bottom:68px;width:2px;border-radius:2px;
       background:linear-gradient(180deg,var(--sd-acc) 0%,var(--sd-acc) var(--jp-fill,32%),rgba(22,32,59,.1) var(--jp-fill,32%),rgba(22,32,59,.1) 100%);}
 
     .sd-jp2-st{position:relative;z-index:1;display:flex;gap:14px;align-items:flex-start;width:100%;text-align:left;cursor:pointer;
       background:transparent;border:0;padding:0;}
-    .sd-jp2-noden{flex:0 0 50px;display:flex;align-items:flex-start;justify-content:center;padding-top:15px;}
-    .sd-jp2-node{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;
-      font-size:14px;font-weight:700;font-variant-numeric:tabular-nums;position:relative;}
+    .sd-jp2-noden{flex:0 0 64px;display:flex;align-items:flex-start;justify-content:center;padding-top:18px;}
+    .sd-jp2-node{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+      font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;position:relative;}
     .sd-jp2-st.done .sd-jp2-node{color:var(--sd-acc-deep);background:#EAF2FF;box-shadow:inset 0 0 0 1px rgba(43,143,255,.3);}
     .sd-jp2-st.active .sd-jp2-node{color:#fff;background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));
-      box-shadow:inset 0 0 12px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.45),0 5px 14px rgba(43,143,255,.3);}
+      box-shadow:inset 0 0 14px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.45),0 5px 14px rgba(43,143,255,.3);}
     .sd-jp2-st.locked .sd-jp2-node{color:var(--sd-ink-mute);background:#fff;box-shadow:inset 0 0 0 1.5px rgba(22,32,59,.12);}
 
     .sd-jp2-st__b{flex:1 1 auto;min-width:0;position:relative;
-      padding:13px 16px;border-radius:15px;border:1px solid transparent;
+      padding:18px 20px;border-radius:16px;border:1px solid transparent;
       transition:background .2s,border-color .2s,box-shadow .2s,margin .26s cubic-bezier(.23,1,.32,1);}
     .sd-jp2-st:not(.is-sel):hover .sd-jp2-st__b{background:rgba(43,143,255,.05);}
     .sd-jp2-st__top{display:flex;align-items:baseline;gap:12px;}
-    .sd-jp2-st__t{flex:1 1 auto;min-width:0;font-size:15px;font-weight:600;color:var(--sd-ink);letter-spacing:-.2px;line-height:1.3;
+    .sd-jp2-st__t{flex:1 1 auto;min-width:0;font-size:17px;font-weight:600;color:var(--sd-ink);letter-spacing:-.3px;line-height:1.3;
       overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     .sd-jp2-st.locked .sd-jp2-st__t{color:var(--sd-ink-sub);font-weight:500;}
-    .sd-jp2-st__st{flex:0 0 auto;font-size:11.5px;font-weight:600;color:var(--sd-ink-mute);letter-spacing:.005em;}
+    .sd-jp2-st__st{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sd-ink-mute);}
     .sd-jp2-st.done .sd-jp2-st__st,.sd-jp2-st.active .sd-jp2-st__st{color:var(--sd-acc-deep);}
     .sd-jp2-st__d{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-      font-size:12.5px;font-weight:500;color:var(--sd-ink-mute);line-height:1.45;margin-top:5px;}
+      font-size:13px;font-weight:500;color:var(--sd-ink-mute);line-height:1.45;margin-top:6px;}
 
     /* выбранный этап — светлая заливка изнутри, без тени, наезжает на панель */
     .sd-jp2-st.is-sel{z-index:6;}
-    .sd-jp2-st.is-sel .sd-jp2-st__b{margin-right:-60px;background:rgba(255,255,255,.97);border-color:rgba(43,143,255,.32);
+    .sd-jp2-st.is-sel .sd-jp2-st__b{margin-right:-68px;background:rgba(255,255,255,.97);border-color:rgba(43,143,255,.32);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 40px rgba(43,143,255,.1);}
-    .sd-jp2-st.is-sel .sd-jp2-st__b::after{content:'';position:absolute;right:-7px;top:23px;width:14px;height:14px;
+    .sd-jp2-st.is-sel .sd-jp2-st__b::after{content:'';position:absolute;right:-7px;top:28px;width:14px;height:14px;
       transform:rotate(45deg);background:rgba(255,255,255,.99);
       border-top:1px solid rgba(43,143,255,.32);border-right:1px solid rgba(43,143,255,.32);border-radius:0 4px 0 0;}
 
@@ -349,18 +349,18 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 0 70px rgba(43,143,255,.045);
       animation:jp-fade .28s cubic-bezier(.23,1,.32,1);}
     @keyframes jp-fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-    .sd-jp2-art{position:absolute;z-index:0;right:-8px;top:-18px;width:258px;pointer-events:none;opacity:.92;
+    .sd-jp2-art{float:right;margin:0 0 20px 32px;width:258px;pointer-events:none;opacity:.92;
       filter:drop-shadow(0 20px 42px rgba(43,90,200,.14));
       -webkit-mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);}
     .sd-jp2-art.locked{opacity:.3;filter:grayscale(.5) drop-shadow(0 14px 30px rgba(43,90,200,.1));}
-    .sd-jp2-panel__head{position:relative;z-index:1;max-width:60%;}
-    .sd-jp2-eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sd-ink-mute);}
+    .sd-jp2-panel__head{position:relative;z-index:1;overflow:hidden;}
+    .sd-jp2-eyebrow{font-size:12px;font-weight:600;color:var(--sd-ink-mute);}
     .sd-jp2-eyebrow.active{color:var(--sd-acc-deep);}
     .sd-jp2-panel__t{font-weight:700;font-size:32px;letter-spacing:-1.1px;line-height:1.06;color:#15203B;margin:13px 0 0;text-wrap:balance;}
-    .sd-jp2-panel__d{font-size:15.5px;line-height:1.62;color:var(--sd-ink-sub);margin:14px 0 0;max-width:54ch;}
+    .sd-jp2-panel__d{font-size:15.5px;line-height:1.62;color:var(--sd-ink-sub);margin:14px 0 0;}
     .sd-jp2-more{overflow:hidden;max-height:0;opacity:0;transition:max-height .3s cubic-bezier(.23,1,.32,1),opacity .22s;}
     .sd-jp2-more.open{max-height:640px;opacity:1;}
-    .sd-jp2-more p{font-size:14px;line-height:1.62;color:var(--sd-ink-sub);margin:13px 0 0;max-width:64ch;}
+    .sd-jp2-more p{font-size:14px;line-height:1.62;color:var(--sd-ink-sub);margin:13px 0 0;}
     .sd-jp2-readmore{margin-top:15px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--sd-acc-deep);
       background:0;border:0;cursor:pointer;padding:0;transition:opacity .15s;}
     .sd-jp2-readmore:hover{opacity:.7;}
@@ -371,55 +371,38 @@
     .sd-jp2-prog{position:relative;z-index:1;margin-top:30px;padding:22px 24px;border-radius:18px;
       border:1px solid rgba(22,32,59,.08);background:rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
     .sd-jp2-prog__top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;}
-    .sd-jp2-prog__lab{font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--sd-ink-mute);}
+    .sd-jp2-prog__lab{font-size:11px;font-weight:600;color:var(--sd-ink-mute);}
     .sd-jp2-prog__pct{font-size:40px;font-weight:700;letter-spacing:-1.4px;line-height:1;color:var(--sd-acc-deep);font-variant-numeric:tabular-nums;margin-top:9px;}
     .sd-jp2-prog__of{font-size:13px;font-weight:600;color:var(--sd-ink-mute);font-variant-numeric:tabular-nums;}
     .sd-jp2-prog__track{margin-top:18px;height:8px;border-radius:99px;background:rgba(22,32,59,.07);overflow:hidden;}
     .sd-jp2-prog__fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sd-acc-2),var(--sd-acc-deep));transform-origin:left;transition:transform .4s cubic-bezier(.23,1,.32,1);}
 
-    /* ── задачи — каждая своя карточка с границей, без разделителей ──────── */
+    /* ── задачи — простые кнопки, без expandable ── */
     .sd-jp2-tasks{position:relative;z-index:1;margin-top:14px;display:flex;flex-direction:column;gap:11px;}
     .sd-jp2-task{border:1px solid rgba(22,32,59,.08);border-radius:16px;background:rgba(255,255,255,.5);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .2s,background .2s;}
-    .sd-jp2-task.done:hover,.sd-jp2-task.upcoming:hover{border-color:rgba(43,143,255,.22);background:rgba(255,255,255,.66);}
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);cursor:pointer;text-align:left;font-family:inherit;width:100%;
+      transition:border-color .2s,background .2s,transform .15s;}
+    .sd-jp2-task:hover{border-color:rgba(43,143,255,.22);background:rgba(255,255,255,.7);transform:translateY(-1px);}
     .sd-jp2-task__row{display:flex;align-items:center;gap:15px;padding:16px 18px;}
-    .sd-jp2-task.done .sd-jp2-task__row,.sd-jp2-task.upcoming .sd-jp2-task__row{cursor:pointer;}
     .sd-jp2-task__mk{flex:0 0 36px;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;}
     .sd-jp2-task.done .sd-jp2-task__mk{color:var(--sd-acc-deep);background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2);}
-    .sd-jp2-task.upcoming .sd-jp2-task__mk{color:var(--sd-ink-mute);background:rgba(22,32,59,.04);box-shadow:inset 0 0 0 1px rgba(22,32,59,.07);}
+    .sd-jp2-task.upcoming .sd-jp2-task__mk{background:rgba(22,32,59,.04);box-shadow:inset 0 0 0 1.5px rgba(22,32,59,.1);}
     .sd-jp2-task__b{flex:1 1 auto;min-width:0;}
     .sd-jp2-task__t{font-size:15px;font-weight:600;color:var(--sd-ink);letter-spacing:-.2px;line-height:1.3;}
     .sd-jp2-task.done .sd-jp2-task__t{color:var(--sd-ink-sub);}
-    .sd-jp2-task.upcoming .sd-jp2-task__t{color:var(--sd-ink-sub);}
     .sd-jp2-task__sub{font-size:12.5px;font-weight:500;color:var(--sd-ink-mute);line-height:1.45;margin-top:3px;}
-    .sd-jp2-task__st{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sd-ink-mute);}
-    .sd-jp2-task.done .sd-jp2-task__st{color:var(--sd-acc-deep);}
-    .sd-jp2-task__chev{flex:0 0 auto;color:var(--sd-ink-mute);display:inline-flex;transition:transform .25s cubic-bezier(.23,1,.32,1);}
-    .sd-jp2-task.is-open .sd-jp2-task__chev{transform:rotate(180deg);}
-    /* текущая задача от тебя — единственный акцент */
+    .sd-jp2-task__st{flex:0 0 auto;font-size:12px;font-weight:600;color:var(--sd-acc-deep);}
+    .sd-jp2-task__dl{flex:0 0 auto;font-size:12.5px;font-weight:600;color:var(--sd-ink-mute);}
+    .sd-jp2-task__dl.late{color:#C94040;}
+    .sd-jp2-task__cta{flex:0 0 auto;}
     .sd-jp2-task.current{border:1.5px solid var(--sd-acc-line);
       background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(244,247,255,.76));
       box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 48px rgba(43,143,255,.1);}
-    .sd-jp2-task.current .sd-jp2-task__row{padding:20px 22px;cursor:pointer;}
+    .sd-jp2-task.current:hover{border-color:var(--sd-acc-2);}
+    .sd-jp2-task.current .sd-jp2-task__row{padding:20px 22px;}
     .sd-jp2-task.current .sd-jp2-task__mk{flex:0 0 42px;width:42px;height:42px;border-radius:13px;color:#fff;
       background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));box-shadow:inset 0 0 13px rgba(175,215,255,.55),inset 0 1px 0 rgba(255,255,255,.4);}
     .sd-jp2-task.current .sd-jp2-task__t{font-size:17px;font-weight:700;color:var(--sd-ink);}
-    .sd-jp2-meta{display:flex;align-items:center;flex-wrap:wrap;margin-top:7px;font-size:13px;font-weight:500;color:var(--sd-ink-mute);}
-    .sd-jp2-meta b{color:var(--sd-acc-deep);font-weight:600;}
-    .sd-jp2-meta__sep{margin:0 9px;width:3px;height:3px;border-radius:50%;background:rgba(22,32,59,.2);}
-    .sd-jp2-task__cta{flex:0 0 auto;}
-    /* раскрытие задачи */
-    .sd-jp2-exp{overflow:hidden;max-height:0;opacity:0;transition:max-height .32s cubic-bezier(.23,1,.32,1),opacity .24s;}
-    .sd-jp2-exp.open{max-height:520px;opacity:1;}
-    .sd-jp2-exp__in{padding:0 18px 18px 69px;}
-    .sd-jp2-task.current .sd-jp2-exp__in{padding:2px 22px 20px 79px;}
-    .sd-jp2-exp__d{font-size:13.5px;line-height:1.6;color:var(--sd-ink-sub);max-width:62ch;}
-    .sd-jp2-flow{margin-top:14px;}
-    .sd-jp2-flowstep{display:flex;gap:12px;align-items:flex-start;padding:8px 0;}
-    .sd-jp2-flowstep__mk{flex:0 0 22px;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:700;
-      color:var(--sd-acc-deep);background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.22);font-variant-numeric:tabular-nums;}
-    .sd-jp2-flowstep__t{font-size:13.5px;font-weight:600;color:var(--sd-ink);}
-    .sd-jp2-flowstep__s{font-size:12.5px;color:var(--sd-ink-mute);margin-top:2px;}
 
     /* ── locked-этап: тихий превью своей карточкой ──────────────────────── */
     .sd-jp2-soon{position:relative;z-index:1;margin-top:22px;padding:22px 24px;border-radius:18px;
@@ -434,8 +417,7 @@
       .sd-jp2{grid-template-columns:1fr;gap:18px;}
       .sd-jp2-st.is-sel .sd-jp2-st__b{margin-right:0;}
       .sd-jp2-st.is-sel .sd-jp2-st__b::after{display:none;}
-      .sd-jp2-panel__head{max-width:100%;}
-      .sd-jp2-art{opacity:.45;width:150px;}
+      .sd-jp2-art{float:none;width:160px;opacity:.45;margin:0 0 16px 0;}
     }`;
     document.head.appendChild(el);
   }
@@ -451,65 +433,35 @@
     return h('div', { className: 'sd-jp2-meta' }, out);
   }
 
-  const chevDown = () => h('span', { className: 'sd-jp2-task__chev' }, Ic.ChevronDown ? h(Ic.ChevronDown, { size: 18 }) : 'v');
+  function JpTask(s, t, i) {
+    const click = () => SH.openTask(taskOf(t));
+    const done = t.status === 'done';
+    const current = t.status === 'current';
 
-  function JpTask(s, t, i, openTask, setOpenTask) {
-    const isOpen = openTask === i;
-    const toggle = () => setOpenTask(isOpen ? -1 : i);
-    const flowOf = (t.flow && t.flow.length) ? h('div', { className: 'sd-jp2-flow' },
-      t.flow.map((f, k) => h('div', { key: k, className: 'sd-jp2-flowstep' },
-        h('span', { className: 'sd-jp2-flowstep__mk' }, k + 1),
-        h('div', null,
-          h('div', { className: 'sd-jp2-flowstep__t' }, f.t),
-          f.s ? h('div', { className: 'sd-jp2-flowstep__s' }, f.s) : null)))) : null;
+    const marker = done
+      ? h('span', { className: 'sd-jp2-task__mk' }, Ic.Check ? h(Ic.Check, { size: 16, strokeWidth: 2.6 }) : '✓')
+      : current
+      ? h('span', { className: 'sd-jp2-task__mk' }, Ic.Spark ? h(Ic.Spark, { size: 18 }) : '•')
+      : h('span', { className: 'sd-jp2-task__mk' });
 
-    if (t.status === 'done') {
-      const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
-        h('div', { className: 'sd-jp2-exp__in' }, h('div', { className: 'sd-jp2-exp__d' }, t.desc || t.sub || 'Готово.')));
-      return h('div', { key: i, className: 'sd-jp2-task done' + (isOpen ? ' is-open' : '') },
-        h('div', { className: 'sd-jp2-task__row', onClick: toggle },
-          h('span', { className: 'sd-jp2-task__mk' }, Ic.Check ? h(Ic.Check, { size: 16, strokeWidth: 2.6 }) : '✓'),
-          h('div', { className: 'sd-jp2-task__b' },
-            h('div', { className: 'sd-jp2-task__t' }, t.title),
-            t.sub ? h('div', { className: 'sd-jp2-task__sub' }, t.sub) : null),
-          h('span', { className: 'sd-jp2-task__st' }, 'Завершено'),
-          chevDown()),
-        exp);
-    }
+    const dlText = done ? null : t.dl || (t.owner === 'us' ? 'Берем на себя' : t.time || null);
+    const right = done
+      ? h('span', { className: 'sd-jp2-task__st' }, 'Завершено')
+      : dlText ? h('span', { className: 'sd-jp2-task__dl' + (t.dlState === 'late' ? ' late' : '') }, dlText) : null;
 
-    if (t.status === 'current') {
-      const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
-        h('div', { className: 'sd-jp2-exp__in' },
-          t.desc ? h('div', { className: 'sd-jp2-exp__d' }, t.desc) : null,
-          flowOf));
-      return h('div', { key: i, className: 'sd-jp2-task current' + (isOpen ? ' is-open' : '') },
-        h('div', { className: 'sd-jp2-task__row', onClick: toggle },
-          h('span', { className: 'sd-jp2-task__mk' }, Ic.Spark ? h(Ic.Spark, { size: 18 }) : '•'),
-          h('div', { className: 'sd-jp2-task__b' },
-            h('div', { className: 'sd-jp2-task__t' }, t.title),
-            jpMeta(t)),
-          h('div', { className: 'sd-jp2-task__cta' },
-            h('button', { type: 'button', className: 'sd-btn sd-btn--primary sd-btn--sm', onClick: (e) => { e.stopPropagation(); SH.openTask(taskOf(t)); } },
-              t.cta || 'Перейти к задаче', arr(15))),
-          chevDown()),
-        exp);
-    }
-
-    // upcoming
-    const st = t.owner === 'us' ? 'Наша задача' : t.dl ? 'Срок: ' + t.dl : 'Ожидает';
-    const exp = h('div', { className: 'sd-jp2-exp' + (isOpen ? ' open' : '') },
-      h('div', { className: 'sd-jp2-exp__in' },
-        h('div', { className: 'sd-jp2-exp__d' }, t.desc || 'Откроется, когда дойдем до этого шага.'),
-        flowOf));
-    return h('div', { key: i, className: 'sd-jp2-task upcoming' + (isOpen ? ' is-open' : '') },
-      h('div', { className: 'sd-jp2-task__row', onClick: toggle },
-        h('span', { className: 'sd-jp2-task__mk' }, Ic.Lock ? h(Ic.Lock, { size: 15 }) : '·'),
+    return h('div', { key: i, className: 'sd-jp2-task ' + (t.status || 'upcoming'), onClick: click },
+      h('div', { className: 'sd-jp2-task__row' },
+        marker,
         h('div', { className: 'sd-jp2-task__b' },
           h('div', { className: 'sd-jp2-task__t' }, t.title),
           t.sub ? h('div', { className: 'sd-jp2-task__sub' }, t.sub) : null),
-        h('span', { className: 'sd-jp2-task__st' }, st),
-        chevDown()),
-      exp);
+        current && t.cta
+          ? h('div', { className: 'sd-jp2-task__cta' },
+              h('button', { type: 'button', className: 'sd-btn sd-btn--primary sd-btn--sm',
+                onClick: (e) => { e.stopPropagation(); SH.openTask(taskOf(t)); } },
+                t.cta, arr(15)))
+          : null,
+        right));
   }
 
   function JpDetail(props) {
@@ -529,8 +481,9 @@
     if (locked) {
       const prev = STAGES[s.after - 1];
       return h('section', { className: 'sd-jp2-panel' },
-        h('img', { className: 'sd-jp2-art locked', src: art, alt: '' }),
-        h('div', { className: 'sd-jp2-panel__head' }, head),
+        h('div', { className: 'sd-jp2-panel__head' },
+          h('img', { key: 'art', className: 'sd-jp2-art locked', src: art, alt: '' }),
+          head),
         h('div', { className: 'sd-jp2-soon' },
           h('div', { className: 'sd-jp2-soon__h' }, Ic.Lock ? h(Ic.Lock, { size: 15 }) : null,
             'Откроется после этапа ' + s.after + (prev ? ' · «' + prev.t + '»' : '')),
@@ -543,8 +496,9 @@
     const doneN = tasks.filter((t) => t.status === 'done').length;
     const pct = s.st === 'done' ? 100 : Math.round((doneN / (tasks.length || 1)) * 100);
     return h('section', { className: 'sd-jp2-panel' },
-      h('img', { className: 'sd-jp2-art', src: art, alt: '' }),
-      h('div', { className: 'sd-jp2-panel__head' }, head),
+      h('div', { className: 'sd-jp2-panel__head' },
+        h('img', { key: 'art', className: 'sd-jp2-art', src: art, alt: '' }),
+        head),
       h('div', { className: 'sd-jp2-prog' + (s.st === 'done' ? ' done' : '') },
         h('div', { className: 'sd-jp2-prog__top' },
           h('div', null,
@@ -553,7 +507,7 @@
           h('div', { className: 'sd-jp2-prog__of' }, doneN + ' из ' + tasks.length + ' задач')),
         h('div', { className: 'sd-jp2-prog__track' },
           h('div', { className: 'sd-jp2-prog__fill', style: { transform: 'scaleX(' + (pct / 100) + ')' } }))),
-      h('div', { className: 'sd-jp2-tasks' }, tasks.map((t, i) => JpTask(s, t, i, props.openTask, props.setOpenTask))));
+      h('div', { className: 'sd-jp2-tasks' }, tasks.map((t, i) => JpTask(s, t, i))));
   }
 
   function JPath() {
@@ -561,11 +515,10 @@
     const activeN = (STAGES.find((s) => s.st === 'active') || STAGES[0]).n;
     const [sel, setSel] = useState(activeN);
     const [moreOpen, setMoreOpen] = useState(false);
-    const [openTask, setOpenTask] = useState(-1);
     const s = STAGES.find((x) => x.n === sel) || STAGES[0];
     const activeIdx = STAGES.findIndex((x) => x.st === 'active');
     const fill = Math.round(((activeIdx + 0.5) / STAGES.length) * 100);
-    const select = (n) => { setSel(n); setMoreOpen(false); setOpenTask(-1); };
+    const select = (n) => { setSel(n); setMoreOpen(false); };
 
     return h('section', { className: 'sd-sec' },
       h('div', { className: 'sd-sec__head' },
@@ -587,7 +540,7 @@
                   h('span', { className: 'sd-jp2-st__st' }, stWord)),
                 st.sub ? h('span', { className: 'sd-jp2-st__d' }, st.sub) : null));
           })),
-        h(JpDetail, { key: sel, s: s, moreOpen: moreOpen, setMoreOpen: setMoreOpen, openTask: openTask, setOpenTask: setOpenTask })));
+        h(JpDetail, { key: sel, s: s, moreOpen: moreOpen, setMoreOpen: setMoreOpen })));
   }
 
   /* ── Полезное про переезд — журнальная сетка как в рефе: ВСЕ карточки
@@ -601,7 +554,8 @@
     el.id = 'es-kb-css';
     el.textContent = `
     .kb-headwrap{min-width:0;}
-    .sd-sec__sub{font-size:13.5px;font-weight:500;color:var(--sd-ink-mute);margin-top:5px;}
+    .kb-headwrap .sd-sec__title{font-size:26px;font-weight:500;}
+    .sd-sec__sub{font-size:15px;font-weight:500;color:var(--sd-ink-mute);margin-top:7px;}
     .kb{display:grid;grid-template-columns:1.34fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:16px;min-height:452px;}
 
     /* ═══ КАРТОЧКА (общий full-bleed): картинка на весь размер + оверлей ═══ */
@@ -616,17 +570,19 @@
     .kb-c__b{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:space-between;}
     .kb-c__top{display:flex;flex-direction:column;align-items:flex-start;min-width:0;}
     /* чип рубрики — лёгкий оттенок категории, текст белый */
-    .kb-chip{display:inline-flex;align-items:center;border-radius:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#fff;
-      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);
+    .kb-chip{display:inline-flex;align-items:center;border-radius:8px;font-weight:600;color:#fff;
+      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);
       text-shadow:0 1px 2px rgba(4,9,28,.4);}
     .kb-time{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:rgba(232,239,255,.9);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(4,9,28,.5);}
     .kb-time svg{color:rgba(170,202,255,.95);}
     .kb-c__ttl{font-weight:600;color:#fff;letter-spacing:-.3px;text-wrap:balance;text-shadow:0 2px 10px rgba(4,9,28,.35);}
-    /* белая «скруглённая квадратная» кнопка со стрелкой в цвет рубрики */
-    .kb-sq{flex:0 0 auto;display:grid;place-items:center;background:#fff;border-radius:12px;
-      box-shadow:0 7px 18px rgba(4,9,28,.3),inset 0 1px 0 rgba(255,255,255,.9);transition:transform .18s,box-shadow .18s;}
+    /* стеклянная кнопка со стрелкой */
+    .kb-sq{flex:0 0 auto;display:grid;place-items:center;
+      background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.2);border-radius:12px;color:#fff;
+      transition:transform .18s,background .18s;}
     .kb-sq svg{transition:transform .2s;}
-    .kb-c:hover .kb-sq{transform:translateY(-2px);box-shadow:0 11px 24px rgba(4,9,28,.42);}
+    .kb-c:hover .kb-sq{transform:translateY(-2px);background:rgba(255,255,255,.22);}
     .kb-c:hover .kb-sq svg{transform:translateX(2px);}
 
     /* — крупная обложка слева — */
@@ -636,13 +592,12 @@
     .kb-feat .kb-chip{font-size:11px;padding:6px 13px;}
     .kb-feat .kb-c__ttl{font-size:29px;line-height:1.13;letter-spacing:-.8px;margin-top:13px;max-width:14ch;}
     .kb-feat .kb-time{font-size:12.5px;margin-top:12px;}
-    .kb-feat__cta{align-self:flex-start;display:inline-flex;align-items:center;gap:9px;padding:12px 12px 12px 20px;border-radius:99px;background:#fff;color:#15203B;
-      font-size:14px;font-weight:600;letter-spacing:-.1px;box-shadow:0 10px 24px rgba(4,9,28,.3);transition:transform .18s,box-shadow .18s;}
-    .kb-feat:hover .kb-feat__cta{transform:translateY(-1px);box-shadow:0 14px 30px rgba(4,9,28,.42);}
-    .kb-feat__cta i{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--sd-acc-deep);color:#fff;
-      box-shadow:inset 0 0 12px rgba(175,215,255,.7),inset 0 1px 0 rgba(255,255,255,.5);}
-    .kb-feat__cta i svg{transition:transform .2s;}
-    .kb-feat:hover .kb-feat__cta i svg{transform:translateX(2px);}
+    .kb-feat__cta{flex:0 0 auto;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;
+      background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
+      border:1px solid rgba(255,255,255,.2);color:#fff;transition:transform .18s,background .18s;}
+    .kb-feat:hover .kb-feat__cta{transform:translateY(-2px);background:rgba(255,255,255,.22);}
+    .kb-feat__cta svg{transition:transform .2s;}
+    .kb-feat:hover .kb-feat__cta svg{transform:translateX(2px);}
 
     /* — мелкие карточки 2×2 — */
     .kb-sm{border-radius:20px;}
@@ -653,8 +608,8 @@
     .kb-sm .kb-time{font-size:11px;margin-top:8px;}
     .kb-sm .kb-sq{width:36px;height:36px;}
 
-    /* ═══ ЛЕНТА КАТЕГОРИЙ под карточками ══════════════════════════════════ */
-    .kb-cats{display:flex;align-items:stretch;gap:10px;margin-top:16px;overflow-x:auto;padding:2px 1px 4px;scrollbar-width:none;}
+    /* ═══ ЛЕНТА КАТЕГОРИЙ (скрыта пока) ═══════════════════════════════════ */
+    .kb-cats{display:none;}
     .kb-cats::-webkit-scrollbar{height:0;}
     .kb-cat{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:11px 18px 11px 12px;border-radius:15px;cursor:pointer;font-family:inherit;
       background:rgba(255,255,255,.62);border:1px solid rgba(22,32,59,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 6px 16px rgba(8,16,44,.05);
@@ -698,20 +653,19 @@
       h('span', { className: 'kb-c__scrim' }),
       h('span', { className: 'kb-c__b' },
         h('span', { className: 'kb-c__top' },
-          h('span', { className: 'kb-chip', style: { background: hexA(a.tint, .34), borderColor: hexA(a.tint, .55) } }, label || a.cap),
+          h('span', { className: 'kb-chip', style: { background: hexA(a.tint, .22), borderColor: hexA(a.tint, .36) } }, label || a.cap),
           h('span', { className: 'kb-c__ttl' }, a.title),
           h('span', { className: 'kb-time' }, clock(cls === 'kb-feat' ? 13 : 12), a.dur)),
         cls === 'kb-feat'
-          ? h('span', { className: 'kb-feat__cta' }, 'Читать статью', h('i', null, arrR(16)))
-          : h('span', { className: 'kb-sq', style: { color: a.tint } }, arrR(17))));
+          ? h('span', { className: 'kb-feat__cta' }, arrR(20))
+          : h('span', { className: 'kb-sq' }, arrR(17))));
 
     return h('section', { className: 'sd-sec' },
       h('div', { className: 'sd-sec__head' },
         h('div', { className: 'kb-headwrap' },
-          h('h3', { className: 'sd-sec__title' }, 'Полезное про переезд',
-            Ic.Spark ? h(Ic.Spark, { size: 16, style: { marginLeft: 9, color: 'var(--sd-acc)', verticalAlign: 'middle' } }) : null),
-          h('div', { className: 'sd-sec__sub' }, 'Подготовься к жизни и учебе в Китае')),
-        h('button', { type: 'button', className: 'sd-sec__link', onClick: goLearn }, 'Вся база', arr(14))),
+          h('h3', { className: 'sd-sec__title' }, 'Полезное про переезд'),
+          h('div', { className: 'sd-sec__sub' }, 'Жилье, документы, деньги, учеба — собрали всё, что нужно знать до и после переезда в Китай')),
+        h('button', { type: 'button', className: 'sd-btn sd-btn--primary sd-btn--sm', onClick: goLearn }, 'Вся база', arr(14))),
       h('div', { className: 'kb' },
         card(feat, 'kb-feat', 'Главное', 'f'),
         rest.map((a, i) => card(a, 'kb-sm', null, i))),

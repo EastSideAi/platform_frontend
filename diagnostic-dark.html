@@ -24,6 +24,16 @@
          url('funnel-assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
     font-weight: 400; font-style: normal; font-display: swap;
   }
+  /* SF Pro Display — реальный веб-шрифт (woff2, jsDelivr). Без этого 'SF Pro Display'
+     в стеке ниже падает в Segoe UI на Windows. Грузим 400/500/600/700. */
+  @font-face { font-family: 'SF Pro Display'; font-weight: 400; font-style: normal; font-display: swap;
+    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_regular.woff2') format('woff2'); }
+  @font-face { font-family: 'SF Pro Display'; font-weight: 500; font-style: normal; font-display: swap;
+    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_medium.woff2') format('woff2'); }
+  @font-face { font-family: 'SF Pro Display'; font-weight: 600; font-style: normal; font-display: swap;
+    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_semibold.woff2') format('woff2'); }
+  @font-face { font-family: 'SF Pro Display'; font-weight: 700; font-style: normal; font-display: swap;
+    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_bold.woff2') format('woff2'); }
   :root {
     --base: #03081C; --panel: #060D28;
     --violet: #2B8FFF; --violet-2: #5CB4FF; --violet-deep: #1E72E6; --violet-soft: #9FCBFF;
@@ -388,39 +398,129 @@
   .ipop-close:hover { background: rgba(43,143,255,.2); color: #fff; }
   .ipop-close svg { width: 17px; height: 17px; }
 
-  /* ── широкий попап «подробно вузы»: трёхслойка — тёмное окно, светлые карточки ── */
-  .ipop-card.wide { width: min(1040px, 95vw); padding: 32px 32px 28px; }
-  .ipop-ulist { margin-top: 24px; display: flex; flex-direction: column; gap: 16px; }
-  .ipop .ucard { display: flex; flex-direction: column; border-radius: 20px; overflow: hidden;
-    background: linear-gradient(150deg, rgba(255,255,255,.97), rgba(255,255,255,.85));
-    border: 1px solid rgba(120,140,210,.3); box-shadow: 0 12px 30px rgba(2,6,20,.32); }
-  .ipop .uc-photo { position: relative; height: 188px; flex: none; background: #0A1330 50% 42% / cover no-repeat; }
-  .ipop .uc-photo::after { content: ''; position: absolute; inset: 0;
-    box-shadow: inset 0 0 0 1px rgba(36,40,90,.05);
-    background: linear-gradient(180deg, rgba(3,8,28,.14) 0%, transparent 24%, transparent 70%, rgba(255,255,255,.45) 100%); }
-  .ipop .uc-main { padding: 20px 24px 24px; min-width: 0; }
-  .ipop .uc-head { display: flex; align-items: flex-start; gap: 16px; }
-  .ipop .uc-tt { flex: 1; min-width: 0; }
-  .ipop .uc-name { font-size: 19px; font-weight: 700; color: var(--ink); letter-spacing: -.02em; line-height: 1.15; }
-  .ipop .uc-zh { font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
-  .ipop .uc-tag { font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: none; padding: 4px 12px; border-radius: 99px; border: 1px solid; flex: none; white-space: nowrap; }
-  .ipop .uc-tag.match { color: #1C7E54; border-color: rgba(46,160,110,.4); background: rgba(46,160,110,.08); }
-  .ipop .uc-tag.reach { color: #B26A00; border-color: rgba(220,150,40,.4); background: rgba(220,150,40,.08); }
-  .ipop .uc-tag.safe  { color: #2C7FBE; border-color: rgba(63,155,230,.4); background: rgba(63,155,230,.08); }
-  .ipop .uc-desc { margin-top: 12px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
-  .ipop .uc-facts { margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .ipop .uc-fact { border-radius: 11px; padding: 12px 12px; background: rgba(36,40,90,.04); border: 1px solid rgba(36,40,90,.07); }
-  .ipop .uc-fact .k { font-size: 10px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
-  .ipop .uc-fact .v { margin-top: 4px; font-size: 13.5px; font-weight: 700; color: var(--ink); }
-  .ipop .uc-fact .v.good { color: var(--jade-ink); }
-  .ipop .uc-detail { margin-top: 16px; padding-top: 16px; border-top: 1px solid rgba(36,40,90,.1);
-    display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px 28px; }
-  .ipop .uc-d-h { display: flex; align-items: center; gap: 8px; font-size: 10.5px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--acc-ink); }
-  .ipop .uc-d-h svg { width: 15px; height: 15px; flex: none; }
-  .ipop .uc-d-t { margin-top: 8px; font-size: 12.5px; line-height: 1.55; color: var(--ink-2); }
-  .ipop .uc-d-t b { font-weight: 700; color: var(--ink); }
-  @media (max-width: 920px) { .ipop .uc-facts { grid-template-columns: 1fr 1fr; } .ipop .uc-detail { grid-template-columns: 1fr; } }
+  /* ── широкий попап «подобранные вузы»: premium dark, мастер-детэйл (v5) ──
+     Слева — горизонтальные карточки (фото слева, текст справа), без тегов.
+     Справа — чистое hero-фото (повыше), заголовок/описание под ним,
+     характеристики (чип-иконка + подпись/значение), секции. Без буквы «ё». */
+  .u-pop { transition: visibility 0s linear .34s; }
+  .u-pop.on { transition: visibility 0s; }
+  .u-veil { position: absolute; inset: 0; background: rgba(2,5,16,.82);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); opacity: 0; transition: opacity .32s ease; }
+  .u-pop.on .u-veil { opacity: 1; }
+  .u-frame { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-48%) scale(.98);
+    width: min(1220px, 93vw); height: min(860px, 90vh); display: flex; flex-direction: column; overflow: hidden;
+    background:
+      radial-gradient(900px 600px at 86% -12%, rgba(43,143,255,.07), transparent 60%),
+      linear-gradient(176deg, #050E26 0%, #03081C 60%, #02061A 100%);
+    border: 1px solid rgba(255,255,255,.06); border-radius: 28px;
+    box-shadow: 0 50px 140px rgba(0,1,8,.7);
+    color: #fff; opacity: 0; transition: opacity .34s ease, transform .42s cubic-bezier(.22,.61,.36,1); }
+  .u-pop.on .u-frame { opacity: 1; transform: translate(-50%,-50%) scale(1); }
 
+  .u-top { display: flex; align-items: flex-start; gap: 16px; flex: none; padding: 30px 36px 22px; }
+  .u-top-txt { flex: 1; min-width: 0; }
+  .u-top-title { font-size: 26px; font-weight: 700; letter-spacing: -.5px; color: #fff; }
+  .u-top-desc { margin-top: 7px; font-size: 13.5px; line-height: 1.5; color: rgba(255,255,255,.5); max-width: 72ch; }
+  .u-close { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; cursor: pointer; margin-top: 2px;
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); color: rgba(255,255,255,.6); transition: background .15s, color .15s, border-color .15s; }
+  .u-close:hover { background: rgba(255,255,255,.08); color: #fff; }
+  .u-close svg { width: 16px; height: 16px; }
+
+  .u-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 480px 1fr; }
+
+  /* левый рейл */
+  .u-rail { display: flex; flex-direction: column; min-height: 0; padding: 4px 20px 0 36px; }
+  .u-list { flex: 1; min-height: 0; overflow-y: auto; padding: 0 16px 28px 0; display: flex; flex-direction: column; gap: 12px; }
+  .u-list::-webkit-scrollbar { width: 5px; }
+  .u-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 99px; }
+
+  /* горизонтальная карточка: фото слева, текст справа */
+  .u-card { position: relative; cursor: pointer; display: flex; gap: 14px; align-items: center; padding: 12px;
+    border-radius: 16px; border: 1px solid rgba(255,255,255,.1); background: rgba(255,255,255,.04);
+    transition: background .18s ease, border-color .18s ease, box-shadow .22s ease; }
+  .u-card:hover { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.16); }
+  .u-card.sel { background: rgba(43,143,255,.09); border-color: rgba(60,150,250,.6);
+    box-shadow: 0 0 0 1px rgba(60,150,250,.35), 0 12px 34px rgba(30,114,240,.18); }
+  .u-photo { position: relative; width: 112px; flex: none; aspect-ratio: 1/1; border-radius: 12px; overflow: hidden; background: #0A1330; }
+  .u-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .5s cubic-bezier(.22,.61,.36,1); }
+  .u-card:hover .u-photo img { transform: scale(1.05); }
+  .u-info { flex: 1; min-width: 0; padding: 0 4px 0 0; }
+  .u-name { font-size: 15.5px; font-weight: 600; color: #fff; letter-spacing: -.01em; line-height: 1.25;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .u-zh { margin-top: 3px; font-size: 12px; color: rgba(255,255,255,.4); letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .u-city { margin-top: 9px; font-size: 12px; color: rgba(255,255,255,.45); display: flex; align-items: center; gap: 7px; }
+  .u-city .dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(255,255,255,.25); flex: none; }
+  .u-nums { margin-top: 9px; display: flex; align-items: baseline; gap: 12px; }
+  .u-grant { font-size: 12.5px; font-weight: 700; color: #4ADE80; }
+  .u-chance { margin-left: auto; font-size: 12.5px; }
+  .u-chance small { color: rgba(255,255,255,.4); font-weight: 500; }
+  .u-chance b { color: #5CB4FF; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+  /* правый детэйл */
+  .u-detail { min-width: 0; min-height: 0; display: flex; flex-direction: column; padding: 4px 36px 0 36px; }
+  .u-scroll { flex: 1; min-height: 0; overflow-y: auto; padding: 0 18px 36px 0; transition: opacity .14s ease; }
+  .u-scroll.swap { opacity: 0; }
+  .u-scroll::-webkit-scrollbar { width: 6px; }
+  .u-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,.1); border-radius: 99px; }
+
+  /* hero — чистое фото без затемнения (повыше), текст отдельным блоком ниже */
+  .u-hero { position: relative; height: 340px; border-radius: 20px; overflow: hidden; background: #0A1330; }
+  .u-hero img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .u-head { margin-top: 22px; }
+  .u-head .hcity { display: flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 500; color: #9FCBFF; }
+  .u-head .hcity svg { width: 14px; height: 14px; }
+  .u-head .hname { margin-top: 10px; font-size: 40px; font-weight: 700; letter-spacing: -.6px; line-height: 1.04; color: #fff; text-wrap: balance; }
+  .u-head .hzh { margin-top: 6px; font-size: 15px; color: rgba(255,255,255,.6); letter-spacing: .02em; }
+
+  .u-desc { margin-top: 20px; font-size: 14.5px; line-height: 1.65; color: rgba(255,255,255,.6); max-width: 68ch; }
+
+  .u-facts { margin-top: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .u-fact { display: flex; align-items: center; gap: 13px; border-radius: 14px; padding: 13px 15px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.05); }
+  .u-fic { width: 40px; height: 40px; flex: none; border-radius: 11px; display: grid; place-items: center; color: #fff;
+    background: #0B1A3A; border: 1px solid rgba(255,255,255,.06); }
+  .u-fic svg { width: 18px; height: 18px; }
+  .u-ftxt { min-width: 0; }
+  .u-fact .fl { font-size: 10.5px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: rgba(255,255,255,.4); }
+  .u-fact .fv { margin-top: 3px; font-size: 14px; font-weight: 600; color: rgba(255,255,255,.92); line-height: 1.25; }
+  .u-fact .fv.good { color: #4ADE80; }
+  .u-fact .fv.acc { color: #5CB4FF; }
+
+  .u-secs { margin-top: 30px; display: flex; flex-direction: column; gap: 14px; }
+  .u-sec { border-radius: 18px; padding: 26px 28px; background: rgba(255,255,255,.025); border: 1px solid rgba(255,255,255,.05); }
+  .u-sec-h { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .u-sec-ic { width: 34px; height: 34px; flex: none; border-radius: 10px; display: grid; place-items: center; color: rgba(255,255,255,.6);
+    background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.05); }
+  .u-sec-ic svg { width: 17px; height: 17px; }
+  .u-sec-h b { font-size: 16px; font-weight: 600; letter-spacing: -.01em; color: #fff; }
+  .u-sec p { font-size: 13.5px; line-height: 1.7; color: rgba(255,255,255,.55); }
+  .u-sec p b { color: rgba(255,255,255,.85); font-weight: 600; }
+
+  .u-foot { margin-top: 24px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.06);
+    display: flex; align-items: flex-start; gap: 10px; color: rgba(255,255,255,.4); font-size: 12.5px; line-height: 1.55; }
+  .u-foot svg { width: 15px; height: 15px; flex: none; margin-top: 1px; color: rgba(255,255,255,.35); }
+
+  @media (max-width: 1180px) { .u-body { grid-template-columns: 420px 1fr; } }
+  @media (max-width: 1040px) {
+    .u-frame { width: 95vw; height: 92vh; }
+    .u-body { grid-template-columns: 360px 1fr; }
+    .u-top { padding: 24px 26px 18px; }
+    .u-rail { padding-left: 26px; }
+    .u-detail { padding: 4px 26px 0; }
+    .u-hero { height: 280px; }
+    .u-head .hname { font-size: 32px; }
+    .u-top-title { font-size: 22px; }
+  }
+  @media (max-width: 820px) {
+    .u-body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+    .u-rail { padding: 4px 26px 0; }
+    .u-list { flex-direction: row; overflow-x: auto; overflow-y: hidden; padding: 0 26px 16px; }
+    .u-card { min-width: 250px; }
+    .u-facts { grid-template-columns: 1fr; }
+    .u-hero { height: 220px; }
+    .u-head .hname { font-size: 26px; }
+  }
   /* ── попап маршрута: модалка-окно, страница за ней лишь слегка затемнена ── */
   .rm-pop { position: fixed; inset: 0; z-index: 60; visibility: hidden; }
   .rm-pop.on { visibility: visible; }
@@ -618,75 +718,60 @@
   .ch3-label { position: relative; font-size: 14px; font-weight: 700; color: var(--ink-sub); line-height: 1.34; }
   .ch3-pct { position: relative; margin-top: auto; padding-top: 16px; font-size: 46px; font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
 
-  /* ════ СРАВНЕНИЕ ВАРИАНТОВ ГРАНТА: таблица — шапка-колонки + строки с тонкими разделителями ════ */
-  /* единый шаблон колонок для шапки и всех строк, чтобы всё стояло строго друг под другом */
-  .cmpx { --cols: 104px minmax(0,1.3fr) minmax(0,.82fr) minmax(0,1.34fr);
-    display: flex; flex-direction: column; gap: 28px; margin-top: 4px; }
-  /* токены цвета варианта живут на обёртке-строке */
-  .cmpx-row { --c: #1E63C2; --c-lite: #5CB4FF; --cr: 43,143,255; }
-  .cmpx-row.v-violet { --c: #6A52E0; --c-lite: #A28FFF; --cr: 120,100,240; }
-  .cmpx-row.v-jade { --c: #1C7E52; --c-lite: #4FC78C; --cr: 35,160,105; }
-  /* шапка таблицы — очень тихие, мелкие подписи колонок */
-  .cmpx-head { display: grid; grid-template-columns: var(--cols); padding: 0 32px 2px; }
-  .cmpx-head span { font-size: 9.5px; font-weight: 600; letter-spacing: 0; text-transform: none;
-    color: var(--ink-faint); line-height: 1.3; align-self: end; }
-  .cmpx-head .h-cov, .cmpx-head .h-pct, .cmpx-head .h-ch { padding-left: 28px; }
-  .cmpx-head .h-ch { color: rgba(23,99,200,.5); }
-  /* ярлык варианта — вынесен НАД карточкой, освобождает место внутри */
-  .cmpx-label { display: flex; align-items: baseline; gap: 12px; padding: 0 8px 12px 32px; }
-  .cmpx-lt { font-size: 20px; font-weight: 700; color: var(--c); letter-spacing: -.025em; line-height: 1; }
-  .cmpx-ls { font-size: 12.5px; font-weight: 500; color: var(--ink-faint); }
-  .cmpx-best { margin-left: auto; align-self: center; display: inline-flex; align-items: center; gap: 8px;
-    padding: 4px 12px; border-radius: 99px; background: rgba(var(--cr), .1); border: 1px solid rgba(var(--cr), .32);
-    color: var(--c); font-size: 9.5px; font-weight: 700; letter-spacing: 0; text-transform: none; }
-  .cmpx-best svg { width: 11px; height: 11px; }
-  /* строка-карточка — лёгкое стекло, без тяжёлого цветного налива */
-  .cmpx-card { display: grid; grid-template-columns: var(--cols); align-items: stretch;
-    padding: 16px 32px; border-radius: 18px;
-    background: linear-gradient(160deg, rgba(255,255,255,.82), rgba(255,255,255,.56));
-    border: 1px solid rgba(120,140,210,.22);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.8); transition: border-color .2s ease, box-shadow .2s ease; }
-  .cmpx-card:hover { border-color: rgba(var(--cr), .42);
-    box-shadow: inset 0 0 26px rgba(var(--cr), .07), inset 0 1px 0 rgba(255,255,255,.8); }
-  /* тонкие вертикальные «палочки»-разделители между колонками, как в таблице */
-  .cmpx-cov, .cmpx-pct, .cmpx-ch { padding-left: 28px; border-left: 1px solid rgba(36,40,90,.1);
-    display: flex; flex-direction: column; justify-content: center; }
-  /* зона 1: гора-якорь варианта */
-  .cmpx-var { display: flex; align-items: center; justify-content: center; padding-right: 20px; }
-  .cmpx-mtn { width: 92px; height: 66px; flex: none; display: flex; align-items: flex-end; justify-content: center; }
-  .cmpx-mtn img { width: 100%; height: auto; max-height: 100%; object-fit: contain; object-position: bottom; display: block; }
-  /* зона 2: что покрывает — галочка как у выбранного ответа в анкете */
-  .cmpx-cov { gap: 8px; }
-  .cmpx-li { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
-  .cmpx-li i { width: 21px; height: 21px; flex: none; border-radius: 50%; display: grid; place-items: center;
-    background: linear-gradient(140deg, var(--c-lite), var(--c)); box-shadow: inset 0 1px 3px rgba(255,255,255,.45); }
-  .cmpx-li i svg { width: 11px; height: 11px; color: #fff; }
-  .cmpx-li.no { color: var(--ink-faint); }
-  .cmpx-li.no i { background: transparent; box-shadow: inset 0 0 0 2px rgba(36,40,90,.2); }
-  .cmpx-li.no i svg { color: var(--ink-faint); }
-  /* зона 3: покрытие учебы */
-  .cmpx-pct-v { font-size: 31px; font-weight: 700; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--c); }
-  .cmpx-row.v-jade .cmpx-pct-v { color: var(--ink-faint); }
-  .cmpx-pct-c { margin-top: 8px; font-size: 11px; font-weight: 500; color: var(--ink-faint); line-height: 1.35; }
-  /* зона 4: шанс + слайдер — проценты одного размера, с воздухом */
-  .cmpx-ch-lab { display: flex; justify-content: space-between; gap: 16px; }
-  .cmpx-ch-lab span { font-size: 9.5px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
-  .cmpx-ch-lab span.l-aft { color: var(--c); }
-  .cmpx-ch-nums { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-top: 8px; }
-  .cmpx-ch-now { font-size: 23px; font-weight: 700; letter-spacing: -.03em; color: var(--ink-faint); font-variant-numeric: tabular-nums; line-height: 1; }
-  .cmpx-ch-arr { width: 16px; height: 16px; flex: none; align-self: center; color: var(--c); opacity: .5; }
-  .cmpx-ch-aft { font-size: 23px; font-weight: 700; letter-spacing: -.03em; color: var(--c); font-variant-numeric: tabular-nums; line-height: 1; }
-  .cmpx-bar { position: relative; height: 7px; border-radius: 999px; margin-top: 16px; background: rgba(36,40,90,.09); }
-  .cmpx-bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
-    background: linear-gradient(90deg, var(--c), var(--c-lite)); }
-  /* ползунок: чёткий — сплошной центр + белый зазор + тонкое цветное кольцо, без размытого ореола */
-  .cmpx-bar > i::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-    width: 14px; height: 14px; border-radius: 50%; background: var(--c);
-    box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px rgba(var(--cr), .9), 0 2px 4px rgba(var(--cr), .3); }
-  /* «без гранта»: чистый изумруд вместо грязно-болотного — и полоска, и ползунок */
-  .cmpx-row.v-jade .cmpx-bar > i { background: linear-gradient(90deg, #2EA06E, #5AD79B); }
-  .cmpx-row.v-jade .cmpx-bar > i::after { background: #2EA06E;
-    box-shadow: 0 0 0 3px #fff, 0 0 0 4.5px rgba(46,170,112,.92), 0 2px 4px rgba(46,170,112,.32); }
+  /* ════ ГРАНТЫ: 3 вертикальные карточки — чисто-белые, SF Pro, без рамок и делителей, число-акцент ════ */
+  .gcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; align-items: stretch; }
+  /* подпись НАД карточкой — не часть карточки: звёздочка + название; сочные акценты как в референсе */
+  .gcol { --c: #0070F3; --c-lite: #5BA6FF; --cr: 0,112,243; display: flex; flex-direction: column; min-width: 0; }
+  .gcol.v-violet { --c: #7B2CBF; --c-lite: #A66BE0; --cr: 123,44,191; }
+  .gcol.v-jade   { --c: #2D8A4E; --c-lite: #4FC870; --cr: 45,138,78; }
+  .gcol-head { display: flex; align-items: center; gap: 8px; padding: 0 4px 14px; }
+  .gcol-head .star { width: 15px; height: 15px; flex: none; color: var(--c); }
+  .gcol-head .name { font-size: 15px; font-weight: 600; color: var(--c); letter-spacing: -.01em; line-height: 1.2; }
+  /* карточка — чисто-белая, БЕЗ рамки и стекла; мягкая нейтральная тень */
+  .gcard { display: flex; flex-direction: column; flex: 1; min-height: 0;
+    border-radius: 20px; padding: 22px 20px; background: #FFFFFF; border: none;
+    box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 10px 26px rgba(20,24,58,.07);
+    transition: transform .2s ease, box-shadow .2s ease; }
+  .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(20,24,58,.05), 0 18px 38px rgba(20,24,58,.1); }
+  /* блок 1: иллюстрация — горка крупнее, визуальный якорь карточки */
+  .g-illu { display: flex; align-items: flex-end; justify-content: center; padding-bottom: 10px; }
+  .g-mtn { height: 104px; display: flex; align-items: flex-end; justify-content: center; }
+  .g-mtn img { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; }
+  /* блок 2: стоимость — главный акцент; единица (₽/%) ТОГО ЖЕ размера и цвета, что и цифра */
+  .g-cost { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 6px; padding: 8px 0 14px; }
+  .g-cost-v { font-size: 40px; font-weight: 700; letter-spacing: -.02em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; }
+  .g-cost-v .u { font-size: 1em; font-weight: 700; color: inherit; margin-left: 1px; letter-spacing: 0; }
+  .g-cost-c { font-size: 12.5px; font-weight: 400; color: rgba(20,24,58,.5); text-align: center; line-height: 1.4; }
+  /* блок 3: что покрывает — список (без делителя, воздух) */
+  .g-blk { padding: 14px 0; }
+  .g-blk-h { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: rgba(20,24,58,.5); margin-bottom: 11px; }
+  .g-list { display: flex; flex-direction: column; gap: 9px; }
+  .g-li { display: flex; align-items: center; gap: 10px; font-size: 13.5px; font-weight: 400; color: #1A1D2E; }
+  .g-li i { width: 19px; height: 19px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--c); }
+  .g-li i svg { width: 10px; height: 10px; color: #fff; }
+  .g-li.no { color: rgba(20,24,58,.45); }
+  .g-li.no i { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(20,24,58,.2); }
+  .g-li.no i svg { color: rgba(20,24,58,.45); }
+  /* блок 4: шанс — обе цифры ОДИНАКОВОГО размера; цветом: сейчас серое, с EastSide акцент */
+  .g-ch { padding-top: 14px; }
+  .g-ch-h { font-size: 12px; font-weight: 600; letter-spacing: .02em; color: rgba(20,24,58,.5); margin-bottom: 11px; }
+  .g-ch-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
+  .g-ch-col { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .g-ch-col.aft { align-items: flex-end; text-align: right; }
+  .g-ch-lab { font-size: 11px; font-weight: 500; color: rgba(20,24,58,.45); }
+  .g-ch-col.aft .g-ch-lab { color: var(--c); }
+  .g-ch-num { font-size: 24px; font-weight: 700; letter-spacing: -.02em; line-height: 1; color: rgba(20,24,58,.4); font-variant-numeric: tabular-nums; }
+  .g-ch-col.aft .g-ch-num { color: var(--c); }
+  .g-ch-arr { width: 16px; height: 16px; color: rgba(20,24,58,.35); }
+  .g-bar { position: relative; height: 7px; border-radius: 999px; margin-top: 14px; background: rgba(20,24,58,.09); }
+  .g-bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--c); }
+  /* ползунок: белое ядро + цветное кольцо — на точке нового значения */
+  .g-bar > i::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
+    width: 13px; height: 13px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 2.5px var(--c), 0 1px 3px rgba(20,24,58,.25); }
+  .gcol.v-jade .g-bar > i { background: #2D8A4E; }
+  .gcol.v-jade .g-bar > i::after { box-shadow: 0 0 0 2.5px #2D8A4E, 0 1px 3px rgba(20,24,58,.25); }
   .gtbl-note { margin-top: 16px; display: flex; align-items: flex-start; gap: 12px; font-size: 12.5px; line-height: 1.5; color: var(--ink-sub); }
   .gtbl-note svg { width: 16px; height: 16px; flex: none; margin-top: 1px; color: var(--acc-ink); }
 
@@ -1043,93 +1128,96 @@
         <div class="sec-h"><span class="sec-t">Что покрывает грант</span></div>
         <p class="sec-s">Что входит в каждый вариант, сколько учебы он покрывает и как меняется шанс с подготовкой по маршруту EastSide.</p>
 
-        <!-- сравнение вариантов: таблица — шапка-колонки + строки с разделителями -->
-        <div class="cmpx">
-          <!-- шапка-колонки -->
-          <div class="cmpx-head">
-            <span></span>
-            <span class="h-cov">Что покрывает</span>
-            <span class="h-pct">Покрытие учебы</span>
-            <span class="h-ch">Шанс: сейчас &rarr; с EastSide</span>
-          </div>
-
-          <!-- ЯКОРЬ: полный грант -->
-          <div class="cmpx-row">
-            <div class="cmpx-label">
-              <span class="cmpx-lt">Полный грант</span>
-              <span class="cmpx-ls">ваша цель — полное покрытие</span>
-              <span class="cmpx-best"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>Лучший вариант</span>
-            </div>
-            <div class="cmpx-card">
-              <div class="cmpx-var">
-                <span class="cmpx-mtn"><img src="funnel-assets/mtn/mtn-full.png" alt="" loading="lazy"></span>
+        <!-- сравнение вариантов: 3 вертикальные карточки (полный / частичный / платное) -->
+        <div class="gcards">
+          <!-- ПОЛНЫЙ ГРАНТ (синий) -->
+          <div class="gcol">
+            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Полный грант</span></div>
+            <div class="gcard">
+              <div class="g-illu">
+                <span class="g-mtn"><img src="funnel-assets/mtn/mtn-full.png" alt="" loading="lazy"></span>
               </div>
-              <div class="cmpx-cov">
-                <span class="cmpx-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Обучение</span>
-                <span class="cmpx-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Проживание</span>
-                <span class="cmpx-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Страховка</span>
-                <span class="cmpx-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Стипендия</span>
+              <div class="g-cost">
+                <div class="g-cost-v">0<span class="u"> ₽</span></div>
+                <div class="g-cost-c">все расходы покрыты</div>
               </div>
-              <div class="cmpx-pct">
-                <div class="cmpx-pct-v">100%</div>
-                <div class="cmpx-pct-c">учеба полностью бесплатна</div>
+              <div class="g-blk">
+                <div class="g-blk-h">Что покрывает</div>
+                <div class="g-list">
+                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Обучение</span>
+                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Проживание</span>
+                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Страховка</span>
+                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Стипендия</span>
+                </div>
               </div>
-              <div class="cmpx-ch">
-                <div class="cmpx-ch-lab"><span>Сейчас</span><span class="l-aft">С EastSide</span></div>
-                <div class="cmpx-ch-nums"><span class="cmpx-ch-now">35%</span><svg class="cmpx-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg><span class="cmpx-ch-aft">78%</span></div>
-                <div class="cmpx-bar"><i style="width:78%"></i></div>
+              <div class="g-ch">
+                <div class="g-ch-h">Шанс поступить</div>
+                <div class="g-ch-grid">
+                  <div class="g-ch-col"><span class="g-ch-lab">Сейчас</span><span class="g-ch-num">35%</span></div>
+                  <svg class="g-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                  <div class="g-ch-col aft"><span class="g-ch-lab">С EastSide</span><span class="g-ch-num">78%</span></div>
+                </div>
+                <div class="g-bar"><i style="width:78%"></i></div>
               </div>
             </div>
           </div>
 
-          <!-- частичный грант -->
-          <div class="cmpx-row v-violet">
-            <div class="cmpx-label">
-              <span class="cmpx-lt">Частичный грант</span>
-              <span class="cmpx-ls">частичное покрытие</span>
-            </div>
-            <div class="cmpx-card">
-              <div class="cmpx-var">
-                <span class="cmpx-mtn"><img src="funnel-assets/mtn/mtn-half.png" alt="" loading="lazy"></span>
+          <!-- ЧАСТИЧНЫЙ ГРАНТ (фиолетовый) -->
+          <div class="gcol v-violet">
+            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Частичный грант</span></div>
+            <div class="gcard">
+              <div class="g-illu">
+                <span class="g-mtn"><img src="funnel-assets/mtn/mtn-half.png" alt="" loading="lazy"></span>
               </div>
-              <div class="cmpx-cov">
-                <span class="cmpx-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Половину обучения</span>
-                <span class="cmpx-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Проживание — отдельно</span>
+              <div class="g-cost">
+                <div class="g-cost-v">≈50<span class="u">%</span></div>
+                <div class="g-cost-c">покрывает половину учебы</div>
               </div>
-              <div class="cmpx-pct">
-                <div class="cmpx-pct-v">50%</div>
-                <div class="cmpx-pct-c">половину оплачивает грант</div>
+              <div class="g-blk">
+                <div class="g-blk-h">Что покрывает</div>
+                <div class="g-list">
+                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Половину обучения</span>
+                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Проживание — отдельно</span>
+                </div>
               </div>
-              <div class="cmpx-ch">
-                <div class="cmpx-ch-lab"><span>Сейчас</span><span class="l-aft">С EastSide</span></div>
-                <div class="cmpx-ch-nums"><span class="cmpx-ch-now">55%</span><svg class="cmpx-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg><span class="cmpx-ch-aft">85%</span></div>
-                <div class="cmpx-bar"><i style="width:85%"></i></div>
+              <div class="g-ch">
+                <div class="g-ch-h">Шанс поступить</div>
+                <div class="g-ch-grid">
+                  <div class="g-ch-col"><span class="g-ch-lab">Сейчас</span><span class="g-ch-num">55%</span></div>
+                  <svg class="g-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                  <div class="g-ch-col aft"><span class="g-ch-lab">С EastSide</span><span class="g-ch-num">85%</span></div>
+                </div>
+                <div class="g-bar"><i style="width:85%"></i></div>
               </div>
             </div>
           </div>
 
-          <!-- платное обучение -->
-          <div class="cmpx-row v-jade">
-            <div class="cmpx-label">
-              <span class="cmpx-lt">Платное обучение</span>
-              <span class="cmpx-ls">без гранта</span>
-            </div>
-            <div class="cmpx-card">
-              <div class="cmpx-var">
-                <span class="cmpx-mtn"><img src="funnel-assets/mtn/mtn-zero.png" alt="" loading="lazy"></span>
+          <!-- ПЛАТНОЕ ОБУЧЕНИЕ (зеленый) -->
+          <div class="gcol v-jade">
+            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Платное обучение</span></div>
+            <div class="gcard">
+              <div class="g-illu">
+                <span class="g-mtn"><img src="funnel-assets/mtn/mtn-zero.png" alt="" loading="lazy"></span>
               </div>
-              <div class="cmpx-cov">
-                <span class="cmpx-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Грант не участвует</span>
-                <span class="cmpx-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Полная оплата обучения</span>
+              <div class="g-cost">
+                <div class="g-cost-v">100<span class="u">%</span></div>
+                <div class="g-cost-c">полная оплата обучения</div>
               </div>
-              <div class="cmpx-pct">
-                <div class="cmpx-pct-v">0%</div>
-                <div class="cmpx-pct-c">оплата полностью своя</div>
+              <div class="g-blk">
+                <div class="g-blk-h">Что покрывает</div>
+                <div class="g-list">
+                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Грант не участвует</span>
+                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Полная оплата обучения</span>
+                </div>
               </div>
-              <div class="cmpx-ch">
-                <div class="cmpx-ch-lab"><span>Сейчас</span><span class="l-aft">С EastSide</span></div>
-                <div class="cmpx-ch-nums"><span class="cmpx-ch-now">85%</span><svg class="cmpx-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg><span class="cmpx-ch-aft">95%</span></div>
-                <div class="cmpx-bar"><i style="width:95%"></i></div>
+              <div class="g-ch">
+                <div class="g-ch-h">Шанс поступить</div>
+                <div class="g-ch-grid">
+                  <div class="g-ch-col"><span class="g-ch-lab">Сейчас</span><span class="g-ch-num">85%</span></div>
+                  <svg class="g-ch-arr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+                  <div class="g-ch-col aft"><span class="g-ch-lab">С EastSide</span><span class="g-ch-num">95%</span></div>
+                </div>
+                <div class="g-bar"><i style="width:95%"></i></div>
               </div>
             </div>
           </div>
@@ -1499,222 +1587,27 @@
   <span id="stgToastTxt">Сохранено</span>
 </div>
 
-<!-- инфо-попап: подбор вузов -->
-<div class="ipop" id="ipopUni" role="dialog" aria-modal="true" aria-label="Университеты под ваш профиль">
-  <div class="ipop-veil" data-close></div>
-  <div class="ipop-card wide">
-    <button class="ipop-close" type="button" data-close aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-    <div class="ipop-kick">Подбор вузов</div>
-    <div class="ipop-title">Университеты под ваш профиль</div>
-    <p class="ipop-lead">Список под ваше направление, язык и сроки — чтобы пройти хотя бы в часть и не потерять год. По каждому вузу: требования, гранты, общежитие, быт и дедлайны подачи.</p>
-
-    <div class="ipop-ulist">
-
-      <div class="ucard">
-        <div class="uc-photo" style="background-image:url('funnel-assets/universities/fudan.jpg')"></div>
-        <div class="uc-main">
-          <div class="uc-head">
-            <span class="uc-tt"><span class="uc-name">Фуданьский университет</span><span class="uc-zh">复旦大学 · Fudan University · Шанхай</span></span>
-            <span class="uc-tag reach">Планка выше</span>
-          </div>
-          <p class="uc-desc">Топ-3 Китая, силен в экономике, бизнесе и международных отношениях. Много англоязычных программ, большой кампус в центре Шанхая. Конкуренция высокая, но полный грант реален при HSK 5 и сильном портфолио — это достижимая цель за год подготовки.</p>
-          <div class="uc-facts">
-            <div class="uc-fact"><div class="k">Город</div><div class="v">Шанхай</div></div>
-            <div class="uc-fact"><div class="k">Язык программ</div><div class="v">Англ. / кит.</div></div>
-            <div class="uc-fact"><div class="k">Требования к языку</div><div class="v">HSK 5 / IELTS 6.0</div></div>
-            <div class="uc-fact"><div class="k">Тип гранта</div><div class="v good">Полный — 100%</div></div>
-            <div class="uc-fact"><div class="k">Что покрывает</div><div class="v">Учеба, жилье, стипендия</div></div>
-            <div class="uc-fact"><div class="k">Длительность</div><div class="v">4 года, бакалавриат</div></div>
-            <div class="uc-fact"><div class="k">Дедлайн подачи</div><div class="v">октябрь</div></div>
-            <div class="uc-fact"><div class="k">Рейтинг QS</div><div class="v">~50 место</div></div>
-            <div class="uc-fact"><div class="k">Шанс на грант</div><div class="v">45%</div></div>
-          </div>
-          <div class="uc-detail">
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Общежитие</div>
-              <p class="uc-d-t">Иностранцы живут в кампусном общежитии. Обычно <b>одно- или двухместные комнаты</b> с кондиционером, своим или блочным санузлом, горячей водой и интернетом. На этаже — кухня, прачечная, комнаты для занятий и круглосуточная вахта.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>Быт и расходы</div>
-              <p class="uc-d-t">Шанхай — самый дорогой город в списке, но в кампусе это почти не чувствуется: студенческие столовые недорогие, а метро покрывает весь город. Международная среда, много иностранных студентов.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>Стипендия и грант</div>
-              <p class="uc-d-t">Полный грант, как правило, закрывает <b>все обучение, проживание в общежитии и ежемесячную стипендию</b> на личные расходы. Частичный — обучение или его часть, проживание тогда за свой счет.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>Учеба и поступление</div>
-              <p class="uc-d-t">Много программ на английском (экономика, бизнес, международные отношения) и на китайском. Подача онлайн до октября: аттестат, мотивационное письмо, две рекомендации и сертификат HSK или IELTS.</p>
-            </div>
-          </div>
-        </div>
+<!-- подобранные вузы: мастер-детэйл (левый рейл ↔ правый детэйл) -->
+<div class="ipop u-pop" id="ipopUni" role="dialog" aria-modal="true" aria-label="Университеты под ваш профиль">
+  <div class="u-veil" data-close></div>
+  <div class="u-frame">
+    <div class="u-top">
+      <div class="u-top-txt">
+        <div class="u-top-title">Университеты</div>
+        <div class="u-top-desc">Подобраны под ваш профиль, язык и сроки подачи. Выберите карточку — справа откроются детали.</div>
       </div>
-
-      <div class="ucard">
-        <div class="uc-photo" style="background-image:url('funnel-assets/universities/zhejiang.jpg')"></div>
-        <div class="uc-main">
-          <div class="uc-head">
-            <span class="uc-tt"><span class="uc-name">Чжэцзянский университет</span><span class="uc-zh">浙江大学 · Zhejiang University · Ханчжоу</span></span>
-            <span class="uc-tag match">Хороший шанс</span>
-          </div>
-          <p class="uc-desc">Один из крупнейших исследовательских вузов страны, широкий выбор направлений — от IT до бизнеса. Провинция Чжэцзян дает щедрые локальные гранты иностранцам, а требования к языку мягче, чем в шанхайской тройке.</p>
-          <div class="uc-facts">
-            <div class="uc-fact"><div class="k">Город</div><div class="v">Ханчжоу</div></div>
-            <div class="uc-fact"><div class="k">Язык программ</div><div class="v">Англ. / кит.</div></div>
-            <div class="uc-fact"><div class="k">Требования к языку</div><div class="v">HSK 4–5</div></div>
-            <div class="uc-fact"><div class="k">Тип гранта</div><div class="v good">Полный или частичный</div></div>
-            <div class="uc-fact"><div class="k">Что покрывает</div><div class="v">Учеба, жилье, стипендия</div></div>
-            <div class="uc-fact"><div class="k">Длительность</div><div class="v">4 года, бакалавриат</div></div>
-            <div class="uc-fact"><div class="k">Дедлайн подачи</div><div class="v">октябрь</div></div>
-            <div class="uc-fact"><div class="k">Рейтинг QS</div><div class="v">~45 место</div></div>
-            <div class="uc-fact"><div class="k">Шанс на грант</div><div class="v">62%</div></div>
-          </div>
-          <div class="uc-detail">
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Общежитие</div>
-              <p class="uc-d-t">Кампусное общежитие для иностранных студентов: <b>одно- и двухместные комнаты</b> с кондиционером, санузлом, горячей водой и интернетом. На этаже общая кухня, прачечная и зоны для учебы, территория закрытая и охраняемая.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>Быт и расходы</div>
-              <p class="uc-d-t">Ханчжоу — зеленый и комфортный город рядом с озером Сиху, крупный IT-центр (здесь штаб Alibaba). Жизнь заметно дешевле Шанхая, до которого около часа на скоростном поезде.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>Стипендия и грант</div>
-              <p class="uc-d-t">Провинция Чжэцзян дает <b>щедрые гранты иностранцам</b>. Полный закрывает обучение, общежитие и ежемесячную стипендию, частичный — обучение или его существенную часть.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>Учеба и поступление</div>
-              <p class="uc-d-t">Широкий выбор направлений — от IT и инженерии до бизнеса, есть программы на английском. Требования к языку мягче, чем в шанхайской тройке. Подача онлайн до октября.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ucard">
-        <div class="uc-photo" style="background-image:url('funnel-assets/universities/nanjing.jpg')"></div>
-        <div class="uc-main">
-          <div class="uc-head">
-            <span class="uc-tt"><span class="uc-name">Нанкинский университет</span><span class="uc-zh">南京大学 · Nanjing University · Нанкин</span></span>
-            <span class="uc-tag match">Хороший шанс</span>
-          </div>
-          <p class="uc-desc">Престижный классический университет с сильной академической базой. Подает документы в раннюю волну (сентябрь) — успеваете спокойно собрать полный пакет и не подавать впритык. Хороший баланс уровня и реальных шансов.</p>
-          <div class="uc-facts">
-            <div class="uc-fact"><div class="k">Город</div><div class="v">Нанкин</div></div>
-            <div class="uc-fact"><div class="k">Язык программ</div><div class="v">Кит. / англ.</div></div>
-            <div class="uc-fact"><div class="k">Требования к языку</div><div class="v">HSK 5</div></div>
-            <div class="uc-fact"><div class="k">Тип гранта</div><div class="v good">Полный — 100%</div></div>
-            <div class="uc-fact"><div class="k">Что покрывает</div><div class="v">Учеба, жилье, стипендия</div></div>
-            <div class="uc-fact"><div class="k">Длительность</div><div class="v">4 года, бакалавриат</div></div>
-            <div class="uc-fact"><div class="k">Дедлайн подачи</div><div class="v">сентябрь</div></div>
-            <div class="uc-fact"><div class="k">Рейтинг QS</div><div class="v">~120 место</div></div>
-            <div class="uc-fact"><div class="k">Шанс на грант</div><div class="v">66%</div></div>
-          </div>
-          <div class="uc-detail">
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Общежитие</div>
-              <p class="uc-d-t">Иностранцы размещаются в кампусном общежитии: <b>одно- или двухместные комнаты</b> с кондиционером, своим или блочным санузлом, горячей водой и интернетом. Кухня, прачечная и учебные комнаты — на этаже, вахта круглосуточно.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>Быт и расходы</div>
-              <p class="uc-d-t">Нанкин — историческая бывшая столица, крупный, но спокойный студенческий город. Стоимость жизни средняя по списку, развитый транспорт, до Шанхая чуть больше часа на поезде.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>Стипендия и грант</div>
-              <p class="uc-d-t">Полный грант обычно покрывает <b>обучение, проживание в общежитии и ежемесячную стипендию</b>. Вуз подает в раннюю волну, поэтому пакет документов вы собираете спокойно, без спешки.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>Учеба и поступление</div>
-              <p class="uc-d-t">Сильная классическая академическая база, программы на китайском и часть на английском. Ранний дедлайн — сентябрь. Нужны аттестат, мотивационное письмо, рекомендации и HSK 5.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ucard">
-        <div class="uc-photo" style="background-image:url('funnel-assets/universities/harbin.jpg')"></div>
-        <div class="uc-main">
-          <div class="uc-head">
-            <span class="uc-tt"><span class="uc-name">Харбинский политехнический</span><span class="uc-zh">哈尔滨工业大学 · HIT · Харбин</span></span>
-            <span class="uc-tag safe">Высокий шанс</span>
-          </div>
-          <p class="uc-desc">Сильнейшая инженерная и техническая школа Китая. Лояльные требования к языку для иностранных абитуриентов и высокий процент грантов — надежный вариант, который заметно поднимает общий шанс на грант.</p>
-          <div class="uc-facts">
-            <div class="uc-fact"><div class="k">Город</div><div class="v">Харбин</div></div>
-            <div class="uc-fact"><div class="k">Язык программ</div><div class="v">Кит. / англ.</div></div>
-            <div class="uc-fact"><div class="k">Требования к языку</div><div class="v">HSK 4</div></div>
-            <div class="uc-fact"><div class="k">Тип гранта</div><div class="v good">Полный — 100%</div></div>
-            <div class="uc-fact"><div class="k">Что покрывает</div><div class="v">Учеба, жилье, стипендия</div></div>
-            <div class="uc-fact"><div class="k">Длительность</div><div class="v">4 года, бакалавриат</div></div>
-            <div class="uc-fact"><div class="k">Дедлайн подачи</div><div class="v">сентябрь</div></div>
-            <div class="uc-fact"><div class="k">Рейтинг QS</div><div class="v">~230 место</div></div>
-            <div class="uc-fact"><div class="k">Шанс на грант</div><div class="v">78%</div></div>
-          </div>
-          <div class="uc-detail">
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Общежитие</div>
-              <p class="uc-d-t">Кампусное общежитие <b>с отоплением</b> (зимы суровые): одно- и двухместные комнаты с санузлом, горячей водой, интернетом и теплыми батареями. Кухня, прачечная и учебные зоны на этаже, охрана круглосуточно.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>Быт и расходы</div>
-              <p class="uc-d-t">Харбин — северный город с очень холодной зимой и знаменитым фестивалем ледяных скульптур. Зато одна из самых низких стоимостей жизни в списке: еда и быт обходятся дешево.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>Стипендия и грант</div>
-              <p class="uc-d-t">Высокий процент грантов для иностранцев. Полный закрывает <b>обучение, общежитие и ежемесячную стипендию</b> — это надежный вариант, который заметно поднимает общий шанс.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>Учеба и поступление</div>
-              <p class="uc-d-t">Сильнейшая инженерная и техническая школа Китая, программы на китайском и английском. Лояльные требования к языку (HSK 4). Подача — до сентября.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ucard">
-        <div class="uc-photo" style="background-image:url('funnel-assets/universities/qingdao.jpg')"></div>
-        <div class="uc-main">
-          <div class="uc-head">
-            <span class="uc-tt"><span class="uc-name">Циндаоский университет</span><span class="uc-zh">青岛大学 · Qingdao University · Циндао</span></span>
-            <span class="uc-tag safe">Высокий шанс</span>
-          </div>
-          <p class="uc-desc">Комфортный приморский город и доступные требования. Надежный запасной вариант с реальным шансом на частичный или полный грант даже на текущем уровне языка.</p>
-          <div class="uc-facts">
-            <div class="uc-fact"><div class="k">Город</div><div class="v">Циндао</div></div>
-            <div class="uc-fact"><div class="k">Язык программ</div><div class="v">Кит. / англ.</div></div>
-            <div class="uc-fact"><div class="k">Требования к языку</div><div class="v">HSK 4</div></div>
-            <div class="uc-fact"><div class="k">Тип гранта</div><div class="v good">Частичный или полный</div></div>
-            <div class="uc-fact"><div class="k">Что покрывает</div><div class="v">Учеба, частично жилье</div></div>
-            <div class="uc-fact"><div class="k">Длительность</div><div class="v">4 года, бакалавриат</div></div>
-            <div class="uc-fact"><div class="k">Дедлайн подачи</div><div class="v">сентябрь</div></div>
-            <div class="uc-fact"><div class="k">Рейтинг QS</div><div class="v">~800 место</div></div>
-            <div class="uc-fact"><div class="k">Шанс на грант</div><div class="v">84%</div></div>
-          </div>
-          <div class="uc-detail">
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>Общежитие</div>
-              <p class="uc-d-t">Кампусное общежитие для иностранных студентов: <b>комнаты на одного-двух</b> с кондиционером, санузлом, горячей водой и интернетом. Общая кухня, прачечная и зоны отдыха, территория у моря, охраняемая.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>Быт и расходы</div>
-              <p class="uc-d-t">Циндао — приморский курортный город с мягким климатом, пляжами и чистым воздухом. Стоимость жизни невысокая, атмосфера спокойная — комфортно для первого года за границей.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>Стипендия и грант</div>
-              <p class="uc-d-t">Реальный шанс на грант даже на текущем уровне языка. Частичный покрывает обучение, полный добавляет <b>проживание и стипендию</b> — конкретику уточняем под ваш профиль.</p>
-            </div>
-            <div class="uc-d">
-              <div class="uc-d-h"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>Учеба и поступление</div>
-              <p class="uc-d-t">Доступные требования к поступлению (HSK 4), программы на китайском и английском. Надежный запасной вариант. Подача — до сентября.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <button class="u-close" type="button" data-close aria-label="Закрыть"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
-    <div class="ipop-note">Точный список вузов и программ под профиль соберем на странице маршрута. Сроки и требования — ориентировочные, финал уточняется по каждому вузу.</div>
+    <div class="u-body">
+      <aside class="u-rail">
+        <div class="u-list" id="uniList"></div>
+      </aside>
+      <section class="u-detail">
+        <div class="u-scroll" id="uniScroll"></div>
+      </section>
+    </div>
   </div>
 </div>
-
 <!-- инфо-попап: гранты и стипендии -->
 <div class="ipop" id="ipopGrant" role="dialog" aria-modal="true" aria-label="Гранты и стипендии">
   <div class="ipop-veil" data-close></div>
@@ -1994,5 +1887,174 @@
 })();
 </script>
 
+<script>
+/* ════ Попап «Университеты»: premium dark, мастер-детэйл (v5) ════
+   Слева — горизонтальные карточки (фото слева, текст справа), без тегов.
+   Справа — чистое hero-фото (повыше) + заголовок/описание + характеристики + секции.
+   Без буквы «ё». */
+(function () {
+  'use strict';
+  var list = document.getElementById('uniList');
+  var scroll = document.getElementById('uniScroll');
+  if (!list || !scroll) return;
+
+  var IC = {
+    pin:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>',
+    globe:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.5 9h17M3.5 15h17M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></svg>',
+    doc:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>',
+    medal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-2.8L17 21l-1.5-7"/></svg>',
+    wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18"/><circle cx="16.5" cy="14.5" r="1.1" fill="currentColor" stroke="none"/></svg>',
+    cal:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="16" rx="2.5"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/></svg>',
+    star: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 7.2 7.5.3-6 4.8 2.1 7.4L12 17.8 5.4 21.7l2.1-7.4-6-4.8 7.5-.3z"/></svg>',
+    gauge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18a8 8 0 1116 0"/><path d="M12 14l4-3"/></svg>',
+    cap:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-4 9 4-9 4z"/><path d="M7 10v4.5c0 1.3 2.2 2.5 5 2.5s5-1.2 5-2.5V10"/></svg>',
+    bed:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-5h18v5"/><path d="M3 21v-3M21 21v-3"/><path d="M6 13v-2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2"/></svg>'
+  };
+
+  var FACT_KEYS = ['city','lang','req','grantT','cover','deadline','qs','chance'];
+  var FACT_META = {
+    city:    ['pin',   'Город'],
+    lang:    ['globe', 'Язык программ'],
+    req:     ['doc',   'Треб. к языку'],
+    grantT:  ['medal', 'Тип гранта'],
+    cover:   ['wallet','Покрытие'],
+    deadline:['cal',   'Дедлайн подачи'],
+    qs:      ['star',  'Рейтинг QS'],
+    chance:  ['gauge', 'Шанс на грант']
+  };
+
+  var UNIS = [
+    {
+      photo: 'funnel-assets/universities/fudan.jpg', name: 'Фуданьский университет',
+      zh: '复旦大学 · Fudan University', zhShort: '复旦大学', city: 'Шанхай', rating: 'QS ~50',
+      chance: 45, grantShort: 'Полный — 100%',
+      desc: 'Топ-3 Китая, силен в экономике и международных отношениях. Много англоязычных программ, кампус в центре Шанхая. Полный грант реален при HSK 5 и сильном портфолио.',
+      facts: { city:'Шанхай', lang:'Англ. / кит.', req:'HSK 5 / IELTS 6.0', grantT:['Полный — 100%','good'], cover:'Учеба, жилье, стипендия', deadline:'октябрь', qs:'~50 место', chance:['45%','acc'] },
+      sections: [
+        ['bed','Общежитие','Иностранцы живут в кампусном общежитии. Обычно <b>одно- или двухместные комнаты</b> с кондиционером, своим или блочным санузлом, горячей водой и интернетом. На этаже — кухня, прачечная, комнаты для занятий и круглосуточная вахта.'],
+        ['wallet','Быт и расходы','Шанхай — самый дорогой город в списке, но в кампусе это почти не чувствуется: студенческие столовые недорогие, а метро покрывает весь город. Международная среда, много иностранных студентов.'],
+        ['medal','Стипендия и грант','Полный грант, как правило, закрывает <b>все обучение, проживание в общежитии и ежемесячную стипендию</b> на личные расходы. Частичный — обучение или его часть, проживание тогда за свой счет.'],
+        ['cap','Учеба и поступление','Много программ на английском (экономика, бизнес, международные отношения) и на китайском. Подача онлайн до октября: аттестат, мотивационное письмо, две рекомендации и сертификат HSK или IELTS.']
+      ]
+    },
+    {
+      photo: 'funnel-assets/universities/zhejiang.jpg', name: 'Чжэцзянский университет',
+      zh: '浙江大学 · Zhejiang University', zhShort: '浙江大学', city: 'Ханчжоу', rating: 'QS ~45',
+      chance: 62, grantShort: 'Полный / частичный',
+      desc: 'Крупный исследовательский вуз, широкий выбор от IT до бизнеса. Провинция дает щедрые гранты иностранцам, требования к языку мягче шанхайской тройки.',
+      facts: { city:'Ханчжоу', lang:'Англ. / кит.', req:'HSK 4–5', grantT:['Полный или частичный','good'], cover:'Учеба, жилье, стипендия', deadline:'октябрь', qs:'~45 место', chance:['62%','acc'] },
+      sections: [
+        ['bed','Общежитие','Кампусное общежитие для иностранных студентов: <b>одно- и двухместные комнаты</b> с кондиционером, санузлом, горячей водой и интернетом. На этаже общая кухня, прачечная и зоны для учебы, территория закрытая и охраняемая.'],
+        ['wallet','Быт и расходы','Ханчжоу — зеленый и комфортный город рядом с озером Сиху, крупный IT-центр (здесь штаб Alibaba). Жизнь заметно дешевле Шанхая, до которого около часа на скоростном поезде.'],
+        ['medal','Стипендия и грант','Провинция Чжэцзян дает <b>щедрые гранты иностранцам</b>. Полный закрывает обучение, общежитие и ежемесячную стипендию, частичный — обучение или его существенную часть.'],
+        ['cap','Учеба и поступление','Широкий выбор направлений — от IT и инженерии до бизнеса, есть программы на английском. Требования к языку мягче, чем в шанхайской тройке. Подача онлайн до октября.']
+      ]
+    },
+    {
+      photo: 'funnel-assets/universities/nanjing.jpg', name: 'Нанкинский университет',
+      zh: '南京大学 · Nanjing University', zhShort: '南京大学', city: 'Нанкин', rating: 'QS ~120',
+      chance: 66, grantShort: 'Полный — 100%',
+      desc: 'Престижный классический университет с сильной академической базой. Ранняя подача в сентябре — успеете собрать полный пакет без спешки.',
+      facts: { city:'Нанкин', lang:'Кит. / англ.', req:'HSK 5', grantT:['Полный — 100%','good'], cover:'Учеба, жилье, стипендия', deadline:'сентябрь', qs:'~120 место', chance:['66%','acc'] },
+      sections: [
+        ['bed','Общежитие','Иностранцы размещаются в кампусном общежитии: <b>одно- или двухместные комнаты</b> с кондиционером, своим или блочным санузлом, горячей водой и интернетом. Кухня, прачечная и учебные комнаты — на этаже, вахта круглосуточно.'],
+        ['wallet','Быт и расходы','Нанкин — историческая бывшая столица, крупный, но спокойный студенческий город. Стоимость жизни средняя по списку, развитый транспорт, до Шанхая чуть больше часа на поезде.'],
+        ['medal','Стипендия и грант','Полный грант обычно покрывает <b>обучение, проживание в общежитии и ежемесячную стипендию</b>. Вуз подает в раннюю волну, поэтому пакет документов вы собираете спокойно, без спешки.'],
+        ['cap','Учеба и поступление','Сильная классическая академическая база, программы на китайском и часть на английском. Ранний дедлайн — сентябрь. Нужны аттестат, мотивационное письмо, рекомендации и HSK 5.']
+      ]
+    },
+    {
+      photo: 'funnel-assets/universities/harbin.jpg', name: 'Харбинский политехнический',
+      zh: '哈尔滨工业大学 · HIT', zhShort: '哈尔滨工业大学', city: 'Харбин', rating: 'QS ~230',
+      chance: 78, grantShort: 'Полный — 100%',
+      desc: 'Сильнейшая инженерная школа Китая. Лояльные требования к языку и высокий процент грантов — надежный вариант, который поднимает общий шанс.',
+      facts: { city:'Харбин', lang:'Кит. / англ.', req:'HSK 4', grantT:['Полный — 100%','good'], cover:'Учеба, жилье, стипендия', deadline:'сентябрь', qs:'~230 место', chance:['78%','acc'] },
+      sections: [
+        ['bed','Общежитие','Кампусное общежитие <b>с отоплением</b> (зимы суровые): одно- и двухместные комнаты с санузлом, горячей водой, интернетом и теплыми батареями. Кухня, прачечная и учебные зоны на этаже, охрана круглосуточно.'],
+        ['wallet','Быт и расходы','Харбин — северный город с очень холодной зимой и знаменитым фестивалем ледяных скульптур. Зато одна из самых низких стоимостей жизни в списке: еда и быт обходятся дешево.'],
+        ['medal','Стипендия и грант','Высокий процент грантов для иностранцев. Полный закрывает <b>обучение, общежитие и ежемесячную стипендию</b> — это надежный вариант, который заметно поднимает общий шанс.'],
+        ['cap','Учеба и поступление','Сильнейшая инженерная и техническая школа Китая, программы на китайском и английском. Лояльные требования к языку (HSK 4). Подача — до сентября.']
+      ]
+    },
+    {
+      photo: 'funnel-assets/universities/qingdao.jpg', name: 'Циндаоский университет',
+      zh: '青岛大学 · Qingdao University', zhShort: '青岛大学', city: 'Циндао', rating: 'QS ~800',
+      chance: 84, grantShort: 'Частичный / полный',
+      desc: 'Комфортный приморский город и доступные требования. Надежный запасной вариант с реальным шансом на грант даже на текущем уровне языка.',
+      facts: { city:'Циндао', lang:'Кит. / англ.', req:'HSK 4', grantT:['Частичный или полный','good'], cover:'Учеба, частично жилье', deadline:'сентябрь', qs:'~800 место', chance:['84%','acc'] },
+      sections: [
+        ['bed','Общежитие','Кампусное общежитие для иностранных студентов: <b>комнаты на одного-двух</b> с кондиционером, санузлом, горячей водой и интернетом. Общая кухня, прачечная и зоны отдыха, территория у моря, охраняемая.'],
+        ['wallet','Быт и расходы','Циндао — приморский курортный город с мягким климатом, пляжами и чистым воздухом. Стоимость жизни невысокая, атмосфера спокойная — комфортно для первого года за границей.'],
+        ['medal','Стипендия и грант','Реальный шанс на грант даже на текущем уровне языка. Частичный покрывает обучение, полный добавляет <b>проживание и стипендию</b> — конкретику уточняем под ваш профиль.'],
+        ['cap','Учеба и поступление','Доступные требования к поступлению (HSK 4), программы на китайском и английском. Надежный запасной вариант. Подача — до сентября.']
+      ]
+    }
+  ];
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function cardHTML(u, i){
+    return '<article class="u-card' + (i === 0 ? ' sel' : '') + '" data-i="' + i + '" role="button" tabindex="0">' +
+      '<div class="u-photo"><img src="' + u.photo + '" alt="' + esc(u.name) + '" loading="lazy"></div>' +
+      '<div class="u-info">' +
+        '<div class="u-name">' + u.name + '</div>' +
+        '<div class="u-zh">' + u.zhShort + '</div>' +
+        '<div class="u-city"><span>' + u.city + '</span><span class="dot"></span><span>' + u.rating + '</span></div>' +
+        '<div class="u-nums"><span class="u-grant">' + u.grantShort + '</span>' +
+          '<span class="u-chance"><small>грант</small> <b>' + u.chance + '%</b></span></div>' +
+      '</div></article>';
+  }
+
+  function factsHTML(u){
+    var out = '';
+    FACT_KEYS.forEach(function (k){
+      var meta = FACT_META[k], raw = u.facts[k], mod = '', val = raw;
+      if (Array.isArray(raw)) { val = raw[0]; mod = raw[1] ? ' ' + raw[1] : ''; }
+      out += '<div class="u-fact"><span class="u-fic">' + IC[meta[0]] + '</span><div class="u-ftxt">' +
+        '<div class="fl">' + meta[1] + '</div><div class="fv' + mod + '">' + val + '</div></div></div>';
+    });
+    return '<div class="u-facts">' + out + '</div>';
+  }
+
+  function detailHTML(u){
+    var hero = '<div class="u-hero"><img src="' + u.photo + '" alt="' + esc(u.name) + '"></div>';
+    var head = '<div class="u-head">' +
+        '<div class="hcity">' + IC.pin + u.city + '</div>' +
+        '<div class="hname">' + u.name + '</div>' +
+        '<div class="hzh">' + u.zh + '</div>' +
+      '</div>';
+    var desc = '<p class="u-desc">' + u.desc + '</p>';
+    var secs = '<div class="u-secs">' + u.sections.map(function (s){
+      return '<div class="u-sec"><div class="u-sec-h"><span class="u-sec-ic">' + IC[s[0]] + '</span><b>' + s[1] + '</b></div><p>' + s[2] + '</p></div>';
+    }).join('') + '</div>';
+    var foot = '<div class="u-foot">' + IC.doc + 'Точный список вузов и программ под профиль соберем на странице маршрута. Сроки и требования — ориентировочные, финал уточняется по каждому вузу.</div>';
+    return hero + head + desc + factsHTML(u) + secs + foot;
+  }
+
+  list.innerHTML = UNIS.map(cardHTML).join('');
+
+  function selectUni(i){
+    var cards = list.querySelectorAll('.u-card');
+    for (var k = 0; k < cards.length; k++) cards[k].classList.toggle('sel', +cards[k].getAttribute('data-i') === i);
+    scroll.classList.add('swap');
+    setTimeout(function () { scroll.scrollTop = 0; scroll.innerHTML = detailHTML(UNIS[i]); scroll.classList.remove('swap'); }, 140);
+    var el = list.querySelector('.u-card[data-i="' + i + '"]');
+    if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  list.addEventListener('click', function (e){
+    var c = e.target.closest ? e.target.closest('.u-card') : null;
+    if (c) selectUni(+c.getAttribute('data-i'));
+  });
+  list.addEventListener('keydown', function (e){
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    var c = e.target.closest ? e.target.closest('.u-card') : null;
+    if (!c) return;
+    e.preventDefault(); selectUni(+c.getAttribute('data-i'));
+  });
+
+  scroll.innerHTML = detailHTML(UNIS[0]);
+})();
+</script>
 </body>
 </html>
