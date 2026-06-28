@@ -332,27 +332,26 @@
     box-shadow: inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3); transition: background .12s; }
   .btn-next:hover { background: #2B8FFF; }
   .btn-next svg { transform: rotate(-45deg); }
-  .rm-banner { position: relative; display: block; width: 100%; margin: 80px 0 24px; min-height: 214px;
-    border: 1px solid rgba(43,143,255,.4); border-radius: 20px; overflow: hidden; cursor: pointer;
-    background: #03081C; text-align: left; padding: 0; font-family: inherit;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.05); transition: border-color .25s; }
-  .rm-banner:hover { border-color: rgba(110,180,255,.75); }
-  .rm-bg { position: absolute; inset: 0; background: url('funnel-assets/prototypes/v2/bg-lit-wide.png') 56% 26% / cover no-repeat;
-    transform: scale(1.02); transition: transform .8s cubic-bezier(.22,.61,.36,1); }
-  .rm-banner:hover .rm-bg { transform: scale(1.06); }
-  .rm-shade { position: absolute; inset: 0; pointer-events: none;
+  .rm-banner { position: relative; display: block; width: 100%; margin: 80px 0 24px; min-height: 288px;
+    border: 0; border-radius: 20px; overflow: hidden; cursor: pointer;
     background:
-      linear-gradient(180deg, rgba(3,8,28,.62) 0%, rgba(3,8,28,.7) 100%),
-      linear-gradient(90deg, rgba(3,8,28,.28) 0%, rgba(3,8,28,0) 60%);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.1); }
+      radial-gradient(620px 300px at 88% -12%, rgba(43,143,255,.12), transparent 62%),
+      linear-gradient(180deg, #FFFFFF 0%, #EAEFFB 100%);
+    text-align: left; padding: 0; font-family: inherit;
+    box-shadow: 0 10px 30px rgba(30,50,90,.10), inset 0 0 70px rgba(43,143,255,.05);
+    transition: transform .2s cubic-bezier(.22,.61,.36,1); }
+  .rm-banner:hover { transform: translateY(-2px); }
+  /* тёмное фото и затемнение убраны — баннер светлый, текст чёрный */
+  .rm-bg { display: none; }
+  .rm-shade { display: none; }
   .rm-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start;
-    padding: 28px 32px 28px; color: #fff; }
+    padding: 38px 40px; color: var(--ink); }
   .rm-kick { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700;
-    letter-spacing: -0.01em; text-transform: none; color: var(--violet-soft); }
+    letter-spacing: -0.01em; text-transform: none; color: var(--acc-ink); }
   .rm-kick i { width: 6px; height: 6px; border-radius: 50%; background: var(--violet-2); box-shadow: 0 0 10px var(--violet-2); }
   .rm-title { margin-top: 12px; font-family: 'Onest', sans-serif; font-size: 25px;
-    font-weight: 700; letter-spacing: -.7px; line-height: 1.15; }
-  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--tx-soft); max-width: 42ch; }
+    font-weight: 700; letter-spacing: -.7px; line-height: 1.15; color: var(--ink); }
+  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: rgba(21,21,31,.68); max-width: 42ch; }
   .rm-cta { margin-top: 20px; }
   .rm-cta svg { transition: transform .2s; }
   .rm-banner:hover .rm-cta { background: #2B8FFF; }
@@ -718,60 +717,60 @@
   .ch3-label { position: relative; font-size: 14px; font-weight: 700; color: var(--ink-sub); line-height: 1.34; }
   .ch3-pct { position: relative; margin-top: auto; padding-top: 16px; font-size: 46px; font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
 
-  /* ════ ГРАНТЫ: 3 карточки — лёгкие/воздушные/премиум (Apple/Linear/Stripe): много воздуха, тоньше и тише ════ */
+  /* ════ ГРАНТЫ: 3 карточки — верх Row (круг-горка + число), список в tint-контейнере, крупный масштаб ════ */
   .gcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; align-items: stretch; }
-  /* подпись НАД карточкой — маленькая, тихая, не капсом; воздух до карточки */
+  /* подпись НАД карточкой — крупная, спокойная */
   .gcol { --c: #0070F3; --c-lite: #5BA6FF; --cr: 0,112,243; display: flex; flex-direction: column; min-width: 0; }
   .gcol.v-violet { --c: #7B2CBF; --c-lite: #A66BE0; --cr: 123,44,191; }
   .gcol.v-jade   { --c: #2D8A4E; --c-lite: #4FC870; --cr: 45,138,78; }
-  .gcol-head { display: flex; align-items: center; gap: 7px; padding: 0 6px 18px; }
-  .gcol-head .star { width: 12px; height: 12px; flex: none; color: var(--c); }
-  .gcol-head .name { font-size: 13px; font-weight: 500; color: var(--c); letter-spacing: -.005em; line-height: 1.2; }
-  /* карточка — едва заметная цветная подложка: почти белая с лёгким tint, без объёма и тяжёлой тени */
+  .gcol-head { display: flex; align-items: center; gap: 8px; padding: 0 4px 14px; }
+  .gcol-head .star { width: 16px; height: 16px; flex: none; color: var(--c); }
+  .gcol-head .name { font-size: 17px; font-weight: 600; color: var(--c); letter-spacing: -.015em; line-height: 1.2; }
+  /* карточка — белая, мягкая тень, много воздуха внутри */
   .gcard { display: flex; flex-direction: column; flex: 1; min-height: 0;
-    border-radius: 14px; padding: 26px 22px; background: rgba(var(--cr), .025); border: none;
-    box-shadow: 0 1px 2px rgba(20,24,58,.03);
-    transition: background .2s ease, box-shadow .2s ease; }
-  .gcard:hover { background: rgba(var(--cr), .04); box-shadow: 0 2px 8px rgba(20,24,58,.05); }
-  /* блок 1: горка — меньше, легче, больше воздуха вокруг */
-  .g-illu { display: flex; align-items: flex-end; justify-content: center; padding-bottom: 20px; }
-  .g-mtn { height: 78px; display: flex; align-items: flex-end; justify-content: center; }
-  .g-mtn img { height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; }
-  /* блок 2: стоимость — крупная, но легче (thinner); заметный воздух до подписи */
-  .g-cost { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    gap: 10px; padding: 12px 0 22px; }
-  .g-cost-v { font-size: 32px; font-weight: 600; letter-spacing: -.02em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; }
-  .g-cost-v .u { font-size: 1em; font-weight: 600; color: inherit; margin-left: 1px; letter-spacing: 0; }
-  .g-cost-c { font-size: 11.5px; font-weight: 400; color: rgba(20,24,58,.5); text-align: center; line-height: 1.4; }
-  /* блок 3: что покрывает — компактный список, маленькие аккуратные кружки */
-  .g-blk { padding: 18px 0; }
-  .g-blk-h { font-size: 10.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: rgba(20,24,58,.42); margin-bottom: 12px; }
-  .g-list { display: flex; flex-direction: column; gap: 7px; }
-  .g-li { display: flex; align-items: center; gap: 9px; font-size: 12.5px; font-weight: 400; color: #1A1D2E; }
-  .g-li i { width: 15px; height: 15px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--c); }
-  .g-li i svg { width: 8px; height: 8px; color: #fff; }
-  .g-li.no { color: rgba(20,24,58,.42); }
-  .g-li.no i { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(20,24,58,.16); }
-  .g-li.no i svg { color: rgba(20,24,58,.42); }
-  /* блок 4: шанс — тише/ниже; почти незаметный разделитель сверху, тонкий бар, изящный ползунок */
-  .g-ch { padding-top: 18px; border-top: 1px solid rgba(20,24,58,.06); }
-  .g-ch-h { font-size: 10.5px; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: rgba(20,24,58,.42); margin-bottom: 11px; }
+    border-radius: 16px; padding: 24px 22px; background: #FFFFFF; border: none;
+    box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 8px 22px rgba(20,24,58,.05);
+    transition: transform .2s ease, box-shadow .2s ease; }
+  .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20,24,58,.06), 0 14px 32px rgba(20,24,58,.09); }
+  /* ВЕРХ: Row — горка в тонированном круге СЛЕВА + колонка число/подпись СПРАВА (левый край) */
+  .g-top { display: flex; align-items: center; gap: 14px; padding-bottom: 20px; }
+  .g-mtn { width: 56px; height: 56px; flex: none; border-radius: 50%; display: grid; place-items: center;
+    background: rgba(var(--cr), .09); }
+  .g-mtn img { width: 40px; height: 40px; object-fit: contain; display: block; }
+  .g-cost { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 4px; min-width: 0; }
+  .g-cost-v { font-size: 38px; font-weight: 700; letter-spacing: -.025em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; }
+  .g-cost-v .u { font-size: 1em; font-weight: 700; color: inherit; margin-left: 1px; letter-spacing: 0; }
+  .g-cost-c { font-size: 12.5px; font-weight: 400; color: rgba(20,24,58,.5); line-height: 1.35; }
+  /* блок: что покрывает — список в лёгком тонированном контейнере (чуть ярче круга) */
+  .g-blk { padding: 4px 0 6px; }
+  .g-blk-h { font-size: 12px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: rgba(20,24,58,.45); margin-bottom: 12px; }
+  .g-listbox { background: rgba(var(--cr), .08); border-radius: 12px; padding: 12px 14px; }
+  .g-list { display: flex; flex-direction: column; gap: 9px; }
+  .g-li { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; color: #1A1D2E; }
+  .g-li i { width: 18px; height: 18px; flex: none; border-radius: 50%; display: grid; place-items: center; background: var(--c); }
+  .g-li i svg { width: 10px; height: 10px; color: #fff; }
+  .g-li.no { color: rgba(20,24,58,.45); }
+  .g-li.no i { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(20,24,58,.18); }
+  .g-li.no i svg { color: rgba(20,24,58,.45); }
+  /* блок: шанс поступить — толстый бар, заметный ползунок */
+  .g-ch { padding-top: 18px; }
+  .g-ch-h { font-size: 12px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; color: rgba(20,24,58,.45); margin-bottom: 12px; }
   .g-ch-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
   .g-ch-col { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .g-ch-col.aft { align-items: flex-end; text-align: right; }
-  .g-ch-lab { font-size: 10px; font-weight: 400; color: rgba(20,24,58,.4); }
+  .g-ch-lab { font-size: 11px; font-weight: 500; color: rgba(20,24,58,.45); }
   .g-ch-col.aft .g-ch-lab { color: var(--c); }
-  .g-ch-num { font-size: 20px; font-weight: 600; letter-spacing: -.02em; line-height: 1; color: rgba(20,24,58,.38); font-variant-numeric: tabular-nums; }
+  .g-ch-num { font-size: 26px; font-weight: 700; letter-spacing: -.02em; line-height: 1; color: rgba(20,24,58,.4); font-variant-numeric: tabular-nums; }
   .g-ch-col.aft .g-ch-num { color: var(--c); }
-  .g-ch-arr { width: 13px; height: 13px; color: rgba(20,24,58,.28); }
-  .g-bar { position: relative; height: 3px; border-radius: 999px; margin-top: 13px; background: rgba(20,24,58,.08); }
+  .g-ch-arr { width: 16px; height: 16px; color: rgba(20,24,58,.32); }
+  .g-bar { position: relative; height: 8px; border-radius: 999px; margin-top: 14px; background: rgba(20,24,58,.09); }
   .g-bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--c); }
-  /* ползунок: маленький, тонкое кольцо — изящный, не выпирает */
+  /* ползунок: заметный, объёмный — на точке нового значения */
   .g-bar > i::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-    width: 9px; height: 9px; border-radius: 50%; background: #fff;
-    box-shadow: 0 0 0 1.5px var(--c); }
+    width: 16px; height: 16px; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 0 2.5px var(--c), 0 2px 5px rgba(20,24,58,.18); }
   .gcol.v-jade .g-bar > i { background: #2D8A4E; }
-  .gcol.v-jade .g-bar > i::after { box-shadow: 0 0 0 1.5px #2D8A4E; }
+  .gcol.v-jade .g-bar > i::after { box-shadow: 0 0 0 2.5px #2D8A4E, 0 2px 5px rgba(20,24,58,.18); }
   .gtbl-note { margin-top: 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 11.5px; line-height: 1.5; color: rgba(20,24,58,.45); }
   .gtbl-note svg { width: 14px; height: 14px; flex: none; margin-top: 1px; color: rgba(20,24,58,.4); }
 
@@ -1134,20 +1133,22 @@
           <div class="gcol">
             <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Полный грант</span></div>
             <div class="gcard">
-              <div class="g-illu">
+              <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-full.png" alt="" loading="lazy"></span>
-              </div>
-              <div class="g-cost">
-                <div class="g-cost-v">0<span class="u"> ₽</span></div>
-                <div class="g-cost-c">все расходы покрыты</div>
+                <div class="g-cost">
+                  <div class="g-cost-v">0<span class="u"> ₽</span></div>
+                  <div class="g-cost-c">все расходы покрыты</div>
+                </div>
               </div>
               <div class="g-blk">
                 <div class="g-blk-h">Что покрывает</div>
-                <div class="g-list">
-                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Обучение</span>
-                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Проживание</span>
-                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Страховка</span>
-                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Стипендия</span>
+                <div class="g-listbox">
+                  <div class="g-list">
+                    <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Обучение</span>
+                    <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Проживание</span>
+                    <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Страховка</span>
+                    <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Стипендия</span>
+                  </div>
                 </div>
               </div>
               <div class="g-ch">
@@ -1166,18 +1167,20 @@
           <div class="gcol v-violet">
             <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Частичный грант</span></div>
             <div class="gcard">
-              <div class="g-illu">
+              <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-half.png" alt="" loading="lazy"></span>
-              </div>
-              <div class="g-cost">
-                <div class="g-cost-v">≈50<span class="u">%</span></div>
-                <div class="g-cost-c">покрывает половину учебы</div>
+                <div class="g-cost">
+                  <div class="g-cost-v">≈50<span class="u">%</span></div>
+                  <div class="g-cost-c">покрывает половину учебы</div>
+                </div>
               </div>
               <div class="g-blk">
                 <div class="g-blk-h">Что покрывает</div>
-                <div class="g-list">
-                  <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Половину обучения</span>
-                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Проживание — отдельно</span>
+                <div class="g-listbox">
+                  <div class="g-list">
+                    <span class="g-li"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg></i>Половину обучения</span>
+                    <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Проживание — отдельно</span>
+                  </div>
                 </div>
               </div>
               <div class="g-ch">
@@ -1196,18 +1199,20 @@
           <div class="gcol v-jade">
             <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Платное обучение</span></div>
             <div class="gcard">
-              <div class="g-illu">
+              <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-zero.png" alt="" loading="lazy"></span>
-              </div>
-              <div class="g-cost">
-                <div class="g-cost-v">100<span class="u">%</span></div>
-                <div class="g-cost-c">полная оплата обучения</div>
+                <div class="g-cost">
+                  <div class="g-cost-v">100<span class="u">%</span></div>
+                  <div class="g-cost-c">полная оплата обучения</div>
+                </div>
               </div>
               <div class="g-blk">
                 <div class="g-blk-h">Что покрывает</div>
-                <div class="g-list">
-                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Грант не участвует</span>
-                  <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Полная оплата обучения</span>
+                <div class="g-listbox">
+                  <div class="g-list">
+                    <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Грант не участвует</span>
+                    <span class="g-li no"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h12"/></svg></i>Полная оплата обучения</span>
+                  </div>
                 </div>
               </div>
               <div class="g-ch">
@@ -1244,7 +1249,7 @@
         <div class="sec-h"><span class="sec-t">Университеты под ваш профиль</span></div>
         <p class="sec-s">Подобраны под ваше направление, язык и сроки. Нажмите на любой — откроется подробное описание всех вузов.</p>
         <div class="unis">
-          <a class="uni" data-ipop="ipopUni" role="button" tabindex="0">
+          <a class="uni" data-uni="0" data-ipop="ipopUni" role="button" tabindex="0">
             <span class="uni-img" style="--img:url('funnel-assets/universities/fudan.jpg'); --pos:50% 50%"><span class="uni-tag">Планка выше</span></span>
             <span class="uni-body">
               <span class="uni-name">Фуданьский университет</span>
@@ -1253,7 +1258,7 @@
               <span class="uni-foot"><span class="uni-chance">Шанс поступить: <b>45%</b></span><span class="uni-go">Подробнее<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
             </span>
           </a>
-          <a class="uni" data-ipop="ipopUni" role="button" tabindex="0">
+          <a class="uni" data-uni="1" data-ipop="ipopUni" role="button" tabindex="0">
             <span class="uni-img" style="--img:url('funnel-assets/universities/zhejiang.jpg'); --pos:50% 50%"><span class="uni-tag">Хороший шанс</span></span>
             <span class="uni-body">
               <span class="uni-name">Чжэцзянский университет</span>
@@ -1262,7 +1267,7 @@
               <span class="uni-foot"><span class="uni-chance">Шанс поступить: <b>62%</b></span><span class="uni-go">Подробнее<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
             </span>
           </a>
-          <a class="uni" data-ipop="ipopUni" role="button" tabindex="0">
+          <a class="uni" data-uni="2" data-ipop="ipopUni" role="button" tabindex="0">
             <span class="uni-img" style="--img:url('funnel-assets/universities/nanjing.jpg'); --pos:50% 50%"><span class="uni-tag">Хороший шанс</span></span>
             <span class="uni-body">
               <span class="uni-name">Нанкинский университет</span>
@@ -1271,7 +1276,7 @@
               <span class="uni-foot"><span class="uni-chance">Шанс поступить: <b>66%</b></span><span class="uni-go">Подробнее<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></span>
             </span>
           </a>
-          <a class="uni" data-ipop="ipopUni" role="button" tabindex="0">
+          <a class="uni" data-uni="3" data-ipop="ipopUni" role="button" tabindex="0">
             <span class="uni-img" style="--img:url('funnel-assets/universities/harbin.jpg'); --pos:50% 50%"><span class="uni-tag">Высокий шанс</span></span>
             <span class="uni-body">
               <span class="uni-name">Харбинский политех</span>
@@ -2032,6 +2037,11 @@
   }
 
   list.innerHTML = UNIS.map(cardHTML).join('');
+
+  // клик по карточке-открывалке конкретного вуза на странице — открыть именно его
+  document.querySelectorAll('[data-ipop="ipopUni"][data-uni]').forEach(function (b){
+    b.addEventListener('click', function (){ selectUni(+b.getAttribute('data-uni')); });
+  });
 
   function selectUni(i){
     var cards = list.querySelectorAll('.u-card');
