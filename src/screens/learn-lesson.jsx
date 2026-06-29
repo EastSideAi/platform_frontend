@@ -41,12 +41,19 @@
   .lx-theory__t{font-weight:600;font-size:22px;letter-spacing:-.4px;line-height:1.2;color:var(--lx-ink);text-wrap:balance;}
   .lx-theory__b{font-size:16px;line-height:1.62;color:var(--lx-ink-sub);margin-top:13px;max-width:60ch;}
   .lx-voc{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:24px;}
-  .lx-voc__c{position:relative;overflow:hidden;border-radius:18px;padding:18px 20px;
-    background:linear-gradient(155deg,rgba(255,255,255,.85),rgba(244,247,255,.6));
-    border:1px solid rgba(43,111,224,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 26px rgba(43,143,255,.05);}
-  .lx-voc__hz{font-size:30px;font-weight:600;color:var(--lx-acc-deep);letter-spacing:.5px;line-height:1;}
-  .lx-voc__py{font-size:13px;font-weight:600;color:var(--lx-ink-mute);margin-top:8px;font-variant-numeric:tabular-nums;}
-  .lx-voc__ru{font-size:15px;font-weight:600;color:var(--lx-ink);margin-top:3px;}
+  .lx-voc__c{position:relative;overflow:hidden;border-radius:18px;padding:16px 18px;
+    background:linear-gradient(155deg,rgba(255,255,255,.92),rgba(244,247,255,.6));
+    border:1px solid rgba(43,111,224,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 0 26px rgba(43,143,255,.05);}
+  .lx-voc__top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .lx-voc__py{font-size:13px;font-weight:600;color:var(--lx-ink-mute);font-variant-numeric:tabular-nums;letter-spacing:.2px;}
+  .lx-voc__audio{flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;cursor:pointer;color:#fff;
+    background:linear-gradient(150deg,#5CB4FF,#1E63C2);border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 6px 14px -6px rgba(32,115,230,.5);transition:transform .14s,box-shadow .14s,opacity .14s;}
+  .lx-voc__audio:hover{transform:translateY(-1px) scale(1.04);}
+  .lx-voc__audio:active{transform:scale(.96);}
+  .lx-voc__audio.is-busy{opacity:.55;animation:lx-pulse .8s ease-in-out infinite;}
+  @keyframes lx-pulse{0%,100%{opacity:.55;}50%{opacity:.95;}}
+  .lx-voc__hz{font-size:38px;font-weight:600;color:var(--lx-acc-deep);letter-spacing:1px;line-height:1;margin-top:8px;}
+  .lx-voc__ru{font-size:15.5px;font-weight:600;color:var(--lx-ink);margin-top:5px;}
 
   /* ── Варианты (choice / gap) ────────────────────────────────────────────── */
   .lx-opts{display:flex;flex-direction:column;gap:11px;margin-top:24px;}
@@ -148,7 +155,10 @@
     background:rgba(255,255,255,.7);border:1.5px solid rgba(22,32,59,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);color:var(--lx-ink);
     transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s,background .15s;}
   .lx-tone__b:hover:not(.is-locked){transform:translateY(-1px);border-color:var(--lx-acc-line);}
-  .lx-tone__mark{flex:0 0 34px;width:34px;text-align:center;font-size:30px;font-weight:600;line-height:1;color:var(--lx-acc-deep);}
+  .lx-tone__top{display:flex;align-items:center;justify-content:center;gap:14px;}
+  .lx-tone__mark{flex:0 0 42px;width:42px;display:inline-flex;align-items:center;justify-content:center;color:var(--lx-acc-deep);}
+  .lx-tone__mark svg{display:block;width:38px;height:20px;}
+  .lx-tone__n{font-weight:800;color:var(--lx-ink);font-variant-numeric:tabular-nums;margin-right:5px;}
   .lx-tone__name{flex:1 1 auto;font-size:13.5px;font-weight:600;color:var(--lx-ink-sub);}
   .lx-tone__b.is-sel{border-color:var(--lx-acc-line);background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(238,244,255,.86));box-shadow:inset 0 0 26px rgba(43,143,255,.1);}
   .lx-tone__b.is-correct{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);}
@@ -253,11 +263,52 @@
   .le-aims__c{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);border:1px solid var(--le-acc-line);}
 
   .le-note-h{font-family:var(--le-display);font-weight:500;font-size:18px;letter-spacing:-.012em;color:var(--le-ink);margin:30px 0 0;}
-  .le-note-p{font-size:16px;line-height:1.66;color:var(--le-ink-sub);margin:10px 0 0;max-width:66ch;font-weight:400;}
+  .le-note-p{font-size:16px;line-height:1.66;color:var(--le-ink);margin:10px 0 0;font-weight:400;overflow-wrap:break-word;word-break:break-word;}
   .le-note-img{margin:20px 0 0;}
   .le-note-img figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--le-line);}
   .le-note-img img{display:block;width:100%;height:auto;}
   .le-note-img figcaption{font-size:12.5px;color:var(--le-ink-mute);margin-top:9px;}
+
+/* ── ДОКУМЕНТ (lesson.doc) — рендерится в конспекте, когда есть doc[] ──────────
+   Слово — одна карточка в потоке (не сетка), список/цитата/аудио/выноски/раздел. */
+.le-doc{display:flex;flex-direction:column;gap:2px;}
+.le-hanzi{cursor:pointer;border-radius:5px;padding:1px 2px;margin:0 -1px;transition:background .12s,color .12s;}
+.le-hanzi:hover{background:rgba(43,143,255,.14);color:var(--le-acc-deep);}
+.le-doc .le-note-h{margin-top:26px;}
+.le-doc .le-note-h:first-child{margin-top:0;}
+.le-doc b{font-weight:700;color:var(--le-ink);}
+.le-doc i{font-style:italic;}
+.le-doc-quote{margin:18px 0 4px;padding:14px 18px;border-left:3px solid var(--le-acc);background:rgba(43,143,255,.05);border-radius:0 12px 12px 0;font-size:16px;line-height:1.6;color:var(--le-ink);font-weight:450;}
+.le-doc-list{margin:12px 0 4px;padding:0 0 0 4px;list-style:none;display:flex;flex-direction:column;gap:8px;}
+.le-doc-list li{position:relative;padding-left:22px;font-size:16px;line-height:1.6;color:var(--le-ink);overflow-wrap:break-word;word-break:break-word;}
+.le-doc-list li::before{content:'';position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--le-acc);}
+.le-doc-list--ol{counter-reset:ldoc;}
+.le-doc-list--ol li{padding-left:26px;counter-increment:ldoc;}
+.le-doc-list--ol li::before{content:counter(ldoc);left:0;top:1px;width:auto;height:auto;background:0;color:var(--le-acc-deep);font-weight:700;font-size:14px;font-variant-numeric:tabular-nums;}
+.le-doc-word{margin:16px 0 4px;}
+.le-doc-word .lx-voc{grid-template-columns:1fr;margin-top:0;}
+.le-dword{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:9px 0 5px;padding:3px 2px;}
+.le-dword__hz{font-size:22px;font-weight:600;color:var(--le-acc-deep);letter-spacing:.5px;line-height:1.1;}
+.le-dword__py{font-size:13px;color:var(--le-ink-mute);font-variant-numeric:tabular-nums;}
+.le-dword__ru{font-size:15px;color:var(--le-ink);}
+.le-dword__say{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:#fff;background:linear-gradient(150deg,#5CB4FF,#1E63C2);border:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);transition:transform .14s;}
+.le-dword__say:hover{transform:translateY(-1px);}
+.le-doc-audio{display:inline-flex;align-items:center;gap:11px;margin:14px 0 4px;padding:12px 16px;border-radius:13px;background:rgba(43,143,255,.06);border:1px solid var(--le-line);color:var(--le-acc-deep);font-size:14.5px;font-weight:600;}
+.le-doc-callout{display:flex;gap:11px;align-items:flex-start;margin:16px 0 4px;padding:14px 17px;border-radius:13px;font-size:15px;line-height:1.55;}
+.le-doc-callout svg{flex:0 0 auto;margin-top:2px;}
+.le-doc-callout--hint{background:rgba(226,165,46,.08);border:1px solid rgba(226,165,46,.3);color:#7A5712;}
+.le-doc-callout--imp{background:rgba(43,143,255,.07);border:1px solid var(--le-acc-line);color:var(--le-ink);}
+.le-doc-material{display:inline-flex;align-items:center;gap:9px;margin:12px 0 4px;padding:11px 15px;border-radius:12px;background:rgba(255,255,255,.6);border:1px solid var(--le-line);color:var(--le-acc-ink);font-size:14px;font-weight:600;text-decoration:none;transition:border-color .15s,transform .15s;}
+.le-doc-material:hover{border-color:var(--le-acc-line);transform:translateY(-1px);}
+.le-doc-divider{border:0;border-top:1px solid var(--le-line);margin:22px 0;}
+.le-study.is-compact .le-doc{gap:0;}
+.le-study.is-compact .le-doc .le-note-h{font-size:15px;margin-top:20px;}
+.le-study.is-compact .le-doc .le-note-p{font-size:14px;line-height:1.55;margin-top:7px;}
+.le-study.is-compact .le-doc-quote{font-size:13.5px;padding:11px 14px;margin:12px 0 2px;}
+.le-study.is-compact .le-doc-list li{font-size:14px;}
+.le-study.is-compact .le-doc-callout{font-size:13px;padding:11px 14px;margin:12px 0 2px;}
+.le-study.is-compact .le-doc-word{margin:12px 0 2px;}
+.le-study.is-compact .le-doc-word .lx-voc__hz{font-size:24px;}
 
   .le-fig{margin:22px 0 0;border-radius:16px;padding:20px 22px 16px;background:rgba(43,143,255,.04);border:1px solid var(--le-line);}
   .le-tones{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;}
@@ -492,8 +543,10 @@
         block.title ? h('div', { className: 'lx-theory__t' }, block.title) : null,
         block.body ? h('div', { className: 'lx-theory__b' }, block.body) : null,
         vocab.length ? h('div', { className: 'lx-voc' }, vocab.map((v, i) => h('div', { key: i, className: 'lx-voc__c' },
+          h('div', { className: 'lx-voc__top' },
+            h('span', { className: 'lx-voc__py' }, v.pinyin || ''),
+            v.hanzi ? h(SpeakBtn, { text: v.hanzi, size: 16 }) : null),
           v.hanzi ? h('div', { className: 'lx-voc__hz' }, v.hanzi) : null,
-          v.pinyin ? h('div', { className: 'lx-voc__py' }, v.pinyin) : null,
           v.ru ? h('div', { className: 'lx-voc__ru' }, v.ru) : null))) : null);
     }
 
@@ -659,11 +712,13 @@
         h('div', { className: 'lx-kick' }, Ic.Target ? h(Ic.Target, { size: 15 }) : null, 'Какой тон?'),
         h('div', { className: 'lx-prompt' }, block.prompt || 'Определите тон иероглифа'),
         h('div', { className: 'lx-tone__card' },
-          h('div', { className: 'lx-tone__hz' }, block.hanzi || '?'),
+          h('div', { className: 'lx-tone__top' },
+            h('div', { className: 'lx-tone__hz' }, block.hanzi || '?'),
+            block.hanzi ? h(SpeakBtn, { text: block.hanzi, size: 18 }) : null),
           locked ? h('div', { className: 'lx-tone__pin' }, block.pinyin || '') : null),
         h('div', { className: 'lx-tone__opts' }, (L.TONES || []).map((t, i) => h('button', { key: i, type: 'button', className: optCls(i), onClick: () => pick(i) },
-          h('span', { className: 'lx-tone__mark' }, t.mark),
-          h('span', { className: 'lx-tone__name' }, t.name)))),
+          h('span', { className: 'lx-tone__mark' }, ToneContour(t.contour)),
+          h('span', { className: 'lx-tone__name' }, h('b', { className: 'lx-tone__n' }, (i + 1) + '-й'), t.name)))),
         revealed && block.explain ? explainRow(block, sel === correctIdx) : null);
     }
 
@@ -693,6 +748,131 @@
     const s = size || 14;
     return h('svg', { width: s, height: s, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.8, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true },
       h('path', { d: 'M4 9V5a1 1 0 0 1 1-1h4M20 9V5a1 1 0 0 0-1-1h-4M4 15v4a1 1 0 0 0 1 1h4M20 15v4a1 1 0 0 1-1 1h-4' }));
+  }
+
+  /* ── Озвучка (Web Speech API, zh-CN) и контуры тонов ───────────────────── */
+  function speakHanzi(text) {
+    try {
+      if (!window.speechSynthesis || !text) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(String(text));
+      u.lang = 'zh-CN'; u.rate = 0.9;
+      window.speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+  function SpeakBtn(props) {
+    const { text, size, className } = props;
+    const [busy, setBusy] = useState(false);
+    const onClick = (e) => { e.stopPropagation(); if (!text) return; setBusy(true); speakHanzi(text); setTimeout(() => setBusy(false), 750); };
+    return h('button', { type: 'button', className: (className || 'lx-voc__audio') + (busy ? ' is-busy' : ''), onClick, 'aria-label': 'Прослушать' }, VolGlyph(size || 16));
+  }
+  function ToneContour(d) {
+    return h('svg', { viewBox: '0 0 60 30', 'aria-hidden': true }, h('path', { d, stroke: 'currentColor', strokeWidth: 3.4, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }));
+  }
+
+  /* ── Документ (lesson.doc): рендер marks (bold/italic) и блоков ──────────── */
+  function renderText(text, marks) {
+    const str = String(text == null ? '' : text);
+    if (!marks || !marks.length) return str;
+    const n = str.length;
+    const b = new Array(n).fill(false), it = new Array(n).fill(false);
+    (marks || []).forEach((m) => {
+      if (!m || m.start == null || m.end == null) return;
+      for (let k = Math.max(0, m.start); k < Math.min(n, m.end); k++) {
+        if (m.type === 'bold') b[k] = true;
+        if (m.type === 'italic') it[k] = true;
+      }
+    });
+    const out = [];
+    let buf = '', cb = false, ci = false, seg = 0;
+    const flush = () => {
+      if (!buf) return;
+      const key = 's' + (seg++);
+      let node = buf;
+      if (cb && ci) node = h('b', { key }, h('i', null, buf));
+      else if (cb) node = h('b', { key }, buf);
+      else if (ci) node = h('i', { key }, buf);
+      out.push(node); buf = '';
+    };
+    for (let k = 0; k < n; k++) {
+      if (b[k] !== cb || it[k] !== ci) { flush(); cb = b[k]; ci = it[k]; }
+      buf += str.charAt(k);
+    }
+    flush();
+    return out.length ? out : str;
+  }
+
+  /* richText — текст с кликабельными иероглифами (озвучка по клику) + marks.
+     marks применяются посегментно (частичный bold/italic тоже рендерится),
+     внутри каждого сегмента иероглифы остаются кликабельными. */
+  function richText(text, marks) {
+    const str = String(text == null ? '' : text);
+    if (!str) return str;
+    const n = str.length;
+    const b = new Array(n).fill(false), it = new Array(n).fill(false);
+    (marks || []).forEach((mm) => {
+      if (!mm || mm.start == null || mm.end == null) return;
+      for (let k = Math.max(0, mm.start); k < Math.min(n, mm.end); k++) {
+        if (mm.type === 'bold') b[k] = true;
+        if (mm.type === 'italic') it[k] = true;
+      }
+    });
+    const re = /([一-鿿]+)/g;
+    let hk = 0;
+    const splitHanzi = (chunk) => {           // кликабельные иероглифы внутри куска
+      const nodes = [];
+      let last = 0, m;
+      re.lastIndex = 0;
+      while ((m = re.exec(chunk))) {
+        if (m.index > last) nodes.push(chunk.slice(last, m.index));
+        nodes.push(h('span', { key: 'h' + (hk++), className: 'le-hanzi', onClick: (e) => { e.stopPropagation(); speakHanzi(m[1]); } }, m[1]));
+        last = m.index + m[1].length;
+      }
+      if (last < chunk.length) nodes.push(chunk.slice(last));
+      return nodes;
+    };
+    const out = [];
+    let seg = 0, i = 0;
+    while (i < n) {
+      const cb = b[i], ci = it[i];
+      let j = i + 1;
+      while (j < n && b[j] === cb && it[j] === ci) j++;
+      const kids = splitHanzi(str.slice(i, j));
+      const key = 's' + (seg++);
+      let node;
+      if (cb && ci) node = h('b', { key }, h('i', null, kids));
+      else if (cb) node = h('b', { key }, kids);
+      else if (ci) node = h('i', { key }, kids);
+      else node = kids.length === 1 ? kids[0] : h('span', { key }, kids);
+      out.push(node);
+      i = j;
+    }
+    return out.length ? out : str;
+  }
+
+  function renderDoc(doc) {
+    return (doc || []).map((b, i) => {
+      const key = (b && b._id) || ('d' + i);
+      if (!b) return null;
+      if (b.kind === 'heading') return h('div', { key, className: 'le-note-h' }, richText(b.text));
+      if (b.kind === 'para') return h('p', { key, className: 'le-note-p' }, richText(b.text, b.marks));
+      if (b.kind === 'quote') return h('blockquote', { key, className: 'le-doc-quote' }, richText(b.text, b.marks));
+      if (b.kind === 'bullets') return h('ul', { key, className: 'le-doc-list' }, (b.items || []).map((it, k) => h('li', { key: k }, it || '')));
+      if (b.kind === 'numbered') return h('ol', { key, className: 'le-doc-list le-doc-list--ol' }, (b.items || []).map((it, k) => h('li', { key: k }, it || '')));
+      if (b.kind === 'word') return h('div', { key, className: 'le-dword' },
+        b.hanzi ? h('span', { className: 'le-dword__hz' }, b.hanzi) : null,
+        b.pinyin ? h('span', { className: 'le-dword__py' }, b.pinyin) : null,
+        b.ru ? h('span', { className: 'le-dword__ru' }, b.ru) : null,
+        b.hanzi ? h(SpeakBtn, { text: b.hanzi, size: 13, className: 'le-dword__say' }) : null);
+      if (b.kind === 'image') return h('div', { key, className: 'le-note-img' },
+        h('figure', null, h('img', { src: b.url, alt: b.caption || '', loading: 'lazy' }), b.caption ? h('figcaption', null, b.caption) : null));
+      if (b.kind === 'audio') return h('div', { key, className: 'le-doc-audio' }, PlayGlyph(16), h('span', null, b.title || 'Аудио'));
+      if (b.kind === 'hint') return h('div', { key, className: 'le-doc-callout le-doc-callout--hint' }, Ic.Info ? h(Ic.Info, { size: 16 }) : null, h('span', null, b.text || ''));
+      if (b.kind === 'important') return h('div', { key, className: 'le-doc-callout le-doc-callout--imp' }, Ic.AlertCircle ? h(Ic.AlertCircle, { size: 16 }) : null, h('span', null, b.text || ''));
+      if (b.kind === 'material') return h('a', { key, className: 'le-doc-material', href: b.url || '#', target: '_blank', rel: 'noreferrer' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 15 }) : null, h('span', null, b.title || b.url || 'Материал'));
+      if (b.kind === 'divider') return h('hr', { key, className: 'le-doc-divider' });
+      return null;
+    });
   }
 
   const SH = window.ESStudentShell;
@@ -750,7 +930,8 @@
     if (!lesson) return null;
     const v = lesson.video || {};
     const emb = L.videoEmbed(v);
-    const noteBlocks = L.notesToBlocks(lesson.notes);
+    const hasDoc = !!(lesson.doc && lesson.doc.length);
+    const noteBlocks = hasDoc ? [] : L.notesToBlocks(lesson.notes);
     const blocks = lesson.blocks || [];
     const start = onStart || function () {};
     const glossary = (lesson.glossary && lesson.glossary.length) ? lesson.glossary : collectVocab(blocks);
@@ -803,10 +984,17 @@
             h('span', { className: 'le-bar__ic' }, FsGlyph(16)))));
 
     // ── конспект (раскрывающийся): цели → разбор → тоны → новые слова ──
-    const heads = noteBlocks.filter((n) => n.kind === 'head').length;
     const teaserBits = [];
-    if (heads) teaserBits.push(heads + ' ' + plural(heads, 'раздел', 'раздела', 'разделов'));
-    if (glossary.length) teaserBits.push(glossary.length + ' ' + plural(glossary.length, 'новое слово', 'новых слова', 'новых слов'));
+    if (hasDoc) {
+      const dHeads = lesson.doc.filter((b) => b && b.kind === 'heading').length;
+      const dWords = lesson.doc.filter((b) => b && b.kind === 'word').length;
+      if (dHeads) teaserBits.push(dHeads + ' ' + plural(dHeads, 'раздел', 'раздела', 'разделов'));
+      if (dWords) teaserBits.push(dWords + ' ' + plural(dWords, 'новое слово', 'новых слова', 'новых слов'));
+    } else {
+      const heads = noteBlocks.filter((n) => n.kind === 'head').length;
+      if (heads) teaserBits.push(heads + ' ' + plural(heads, 'раздел', 'раздела', 'разделов'));
+      if (glossary.length) teaserBits.push(glossary.length + ' ' + plural(glossary.length, 'новое слово', 'новых слова', 'новых слов'));
+    }
     if (objectives.length) teaserBits.push('цели урока');
     const teaser = teaserBits.join('  ·  ');
 
@@ -816,15 +1004,17 @@
         h('span', { className: 'le-aims__c' }, Ic.Check ? h(Ic.Check, { size: 15, strokeWidth: 2.6 }) : '✓'),
         h('span', null, o))))) : null;
 
-    const notesBody = noteBlocks.length ? h('div', null, noteBlocks.map((n, i) => {
-      if (n.kind === 'head') return h('div', { key: i, className: 'le-note-h' }, n.text);
-      if (n.kind === 'figure') return h(ToneFigure, { key: i, name: n.name });
-      if (n.kind === 'img') return h('div', { key: i, className: 'le-note-img' },
-        h('figure', null, h('img', { src: n.src, alt: n.alt || '', loading: 'lazy' }), n.alt ? h('figcaption', null, n.alt) : null));
-      return h('p', { key: i, className: 'le-note-p' }, n.text);
-    })) : null;
+    const notesBody = hasDoc
+      ? h('div', { className: 'le-doc' }, renderDoc(lesson.doc))
+      : (noteBlocks.length ? h('div', null, noteBlocks.map((n, i) => {
+          if (n.kind === 'head') return h('div', { key: i, className: 'le-note-h' }, n.text);
+          if (n.kind === 'figure') return h(ToneFigure, { key: i, name: n.name });
+          if (n.kind === 'img') return h('div', { key: i, className: 'le-note-img' },
+            h('figure', null, h('img', { src: n.src, alt: n.alt || '', loading: 'lazy' }), n.alt ? h('figcaption', null, n.alt) : null));
+          return h('p', { key: i, className: 'le-note-p' }, n.text);
+        })) : null);
 
-    const words = glossary.length ? h('div', { className: 'le-words' },
+    const words = (!hasDoc && glossary.length) ? h('div', { className: 'le-words' },
       h('div', { className: 'le-words__l' }, 'Новые слова'),
       h('div', { className: 'le-gloss' }, glossary.map((g, i) => h('div', { key: i, className: 'le-gl' },
         h('span', { className: 'le-gl__hz' }, g.hanzi || '—'),

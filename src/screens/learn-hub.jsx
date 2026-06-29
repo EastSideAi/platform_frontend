@@ -16,6 +16,7 @@
   const { createElement: h } = window.React || React;
   const Ic = window.EIcons || {};
   const SH = window.ESStudentShell;
+  const L = window.ELessons;
   const nav = (window.ERouter && window.ERouter.navigate) || function () {};
   const arr = (s) => Ic.ArrowRight ? h(Ic.ArrowRight, { size: s || 16, className: 'sd-arr' }) : null;
 
@@ -28,7 +29,7 @@
     pct: 46,
     lessonsLeft: 18, lessonsTotal: 32,
     testAvg: 84, streak: 12,
-    next: { day: 'Завтра', date: '26 июня', time: '17:00', topic: 'Урок 12 · Время и распорядок дня', format: 'Онлайн · 50 минут', teacher: 'Ли Вэй' },
+    next: { n: 12, day: 'Завтра', date: '26 июня', time: '17:00', topic: 'Время и распорядок дня', format: 'Онлайн · 50 минут', teacher: 'Ли Вэй', videoPoster: 'funnel-assets/universities/fudan.jpg', videoUrl: '', duration: '08:40' },
     schedule: [
       { day: 'Чт', date: '26 июня', time: '17:00', topic: 'Время и распорядок дня', next: true },
       { day: 'Пн', date: '30 июня', time: '17:00', topic: 'Покупки и числа' },
@@ -80,8 +81,13 @@
     .lh-hero__fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#5CB4FF,#2073E6);box-shadow:0 0 12px rgba(43,143,255,.6);transition:width .5s cubic-bezier(.23,1,.32,1);}
     .lh-hero__plab{font-size:12.5px;font-weight:600;color:#CFE2FF;font-variant-numeric:tabular-nums;white-space:nowrap;}
     .lh-hero__cta{margin-top:26px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-    .lh-hero__teacher{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#8FA0C8;}
-    .lh-hero__teacher svg{color:#7FB0FF;} .lh-hero__teacher b{color:#EAF0FF;font-weight:600;}
+    .lh-hero__hi{font-family:'SF Pro Display','Onest',system-ui,sans-serif;font-size:15px;font-weight:600;color:#9FCBFF;margin-bottom:12px;letter-spacing:-.1px;}
+    .lh-hero__teacher{display:inline-flex;align-items:center;gap:10px;font-size:13px;font-weight:500;color:#8FA0C8;}
+    .lh-hero__tav{width:32px;height:32px;border-radius:50%;overflow:hidden;flex:0 0 32px;display:grid;place-items:center;font-weight:700;font-size:14px;color:#fff;background:linear-gradient(150deg,#5CB4FF,#1E63C2);box-shadow:inset 0 0 12px rgba(175,215,255,.5);}
+    .lh-hero__tav img{width:100%;height:100%;object-fit:cover;display:block;}
+    .lh-hero__tb{display:flex;flex-direction:column;line-height:1.25;}
+    .lh-hero__tb b{color:#EAF0FF;font-weight:600;font-size:13.5px;}
+    .lh-hero__tbs{color:#8FA0C8;font-size:11.5px;margin-top:1px;}
 
     /* ── СТРОКА МЕТРИК (одна плашка с разделителями, не «4 карточки») ───────── */
     .lh-strip{display:flex;align-items:stretch;margin-top:18px;padding:22px 8px;border-radius:20px;
@@ -106,24 +112,27 @@
     .lh-ph__l{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--sd-acc-deep);cursor:pointer;background:0;border:0;font-family:inherit;}
     .lh-ph__l:hover{gap:7px;}
 
-    /* ближайшее занятие — светлая карточка (тёмный режим отдан только герою) */
-    .lh-next{position:relative;display:flex;flex-direction:column;min-height:236px;
+    /* ближайшее занятие — видео-превью + название */
+    .lh-next{position:relative;display:grid;grid-template-columns:262px minmax(0,1fr);gap:24px;align-items:center;padding:20px;
       background:linear-gradient(150deg,rgba(255,255,255,.74),rgba(242,246,255,.5));
       border:1px solid rgba(43,111,224,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 0 50px rgba(43,143,255,.05);color:var(--sd-ink);}
-    .lh-next__date{position:absolute;right:26px;top:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;width:62px;padding:9px 0;border-radius:14px;
-      background:linear-gradient(150deg,var(--sd-acc-2,#5CB4FF),var(--sd-acc-deep));box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 10px 22px rgba(32,115,230,.24);}
-    .lh-next__date b{font-size:21px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums;}
-    .lh-next__date span{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:rgba(255,255,255,.86);margin-top:3px;}
-    .lh-next__kick{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sd-acc-deep);}
+    .lh-next__video{position:relative;display:block;width:100%;aspect-ratio:16/9;border:0;border-radius:14px;overflow:hidden;padding:0;cursor:pointer;background:#0A1430;
+      box-shadow:0 10px 26px -12px rgba(8,16,44,.5);}
+    .lh-next__poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+    .lh-next__scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(8,16,40,.16) 0%,rgba(8,16,40,0) 38%,rgba(6,12,32,.58) 100%);}
+    .lh-next__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;display:grid;place-items:center;color:#2073E6;
+      background:rgba(255,255,255,.95);border:1px solid rgba(255,255,255,.7);box-shadow:0 8px 22px -8px rgba(4,12,40,.6);transition:transform .16s cubic-bezier(.23,1,.32,1);}
+    .lh-next__video:hover .lh-next__play{transform:translate(-50%,-50%) scale(1.08);}
+    .lh-next__play svg{margin-left:3px;}
+    .lh-next__dur{position:absolute;right:10px;bottom:10px;font-size:11px;font-weight:700;color:#fff;background:rgba(8,14,34,.62);padding:4px 8px;border-radius:7px;font-variant-numeric:tabular-nums;}
+    .lh-next__body{display:flex;flex-direction:column;gap:10px;min-width:0;}
+    .lh-next__kick{display:inline-flex;align-items:center;gap:8px;font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--sd-acc-deep);}
     .lh-next__kick::before{content:'';width:5px;height:5px;border-radius:99px;background:var(--sd-acc);box-shadow:0 0 7px rgba(43,143,255,.7);}
-    .lh-next__when{display:flex;align-items:baseline;gap:11px;margin-top:15px;}
-    .lh-next__day{font-size:29px;font-weight:800;letter-spacing:-1px;color:#15203B;}
-    .lh-next__time{font-size:17px;font-weight:700;color:var(--sd-acc-deep);font-variant-numeric:tabular-nums;}
-    .lh-next__topic{font-size:17px;font-weight:600;color:var(--sd-ink);margin-top:13px;letter-spacing:-.2px;line-height:1.3;max-width:30ch;}
-    .lh-next__meta{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap;}
+    .lh-next__topic{font-family:'SF Pro Display','Onest',system-ui,sans-serif;font-size:23px;font-weight:600;letter-spacing:-.4px;line-height:1.16;color:var(--sd-ink);text-wrap:balance;}
+    .lh-next__meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:2px;}
     .lh-next__m{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--sd-ink-mute);}
     .lh-next__m svg{color:var(--sd-acc-deep);}
-    .lh-next__cta{margin-top:auto;padding-top:22px;}
+    .lh-next__cta{margin-top:8px;}
 
     /* домашка */
     .lh-hw{display:flex;flex-direction:column;gap:10px;}
@@ -217,18 +226,26 @@
 
     @media (max-width:980px){
       .lh-row--next,.lh-row--tests,.lh-link{grid-template-columns:1fr;}
+      .lh-next{grid-template-columns:1fr;gap:16px;}
       .lh-hero{flex-direction:column;align-items:flex-start;} .lh-hero__bg{opacity:.4;}
       .lh-strip{flex-wrap:wrap;gap:18px 0;} .lh-st{flex:1 1 50%;border-right:0;}
-    }`;
+    }
+    @media (max-width:560px){
+      .lh-next{padding:14px;} .lh-hero{padding:30px 24px;} .lh-hero__title{font-size:30px;}
+    }
+    @media (prefers-reduced-motion: reduce){ .lh-hero__fill,.lh-bar,.lh-next__play{transition:none !important;} }`;
     document.head.appendChild(el);
   }
 
   const scoreCls = (s) => s >= 85 ? 'ok' : s >= 75 ? 'acc' : 'mid';
 
   function Hero() {
+    const teacher = (L && L.COURSE && L.COURSE.teacher) || {};
+    const user = (SH && SH.USER) || {};
     return h('section', { className: 'lh-hero' },
       h('div', { className: 'lh-hero__bg' }),
       h('div', { className: 'lh-hero__main' },
+        h('div', { className: 'lh-hero__hi' }, 'Привет, ' + (user.first || 'Дима') + '!'),
         h('div', { className: 'lh-hero__eyebrow' }, 'Ваш курс · ' + COURSE.tariff.split(' · ')[0]),
         h('h1', { className: 'lh-hero__title' }, COURSE.name),
         h('p', { className: 'lh-hero__say' }, COURSE.say),
@@ -237,7 +254,11 @@
           h('span', { className: 'lh-hero__plab' }, COURSE.pct + '% пройдено · до цели HSK 4')),
         h('div', { className: 'lh-hero__cta' },
           h('button', { type: 'button', className: 'sd-btn sd-btn--primary', onClick: () => nav('/learn/lesson') }, 'Продолжить урок', arr()),
-          h('span', { className: 'lh-hero__teacher' }, Ic.User ? h(Ic.User, { size: 15 }) : null, 'Преподаватель: ', h('b', null, COURSE.teacher)))));
+          h('span', { className: 'lh-hero__teacher' },
+            h('span', { className: 'lh-hero__tav' }, teacher.photo ? h('img', { src: teacher.photo, alt: '' }) : (teacher.initial || '李')),
+            h('span', { className: 'lh-hero__tb' },
+              h('b', null, teacher.name || COURSE.teacher),
+              h('span', { className: 'lh-hero__tbs' }, teacher.sub || 'Преподаватель курса'))))));
   }
 
   function Strip() {
@@ -254,24 +275,26 @@
 
   function NextAndHomework() {
     const n = COURSE.next;
+    const UI = window.ELessonUI;
     const hwIcon = (s) => s === 'todo' ? Ic.Spark : s === 'review' ? Ic.Hourglass : s === 'done' ? Ic.Check : Ic.AlertTriangle;
     const goLesson = () => nav('/learn/lesson');
     return h('div', { className: 'lh-row lh-row--next' },
       // ближайшее занятие
       h('div', { className: 'lh-panel lh-next' },
-        h('div', { className: 'lh-next__date' },
-          h('b', null, n.date.split(' ')[0]),
-          h('span', null, n.date.split(' ')[1] || '')),
-        h('div', { className: 'lh-next__kick' }, 'Ближайшее занятие'),
-        h('div', { className: 'lh-next__when' },
-          h('span', { className: 'lh-next__day' }, n.day),
-          h('span', { className: 'lh-next__time' }, n.time)),
-        h('div', { className: 'lh-next__topic' }, n.topic),
-        h('div', { className: 'lh-next__meta' },
-          h('span', { className: 'lh-next__m' }, Ic.Monitor ? h(Ic.Monitor, { size: 15 }) : null, n.format),
-          h('span', { className: 'lh-next__m' }, Ic.User ? h(Ic.User, { size: 15 }) : null, n.teacher)),
-        h('div', { className: 'lh-next__cta' },
-          h('button', { type: 'button', className: 'sd-btn sd-btn--primary', onClick: goLesson }, 'Войти в урок', arr()))),
+        h('button', { type: 'button', className: 'lh-next__video', onClick: goLesson, 'aria-label': 'Открыть урок' },
+          h('img', { className: 'lh-next__poster', src: n.videoPoster || 'funnel-assets/universities/fudan.jpg', alt: '' }),
+          h('span', { className: 'lh-next__scrim' }),
+          h('span', { className: 'lh-next__play' }, UI && UI.PlayGlyph ? UI.PlayGlyph(26) : '▶'),
+          h('span', { className: 'lh-next__dur' }, n.duration || '08:40')),
+        h('div', { className: 'lh-next__body' },
+          h('div', { className: 'lh-next__kick' }, 'Ближайшее занятие · Урок ' + (n.n || '')),
+          h('div', { className: 'lh-next__topic' }, n.topic),
+          h('div', { className: 'lh-next__meta' },
+            h('span', { className: 'lh-next__m' }, Ic.Calendar ? h(Ic.Calendar, { size: 15 }) : null, n.day + ', ' + n.time),
+            h('span', { className: 'lh-next__m' }, Ic.Monitor ? h(Ic.Monitor, { size: 15 }) : null, n.format),
+            h('span', { className: 'lh-next__m' }, Ic.User ? h(Ic.User, { size: 15 }) : null, n.teacher)),
+          h('div', { className: 'lh-next__cta' },
+            h('button', { type: 'button', className: 'sd-btn sd-btn--primary', onClick: goLesson }, 'Продолжить урок', arr())))),
       // домашка
       h('div', { className: 'lh-panel' },
         h('div', { className: 'lh-ph' },

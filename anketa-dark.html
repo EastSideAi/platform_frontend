@@ -208,7 +208,7 @@
      Контент в УЗКОЙ центрированной колонке — не растекается по всей ширине. */
   .plate-scroll {
     position: relative; height: 100%; overflow-y: auto;
-    padding: 76px 44px 24px 44px; margin-right: 336px;
+    padding: 40px 44px 24px 44px; margin-right: 336px;
   }
   .plate-scroll::-webkit-scrollbar { width: 0; }
   .plate-col {
@@ -229,23 +229,27 @@
   /* контейнер вопроса: почти невидимый — легкая белая вуаль + тонкая обводка.
      Просторный паддинг — короткие шаги заполняются воздухом, а не центровкой */
   .q-card {
-    margin-top: 56px; padding: 40px 40px;
+    margin-top: 28px; padding: 40px 40px;
     background: rgba(255,255,255,.28);
     border: 1px solid rgba(255,255,255,.7); border-radius: 24px;
   }
+  /* между соседними блоками вопросов (английский/китайский) — плотнее */
+  .q-card + .q-card { margin-top: 20px; }
   .q-label { font-size: 22px; font-weight: 700; color: #21212E; }
   .q-hint { margin-top: 8px; font-size: 15.5px; color: var(--ink-sub); }
 
   /* карточки-опции: крупные, аккуратные, еле-еле с цветом, тонкая белая обводка */
   .opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 0; }
   .opt {
-    position: relative; border-radius: 20px; padding: 28px 28px; cursor: pointer;
+    position: relative; border-radius: 20px; padding: 28px 28px; cursor: pointer; outline: none;
     min-height: 168px; display: flex; flex-direction: column; justify-content: flex-end;
     background: rgba(255,255,255,.66);
     border: 1.5px solid rgba(74,98,150,.22);
     box-shadow: 0 2px 8px rgba(30,50,90,.05);
     transition: border-color .15s, background .15s, box-shadow .15s;
   }
+  /* убираем браузерный контур-«квадрат» при клике; чистое сапфировое кольцо — только с клавиатуры */
+  .opt:focus-visible { outline: 2px solid rgba(43,143,255,.55); outline-offset: 3px; }
   .opt:hover { background: rgba(255,255,255,.82); border-color: rgba(43,143,255,.6); box-shadow: 0 4px 14px rgba(43,143,255,.14); }
   .opt b { display: block; font-size: 18.5px; font-weight: 600; color: var(--ink-2); line-height: 1.34; }
   .opt span { display: block; margin-top: 12px; font-size: 14.5px; color: var(--ink-sub); line-height: 1.5; }
@@ -255,7 +259,7 @@
   .opts.cols-2 .opt { min-height: 152px; }
   /* кружок-бланк: у невыбранных — пустой контур, у выбранной — синий с галочкой */
   .opt .tick {
-    position: absolute; top: 12px; left: 12px; width: 22px; height: 22px;
+    position: absolute; top: 12px; left: 28px; width: 22px; height: 22px;
     border-radius: 50%; display: grid; place-items: center; color: transparent;
     background: transparent; border: 2px solid rgba(74,98,150,.45);
     transition: background .15s, border-color .15s, color .15s;
@@ -269,7 +273,6 @@
   .opt.sel .tick {
     color: #fff; border-color: transparent;
     background: linear-gradient(140deg, #5CB4FF, #1666E0);
-    box-shadow: inset 0 1px 3px rgba(255,255,255,.45);
   }
 
   /* ── футер: Назад · шаги · Дальше ──────────────────────────────── */
@@ -477,10 +480,22 @@
   .sc-btn.on { background: rgba(255,255,255,.92); color: #1D3A72;
     border: 1.5px solid rgba(43,143,255,.4);
     box-shadow: inset 0 0 18px rgba(43,143,255,.3), inset 0 0 5px rgba(43,143,255,.16); }
-  .scale-cap { margin-top: 12px; font-size: 13.5px; color: var(--ink-sub); }
+  /* подсказка уровня (A1…C2) — аккуратный тёмный тултип сверху при наведении */
+  .sc-btn { position: relative; }
+  .sc-btn[data-tip]::after {
+    content: attr(data-tip);
+    position: absolute; left: 50%; bottom: calc(100% + 8px);
+    transform: translateX(-50%) translateY(4px);
+    width: max-content; max-width: 196px; padding: 7px 11px; border-radius: 9px;
+    background: #060D28; color: #fff; border: 1px solid rgba(255,255,255,.12);
+    font: 500 12px/1.35 'Onest', sans-serif; text-align: center;
+    box-shadow: 0 8px 22px rgba(3,8,28,.3);
+    opacity: 0; pointer-events: none; transition: opacity .15s, transform .15s; z-index: 20;
+  }
+  .sc-btn[data-tip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* textarea */
-  .textarea { width: 100%; min-height: 150px; resize: vertical; padding: 16px 18px; border-radius: 16px;
+  .textarea { width: 100%; min-height: 240px; resize: vertical; padding: 16px 18px; border-radius: 16px;
     background: rgba(255,255,255,.55); border: 1.5px solid rgba(74,98,150,.22);
     font: 500 15.5px/1.5 'Onest', sans-serif; color: var(--ink); outline: none;
     transition: border-color .15s, box-shadow .15s, background .15s; }
@@ -498,10 +513,11 @@
      посадку плотнее, чтобы все помещалось без прокрутки. ─────────────────── */
   @media (max-height: 860px), (max-width: 1240px) {
     .shell { gap: 12px; padding: 12px; }
-    .plate-scroll { padding: 52px 40px 16px 40px; margin-right: 320px; }
+    .plate-scroll { padding: 32px 40px 16px 40px; margin-right: 320px; }
     .h1 { font-size: 30px; letter-spacing: -2px; }
     .sub { font-size: 14px; margin-top: 8px; }
     .q-card { margin-top: 16px; padding: 16px 18px; }
+    .q-card + .q-card { margin-top: 12px; }
     .q-card:last-of-type { margin-bottom: 16px; }
     .opts { gap: 12px; }
     .opt { padding: 12px 16px; }
@@ -526,9 +542,8 @@
      как цельная композиция (сайдбар + плашка + панель держатся вместе),
      контент дышит, вопрос центрируется по вертикали — без пустот ──────── */
   @media (min-width: 1600px) {
-    /* боковую панель держим у левого края: каркас на всю ширину, центрируем только контент */
+    /* каркас на всю ширину, колонка контента шире, заголовок от верха */
     .plate-col { max-width: 940px; }
-    .plate-mid { justify-content: center; }
     .h1 { font-size: 44px; }
   }
 
@@ -537,6 +552,7 @@
     .plate-scroll { padding-top: 24px; }
     .h1 { font-size: 26px; }
     .q-card { margin-top: 12px; padding: 16px 16px; }
+    .q-card + .q-card { margin-top: 10px; }
     .path-mtn { height: 84px; margin-top: 12px; }
     .steps { gap: 3px; margin-top: 12px; }
     .step { padding: 4px 12px; }
@@ -1140,9 +1156,11 @@
   function scale(name, opts, caps) {
     var sel = S[name] || 'B1';
     var btns = opts.map(function (v) {
-      return '<button class="sc-btn' + (sel === v ? ' on' : '') + '" data-single="' + name + '" data-v="' + v + '">' + v + '</button>';
+      var d = caps[v] || '';
+      return '<button class="sc-btn' + (sel === v ? ' on' : '') + '" data-single="' + name + '" data-v="' + v + '"' +
+        (d ? ' data-tip="' + d + '" title="' + d + '"' : '') + '>' + v + '</button>';
     }).join('');
-    return '<div class="scale">' + btns + '</div><p class="scale-cap">' + (caps[sel] || '') + '</p>';
+    return '<div class="scale">' + btns + '</div>';
   }
 
   function textarea(name, ph) {
@@ -1158,7 +1176,7 @@
     // глава 1 — Что изучать
     { g: 1, s: 'Направление', body: function () {
       return q('Какое направление вам ближе', 'Можно выбрать несколько или вписать свое. Если еще не определились — отметьте то, что нравится.',
-        chipsMulti('dirs', DIRS) + '<div style="margin-top:12px">' + input('dirOther', 'Свое направление — впишите сюда') + '</div>');
+        chipsMulti('dirs', DIRS) + '<div style="margin-top:12px">' + input('dirOther', 'Свои направления через запятую: дизайн, архитектура…') + '</div>');
     } },
     { g: 1, s: 'Формат обучения', body: function () {
       return q('Какой формат обучения вам подходит', 'Если пока выбираете — так и отметьте, поможем определиться.', cards('program', PROGRAM, 3));

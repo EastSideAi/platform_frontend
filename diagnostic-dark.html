@@ -341,26 +341,26 @@
     box-shadow: 0 10px 30px rgba(30,50,90,.10), inset 0 0 70px rgba(43,143,255,.05);
     transition: transform .2s cubic-bezier(.22,.61,.36,1); }
   .rm-banner:hover { transform: translateY(-2px); }
-  /* картинка-фон на месте; тёмного скрима нет — чёрный текст на матовой стеклянной плашке */
+  /* картинка-фоном; плашки и затемнения нет — текст прямо на фото, мягкий ореол для читаемости */
   .rm-bg { position: absolute; inset: 0; background: url('funnel-assets/prototypes/v2/bg-lit-wide.png') 56% 26% / cover no-repeat;
     transform: scale(1.02); transition: transform .8s cubic-bezier(.22,.61,.36,1); }
   .rm-banner:hover .rm-bg { transform: scale(1.06); }
   .rm-shade { display: none; }
   .rm-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start;
-    width: fit-content; max-width: 460px; margin: 28px; padding: 26px 30px; color: var(--ink);
-    background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px);
-    border: 1px solid rgba(255,255,255,.7); border-radius: 18px;
-    box-shadow: 0 10px 30px rgba(3,8,28,.18); }
-  .rm-kick { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700;
-    letter-spacing: -0.01em; text-transform: none; color: var(--acc-ink); }
-  .rm-kick i { width: 6px; height: 6px; border-radius: 50%; background: var(--violet-2); box-shadow: 0 0 10px var(--violet-2); }
+    max-width: 540px; margin: 34px; padding: 0; color: var(--ink); }
+  .rm-title, .rm-sub { text-shadow: 0 1px 10px rgba(255,255,255,.82), 0 0 3px rgba(255,255,255,.5); }
+  .rm-kick { display: none; }
   .rm-title { margin-top: 12px; font-family: 'Onest', sans-serif; font-size: 25px;
     font-weight: 700; letter-spacing: -.7px; line-height: 1.15; color: var(--ink); }
-  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: rgba(21,21,31,.68); max-width: 42ch; }
+  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink); max-width: 42ch; }
   .rm-cta { margin-top: 20px; }
   .rm-cta svg { transition: transform .2s; }
   .rm-banner:hover .rm-cta { background: #2B8FFF; }
   .rm-banner:hover .rm-cta svg { transform: rotate(-45deg) translateX(2px); }
+  /* кнопка на баннере грантов — нейтральная (синяя выбивалась из фото) */
+  .rm-banner.b-grant .rm-cta { background: #FFFFFF; color: var(--ink);
+    box-shadow: 0 6px 18px rgba(3,8,28,.22); border: 1px solid rgba(255,255,255,.55); }
+  .rm-banner.b-grant:hover .rm-cta { background: #F2F5FB; color: var(--ink); }
 
   /* баннеры разделов с картинкой (по образцу баннера-маршрута) */
   .rm-banner.b-uni   .rm-bg { background-image: url('funnel-assets/banners/banner-universities.png'); background-position: 78% 38%; }

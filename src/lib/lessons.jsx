@@ -23,22 +23,24 @@
   // ── Палитра блоков для конструктора ─────────────────────────────────────────
   // icon — ключ window.EIcons; gets — что в итоге делает ученик (для галереи).
   const TYPES = [
-    { type: 'theory', label: 'Теория',     icon: 'Book',        hint: 'Объяснение и новые слова', gets: 'Читает правило и новые слова' },
-    { type: 'choice', label: 'Один ответ', icon: 'CheckCircle', hint: 'Выбор одного верного',     gets: 'Выбирает один верный вариант' },
-    { type: 'gap',    label: 'Пропуск',    icon: 'Edit',        hint: 'Вставить нужное слово',    gets: 'Вставляет слово в пропуск' },
-    { type: 'match',  label: 'Пары',       icon: 'Grid',        hint: 'Соединить слово и перевод', gets: 'Соединяет пары иероглиф—перевод' },
-    { type: 'order',  label: 'Предложение',icon: 'Route',       hint: 'Собрать фразу из слов',    gets: 'Собирает фразу из слов' },
-    { type: 'type',   label: 'Ввод',       icon: 'Send',        hint: 'Напечатать ответ',         gets: 'Печатает ответ сам' },
-    { type: 'tone',   label: 'Тон',        icon: 'Target',      hint: 'Определить тон иероглифа',  gets: 'Определяет тон иероглифа' },
+    { type: 'theory', label: 'Теория',     icon: 'Book',       hint: 'Объяснение и новые слова', gets: 'Читает правило и новые слова' },
+    { type: 'choice', label: 'Один ответ', icon: 'ListDot',    hint: 'Выбор одного верного',     gets: 'Выбирает один верный вариант' },
+    { type: 'gap',    label: 'Пропуск',    icon: 'TextGap',    hint: 'Вставить нужное слово',    gets: 'Вставляет слово в пропуск' },
+    { type: 'match',  label: 'Пары',       icon: 'PairLink',   hint: 'Соединить слово и перевод', gets: 'Соединяет пары иероглиф—перевод' },
+    { type: 'order',  label: 'Предложение',icon: 'Sequence',   hint: 'Собрать фразу из слов',    gets: 'Собирает фразу из слов' },
+    { type: 'type',   label: 'Ввод',       icon: 'TextCursor', hint: 'Напечатать ответ',         gets: 'Печатает ответ сам' },
+    { type: 'tone',   label: 'Тон',        icon: 'ToneWave',   hint: 'Определить тон иероглифа',  gets: 'Определяет тон иероглифа' },
   ];
   const typeMeta = (t) => TYPES.find((x) => x.type === t) || { type: t, label: t, icon: 'Book' };
   const typeLabel = (t) => typeMeta(t).label;
 
+  // contour — SVG-path контура тона (viewBox 0 0 60 30). Рисуем визуальную форму
+  // тона (как Duolingo), а не букву «a» со знаком — нагляднее и не путает.
   const TONES = [
-    { mark: 'ā', name: '1-й · ровный' },
-    { mark: 'á', name: '2-й · восходящий' },
-    { mark: 'ǎ', name: '3-й · нисходяще-восходящий' },
-    { mark: 'à', name: '4-й · падающий' },
+    { mark: 'ā', name: 'ровный',                 contour: 'M6 9 L54 9' },
+    { mark: 'á', name: 'восходящий',             contour: 'M6 25 L54 6' },
+    { mark: 'ǎ', name: 'нисходяще-восходящий',   contour: 'M6 11 Q30 34 54 8' },
+    { mark: 'à', name: 'падающий',               contour: 'M6 6 L54 25' },
   ];
 
   // ── Урок по умолчанию: «Знакомство», HSK 1 (показывает все форматы) ─────────
@@ -62,19 +64,24 @@
       { hanzi: '我', pinyin: 'wǒ', ru: 'Я' },
       { hanzi: '是', pinyin: 'shì', ru: 'Быть, являться' },
     ],
+    // Документ урока (Теория) — упорядоченный массив блоков. Это канонический
+    // носитель контента для нового конструктора-документа и для ученического
+    // StudyView (когда есть doc[] — рендерим его; иначе fallback на notes+glossary).
+    doc: [
+      { _id: 'doc0', kind: 'para', text: 'Китайское приветствие складывается из простых слов. Достаточно запомнить несколько, чтобы поздороваться, поблагодарить и попрощаться почти в любой ситуации.', marks: [] },
+      { _id: 'doc1', kind: 'heading', text: 'С чего начинается разговор', level: 2 },
+      { _id: 'doc2', kind: 'word', hanzi: '你好', pinyin: 'nǐ hǎo', ru: 'Привет' },
+      { _id: 'doc3', kind: 'para', text: '你好 (nǐ hǎo) — универсальное «привет», дословно «ты хороший». Подходит и близкому другу, и незнакомому человеку.', marks: [] },
+      { _id: 'doc4', kind: 'heading', text: 'Вежливость', level: 2 },
+      { _id: 'doc5', kind: 'word', hanzi: '谢谢', pinyin: 'xièxie', ru: 'Спасибо' },
+      { _id: 'doc6', kind: 'word', hanzi: '再见', pinyin: 'zàijiàn', ru: 'До свидания' },
+      { _id: 'doc7', kind: 'para', text: '谢谢 (xièxie) — «спасибо», повтор слога делает слово мягким. 再见 (zàijiàn) — «до свидания», дословно «увидимся снова».', marks: [] },
+      { _id: 'doc8', kind: 'heading', text: 'Почему важен тон', level: 2 },
+      { _id: 'doc9', kind: 'important', text: 'Один и тот же слог в разных тонах — разные слова: один звук в четырёх тонах даёт четыре слова. Поэтому тон мы слышим и держим с самого первого урока.' },
+      { _id: 'doc10', kind: 'word', hanzi: '老师', pinyin: 'lǎoshī', ru: 'Учитель' },
+    ],
     notes: 'Китайское приветствие складывается из простых слов. Достаточно запомнить несколько, чтобы поздороваться, поблагодарить и попрощаться почти в любой ситуации.\n\n## С чего начинается разговор\n你好 (nǐ hǎo) — универсальное «привет», дословно «ты хороший». Подходит и близкому другу, и незнакомому человеку.\n\n## Вежливость\n谢谢 (xièxie) — «спасибо», повтор слога делает слово мягким. 再见 (zàijiàn) — «до свидания», дословно «увидимся снова».\n\n## Почему важен тон\nОдин и тот же слог в разных тонах — разные слова: один звук в четырёх тонах даёт четыре слова. Поэтому тон мы слышим и держим с самого первого урока.\n[[tones]]',
     blocks: [
-      {
-        type: 'theory',
-        title: 'Базовое приветствие',
-        body: 'В китайском приветствие складывается из простых слов. Запомните эти четыре — и сможете поздороваться, поблагодарить и попрощаться с кем угодно.',
-        vocab: [
-          { hanzi: '你好', pinyin: 'nǐ hǎo', ru: 'Привет' },
-          { hanzi: '谢谢', pinyin: 'xièxie', ru: 'Спасибо' },
-          { hanzi: '再见', pinyin: 'zàijiàn', ru: 'Пока' },
-          { hanzi: '老师', pinyin: 'lǎoshī', ru: 'Учитель' },
-        ],
-      },
       {
         type: 'choice',
         prompt: 'Как сказать «Привет»?',
@@ -211,6 +218,61 @@
     return out.filter((b) => b.kind === 'figure' || b.kind === 'img' || b.text);
   }
 
+  // ── Документ урока: новый пустой блок по kind (для конструктора) ──────────────
+  // _id — стабильный ключ для React и DnD. При создании блока генерится один раз.
+  let _docSeq = 0;
+  function newDocId() { _docSeq += 1; return 'b' + Date.now().toString(36) + '_' + _docSeq; }
+  function blankDocBlock(kind) {
+    const _id = newDocId();
+    switch (kind) {
+      case 'heading':   return { _id, kind, text: 'Новый раздел', level: 2 };
+      case 'para':      return { _id, kind, text: '', marks: [] };
+      case 'quote':     return { _id, kind, text: '', marks: [] };
+      case 'bullets':   return { _id, kind, items: [''] };
+      case 'numbered':  return { _id, kind, items: [''] };
+      case 'word':      return { _id, kind, hanzi: '', pinyin: '', ru: '' };
+      case 'image':     return { _id, kind, url: '', caption: '' };
+      case 'audio':     return { _id, kind, url: '', title: '' };
+      case 'hint':      return { _id, kind, text: '' };
+      case 'important': return { _id, kind, text: '' };
+      case 'material':  return { _id, kind, title: '', url: '' };
+      case 'divider':   return { _id, kind };
+      default:          return { _id, kind: 'para', text: '', marks: [] };
+    }
+  }
+
+  // ── Миграция legacy-урока (notes + glossary + theory-блоки) → doc[] ──────────
+  // Чистая и детерминированная: _id по индексу (миграция повторяема). figure
+  // ([[tones]]) намеренно пропускается — фигуры кодогенерируются рендером. Поле
+  // notes НЕ удаляем (fallback StudyView + старый NotesEditor). theory-блоки
+  // расклеиваются в heading+para+word и остаются в blocks (не удаляем — конструктор
+  // практики их не показывает, а удалять опасно для сохранённых драфтов).
+  function migrateToDoc(lesson) {
+    const l = lesson || {};
+    const out = [];
+    let i = 0;
+    const id = () => 'm' + (i++);
+    notesToBlocks(l.notes).forEach((n) => {
+      if (n.kind === 'head') out.push({ _id: id(), kind: 'heading', text: n.text, level: 2 });
+      else if (n.kind === 'para') out.push({ _id: id(), kind: 'para', text: n.text, marks: [] });
+      else if (n.kind === 'img') out.push({ _id: id(), kind: 'image', url: n.src, caption: n.alt || '' });
+      // figure → SKIP (кодогенерируемая иллюстрация тонов)
+    });
+    (l.glossary || []).forEach((g) => {
+      if (g && (g.hanzi || g.ru)) out.push({ _id: id(), kind: 'word', hanzi: g.hanzi || '', pinyin: g.pinyin || '', ru: g.ru || '' });
+    });
+    (l.blocks || []).forEach((b) => {
+      if (b && b.type === 'theory') {
+        if (b.title) out.push({ _id: id(), kind: 'heading', text: b.title, level: 2 });
+        if (b.body) out.push({ _id: id(), kind: 'para', text: b.body, marks: [] });
+        (b.vocab || []).forEach((v) => {
+          if (v && (v.hanzi || v.ru)) out.push({ _id: id(), kind: 'word', hanzi: v.hanzi || '', pinyin: v.pinyin || '', ru: v.ru || '' });
+        });
+      }
+    });
+    return out;
+  }
+
   // ── Стейт-инициализация ответа (для тренажёра и превью) ──────────────────────
   function initState(block) {
     if (!block) return {};
@@ -267,9 +329,19 @@
   // ── Метаданные урока: блоки, ~минуты, ~XP (для шапки конструктора) ────────────
   function meta(lesson) {
     const blocks = (lesson && lesson.blocks) || [];
-    let sec = 0, xp = 0;
+    const doc = (lesson && lesson.doc) || [];
+    let sec = 0, xp = 0, words = 0;
     blocks.forEach((b) => { if (b.type === 'theory') { sec += 30; xp += 5; } else { sec += 25; xp += 10; } });
-    return { blocks: blocks.length, minutes: Math.max(1, Math.round(sec / 60)), xp: xp + (blocks.length ? 20 : 0) };
+    doc.forEach((b) => {
+      if (!b) return;
+      if (b.kind === 'word') { words += 1; sec += 14; xp += 2; }
+      else if (b.kind === 'heading') sec += 8;
+      else if (b.kind === 'para' || b.kind === 'quote') sec += 18;
+      else if (b.kind === 'image' || b.kind === 'audio') sec += 15;
+      else if (b.kind === 'bullets' || b.kind === 'numbered') sec += 12 * Math.max(1, (b.items || []).length);
+      else sec += 6;
+    });
+    return { blocks: blocks.length, doc: doc.length, words, minutes: Math.max(1, Math.round(sec / 60)), xp: xp + (blocks.length ? 20 : 0) };
   }
 
   // ── Валидация блока: первая проблема строкой, либо null ──────────────────────
@@ -352,7 +424,22 @@
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) { const l = JSON.parse(raw); if (l && Array.isArray(l.blocks) && l.blocks.length) return l; }
+      if (raw) {
+        const l = JSON.parse(raw);
+        if (l && typeof l === 'object') {
+          // Миграция legacy-драфта без doc[] (старый конструктор писал notes+blocks).
+          // Идемпотентна: doc не пишется обратно до первого save(). Теория ушла в
+          // doc[], поэтому theory-блоки убираем из практики (контент уже в документе).
+          if (!Array.isArray(l.doc) && Array.isArray(l.blocks) && l.blocks.length) {
+            l.doc = migrateToDoc(l);
+            l.blocks = l.blocks.filter((b) => b && b.type !== 'theory');
+            if (!l.blocks.length) l.blocks = [blankBlock('choice')];
+          }
+          // Сохранённый пустой урок (после «Очистить») возвращаем как есть —
+          // иначе пустой драфт снова превращался бы в демо-контент.
+          if (Array.isArray(l.doc) || Array.isArray(l.blocks)) return l;
+        }
+      }
     } catch (e) { /* битый драфт — отдаём дефолт */ }
     return clone(DEFAULT);
   }
@@ -404,7 +491,7 @@
     moduleShort: 'Модуль 1',
     total: 32,
     levelTotal: 14,       // уроков в текущем уровне (Модуль 1) — для «до уровня осталось N»
-    teacher: { name: 'Ли Вэй', role: 'Преподаватель курса', initial: '李', sub: 'Носитель языка · 6 лет с подростками' },
+    teacher: { name: 'Ли Вэй', role: 'Преподаватель курса', initial: '李', sub: 'Носитель языка · 6 лет с подростками', photo: 'funnel-assets/team/teacher-liwei.jpg' },
     lessons: [
       { n: 9,  title: 'Числа от 1 до 10', duration: '07:20', words: 10, state: 'done', score: 88, thumb: 'funnel-assets/universities/qingdao.jpg', lesson: LESSON_NUMBERS },
       { n: 10, title: 'Моя семья', duration: '09:05', words: 12, state: 'done', score: 92, thumb: 'funnel-assets/universities/nanjing.jpg', lesson: LESSON_FAMILY },
@@ -416,7 +503,8 @@
 
   window.ELessons = {
     KEY, TYPES, TONES, TEMPLATES, typeMeta, typeLabel, DEFAULT, COURSE,
-    blankBlock, initState, isComplete, isCorrect, meta, blockIssue, norm,
+    blankBlock, blankDocBlock, migrateToDoc,
+    initState, isComplete, isCorrect, meta, blockIssue, norm,
     videoEmbed, notesToBlocks, save, load, clone,
   };
 })();
