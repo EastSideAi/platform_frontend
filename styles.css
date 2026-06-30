@@ -7,15 +7,10 @@
    здесь — только фундамент и переиспользуемые утилиты.
    ============================================================================ */
 
-/* ---- Фирменный дисплейный шрифт Arkhip (ТОЛЬКО крупные заголовки) ---------- */
-@font-face {
-  font-family: 'Arkhip';
-  src: url('assets/fonts/arkhip/Arkhip_font.otf') format('opentype'),
-       url('assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* ---- Единый шрифт: только Manrope, везде ---------------------------------- */
+/* Глобальный форс перебивает любые локальные font-family (включая инлайновые
+   literal-стеки в старых экранах src/screens/*). Один шрифт на весь продукт. */
+*, *::before, *::after { font-family: var(--font-display) !important; }
 
 /* ---- Reset ----------------------------------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }

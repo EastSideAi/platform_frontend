@@ -87,13 +87,12 @@
   --critical-neg:  var(--danger-ink);  /* отрицательная динамика */
 
   /* ---- ТИПОГРАФИКА · семейства ----------------------------------------- */
-  /* Arkhip — фирменный ДИСПЛЕЙНЫЙ шрифт, ТОЛЬКО крупные заголовки (h1/hero/
-     панель-титул). Onest — подзаголовки, числа, акцентная типографика.
-     Manrope — основной текст, интерфейсные подписи. @font-face Arkhip — в styles.css. */
-  --font-arkhip:  'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-  --font-display: 'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-  --font-text:    'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
-  --font-mono:    'Onest', ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
+  /* Единственный шрифт продукта — Manrope. Все алиасы (display/text/arkhip/mono)
+     указывают на него: один шрифт везде, без исключений. Грузится <link> в index.html. */
+  --font-arkhip:  'Manrope', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --font-display: 'Manrope', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --font-text:    'Manrope', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif;
+  --font-mono:    'Manrope', ui-monospace, 'SF Mono', 'Cascadia Mono', monospace;
 
   /* ---- ТИПОГРАФИКА · размеры (шкала, rem от 16px корня) ----------------- */
   --fs-2xs:  0.6875rem; /* 11px — uppercase-метки, мелкая мета */

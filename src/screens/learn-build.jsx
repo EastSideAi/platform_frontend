@@ -87,10 +87,9 @@
      СТИЛИ. Префикс .lb-. Шрифт SF Pro Display через локальный токен.
   ───────────────────────────────────────────────────────────────────────── */
   const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
   .lb-app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;
-    --lb-display:'SF Pro Display','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-    --lb-text:'SF Pro Text','Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --lb-display:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --lb-text:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
     --lb-acc:#2073E6; --lb-acc-2:#5CB4FF; --lb-acc-deep:#1E63C2; --lb-acc-ink:#1763C8;
     --lb-acc-soft:rgba(43,143,255,.1); --lb-acc-line:rgba(43,143,255,.4);
     --lb-ink:#15203B; --lb-ink-sub:rgba(21,32,59,.6); --lb-ink-mute:rgba(21,32,59,.42); --lb-ink-faint:rgba(21,32,59,.24);
@@ -145,8 +144,8 @@
   .lb-pane--rail{border-right:1px solid var(--lb-line);background:rgba(247,249,253,.5);}
   .lb-pane--prev{border-left:1px solid var(--lb-line);background:linear-gradient(180deg,rgba(236,240,251,.42),rgba(244,247,255,.26));
     display:flex;flex-direction:column;align-items:center;}
-  .lb-pane--center{padding:0 24px 140px;}
-  .lb-canvas{max-width:720px;margin:0 auto;position:relative;}
+  .lb-pane--center{padding:0 14px 130px;}
+  .lb-canvas{max-width:920px;margin:0 auto;position:relative;}
 
   /* ── ЛЕВЫЙ RAIL: структура урока ────────────────────────────────────────── */
   .lb-rail__h{font-family:var(--lb-display);font-size:14px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;margin:0 2px 4px;}
@@ -162,25 +161,26 @@
   .lb-rlink__t{font-size:13px;font-weight:600;color:var(--lb-ink);letter-spacing:-.1px;}
   .lb-rlink__s{font-size:11.5px;color:var(--lb-ink-mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb-rail__add{margin-top:11px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
-    color:var(--lb-acc-deep);padding:11px;border-radius:12px;background:var(--lb-acc-soft);border:1.5px dashed var(--lb-acc-line);transition:background .15s;}
-  .lb-rail__add:hover{background:rgba(43,143,255,.16);}
+    color:var(--lb-ink-sub);padding:11px;border-radius:12px;background:rgba(22,32,59,.03);border:1.5px dashed var(--lb-line-strong);transition:background .15s,color .15s,border-color .15s;}
+  .lb-rail__add:hover{background:rgba(22,32,59,.05);color:var(--lb-ink);border-color:var(--lb-ink-faint);}
 
-  /* ── ЦЕНТР: табы ────────────────────────────────────────────────────────── */
-  .lb-tabs{display:flex;align-items:center;gap:4px;padding:10px 0 16px;}
-  .lb-tab{font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-mute);background:0;border:0;cursor:pointer;padding:8px 14px;border-radius:10px;transition:color .15s,background .15s;}
-  .lb-tab:hover{color:var(--lb-ink);background:rgba(255,255,255,.6);}
-  .lb-tab.is-on{color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
-  .lb-tab__c{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:7px;border-radius:99px;background:rgba(22,32,59,.08);font-size:10.5px;font-weight:700;color:var(--lb-ink-sub);font-variant-numeric:tabular-nums;}
+  /* ── ЦЕНТР: табы — плавающий стеклянный сегмент-контрол по центру холста ──── */
+  .lb-tabs{position:sticky;top:12px;z-index:34;display:flex;justify-content:center;padding:4px 0 26px;pointer-events:none;}
+  .lb-tabseg{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:16px;
+    background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.85);box-shadow:0 14px 36px -16px rgba(18,28,58,.34),0 1px 0 rgba(22,32,59,.04),inset 0 1px 0 rgba(255,255,255,.9);}
+  .lb-tab{position:relative;display:inline-flex;align-items:center;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-mute);background:0;border:0;cursor:pointer;padding:8px 17px;border-radius:12px;transition:color .18s var(--lb-ease,ease),background .18s;}
+  .lb-tab:hover{color:var(--lb-ink);}
+  .lb-tab.is-on{color:var(--lb-ink);background:#fff;box-shadow:0 3px 10px -3px rgba(18,28,58,.2),0 0 0 1px rgba(22,32,59,.05),inset 0 1px 0 #fff;}
+  .lb-tab__c{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:rgba(22,32,59,.07);font-size:10.5px;font-weight:700;color:var(--lb-ink-sub);font-variant-numeric:tabular-nums;transition:background .18s,color .18s;}
   .lb-tab.is-on .lb-tab__c{background:var(--lb-acc-deep);color:#fff;}
-  .lb-tabs__sp{flex:1 1 auto;}
-  .lb-tbmeta{font-size:12px;font-weight:500;color:var(--lb-ink-mute);font-variant-numeric:tabular-nums;}
 
   /* ── вкладка ТЕОРИЯ: свойства урока + документ ─────────────────────────── */
-  .lb-doc{position:relative;padding-left:80px;}
-  .lb-titlein{width:100%;font-family:var(--lb-display);font-size:32px;font-weight:600;letter-spacing:-.026em;line-height:1.1;color:var(--lb-ink);
+  .lb-doc{position:relative;padding:34px 0 0 72px;}
+  .lb-titlein{width:100%;font-family:var(--lb-display);font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.06;color:var(--lb-ink);
     padding:4px 2px;border:0;border-bottom:1.5px solid transparent;background:0;transition:border-color .15s;text-wrap:balance;}
   .lb-titlein::placeholder{color:var(--lb-ink-faint);}
-  .lb-titlein:focus{outline:0;border-bottom-color:var(--lb-acc-line);}
+  .lb-titlein:focus{outline:0;border-bottom-color:var(--lb-line-strong);}
   .lb-subin{width:100%;font-family:inherit;font-size:15px;font-weight:400;line-height:1.6;color:var(--lb-ink-sub);
     padding:6px 2px;border:0;background:0;margin-top:2px;}
   .lb-subin::placeholder{color:var(--lb-ink-faint);}
@@ -225,7 +225,7 @@
   .lb-inline-add:hover{color:var(--lb-acc-deep);background:rgba(43,143,255,.06);}
   .lb-inline-link{flex:1 1 220px;min-width:160px;font-family:inherit;font-size:14px;color:var(--lb-ink-sub);padding:6px 2px;border:0;border-bottom:1px solid var(--lb-line);background:0;transition:border-color .15s;}
   .lb-inline-link::placeholder{color:var(--lb-ink-faint);}
-  .lb-inline-link:focus{outline:0;border-bottom-color:var(--lb-acc-line);}
+  .lb-inline-link:focus{outline:0;border-bottom-color:var(--lb-line-strong);}
 
   /* видео — отдельный плеер на всю ширину конспекта */
   .lb-video{position:relative;display:flex;flex-direction:column;gap:12px;padding:0;}
@@ -241,8 +241,8 @@
   /* пустое состояние видео — карточка загрузки */
   .lb-vdrop{display:flex;flex-direction:column;gap:14px;padding:8px 0 2px;}
   .lb-vdrop__card{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;cursor:pointer;padding:26px 22px;border-radius:16px;
-    background:rgba(255,255,255,.6);border:1.5px dashed var(--lb-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .14s,background .14s;}
-  .lb-vdrop__card:hover{background:rgba(255,255,255,.85);border-color:var(--lb-acc);}
+    background:rgba(255,255,255,.6);border:1.5px dashed var(--lb-line-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .14s,background .14s;}
+  .lb-vdrop__card:hover{background:rgba(255,255,255,.85);border-color:var(--lb-ink-mute);}
   .lb-vdrop__ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 18px -10px rgba(32,115,230,.5);}
   .lb-vdrop__t{font-family:var(--lb-display);font-size:15px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;}
   .lb-vdrop__s{font-size:12.5px;color:var(--lb-ink-mute);line-height:1.5;max-width:300px;}
@@ -278,10 +278,20 @@
   .lb-mat__x:hover{color:var(--lb-rose);}
 
   /* ── ПОТОК ДОКУМЕНТА: блоки + gutter «+» + drag handle ──────────────────── */
-  .lb-flow{margin-top:6px;position:relative;}
+  .lb-flow{margin-top:2px;position:relative;}
   .lb-flow__h{font-family:var(--lb-display);font-size:12px;font-weight:700;color:var(--lb-ink-mute);letter-spacing:.08em;text-transform:uppercase;margin:0 0 16px;}
 
-  .lb-row{position:relative;border-radius:12px;transition:background .12s;}
+  .lb-row{position:relative;border-radius:12px;transition:background .12s;margin-top:2px;}
+  /* система отступов: воздух перед смысловыми блоками, плотно внутри потока (design.md §5.6) */
+  .lb-row:first-child{margin-top:0;}
+  .lb-row--heading{margin-top:32px;}
+  .lb-row--quote{margin-top:18px;}
+  .lb-row--bullets,.lb-row--numbered{margin-top:14px;}
+  .lb-row--word{margin-top:8px;}
+  .lb-row--word + .lb-row--word{margin-top:6px;}
+  .lb-row--image,.lb-row--audio,.lb-row--material,.lb-row--hint,.lb-row--important{margin-top:16px;}
+  .lb-row--divider{margin-top:20px;}
+  .lb-row--heading + .lb-row{margin-top:12px;}
   .lb-row__gutter{position:absolute;left:-103px;top:11px;display:flex;align-items:flex-start;gap:1px;opacity:0;transition:opacity .15s;z-index:2;}
   .lb-row:hover .lb-row__gutter,.lb-row.is-focus .lb-row__gutter{opacity:1;}
   .lb-handle{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;color:var(--lb-ink-mute);cursor:grab;background:0;border:0;touch-action:none;flex:0 0 auto;transition:color .15s,background .15s;}
@@ -297,10 +307,10 @@
   .lb-row.is-dropbefore::before{top:-1px;} .lb-row.is-dropafter::after{bottom:-1px;}
 
   /* текстовые блоки — contentEditable */
-  .lb-ce{font-family:var(--lb-text);outline:0;border-radius:8px;padding:4px 7px;min-height:1.7em;line-height:1.6;cursor:text;}
+  .lb-ce{font-family:var(--lb-text);outline:0;border-radius:8px;padding:3px 7px;min-height:1.7em;line-height:1.6;cursor:text;white-space:pre-wrap;}
   .lb-ce b,.lb-ce strong{font-weight:700;} .lb-ce i,.lb-ce em{font-style:italic;}
-  .lb-ce--h{font-family:var(--lb-display);font-size:26px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--lb-ink);}
-  .lb-ce--p{font-size:17px;line-height:1.65;color:var(--lb-ink);}
+  .lb-ce--h{font-family:var(--lb-display);font-size:27px;font-weight:600;letter-spacing:-.024em;line-height:1.18;color:var(--lb-ink);}
+  .lb-ce--p{font-size:16.5px;line-height:1.7;color:var(--lb-ink);}
   .lb-ce--q{font-size:16px;color:var(--lb-ink);font-style:italic;border-left:3px solid var(--lb-acc);padding-left:14px;margin:2px 0;}
   .lb-ce:empty::before{content:attr(data-ph);color:var(--lb-ink-mute);}
 
@@ -315,22 +325,29 @@
   .lb-listadd{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-acc-deep);background:0;border:0;padding:5px 7px;border-radius:7px;transition:background .12s;margin-top:2px;}
   .lb-listadd:hover{background:var(--lb-acc-soft);}
 
-  /* спец-блоки встроены в поток — без карточных рамок */
-  .lb-flowlist{display:flex;flex-direction:column;gap:6px;}
+  /* спец-блоки встроены в поток — отступы задаются по типу блока (.lb-row--*) */
+  .lb-flowlist{display:flex;flex-direction:column;gap:0;}
 
-  /* спец-блоки (слово/аудио/материал) — единый тихий ряд: нейтральная поверхность, сапфир только на иконке */
-  .lb-word,.lb-aud,.lb-matblk{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:10px 12px;border-radius:11px;
-    background:rgba(255,255,255,.6);border:1px solid var(--lb-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
+  /* спец-блоки (аудио/материал) — тихий ряд: нейтральная поверхность, сапфир только на иконке */
+  .lb-aud,.lb-matblk{display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:10px 12px;border-radius:12px;
+    background:rgba(255,255,255,.55);border:1px solid var(--lb-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);
     transition:border-color .14s,background .14s;}
-  .lb-word:hover,.lb-aud:hover,.lb-matblk:hover{background:rgba(255,255,255,.85);border-color:var(--lb-line-strong);}
+  .lb-aud:hover,.lb-matblk:hover{background:rgba(255,255,255,.82);border-color:var(--lb-line-strong);}
   .lb-aud>svg:first-child,.lb-matblk>svg:first-child{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;padding:5px;color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.22);}
-  .lb-word{flex-wrap:nowrap;gap:14px;padding:12px 14px;}
-  .lb-word__hz{font-family:inherit;font-size:30px;font-weight:600;color:var(--lb-acc-deep);letter-spacing:1px;background:transparent;border:0;outline:0;width:auto;min-width:54px;line-height:1.1;padding:0;}
-  .lb-word__fields{display:flex;align-items:center;gap:0;flex:1 1 auto;min-width:0;}
-  .lb-word__py{font-family:inherit;font-size:14px;color:var(--lb-ink-mute);background:transparent;border:0;outline:0;flex:0 0 120px;width:auto;font-variant-numeric:tabular-nums;padding:3px 0 3px 14px;border-left:1px solid var(--lb-line);}
-  .lb-word__ru{font-family:inherit;font-size:15px;color:var(--lb-ink);background:transparent;border:0;outline:0;flex:1 1 auto;min-width:80px;padding:0;}
-  .lb-word__say{flex:0 0 auto;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;cursor:pointer;color:var(--lb-acc-deep);background:transparent;border:0;transition:background .12s;}
-  .lb-word__say:hover{background:rgba(43,143,255,.16);}
+
+  /* СЛОВО — словарная карточка: тайл-иероглиф + стопка «пиньинь / перевод» + озвучка */
+  .lb-word{display:flex;align-items:center;gap:15px;padding:10px 13px 10px 10px;border-radius:15px;
+    background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(247,250,255,.5));border:1px solid var(--lb-line);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 1px 2px rgba(18,28,58,.03);transition:border-color .14s,box-shadow .14s;}
+  .lb-word:hover{border-color:var(--lb-line-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 24px -18px rgba(18,28,58,.24);}
+  .lb-word__hz{flex:0 0 auto;field-sizing:content;width:auto;min-width:56px;max-width:160px;height:56px;padding:0 16px;border-radius:12px;text-align:center;box-sizing:border-box;
+    font-family:var(--lb-display);font-size:28px;font-weight:600;color:var(--lb-acc-deep);letter-spacing:1px;line-height:56px;
+    background:var(--lb-acc-soft);border:0;outline:0;}
+  .lb-word__fields{display:flex;flex-direction:column;gap:1px;flex:1 1 auto;min-width:0;}
+  .lb-word__py{font-family:inherit;font-size:13px;font-weight:500;color:var(--lb-ink-mute);background:transparent;border:0;outline:0;width:100%;font-variant-numeric:tabular-nums;padding:0;}
+  .lb-word__ru{font-family:inherit;font-size:15.5px;font-weight:500;color:var(--lb-ink);background:transparent;border:0;outline:0;width:100%;padding:1px 0 0;}
+  .lb-word__say{flex:0 0 auto;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;cursor:pointer;color:var(--lb-acc-deep);background:rgba(43,143,255,.08);border:0;transition:background .12s,transform .1s;}
+  .lb-word__say:hover{background:rgba(43,143,255,.16);} .lb-word__say:active{transform:scale(.92);}
 
   /* общая «×» — удаление строки/блока, проявляется на hover */
   .lb-row__x{flex:0 0 auto;width:26px;height:26px;border-radius:7px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-mute);background:transparent;border:0;opacity:0;transition:color .15s,opacity .15s;}
@@ -342,7 +359,7 @@
   .lb-img__bar{display:flex;align-items:center;gap:8px;margin-top:6px;}
   .lb-capin{flex:1;font-family:inherit;font-size:13px;color:var(--lb-ink-mute);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;transition:border-color .15s;padding:2px 0;}
   .lb-capin::placeholder{color:var(--lb-ink-faint);}
-  .lb-capin:focus{border-bottom-color:var(--lb-acc-line);}
+  .lb-capin:focus{border-bottom-color:var(--lb-line-strong);}
   .lb-img-empty{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 
   /* аудио — поле названия/ссылки (база ряда общая выше) */
@@ -350,13 +367,13 @@
   .lb-aud__t,.lb-aud__u{font-family:inherit;font-size:14px;background:transparent;border:0;border-bottom:1px solid transparent;outline:0;transition:border-color .15s;padding:3px 0;}
   .lb-aud__t{font-weight:600;color:var(--lb-ink);min-width:120px;}
   .lb-aud__u{color:var(--lb-ink-mute);flex:1;min-width:140px;}
-  .lb-aud__t:focus,.lb-aud__u:focus{border-bottom-color:var(--lb-acc-line);}
+  .lb-aud__t:focus,.lb-aud__u:focus{border-bottom-color:var(--lb-line-strong);}
 
   /* материал-ссылка — поле названия/ссылки (база ряда общая выше) */
   .lb-matblk{color:var(--lb-acc-deep);}
   .lb-matblk__t{font-family:inherit;font-size:14px;font-weight:600;color:var(--lb-ink);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;min-width:120px;padding:3px 0;transition:border-color .15s;}
   .lb-matblk__u{font-family:inherit;font-size:13px;color:var(--lb-ink-mute);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;flex:1;min-width:140px;padding:3px 0;transition:border-color .15s;}
-  .lb-matblk__t:focus,.lb-matblk__u:focus{border-bottom-color:var(--lb-acc-line);}
+  .lb-matblk__t:focus,.lb-matblk__u:focus{border-bottom-color:var(--lb-line-strong);}
 
   /* выноска — левый бордер, без полной рамки */
   .lb-callout{display:flex;gap:10px;align-items:flex-start;padding:8px 14px;border-left:3px solid;border-radius:0 8px 8px 0;font-size:15px;line-height:1.55;}
@@ -373,16 +390,12 @@
     padding:6px 10px;border-radius:8px;background:0;border:0;transition:color .15s,background .12s;}
   .lb-endplus:hover{color:var(--lb-acc-deep);background:rgba(43,143,255,.06);}
 
-  /* конспект — отдельный «лист» внутри документа: заголовок секции + плавающая панель */
-  .lb-konspect{position:relative;margin-top:22px;border-radius:16px;padding:20px 22px 10px;
-    background:linear-gradient(180deg, rgba(255,255,255,.72), rgba(248,250,255,.42));
-    border:1px solid var(--lb-line);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.8), 0 10px 30px -28px rgba(18,28,58,.16);}
-  .lb-konspect__head{display:flex;align-items:center;gap:14px;padding:2px 2px 18px;}
-  .lb-konspect__label{display:flex;flex-direction:column;gap:3px;}
-  .lb-konspect__eyebrow{font-size:10.5px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--lb-acc-ink);}
-  .lb-konspect__title{font-family:var(--lb-display);font-size:20px;font-weight:600;letter-spacing:-.022em;color:var(--lb-ink);line-height:1.15;}
-  .lb-konspect__hint{margin-left:auto;font-size:12px;font-weight:500;color:var(--lb-ink-mute);text-align:right;line-height:1.45;max-width:260px;}
+  /* конспект — чистый лист прямо на холсте: без рамки-карточки, документ дышит */
+  .lb-konspect{position:relative;margin-top:10px;padding:0;background:none;border:0;box-shadow:none;}
+  .lb-konspect__head{display:block;padding:0 2px 8px;}
+  .lb-konspect__label{display:flex;flex-direction:column;gap:5px;}
+  .lb-konspect__title{font-family:var(--lb-display);font-size:23px;font-weight:600;letter-spacing:-.024em;color:var(--lb-ink);line-height:1.12;}
+  .lb-konspect__hint{font-size:13px;font-weight:500;color:var(--lb-ink-mute);line-height:1.45;}
 
   /* toolbar — отдельная скругленная панель в шапке конспекта (статичная: не перекрывает и не мешает выделению текста) */
   .lb-toolbar{display:flex;width:fit-content;max-width:100%;margin:0 auto 22px;
@@ -406,7 +419,7 @@
   .lb-palette{z-index:70;}
 
   /* ── вкладка ПРАКТИКА: карточки заданий ─────────────────────────────────── */
-  .lb-prac{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:18px;}
+  .lb-prac{max-width:920px;margin:0 auto;display:flex;flex-direction:column;gap:18px;}
   .lb-pcard{position:relative;border-radius:18px;background:rgba(255,255,255,.7);border:1px solid var(--lb-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);transition:border-color .15s,box-shadow .15s;}
   .lb-pcard.is-sel{border-color:var(--lb-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 0 0 4px rgba(43,143,255,.07);}
   .lb-pcard__head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;}
@@ -471,13 +484,17 @@
   .lb-prevh{width:100%;max-width:390px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
   .lb-prevh__t{font-size:12.5px;font-weight:600;color:var(--lb-ink);}
   .lb-prevh__s{font-size:11.5px;color:var(--lb-ink-mute);font-variant-numeric:tabular-nums;}
-  .lb-phone{width:100%;max-width:390px;border-radius:34px;padding:11px;background:linear-gradient(160deg,#0A1126,#0C1A3C);
-    box-shadow:0 28px 64px rgba(8,16,44,.34),inset 0 1px 0 rgba(255,255,255,.14);}
-  .lb-phone__screen{position:relative;border-radius:24px;overflow:hidden;background:
-      radial-gradient(420px 300px at 90% -10%, rgba(118,150,255,.16), transparent 64%),
-      linear-gradient(180deg,#FBFBFF,#F4F6FD);min-height:580px;max-height:calc(100vh - 210px);display:flex;flex-direction:column;}
-  .lb-phone__notch{position:absolute;left:50%;top:9px;transform:translateX(-50%);width:92px;height:6px;border-radius:99px;background:rgba(22,32,59,.16);z-index:3;}
-  .lb-phone__body{flex:1 1 auto;overflow-y:auto;padding:24px 16px 18px;}
+  .lb-phone{width:100%;max-width:384px;border-radius:48px;padding:9px;
+    background:linear-gradient(152deg,#171E33 0%,#0B1224 46%,#070C18 100%);
+    box-shadow:0 44px 90px -30px rgba(8,14,34,.6),0 12px 30px -16px rgba(8,14,34,.5),
+      inset 0 0 0 1.5px rgba(255,255,255,.07),inset 0 1.5px 1px rgba(255,255,255,.16),inset 0 -2px 2px rgba(0,0,0,.4);}
+  .lb-phone__screen{position:relative;border-radius:40px;overflow:hidden;background:
+      radial-gradient(420px 300px at 88% -12%, rgba(118,150,255,.18), transparent 64%),
+      linear-gradient(180deg,#FBFCFF,#F3F6FD);min-height:560px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;
+      box-shadow:inset 0 0 0 1px rgba(8,14,34,.5);}
+  .lb-phone__island{position:absolute;left:50%;top:13px;transform:translateX(-50%);width:78px;height:23px;border-radius:99px;background:#05070E;z-index:6;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 1px 3px rgba(0,0,0,.4);}
+  .lb-phone__body{flex:1 1 auto;overflow-y:auto;padding:46px 16px 20px;}
   .lb-phone__body::-webkit-scrollbar{width:0;}
   .lb-prev__note{font-size:11.5px;color:var(--lb-ink-mute);margin-top:14px;text-align:center;line-height:1.5;max-width:320px;}
   .lb-prev-empty{width:100%;max-width:390px;padding:48px 24px;border-radius:20px;text-align:center;background:rgba(255,255,255,.4);border:1px dashed var(--lb-line);color:var(--lb-ink-mute);font-size:13px;line-height:1.55;}
@@ -670,25 +687,30 @@
   function readBlockFromDom(el) {
     const marks = [];
     let pos = 0;
-    const walk = (node, b, it) => {
+    let text = '';
+    const walk = (node, b, it, depth) => {
       const kids = node.childNodes;
       for (let k = 0; k < kids.length; k++) {
         const child = kids[k];
         if (child.nodeType === 3) {
-          const len = (child.nodeValue || '').length;
+          const val = (child.nodeValue || '').replace(/ /g, ' ');
+          const len = val.length;
           if (len) {
             if (b) marks.push({ start: pos, end: pos + len, type: 'bold' });
             if (it) marks.push({ start: pos, end: pos + len, type: 'italic' });
-            pos += len;
+            text += val; pos += len;
           }
-        } else if (child.nodeName === 'B' || child.nodeName === 'STRONG') walk(child, true, it);
-        else if (child.nodeName === 'I' || child.nodeName === 'EM') walk(child, b, true);
-        else if (child.nodeName === 'BR') { /* перенос игнорируем */ }
-        else walk(child, b, it);
+        } else if (child.nodeName === 'BR') { text += '\n'; pos += 1; }
+        else if (child.nodeName === 'B' || child.nodeName === 'STRONG') walk(child, true, it, depth + 1);
+        else if (child.nodeName === 'I' || child.nodeName === 'EM') walk(child, b, true, depth + 1);
+        else {
+          if (depth === 0 && k > 0 && (child.nodeName === 'DIV' || child.nodeName === 'P')) { text += '\n'; pos += 1; }
+          walk(child, b, it, depth + 1);
+        }
       }
     };
-    walk(el, false, false);
-    return { text: (el.textContent || '').replace(/ /g, ' '), marks };
+    walk(el, false, false, 0);
+    return { text: text, marks };
   }
 
   function applyBlockToDom(el, text, marks) {
@@ -813,7 +835,16 @@
         const el = ref.current;
         if (el && !(el.textContent || '').length) { e.preventDefault(); if (props.onEmptyBackspace) props.onEmptyBackspace(); return; }
       }
-      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (props.onEnter) props.onEnter(); return; }
+      if (e.key === 'Enter' && !e.shiftKey) {
+        // Заголовок: Enter уводит в новый блок-абзац (как в Notion).
+        if (block.kind === 'heading') { e.preventDefault(); if (props.onEnter) props.onEnter(); return; }
+        // Абзац/цитата: Enter — мягкий перенос строки. Пишем свободно, без нового
+        // блока и без скачка отступа (Notion-логика свободного текста).
+        e.preventDefault();
+        try { document.execCommand('insertLineBreak'); } catch (err) {}
+        onInput();
+        return;
+      }
       if (e.key !== ' ' || !onMarkdown) return;
       const el = ref.current;
       const txt = (el && el.textContent) || '';
@@ -859,6 +890,7 @@
     const ref = useRef(null);
     const onBlur = () => { const el = ref.current; const t = ((el && el.textContent) || '').trim(); if (t) { const p = parseInline(t); props.onCreate({ kind: 'para', text: p.text, marks: p.marks }); } };
     const onKeyDown = (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); try { document.execCommand('insertLineBreak'); } catch (err) {} return; }
       if (e.key !== ' ') return;
       const el = ref.current; const txt = (el && el.textContent) || '';
       let kind = null;
@@ -982,7 +1014,7 @@
       return null;
     })();
     const showTextTools = block.kind === 'para' || block.kind === 'quote';
-    return h('div', { className: 'lb-row' + (isActive ? ' is-focus' : '') },
+    return h('div', { className: 'lb-row lb-row--' + block.kind + (isActive ? ' is-focus' : '') },
       h('div', { className: 'lb-row__gutter' },
         h('button', { type: 'button', className: 'lb-plus', onClick: (e) => { e.stopPropagation(); onOpenPlus(idx, e); }, 'aria-label': 'Вставить блок' }, Ic.Plus ? h(Ic.Plus, { size: 16 }) : '+'),
         h('button', Object.assign({ type: 'button', className: 'lb-handle', 'aria-label': 'Перетащить' }, ctx.gripProps), Grip(16)),
@@ -1129,7 +1161,7 @@
   function PhoneFrame(props) {
     return h('div', { className: 'lb-phone' },
       h('div', { className: 'lb-phone__screen' },
-        h('div', { className: 'lb-phone__notch' }),
+        h('div', { className: 'lb-phone__island' }),
         h('div', { className: 'lb-phone__body' }, props.children)));
   }
 
@@ -1553,9 +1585,8 @@
       h('div', { className: 'lb-sect' },
         h('div', { className: 'lb-konspect__head' },
           h('div', { className: 'lb-konspect__label' },
-            h('span', { className: 'lb-konspect__eyebrow' }, 'Текст урока'),
-            h('span', { className: 'lb-konspect__title' }, 'Конспект')),
-          h('span', { className: 'lb-konspect__hint' }, 'Пишите как в документе — выделяйте и форматируйте текст')),
+            h('span', { className: 'lb-konspect__title' }, 'Конспект'),
+            h('span', { className: 'lb-konspect__hint' }, 'Пишите как в документе — выделяйте и форматируйте текст'))),
         h('div', { className: 'lb-konspect' },
           h('div', { className: 'lb-flow' },
             doc.length ? h(ReorderList, {
@@ -1601,10 +1632,9 @@
     const center = h('div', { className: 'lb-pane lb-pane--center', ref: centerRef },
       h('div', { className: 'lb-canvas' },
         h('div', { className: 'lb-tabs' },
-          h('button', { type: 'button', className: 'lb-tab' + (tab === 'theory' ? ' is-on' : ''), onClick: () => setTab('theory') }, 'Теория', h('span', { className: 'lb-tab__c' }, doc.length)),
-          h('button', { type: 'button', className: 'lb-tab' + (tab === 'practice' ? ' is-on' : ''), onClick: () => setTab('practice') }, 'Практика', h('span', { className: 'lb-tab__c' }, blocks.length)),
-          h('div', { className: 'lb-tabs__sp' }),
-          h('span', { className: 'lb-tbmeta' }, lesson.level || LEVELS[0], ' · ~', m.minutes, ' мин · ', m.xp, ' XP')),
+          h('div', { className: 'lb-tabseg' },
+            h('button', { type: 'button', className: 'lb-tab' + (tab === 'theory' ? ' is-on' : ''), onClick: () => setTab('theory') }, 'Теория', h('span', { className: 'lb-tab__c' }, doc.length)),
+            h('button', { type: 'button', className: 'lb-tab' + (tab === 'practice' ? ' is-on' : ''), onClick: () => setTab('practice') }, 'Практика', h('span', { className: 'lb-tab__c' }, blocks.length)))),
         tab === 'theory' ? theoryTab : practiceTab));
 
     /* ── ПРЕВЬЮ справа ── */

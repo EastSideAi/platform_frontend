@@ -10,18 +10,11 @@
 <title>EastSide — Вход</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Onest:wght@400;500;600;700;800;900&family=Poiret+One&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — менять тут одной строкой */
-:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif}
+/* единый шрифт интерфейса — только Manrope, везде */
+:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
-
-  @font-face {
-    font-family: 'Arkhip';
-    src: url('funnel-assets/fonts/arkhip/Arkhip_font.otf') format('opentype'),
-         url('funnel-assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
-    font-weight: 400; font-style: normal; font-display: swap;
-  }
   :root {
     --base: #03081C;
     --violet: #2676e7; --violet-2: #5CB4FF; --violet-deep: #1E72E6; --violet-soft: #9FCBFF;
@@ -170,6 +163,26 @@
   .foot a { font-weight: 700; color: var(--violet-2); text-decoration: none; }
   .foot a:hover { color: var(--violet-soft); }
 
+  /* ── разделитель «или» — хайрлайн, гаснущий к краям (не глухая линия) ── */
+  .or { margin-top: 22px; display: flex; align-items: center; gap: 14px;
+    font-size: 12px; font-weight: 600; color: var(--tx-mute); }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(160,195,255,.24), transparent); }
+
+  /* ── вход через соцсети: плоское стекло как у инпутов (§6.4 прав.3 — без выпуклости);
+        на hover загорается сапфировым inset-свечением, как глаз/таб ── */
+  .socials { margin-top: 14px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .soc { height: 46px; border-radius: 13px; cursor: pointer; padding: 0;
+    display: grid; place-items: center; color: var(--tx-soft);
+    background: rgba(3,9,28,.55); border: 1.5px solid rgba(150,185,255,.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+    transition: color .15s, background .15s, border-color .15s, box-shadow .15s, transform .08s; }
+  .soc:hover { color: #fff; background: rgba(8,16,44,.7); border-color: rgba(38,118,231,.6);
+    box-shadow: inset 0 0 18px rgba(38,118,231,.28), inset 0 1px 0 rgba(255,255,255,.1); }
+  .soc:active { transform: translateY(1px); }
+  .soc svg { width: 22px; height: 22px; display: block; }
+  .soc span { font: 800 18px 'Manrope', sans-serif; line-height: 1; }
+
   @media (max-width: 720px) {
     body { background-position: center top; }
     .veil { background: linear-gradient(180deg, rgba(3,8,28,.6), rgba(3,8,28,.92) 45%); }
@@ -191,6 +204,9 @@
     .lbl { font-size: 13px; margin-bottom: 8px; }
     .inp { height: 54px; font-size: 15px; border-radius: 14px; }
     .btn { height: 56px; font-size: 16px; margin-top: 24px; border-radius: 15px; }
+    .or { margin-top: 24px; font-size: 12.5px; }
+    .soc { height: 52px; border-radius: 14px; }
+    .soc svg { width: 23px; height: 23px; }
     .foot { font-size: 13px; margin-top: 20px; }
   }
 
@@ -280,6 +296,19 @@
       </div>
 
       <button class="btn" id="submit" type="submit"><span id="btnTxt">Войти</span></button>
+
+      <div class="or">или войдите через</div>
+      <div class="socials">
+        <button class="soc" type="button" data-soc="tg" title="Telegram" aria-label="Войти через Telegram">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg>
+        </button>
+        <button class="soc" type="button" data-soc="vk" title="ВКонтакте" aria-label="Войти через ВКонтакте">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.16 18.06c-6.86 0-11.18-4.78-11.36-12.72h3.5c.12 5.82 2.74 8.28 4.74 8.78V5.34h3.36v4.96c1.9-.2 3.9-2.42 4.58-4.96h3.3c-.52 3.08-2.66 5.3-4.18 6.22 1.52.74 3.96 2.68 4.9 6.5h-3.62c-.74-2.36-2.56-4.18-4.98-4.42v4.42h-.24z"/></svg>
+        </button>
+        <button class="soc" type="button" data-soc="ya" title="Яндекс" aria-label="Войти через Яндекс">
+          <span>Я</span>
+        </button>
+      </div>
     </form>
   </div>
 </div>
@@ -317,6 +346,12 @@
     var u = document.getElementById('uname');
     try { if (u && u.value.trim()) localStorage.setItem('es_name', u.value.trim().toLowerCase().replace(/(^|[\s-])\S/g, function (c) { return c.toUpperCase(); })); } catch (e) {}
     window.location.href = 'gender-dark.html';
+  });
+
+  // соц-вход (Telegram / ВКонтакте / Яндекс) — пока заглушка: ведет в тот же флоу,
+  // что и обычный вход. Реальный OAuth подключаем позже на бэке.
+  Array.prototype.forEach.call(document.querySelectorAll('.soc'), function (b) {
+    b.addEventListener('click', function () { window.location.href = 'gender-dark.html'; });
   });
 })();
 </script>

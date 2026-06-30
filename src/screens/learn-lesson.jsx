@@ -263,7 +263,7 @@
   .le-aims__c{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);border:1px solid var(--le-acc-line);}
 
   .le-note-h{font-family:var(--le-display);font-weight:500;font-size:18px;letter-spacing:-.012em;color:var(--le-ink);margin:30px 0 0;}
-  .le-note-p{font-size:16px;line-height:1.66;color:var(--le-ink);margin:10px 0 0;font-weight:400;overflow-wrap:break-word;word-break:break-word;}
+  .le-note-p{font-size:16px;line-height:1.66;color:var(--le-ink);margin:10px 0 0;font-weight:400;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;}
   .le-note-img{margin:20px 0 0;}
   .le-note-img figure{margin:0;border-radius:14px;overflow:hidden;border:1px solid var(--le-line);}
   .le-note-img img{display:block;width:100%;height:auto;}
@@ -302,8 +302,8 @@
 .le-doc-material:hover{border-color:var(--le-acc-line);transform:translateY(-1px);}
 .le-doc-divider{border:0;border-top:1px solid var(--le-line);margin:22px 0;}
 .le-study.is-compact .le-doc{gap:0;}
-.le-study.is-compact .le-doc .le-note-h{font-size:15px;margin-top:20px;}
-.le-study.is-compact .le-doc .le-note-p{font-size:14px;line-height:1.55;margin-top:7px;}
+.le-study.is-compact .le-doc .le-note-h{font-size:18px;font-weight:600;margin-top:26px;}
+.le-study.is-compact .le-doc .le-note-p{font-size:14px;line-height:1.62;margin-top:8px;}
 .le-study.is-compact .le-doc-quote{font-size:13.5px;padding:11px 14px;margin:12px 0 2px;}
 .le-study.is-compact .le-doc-list li{font-size:14px;}
 .le-study.is-compact .le-doc-callout{font-size:13px;padding:11px 14px;margin:12px 0 2px;}
@@ -477,7 +477,7 @@
   .le-study.is-compact .le-play{width:46px;height:46px;}
   .le-study.is-compact .le-digest{margin-top:18px;}
   .le-study.is-compact .le-digest__t{font-size:15px;}
-  .le-study.is-compact .le-note-h{font-size:15px;margin-top:20px;}
+  .le-study.is-compact .le-note-h{font-size:17px;font-weight:600;margin-top:24px;}
   .le-study.is-compact .le-note-p{font-size:13px;line-height:1.62;margin-top:8px;}
   .le-study.is-compact .le-tones{grid-template-columns:repeat(2,1fr);}
   .le-study.is-compact .le-aims__i{font-size:13px;}

@@ -12,36 +12,25 @@
 <title>EastSide — Диагностика</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=Poiret+One&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — менять тут одной строкой */
-:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif}
+/* единый шрифт интерфейса — только Manrope, везде */
+:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
-
-  @font-face {
-    font-family: 'Arkhip';
-    src: url('funnel-assets/fonts/arkhip/Arkhip_font.otf') format('opentype'),
-         url('funnel-assets/fonts/arkhip/Arkhip_font.ttf') format('truetype');
-    font-weight: 400; font-style: normal; font-display: swap;
-  }
-  /* SF Pro Display — реальный веб-шрифт (woff2, jsDelivr). Без этого 'SF Pro Display'
-     в стеке ниже падает в Segoe UI на Windows. Грузим 400/500/600/700. */
-  @font-face { font-family: 'SF Pro Display'; font-weight: 400; font-style: normal; font-display: swap;
-    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_regular.woff2') format('woff2'); }
-  @font-face { font-family: 'SF Pro Display'; font-weight: 500; font-style: normal; font-display: swap;
-    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_medium.woff2') format('woff2'); }
-  @font-face { font-family: 'SF Pro Display'; font-weight: 600; font-style: normal; font-display: swap;
-    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_semibold.woff2') format('woff2'); }
-  @font-face { font-family: 'SF Pro Display'; font-weight: 700; font-style: normal; font-display: swap;
-    src: url('https://cdn.jsdelivr.net/npm/sf-pro@1.0.3/font/woff2/sf-pro-display_bold.woff2') format('woff2'); }
   :root {
     --base: #03081C; --panel: #060D28;
     --violet: #2B8FFF; --violet-2: #5CB4FF; --violet-deep: #1E72E6; --violet-soft: #9FCBFF;
     --plate-hi: #F6F7FB; --plate-lo: #E9EBFA; --plate-sky: #D4D9F6;
-    --ink: #15151F; --ink-2: #15151F; --ink-sub: #15151F; --ink-faint: #15151F;
+    --ink: #15151F; --ink-2: rgba(21,21,31,.85); --ink-sub: rgba(21,21,31,.65); --ink-faint: rgba(21,21,31,.48);
     --tx: #FFFFFF; --tx-soft: #C5CBE3; --tx-mute: #8B93B8;
     --acc-ink: #1E63C2; --jade-ink: #1C7E52; --terra-ink: #B23B2A; --ochre-ink: #936417;
     --hair: rgba(36,40,90,.1);
+    /* Карта вертикального ритма (внешнее → внутреннее) */
+    --rhythm-intro: 56px;    /* шапка страницы → первый контент */
+    --rhythm-topic: 72px;    /* между разными темами-секциями */
+    --rhythm-cluster: 28px;  /* блок → его расшифровка (диаграмма → шансы) */
+    --rhythm-subgroup: 48px; /* подблок внутри одной секции */
+    --rhythm-head: 24px;     /* шапка секции → контент */
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
@@ -119,7 +108,8 @@
   .lead { margin-top: 16px; font-size: 16.5px; line-height: 1.62; color: var(--ink-2); max-width: 62ch; }
   .lead b { color: var(--ink); font-weight: 700; }
 
-  .sec { margin-top: 80px; }
+  .sec { margin-top: var(--rhythm-topic); }
+  .lead + .sec { margin-top: var(--rhythm-intro); }
   .sec-h { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
   .sec-t { position: relative; font-size: 21px; font-weight: 700; letter-spacing: -.02em; color: var(--ink); }
   .sec-s { font-size: 14px; line-height: 1.55; color: var(--ink-sub); margin-bottom: 24px; max-width: 70ch; }
@@ -233,7 +223,7 @@
   .blk-eyebrow.grow { color: var(--acc-ink); margin-top: 28px; }
   /* единая лежачая карточка профиля: иконка-плитка слева, текст справа (по рефу).
      одинаковый стиль и для сильных сторон, и для зон роста — без скачков формата */
-  .lcards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 16px; }
+  .lcards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 16px; }
   .lc { display: flex; flex-direction: row; align-items: center; gap: 16px; padding: 16px 20px; border-radius: 17px;
     background: rgba(255,255,255,.72); border: 1px solid rgba(36,40,90,.07);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.9); transition: border-color .18s ease; }
@@ -250,7 +240,7 @@
   .lc-sub { margin-top: 4px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--ink-sub); }
   .lc-sub.good { color: var(--jade-ink); }
   /* отступ перед подблоком «Зоны роста» внутри секции */
-  .grow-h { margin-top: 40px; }
+  .grow-h { margin-top: var(--rhythm-subgroup); }
 
   /* ── ЗОНЫ РОСТА: таблица рекомендаций — слева тема+состояние+пояснение, справа рекомендация ── */
   .recs { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
@@ -332,7 +322,7 @@
     box-shadow: inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3); transition: background .12s; }
   .btn-next:hover { background: #2B8FFF; }
   .btn-next svg { transform: rotate(-45deg); }
-  .rm-banner { position: relative; display: block; width: 100%; margin: 80px 0 24px; min-height: 288px;
+  .rm-banner { position: relative; display: block; width: 100%; margin: var(--rhythm-topic) 0 24px; min-height: 288px;
     border: 0; border-radius: 20px; overflow: hidden; cursor: pointer;
     background:
       radial-gradient(620px 300px at 88% -12%, rgba(43,143,255,.12), transparent 62%),
@@ -371,6 +361,135 @@
     background:
       linear-gradient(90deg, rgba(3,8,28,.76) 0%, rgba(3,8,28,.6) 34%, rgba(3,8,28,.32) 58%, rgba(3,8,28,.08) 80%, rgba(3,8,28,0) 100%),
       linear-gradient(180deg, rgba(3,8,28,.04) 0%, rgba(3,8,28,.3) 100%); }
+
+  /* ══════ Блок записи на бесплатный созвон ══════ */
+  .bk { margin-top: var(--rhythm-topic); border-radius: 30px; overflow: hidden; padding: 36px 40px 40px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FE 100%);
+    border: 1px solid rgba(255,255,255,.92);
+    box-shadow: 0 16px 44px rgba(20,40,90,.10), inset 0 1px 0 rgba(255,255,255,.9); }
+  .bk-title { font-family: 'Onest', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.7px; color: var(--ink); line-height: 1.12; }
+  .bk-sub { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ink-sub); max-width: 54ch; }
+  .bk-grid { margin-top: 28px; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 38px; align-items: stretch; }
+  .bk-div { background: linear-gradient(180deg, transparent, rgba(36,40,90,.12) 12%, rgba(36,40,90,.12) 88%, transparent); }
+
+  /* левая часть: календарь */
+  .bk-left { display: flex; flex-direction: column; }
+  .cal-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .cal-month { font-size: 15px; font-weight: 700; color: var(--ink); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .cal-nav { width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; cursor: pointer;
+    background: rgba(255,255,255,.7); border: 1px solid rgba(36,40,90,.1); color: var(--ink-sub);
+    transition: background .15s, border-color .15s, color .15s, opacity .15s; }
+  .cal-nav:hover { background: #fff; border-color: rgba(43,143,255,.4); color: var(--acc-ink); }
+  .cal-nav[disabled] { opacity: .3; cursor: default; pointer-events: none; }
+  .cal-nav svg { width: 16px; height: 16px; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-dow { text-align: center; font-size: 11px; font-weight: 600; color: var(--ink-faint); padding-bottom: 4px; }
+  .cal-day { aspect-ratio: 1; display: grid; place-items: center; border-radius: 11px; font-size: 13.5px; font-weight: 600;
+    color: var(--ink-2); background: transparent; font-variant-numeric: tabular-nums; cursor: pointer; border: 1px solid transparent;
+    transition: background .14s, color .14s, box-shadow .14s, border-color .14s; }
+  .cal-day:hover { background: rgba(43,143,255,.1); color: var(--acc-ink); }
+  .cal-day.off { color: var(--ink-faint); opacity: .4; cursor: default; pointer-events: none; }
+  .cal-day.today { border-color: rgba(43,143,255,.4); }
+  .cal-day.sel, .cal-day.sel:hover { color: #fff; background: #2073E6; border-color: rgba(120,185,255,.6);
+    box-shadow: inset 0 0 18px rgba(175,215,255,.9), inset 0 1px 0 rgba(255,255,255,.45); }
+  .bk-left-cta { margin-top: auto; padding-top: 24px; display: none; }
+  .bk-left-cta.on { display: block; animation: bkFade .25s ease both; }
+
+  /* правая часть: меняется по состояниям */
+  .bk-right { display: flex; flex-direction: column; min-height: 326px; }
+  @keyframes bkFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  .bk-state { display: none; flex: 1; flex-direction: column; }
+  .bk-state.on { display: flex; animation: bkFade .28s ease both; }
+
+  /* состояние 1 — пусто */
+  .bk-drop { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px;
+    border: 1.5px dashed rgba(43,143,255,.32); border-radius: 20px; padding: 30px 28px; background: rgba(43,143,255,.035); }
+  .bk-drop-ic { width: 62px; height: 62px; border-radius: 18px; display: grid; place-items: center;
+    background: rgba(43,143,255,.12); color: #2B8FFF;
+    box-shadow: inset 0 0 22px rgba(43,143,255,.6), inset 0 0 5px rgba(160,205,255,.7); }
+  .bk-drop-ic svg { width: 28px; height: 28px; }
+  .bk-drop-tx { font-size: 14px; font-weight: 600; color: var(--ink-sub); max-width: 24ch; line-height: 1.5; }
+  .bk-or { margin: 18px 0 14px; display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; color: var(--ink-faint); }
+  .bk-or::before, .bk-or::after { content: ''; flex: 1; height: 1px; background: rgba(36,40,90,.12); }
+
+  /* telegram-кнопка (вторичная, белое стекло) */
+  .tg-btn { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 14px; border-radius: 14px; text-decoration: none; cursor: pointer;
+    background: rgba(255,255,255,.82); border: 1px solid rgba(36,40,90,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    transition: border-color .15s, background .15s; }
+  .tg-btn:hover { border-color: rgba(43,143,255,.42); background: #fff; }
+  .tg-ic { width: 38px; height: 38px; flex: none; border-radius: 11px; display: grid; place-items: center;
+    background: rgba(43,143,255,.14); color: #2B8FFF; box-shadow: inset 0 0 14px rgba(43,143,255,.7), inset 0 0 3px rgba(160,205,255,.7); }
+  .tg-ic svg { width: 19px; height: 19px; }
+  .tg-tx { line-height: 1.25; text-align: left; }
+  .tg-tx b { display: block; font-size: 13.5px; font-weight: 700; color: var(--ink); }
+  .tg-tx span { font-size: 12.5px; color: var(--ink-sub); }
+
+  /* состояние 2 — слоты + ввод */
+  .bk-pick-h { font-size: 13px; font-weight: 700; color: var(--ink-sub); margin-bottom: 12px; }
+  .slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .slot { padding: 11px 0; text-align: center; border-radius: 13px; font-size: 14px; font-weight: 700; cursor: pointer;
+    font-variant-numeric: tabular-nums; color: var(--ink-2);
+    background: rgba(255,255,255,.7); border: 1px solid rgba(36,40,90,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    transition: background .14s, color .14s, border-color .14s, box-shadow .14s; }
+  .slot:hover { border-color: rgba(43,143,255,.45); color: var(--acc-ink); }
+  .slot.sel, .slot.sel:hover { color: #fff; background: #2073E6; border-color: rgba(120,185,255,.6);
+    box-shadow: inset 0 0 18px rgba(175,215,255,.9), inset 0 1px 0 rgba(255,255,255,.45); }
+  .bk-inp-wrap { margin-top: 20px; }
+  .bk-inp { width: 100%; height: 48px; padding: 0 16px; border-radius: 14px; font-size: 14.5px; font-weight: 500; color: var(--ink);
+    background: rgba(255,255,255,.7); border: 1.5px solid rgba(36,40,90,.12); outline: none;
+    transition: border-color .15s, box-shadow .15s, background .15s; }
+  .bk-inp::placeholder { color: var(--ink-faint); }
+  .bk-inp:focus { border-color: rgba(43,143,255,.5); background: #fff; box-shadow: inset 0 0 16px rgba(43,143,255,.1); }
+  .bk-help { margin-top: 10px; font-size: 12.5px; color: var(--ink-sub); }
+  .bk-tg-info { margin-top: auto; padding-top: 18px; }
+
+  /* состояние 3 — успех (целиком внутри правой панели) */
+  .bk-done { align-items: center; justify-content: center; text-align: center; }
+  .bk-check { width: 70px; height: 70px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #2073E6; color: #fff;
+    box-shadow: inset 0 0 26px rgba(175,215,255,.9), inset 0 1px 0 rgba(255,255,255,.45), 0 10px 26px rgba(43,143,255,.35); }
+  .bk-check svg { width: 32px; height: 32px; }
+  .bk-done-t { margin-top: 18px; font-family: 'Onest', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -.4px; color: var(--ink); }
+  .bk-done-s { margin-top: 6px; font-size: 13.5px; color: var(--ink-sub); }
+  .bk-card { margin-top: 20px; width: 100%; border-radius: 16px; padding: 16px 20px; text-align: left;
+    background: rgba(255,255,255,.72); border: 1px solid rgba(36,40,90,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
+    display: flex; flex-direction: column; gap: 12px; }
+  .bk-card-row { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .bk-card-row svg { width: 18px; height: 18px; color: var(--acc-ink); flex: none; }
+  .bk-remind { margin-top: 16px; font-size: 12px; color: var(--ink-faint); line-height: 1.5; max-width: 32ch; }
+  .bk-secondary { margin-top: 18px; display: inline-flex; gap: 18px; }
+  .bk-link { background: none; border: 0; cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--ink-sub); transition: color .15s; }
+  .bk-link:hover { color: var(--acc-ink); }
+  .bk-link.danger:hover { color: var(--terra-ink); }
+
+  /* ══════ Блок поддержки ══════ */
+  .sup { margin-top: 24px; border-radius: 28px; padding: 24px 32px; display: flex; align-items: center; gap: 24px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FE 100%);
+    border: 1px solid rgba(255,255,255,.92);
+    box-shadow: 0 12px 34px rgba(20,40,90,.09), inset 0 1px 0 rgba(255,255,255,.9); }
+  .sup-ava { display: flex; flex: none; }
+  .sup-ava .av { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; margin-left: -12px;
+    font-size: 14px; font-weight: 700; color: #fff; border: 2.5px solid #fff; box-shadow: 0 4px 12px rgba(20,40,90,.18); }
+  .sup-ava .av:first-child { margin-left: 0; }
+  .sup-ava .av.a1 { background: #2B8FFF; }
+  .sup-ava .av.a2 { background: #4C5BCF; }
+  .sup-ava .av.a3 { background: #2C7FBE; }
+  .sup-mid { flex: 1; min-width: 0; }
+  .sup-status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--jade-ink); margin-bottom: 8px; }
+  .sup-status i { width: 8px; height: 8px; border-radius: 50%; background: #2EA06E; box-shadow: 0 0 8px rgba(46,160,110,.85); animation: dotPulse 1.8s ease-in-out infinite; }
+  @keyframes dotPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .55; transform: scale(.8); } }
+  .sup-t { font-family: 'Onest', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: -.4px; color: var(--ink); }
+  .sup-s { margin-top: 4px; font-size: 13.5px; line-height: 1.5; color: var(--ink-sub); max-width: 58ch; }
+  .sup-cta { flex: none; }
+  .sup-cta .btn-next svg { transform: none; }
+
+  @media (max-width: 1080px) {
+    .bk-grid { grid-template-columns: 1fr; gap: 28px; }
+    .bk-div { display: none; }
+    .bk-right { min-height: 0; }
+    .sup { flex-direction: column; align-items: flex-start; gap: 18px; }
+    .sup-cta { align-self: stretch; }
+    .sup-cta .btn-next { width: 100%; justify-content: center; }
+  }
 
   /* ── инфо-попап раздела: подробности, чтобы у родителя было понимание ── */
   .ipop { position: fixed; inset: 0; z-index: 70; visibility: hidden; }
@@ -709,18 +828,18 @@
   .modal-btn.confirm:hover { background: linear-gradient(135deg, #FF7E7E, #E84848); }
 
   /* ════ 3 карточки шансов — свечение ВНУТРИ как у выбранного ответа в анкете ════ */
-  .sec-chs3 { margin-top: 80px; }
+  .sec-chs3 { margin-top: var(--rhythm-cluster); }
   .chs3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
   .ch3 { --cr: 43,143,255;
     position: relative; overflow: hidden; border-radius: 20px; display: flex; flex-direction: column;
-    padding: 24px 28px 24px;
+    padding: 20px 24px;
     background: rgba(255,255,255,.9);
     border: 1.5px solid rgba(var(--cr), .4);
     box-shadow: inset 0 0 26px rgba(var(--cr), .3), inset 0 0 6px rgba(var(--cr), .16); }
   .ch3.c-half { --cr: 120,100,240; }
   .ch3.c-adm  { --cr: 35,160,105; }
-  .ch3-label { position: relative; font-size: 14px; font-weight: 700; color: var(--ink-sub); line-height: 1.34; }
-  .ch3-pct { position: relative; margin-top: auto; padding-top: 16px; font-size: 46px; font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .ch3-label { position: relative; min-height: 38px; font-size: 14px; font-weight: 700; color: var(--ink-sub); line-height: 1.34; }
+  .ch3-pct { position: relative; margin-top: 10px; font-size: 46px; font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
 
   /* ════ ГРАНТЫ: 3 карточки — верх Row (круг-горка + число), список в tint-контейнере, крупный масштаб ════ */
   .gcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; align-items: stretch; }
@@ -728,24 +847,32 @@
   .gcol { --c: #0070F3; --c-lite: #5BA6FF; --cr: 0,112,243; display: flex; flex-direction: column; min-width: 0; }
   .gcol.v-violet { --c: #7B2CBF; --c-lite: #A66BE0; --cr: 123,44,191; }
   .gcol.v-jade   { --c: #2D8A4E; --c-lite: #4FC870; --cr: 45,138,78; }
-  .gcol-head { display: flex; align-items: center; gap: 8px; padding: 0 4px 14px; }
-  .gcol-head .star { width: 16px; height: 16px; flex: none; color: var(--c); }
-  .gcol-head .name { font-size: 17px; font-weight: 600; color: var(--c); letter-spacing: -.015em; line-height: 1.2; }
+  /* шапка над картой: заголовок-тариф + (для главного) пилюля «ваша цель» — резерв 2 строк, чтобы карты не разъехались */
+  .gcol-head { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding: 0 4px 16px; }
+  .gcol-head .name { font-size: 19px; font-weight: 700; color: var(--c); letter-spacing: 0; line-height: 1.15; text-transform: uppercase; }
+  /* метка главного варианта — пилюля по центру под заголовком (анти-дефолт «3 равные») */
+  .g-goal { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px 4px 9px;
+    border-radius: 99px; background: rgba(var(--cr), .10); border: 1px solid rgba(var(--cr), .20);
+    color: var(--acc-ink); font-size: 11.5px; font-weight: 600; letter-spacing: 0; line-height: 1; white-space: nowrap; }
+  .g-goal svg { width: 11px; height: 11px; flex: none; color: var(--c); }
   /* карточка — белая, мягкая тень, много воздуха внутри */
-  .gcard { display: flex; flex-direction: column; flex: 1; min-height: 0;
-    border-radius: 16px; padding: 26px 24px; background: #FFFFFF; border: none;
+  .gcard { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0;
+    border-radius: 16px; padding: 28px 24px; background: #FFFFFF; border: none;
     box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 8px 22px rgba(20,24,58,.05);
     transition: transform .2s ease, box-shadow .2s ease; }
   .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20,24,58,.06), 0 14px 32px rgba(20,24,58,.09); }
+  /* выделенный «полный грант» — сапфировая обводка + тихое свечение изнутри (§6.2 — фирменный приём активного) */
+  .gcol.is-goal .gcard { box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 12px 30px rgba(0,112,243,.12), inset 0 0 0 1.5px rgba(0,112,243,.32); }
+  .gcol.is-goal .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20,24,58,.06), 0 18px 40px rgba(0,112,243,.16), inset 0 0 0 1.5px rgba(0,112,243,.42); }
   /* ВЕРХ: Row — горка в тонированном круге СЛЕВА + колонка число/подпись СПРАВА (левый край) */
-  .g-top { display: flex; align-items: center; gap: 14px; padding-bottom: 24px; }
-  .g-mtn { width: 80px; height: 80px; flex: none; border-radius: 50%; display: grid; place-items: center;
-    background: rgba(var(--cr), .09); }
-  .g-mtn img { width: 60px; height: 60px; object-fit: contain; display: block; }
-  .g-cost { display: flex; flex-direction: column; align-items: flex-start; text-align: left; gap: 4px; min-width: 0; }
-  .g-cost-v { font-size: 24px; font-weight: 700; letter-spacing: -.02em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; }
-  .g-cost-v .u { font-size: 1em; font-weight: 700; color: inherit; margin-left: 1px; letter-spacing: 0; }
-  .g-cost-c { font-size: 12.5px; font-weight: 400; color: rgba(20,24,58,.5); line-height: 1.35; }
+  .g-top { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding-bottom: 22px; }
+  .g-mtn { width: 108px; height: 108px; flex: none; border-radius: 50%; display: grid; place-items: center;
+    background: radial-gradient(circle at 50% 44%, rgba(var(--cr), .22), rgba(var(--cr), .07) 56%, transparent 74%); }
+  .g-mtn img { width: 88px; height: 88px; object-fit: contain; display: block; }
+  .g-cost { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
+  .g-cost-v { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .g-cost-v .u { font-size: .62em; font-weight: 600; color: inherit; margin-left: 2px; letter-spacing: 0; }
+  .g-cost-c { font-size: 13px; font-weight: 400; color: rgba(20,24,58,.5); line-height: 1.35; margin-top: 2px; min-height: 34px; max-width: 19ch; }
   /* блок: что покрывает — список в лёгком тонированном контейнере (чуть ярче круга) */
   .g-blk { padding: 4px 0 6px; }
   .g-blk-h { font-size: 14px; font-weight: 700; letter-spacing: -.005em; color: rgba(20,24,58,.72); margin-bottom: 14px; }
@@ -758,8 +885,8 @@
   .g-li.no i { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(20,24,58,.18); }
   .g-li.no i svg { color: rgba(20,24,58,.45); }
   /* блок: шанс поступить — толстый бар, заметный ползунок */
-  .g-ch { padding-top: 22px; }
-  .g-ch-h { font-size: 14px; font-weight: 700; letter-spacing: -.005em; color: rgba(20,24,58,.72); margin-bottom: 14px; }
+  .g-ch { padding-top: 20px; margin-top: auto; border-top: 1px solid var(--hair); }
+  .g-ch-h { font-size: 14px; font-weight: 700; letter-spacing: -.005em; color: rgba(20,24,58,.72); margin-bottom: 14px; text-align: center; }
   .g-ch-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 8px; }
   .g-ch-col { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
   .g-ch-col.aft { align-items: flex-end; text-align: right; }
@@ -776,8 +903,10 @@
     box-shadow: 0 0 0 2.5px var(--c), 0 2px 5px rgba(20,24,58,.18); }
   .gcol.v-jade .g-bar > i { background: #2D8A4E; }
   .gcol.v-jade .g-bar > i::after { box-shadow: 0 0 0 2.5px #2D8A4E, 0 2px 5px rgba(20,24,58,.18); }
-  .gtbl-note { margin-top: 14px; display: flex; align-items: flex-start; gap: 10px; font-size: 11.5px; line-height: 1.5; color: rgba(20,24,58,.45); }
-  .gtbl-note svg { width: 14px; height: 14px; flex: none; margin-top: 1px; color: rgba(20,24,58,.4); }
+  .gtbl-note { margin-top: 18px; display: flex; align-items: flex-start; gap: 12px;
+    padding: 16px 18px; border-radius: 14px; background: rgba(36,40,90,.035); border: 1px solid rgba(36,40,90,.07);
+    font-size: 13px; line-height: 1.5; color: var(--ink-sub); }
+  .gtbl-note svg { width: 17px; height: 17px; flex: none; margin-top: 1px; color: var(--acc-ink); }
 
   /* ════ НОВОЕ: карточки вузов ════ */
   .unis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -1134,9 +1263,9 @@
 
         <!-- сравнение вариантов: 3 вертикальные карточки (полный / частичный / платное) -->
         <div class="gcards">
-          <!-- ПОЛНЫЙ ГРАНТ (синий) -->
-          <div class="gcol">
-            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Полный грант</span></div>
+          <!-- ПОЛНЫЙ ГРАНТ (синий) — главный вариант, выделен -->
+          <div class="gcol is-goal">
+            <div class="gcol-head"><span class="name">Полный грант</span><span class="g-goal"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg>ваша цель</span></div>
             <div class="gcard">
               <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-full.png" alt="" loading="lazy"></span>
@@ -1170,7 +1299,7 @@
 
           <!-- ЧАСТИЧНЫЙ ГРАНТ (фиолетовый) -->
           <div class="gcol v-violet">
-            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Частичный грант</span></div>
+            <div class="gcol-head"><span class="name">Частичный грант</span></div>
             <div class="gcard">
               <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-half.png" alt="" loading="lazy"></span>
@@ -1202,7 +1331,7 @@
 
           <!-- ПЛАТНОЕ ОБУЧЕНИЕ (зеленый) -->
           <div class="gcol v-jade">
-            <div class="gcol-head"><svg class="star" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.8.7-5.1 4.6 1.5 6.7L12 17.8 5.9 20.3l1.5-6.7L2.3 9l6.8-.7z"/></svg><span class="name">Платное обучение</span></div>
+            <div class="gcol-head"><span class="name">Платное обучение</span></div>
             <div class="gcard">
               <div class="g-top">
                 <span class="g-mtn"><img src="funnel-assets/mtn/mtn-zero.png" alt="" loading="lazy"></span>
@@ -1310,6 +1439,125 @@
           </span>
         </span>
       </button>
+
+      <!-- ════ Запись на бесплатный созвон ════ -->
+      <section class="bk" id="book">
+        <h2 class="bk-title">Запишитесь на бесплатный созвон</h2>
+        <p class="bk-sub">20 минут с куратором — разберем ваш план поступления и ответим на вопросы. Без оплаты и обязательств.</p>
+
+        <div class="bk-grid">
+          <!-- левая часть: календарь -->
+          <div class="bk-left">
+            <div class="cal-top">
+              <button class="cal-nav" id="calPrev" type="button" aria-label="Предыдущий месяц">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+              </button>
+              <span class="cal-month" id="calMonth">Июнь 2026</span>
+              <button class="cal-nav" id="calNext" type="button" aria-label="Следующий месяц">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </button>
+            </div>
+            <div class="cal-grid" id="calGrid">
+              <span class="cal-dow">пн</span><span class="cal-dow">вт</span><span class="cal-dow">ср</span><span class="cal-dow">чт</span><span class="cal-dow">пт</span><span class="cal-dow">сб</span><span class="cal-dow">вс</span>
+            </div>
+            <!-- компактная CTA под календарем — только когда выбран день, слот и введен Telegram -->
+            <div class="bk-left-cta" id="bkLeftCta">
+              <button class="btn-next" id="bkConfirm" type="button">Записаться</button>
+            </div>
+          </div>
+
+          <div class="bk-div"></div>
+
+          <!-- правая часть: три состояния -->
+          <div class="bk-right">
+
+            <!-- состояние 1 — ничего не выбрано -->
+            <div class="bk-state on" id="bkEmpty">
+              <div class="bk-drop">
+                <span class="bk-drop-ic">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+                </span>
+                <span class="bk-drop-tx">Выберите день в календаре — покажем свободное время</span>
+              </div>
+              <div class="bk-or">или напишите напрямую</div>
+              <a class="tg-btn" href="https://t.me/eastside_main" target="_blank" rel="noopener">
+                <span class="tg-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg></span>
+                <span class="tg-tx"><b>Telegram</b><span>@eastside_main</span></span>
+              </a>
+            </div>
+
+            <!-- состояние 2 — выбран день: слоты + Telegram -->
+            <div class="bk-state" id="bkPick">
+              <div class="bk-pick-h" id="bkPickH">Свободное время</div>
+              <div class="slots" id="bkSlots">
+                <button class="slot" type="button" data-t="09:00">09:00</button>
+                <button class="slot" type="button" data-t="11:30">11:30</button>
+                <button class="slot" type="button" data-t="14:00">14:00</button>
+                <button class="slot" type="button" data-t="16:30">16:30</button>
+                <button class="slot" type="button" data-t="18:00">18:00</button>
+              </div>
+              <div class="bk-inp-wrap">
+                <input class="bk-inp" id="bkTg" type="text" placeholder="@telegram_username" autocomplete="off" spellcheck="false" />
+                <p class="bk-help">Укажите Telegram — пришлем подтверждение записи.</p>
+              </div>
+              <div class="bk-tg-info">
+                <a class="tg-btn" href="https://t.me/eastside_main" target="_blank" rel="noopener">
+                  <span class="tg-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg></span>
+                  <span class="tg-tx"><b>Удобнее в Telegram?</b><span>@eastside_main</span></span>
+                </a>
+              </div>
+            </div>
+
+            <!-- состояние 3 — запись создана -->
+            <div class="bk-state bk-done" id="bkDone">
+              <span class="bk-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+              </span>
+              <div class="bk-done-t">Вы записаны!</div>
+              <div class="bk-done-s">Мы отправили подтверждение в Telegram.</div>
+              <div class="bk-card">
+                <div class="bk-card-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
+                  <span id="bkDoneDate">30 июня</span>
+                </div>
+                <div class="bk-card-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+                  <span id="bkDoneTime">16:30</span>
+                </div>
+                <div class="bk-card-row">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.7L3 21l1.8-5.8A8.5 8.5 0 1 1 21 11.5z"/></svg>
+                  <span id="bkDoneTg">@telegram_username</span>
+                </div>
+              </div>
+              <p class="bk-remind">За несколько часов до встречи мы пришлем напоминание.</p>
+              <div class="bk-secondary">
+                <button class="bk-link" id="bkEdit" type="button">Изменить время</button>
+                <button class="bk-link danger" id="bkCancel" type="button">Отменить запись</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ════ Блок поддержки ════ -->
+      <section class="sup">
+        <div class="sup-ava">
+          <span class="av a1">АК</span>
+          <span class="av a2">МВ</span>
+          <span class="av a3">ЛC</span>
+        </div>
+        <div class="sup-mid">
+          <span class="sup-status"><i></i>кураторы на связи</span>
+          <div class="sup-t">Нужна помощь с планом?</div>
+          <p class="sup-s">Мы рядом и знаем, как сделать из шансов результат. Обычно отвечаем за пару минут.</p>
+        </div>
+        <div class="sup-cta">
+          <a class="btn-next" href="https://t.me/eastside_main" target="_blank" rel="noopener">Написать наставнику
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg>
+          </a>
+        </div>
+      </section>
 
       <!-- закрепленный футер навигации воронки -->
       <div class="dbar">
@@ -2069,6 +2317,144 @@
   });
 
   scroll.innerHTML = detailHTML(UNIS[0]);
+})();
+</script>
+<script>
+/* ── Запись на бесплатный созвон: календарь + 3 состояния ── */
+(function () {
+  'use strict';
+  var grid = document.getElementById('calGrid');
+  if (!grid) return;
+
+  var MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+  var MGEN   = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  // демо-окно: от текущего месяца (июнь 2026) до конца года
+  var MIN_Y = 2026, MIN_M = 5, MAX_Y = 2026, MAX_M = 11;
+  var TODAY_Y = 2026, TODAY_M = 5, TODAY_D = 30;
+  var viewY = MIN_Y, viewM = MIN_M;
+  var sel = null;            // {y,m,d}
+  var selSlot = null;
+
+  var monthEl = document.getElementById('calMonth');
+  var prevBtn = document.getElementById('calPrev');
+  var nextBtn = document.getElementById('calNext');
+  var leftCta = document.getElementById('bkLeftCta');
+  var tgInp   = document.getElementById('bkTg');
+  var pickH   = document.getElementById('bkPickH');
+
+  function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+  function firstColMon(y, m) { return (new Date(y, m, 1).getDay() + 6) % 7; }   // 0 = понедельник
+  function atMin() { return viewY === MIN_Y && viewM === MIN_M; }
+  function atMax() { return viewY === MAX_Y && viewM === MAX_M; }
+
+  function renderMonth() {
+    monthEl.textContent = MONTHS[viewM] + ' ' + viewY;
+    prevBtn.disabled = atMin();
+    nextBtn.disabled = atMax();
+    // убрать старые ячейки (оставить 7 заголовков дней недели)
+    while (grid.children.length > 7) grid.removeChild(grid.lastChild);
+    var blanks = firstColMon(viewY, viewM);
+    for (var b = 0; b < blanks; b++) {
+      var sp = document.createElement('span'); grid.appendChild(sp);
+    }
+    var total = daysInMonth(viewY, viewM);
+    for (var d = 1; d <= total; d++) {
+      var col = (blanks + d - 1) % 7;          // 5 = сб, 6 = вс
+      var weekend = col === 5 || col === 6;
+      var cell = document.createElement('button');
+      cell.type = 'button';
+      cell.className = 'cal-day' + (weekend ? ' off' : '');
+      cell.textContent = d;
+      if (!weekend) cell.setAttribute('data-d', d);
+      if (viewY === TODAY_Y && viewM === TODAY_M && d === TODAY_D) cell.classList.add('today');
+      if (sel && sel.y === viewY && sel.m === viewM && sel.d === d) cell.classList.add('sel');
+      grid.appendChild(cell);
+    }
+  }
+
+  prevBtn.addEventListener('click', function () {
+    if (atMin()) return;
+    viewM--; if (viewM < 0) { viewM = 11; viewY--; }
+    renderMonth();
+  });
+  nextBtn.addEventListener('click', function () {
+    if (atMax()) return;
+    viewM++; if (viewM > 11) { viewM = 0; viewY++; }
+    renderMonth();
+  });
+
+  // состояния правой панели
+  function show(id) {
+    var ids = ['bkEmpty', 'bkPick', 'bkDone'];
+    for (var i = 0; i < ids.length; i++) {
+      document.getElementById(ids[i]).classList.toggle('on', ids[i] === id);
+    }
+  }
+  function normTg(v) {
+    v = (v || '').trim().replace(/^@+/, '');
+    return v ? '@' + v : '';
+  }
+  function evalCta() {
+    var ok = !!selSlot && normTg(tgInp.value).length > 1;
+    leftCta.classList.toggle('on', ok);
+  }
+  function clearSlots() {
+    selSlot = null;
+    var ss = document.querySelectorAll('#bkSlots .slot');
+    for (var i = 0; i < ss.length; i++) ss[i].classList.remove('sel');
+  }
+
+  // выбор дня
+  grid.addEventListener('click', function (e) {
+    var c = e.target.closest ? e.target.closest('.cal-day') : null;
+    if (!c || c.classList.contains('off')) return;
+    sel = { y: viewY, m: viewM, d: +c.getAttribute('data-d') };
+    var cells = grid.querySelectorAll('.cal-day');
+    for (var i = 0; i < cells.length; i++) cells[i].classList.remove('sel');
+    c.classList.add('sel');
+    clearSlots();
+    pickH.textContent = 'Свободное время · ' + sel.d + ' ' + MGEN[sel.m];
+    show('bkPick');
+    evalCta();
+  });
+
+  // выбор слота
+  document.getElementById('bkSlots').addEventListener('click', function (e) {
+    var s = e.target.closest ? e.target.closest('.slot') : null;
+    if (!s) return;
+    var ss = this.querySelectorAll('.slot');
+    for (var i = 0; i < ss.length; i++) ss[i].classList.remove('sel');
+    s.classList.add('sel');
+    selSlot = s.getAttribute('data-t');
+    evalCta();
+  });
+
+  tgInp.addEventListener('input', evalCta);
+
+  // записаться → состояние 3
+  document.getElementById('bkConfirm').addEventListener('click', function () {
+    if (!sel || !selSlot || normTg(tgInp.value).length < 2) return;
+    document.getElementById('bkDoneDate').textContent = sel.d + ' ' + MGEN[sel.m];
+    document.getElementById('bkDoneTime').textContent = selSlot;
+    document.getElementById('bkDoneTg').textContent = normTg(tgInp.value);
+    leftCta.classList.remove('on');
+    show('bkDone');
+  });
+
+  // изменить время → назад к выбору
+  document.getElementById('bkEdit').addEventListener('click', function () {
+    show('bkPick');
+    evalCta();
+  });
+  // отменить запись → сброс к состоянию 1
+  document.getElementById('bkCancel').addEventListener('click', function () {
+    sel = null; clearSlots(); tgInp.value = '';
+    leftCta.classList.remove('on');
+    renderMonth();
+    show('bkEmpty');
+  });
+
+  renderMonth();
 })();
 </script>
 </body>

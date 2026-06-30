@@ -58,7 +58,7 @@
     '/payments': S.Payments,                  // оплаты/финансы — ТОЛЬКО зона родителя
 
     // образовательная платформа
-    '/learn': S.LearnHub,                     // хаб курса ученика
+    '/learn': S.LearnHome,                    // «Обучение» — пересобранная learn-home.jsx
     '/learn/lesson': S.LearnLesson,           // интерактивный урок-тренажёр
     '/learn/build': S.LearnBuilder,           // конструктор урока (преподаватель)
 

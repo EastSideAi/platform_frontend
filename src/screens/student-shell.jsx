@@ -1767,8 +1767,16 @@
         h('div', { className: 'sd-wrap' },
           props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
           props.children)),
-      h('button', { type: 'button', className: 'sd-fab', onClick: () => openChat(), 'aria-label': 'Спросить AI' },
-        Ic.Spark ? h(Ic.Spark, { size: 23 }) : 'AI'),
+      props.aiCenter
+        ? h('button', { type: 'button', className: 'lr-aifab', onClick: () => openChat(), 'aria-label': 'Спросить AI-наставника' },
+            h('span', { className: 'lr-aifab__ic' },
+              h('span', { className: 'lr-aifab__pulse', 'aria-hidden': 'true' }),
+              Ic.Spark ? h(Ic.Spark, { size: 18 }) : 'AI'),
+            h('span', { className: 'lr-aifab__tx' },
+              h('span', { className: 'lr-aifab__t' }, 'AI-наставник'),
+              h('span', { className: 'lr-aifab__s' }, 'Спросить о чём угодно')))
+        : h('button', { type: 'button', className: 'sd-fab', onClick: () => openChat(), 'aria-label': 'Спросить AI' },
+            Ic.Spark ? h(Ic.Spark, { size: 23 }) : 'AI'),
       h(PopupHost, null));
   }
 

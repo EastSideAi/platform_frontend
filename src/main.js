@@ -52,6 +52,7 @@ import './screens/crm-clients.jsx';
 import './screens/crm-client.jsx';
 import './screens/crm-funnel.jsx';
 import './screens/learn-hub.jsx';
+import './screens/learn-home.jsx';        // пересобранная «Обучение» (#/learn), живёт в ESStudentShell
 import './screens/learn-lesson.jsx';
 import './screens/learn-build.jsx';
 
