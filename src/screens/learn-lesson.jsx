@@ -275,7 +275,7 @@
 
   /* титул — «Урок N» крупно и уверенно + пилюля модуля + описание (крафт «Главной») */
   .le-titlerow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
-  .le-h1{font-family:var(--le-display);font-weight:800;font-size:42px;letter-spacing:-.032em;line-height:1.02;color:var(--le-ink);margin:0;text-wrap:balance;}
+  .le-h1{font-family:var(--le-display);font-weight:700;font-size:42px;letter-spacing:-.028em;line-height:1.02;color:var(--le-ink);margin:0;text-wrap:balance;}
   .le-modpill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--le-ink);background:rgba(255,255,255,.55);
     border:1px solid var(--le-cbord);border-radius:99px;padding:9px 16px;box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
   .le-modpill svg{color:var(--le-acc-deep);flex:0 0 auto;}

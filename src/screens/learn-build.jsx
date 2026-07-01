@@ -32,6 +32,41 @@
   const Store = window.ELessonStore;
   const nav = (window.ERouter && window.ERouter.navigate) || function () {};
 
+  // ── Загрузка медиа урока: файл → бэкенд (bytea в Postgres), возвращает ссылку.
+  //    Без бэка (ES_LESSONS_BASE пусто) или на ошибке — временная blob-ссылка (как было).
+  //    Файлы больше лимита не грузим (для больших видео — внешняя ссылка).
+  const LB_MEDIA_BASE = (window.ES_LESSONS_BASE || window.ES_API_BASE || '').replace(/\/+$/, '');
+  const LB_MEDIA_MAX = 20 * 1024 * 1024; // 20 МБ
+  function lbReadDataUrl(file) {
+    return new Promise(function (res, rej) {
+      const r = new FileReader();
+      r.onload = function () { res(r.result); };
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+  async function uploadMedia(file) {
+    if (!file) return '';
+    if (!LB_MEDIA_BASE || file.size > LB_MEDIA_MAX) {
+      if (LB_MEDIA_BASE && file.size > LB_MEDIA_MAX) {
+        try { window.alert('Файл больше 20 МБ не сохранён на сервере. Для больших видео используйте ссылку (YouTube, Vimeo, RuTube, ВК).'); } catch (e) {}
+      }
+      return URL.createObjectURL(file);
+    }
+    try {
+      const dataUrl = await lbReadDataUrl(file);
+      const res = await fetch(LB_MEDIA_BASE + '/api/learning/media', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, mime: file.type || 'application/octet-stream', data: dataUrl }),
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const d = await res.json();
+      return LB_MEDIA_BASE + d.url;
+    } catch (e) {
+      return URL.createObjectURL(file); // upload упал — не теряем файл, покажем локально
+    }
+  }
+
   /* ── Inline-SVG иконки (не в общем lib/icons.jsx — локально в экране) ─────── */
   const svg = (size, children, opts) => h('svg', Object.assign({
     width: size, height: size, viewBox: '0 0 24 24', fill: opts && opts.fill ? 'currentColor' : 'none',
@@ -192,7 +227,7 @@
   .lb-rlink__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
   .lb-rlink.is-sel .lb-rlink__ic{color:#EAF2FF;background:#2073E6;box-shadow:inset 0 0 14px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-rlink__b{flex:1 1 auto;min-width:0;}
-  .lb-rlink__t{font-size:14.5px;font-weight:700;color:var(--lb-ink);letter-spacing:-.012em;}
+  .lb-rlink__t{font-size:14.5px;font-weight:600;color:var(--lb-ink);letter-spacing:-.012em;}
   .lb-rlink__s{font-size:12px;color:var(--lb-ink-mute);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb-rail__add{margin-top:0;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
     color:var(--lb-ink-sub);padding:11px;border-radius:12px;background:rgba(22,32,59,.03);border:1.5px dashed var(--lb-line-strong);transition:background .15s,color .15s,border-color .15s;}
@@ -218,7 +253,7 @@
 
   /* ── вкладка ТЕОРИЯ: свойства урока + документ ─────────────────────────── */
   .lb-doc{position:relative;padding:34px 0 0 72px;}
-  .lb-titlein{display:block;width:100%;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:break-word;font-family:var(--lb-display);font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--lb-ink);
+  .lb-titlein{display:block;width:100%;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:break-word;font-family:var(--lb-display);font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1.1;color:var(--lb-ink);
     padding:4px 2px;border:0;border-bottom:1.5px solid transparent;background:0;transition:border-color .15s;}
   .lb-titlein::placeholder{color:var(--lb-ink-faint);}
   .lb-titlein:focus{outline:0;border-bottom-color:var(--lb-line-strong);}
@@ -523,7 +558,7 @@
   .lb-pcard.is-sel .lb-pcard__n{color:#fff;background:var(--lb-acc-deep);}
   .lb-pcard__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
   .lb-pcard__b{flex:1 1 auto;min-width:0;}
-  .lb-pcard__t{font-size:14px;font-weight:700;color:var(--lb-ink);letter-spacing:-.1px;display:flex;align-items:center;gap:8px;}
+  .lb-pcard__t{font-size:14px;font-weight:600;color:var(--lb-ink);letter-spacing:-.1px;display:flex;align-items:center;gap:8px;}
   .lb-pcard__s{font-size:12.5px;color:var(--lb-ink-mute);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb-dotw{width:7px;height:7px;border-radius:50%;background:var(--lb-warn);box-shadow:0 0 0 3px rgba(168,116,28,.14);flex:0 0 auto;}
   .lb-pcard__chev{flex:0 0 auto;color:var(--lb-ink-mute);transition:transform .2s cubic-bezier(.23,1,.32,1);}
@@ -1175,7 +1210,7 @@
   function ImageBlock(props) {
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
-    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; const url = URL.createObjectURL(f); onCommit({ url, caption: block.caption || f.name }); };
+    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url, caption: block.caption || f.name }); };
     if (block.url) return h('div', { className: 'lb-img' },
       h('img', { src: block.url, alt: block.caption || '' }),
       h('div', { className: 'lb-img__bar' },
@@ -1191,7 +1226,7 @@
   function AudioBlock(props) {
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
-    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; onCommit({ url: URL.createObjectURL(f), title: block.title || f.name.replace(/\.[^.]+$/, '') }); };
+    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url: url, title: block.title || f.name.replace(/\.[^.]+$/, '') }); };
     return h('div', { className: 'lb-aud' },
       AudioIc(16),
       h('input', { className: 'lb-aud__t', value: block.title || '', placeholder: 'Название записи', onChange: (e) => onCommit({ title: e.target.value }) }),
@@ -1206,7 +1241,7 @@
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
     const fmtSize = (n) => { if (!n && n !== 0) return ''; if (n < 1024) return n + ' Б'; if (n < 1048576) return Math.round(n / 1024) + ' КБ'; return (n / 1048576).toFixed(1) + ' МБ'; };
-    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; onCommit({ url: URL.createObjectURL(f), title: block.title || f.name.replace(/\.[^.]+$/, ''), fileName: f.name, size: f.size }); };
+    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url: url, title: block.title || f.name.replace(/\.[^.]+$/, ''), fileName: f.name, size: f.size }); };
     const clearFile = () => onCommit({ url: '', fileName: '', size: 0 });
     const hasFile = !!block.fileName;
     return h('div', { className: 'lb-matblk' + (hasFile ? ' is-file' : '') },
@@ -1700,7 +1735,7 @@
         const k = String(e.key || '').toLowerCase();
         if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
         else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
-        else if (k === 's') { e.preventDefault(); if (!forceBlank) { if (Store) Store.saveLocalSync(lessonRef.current); else L.save(lessonRef.current); savedRef.current = lessonRef.current; setSaveState('saving'); setTimeout(() => setSaveState('saved'), 350); } }
+        else if (k === 's') { e.preventDefault(); if (!forceBlank) { const snap = lessonRef.current; if (Store) { Store.saveLocalSync(snap); Store.save(snap).catch(function () {}); } else L.save(snap); savedRef.current = snap; setSaveState('saving'); setTimeout(function () { setSaveState('saved'); }, 350); } }
       };
       window.addEventListener('keydown', onKey);
       return () => window.removeEventListener('keydown', onKey);
@@ -1792,7 +1827,7 @@
     // ── мутаторы мета ──
     const setMeta = (patch) => setLesson((l) => Object.assign({}, l, patch), 'meta');
     const setVideo = (patch) => setLesson((l) => Object.assign({}, l, { video: Object.assign({}, l.video || {}, patch) }), 'video');
-    const onVideoPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; const url = URL.createObjectURL(f); setVideo({ file: url, upload: f.name, title: (vid.title) || f.name.replace(/\.[^.]+$/, '') }); };
+    const onVideoPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); setVideo({ file: url, upload: f.name, title: (vid.title) || f.name.replace(/\.[^.]+$/, '') }); };
     const addMaterial = (patch) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).concat(Object.assign({ title: 'Новый материал', url: '' }, patch || {})) }));
     const patchMaterial = (i, patch) => setLesson((l) => { const a = (l.materials || []).slice(); a[i] = Object.assign({}, a[i], patch); return Object.assign({}, l, { materials: a }); }, 'mat:' + i);
     const delMaterial = (i) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).filter((_, k) => k !== i) }));
@@ -1831,7 +1866,9 @@
       patchDoc(i, { text: data.text, marks: data.marks });
     };
 
-    const persist = (l) => { if (Store) Store.saveLocalSync(l); else L.save(l); };
+    // Сохранение: локальный кеш мгновенно (мгновенный UI/превью) + PUT на бэкенд
+    // (Store.save апсертит в eastside.lessons; при офлайне тихо падает на кеш).
+    const persist = (l) => { if (Store) { Store.saveLocalSync(l); return Store.save(l); } L.save(l); return Promise.resolve(l); };
     const openAsStudent = () => {
       const cur = lessonRef.current || {};
       persist(cur);
@@ -1840,10 +1877,11 @@
     };
     const saveNow = () => {
       if (forceBlank) { setSaveState('saved'); return; }
-      persist(lessonRef.current);
-      savedRef.current = lessonRef.current;
+      const snap = lessonRef.current;
       setSaveState('saving');
-      setTimeout(() => setSaveState('saved'), 350);
+      // локально уже записано внутри persist; ждём подтверждения бэка для «Сохранено»
+      Promise.resolve(persist(snap)).then(function () { savedRef.current = snap; setSaveState('saved'); })
+        .catch(function () { savedRef.current = snap; setSaveState('saved'); });
     };
     const clearLesson = () => {
       let ok = true;
@@ -1908,7 +1946,7 @@
           h('input', { className: 'lb-in', value: vid.url || '', placeholder: 'или ссылка: YouTube, Vimeo, RuTube, ВК', onChange: (e) => setVideo({ url: e.target.value }), onFocus: () => setFocus('video') }));
 
     const mats = lesson.materials || [];
-    const onMatPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; addMaterial({ title: f.name.replace(/\.[^.]+$/, ''), url: URL.createObjectURL(f), filename: f.name, size: f.size }); };
+    const onMatPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); addMaterial({ title: f.name.replace(/\.[^.]+$/, ''), url: url, filename: f.name, size: f.size }); };
     const materialsZone = mats.length
       ? h('div', { className: 'lb-mats' },
           h('input', { ref: matFileRef, type: 'file', style: { display: 'none' }, onChange: onMatPick }),

@@ -43,13 +43,15 @@
      тёмные углы гасим радиальной маской. Высоту держим по контенту, чтобы блок
      «Мои обучения» шёл близко, без пустоты. Голубое ВНУТРЕННЕЕ свечение — НЕ за
      шаром, а в стат-карточках (как активный чип anketa, см. .lr-page .sd-stat). */
-  .lr-page .sd-hero2{min-height:336px;margin:4px 0 0;}
+  .lr-page .sd-hero2{min-height:392px;margin:4px 0 0;}
   .lr-page .sd-hero2__main{margin-top:14px;}
-  .lr-page .sd-hero2__mtwrap{top:50%;right:-8px;width:556px;max-width:49%;transform:translateY(-50%);}
-  .lr-page .sd-hero2__mt{
-    -webkit-mask-image:radial-gradient(58% 66% at 50% 47%,#000 58%,transparent 100%);
-    mask-image:radial-gradient(58% 66% at 50% 47%,#000 58%,transparent 100%);
-    filter:drop-shadow(0 18px 48px rgba(40,90,200,.22));}
+  /* главный заголовок — чуть больше воздуха между буквами (мягче минус-трекинг, не разрядка) */
+  .lr-page .sd-hero2__h{letter-spacing:-.8px;}
+  /* восхождение — светящаяся лестница справа, поднимается в свет (свой альфа-фейд, маска не нужна) */
+  .lr-page .sd-hero2__mtwrap{top:50%;right:-6px;width:588px;max-width:51%;transform:translateY(-50%);}
+  .lr-page .sd-hero2__mt{width:100%;height:auto;
+    -webkit-mask-image:none;mask-image:none;
+    filter:drop-shadow(0 20px 44px rgba(40,90,200,.18));}
   /* стат-карточки хиро — ТОЧНО как активная карточка anketa (свечение внутри) */
   .lr-page .sd-stat{border:1.5px solid rgba(43,143,255,.4);
     box-shadow:inset 0 0 26px rgba(43,143,255,.3),inset 0 0 6px rgba(43,143,255,.16),inset 0 1px 0 rgba(255,255,255,.5);}
@@ -82,10 +84,10 @@
   .lr-card--dim .lr-card__bg{filter:brightness(.9) saturate(1.03);}
   .lr-card--dim2 .lr-card__bg{filter:brightness(.82) saturate(1.05);}
   .lr-card__top{position:relative;z-index:2;}
-  .lr-card__name{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:35px;letter-spacing:-1.4px;color:#fff;line-height:1.01;}
-  .lr-card__count{margin-top:12px;font-size:14px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;}
+  .lr-card__name{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:41px;letter-spacing:-1px;color:#fff;line-height:1;}
+  .lr-card__count{margin-top:13px;font-size:14.5px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;}
   .lr-card__bottom{position:relative;z-index:2;margin-top:auto;}
-  .lr-card__btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:14px;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:600;letter-spacing:-.2px;color:#fff;
+  .lr-card__btn{display:inline-flex;align-items:center;gap:9px;padding:15px 27px;border-radius:15px;cursor:pointer;font-family:inherit;font-size:15.5px;font-weight:600;letter-spacing:-.2px;color:#fff;
     background:rgba(var(--card-acc,255,255,255),.15);-webkit-backdrop-filter:blur(8px) saturate(140%);backdrop-filter:blur(8px) saturate(140%);
     border:1px solid rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.34);transition:transform .16s,background .16s;}
   .lr-card__btn:hover{transform:translateY(-2px);background:rgba(var(--card-acc,255,255,255),.28);}
@@ -256,17 +258,21 @@
   .lr-hmbest b{color:var(--sd-acc-deep);font-weight:700;}
   .lr-fire{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:5px 12px 5px 10px;border-radius:99px;
     background:var(--sd-acc-soft);font-size:12.5px;font-weight:700;color:var(--sd-acc-deep);font-variant-numeric:tabular-nums;}
-  /* «Прогресс по курсам» — кольцо прогресса + счётчик уроков и следующий шаг */
-  .lr-crs{display:flex;flex-direction:column;margin-top:-2px;}
-  .lr-crsrow{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid rgba(22,32,59,.06);}
-  .lr-crsrow:first-child{padding-top:2px;}
-  .lr-crsrow:last-child{border-bottom:0;padding-bottom:2px;}
-  .lr-crs__ring{position:relative;flex:0 0 58px;width:58px;height:58px;}
-  .lr-crs__pct{position:absolute;inset:0;display:grid;place-items:center;font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:14.5px;letter-spacing:-.6px;color:var(--sd-ink);font-variant-numeric:tabular-nums;}
-  .lr-crs__b{flex:1 1 auto;min-width:0;}
-  .lr-crs__t{font-size:14.5px;font-weight:600;color:var(--sd-ink);line-height:1.2;letter-spacing:-.2px;}
-  .lr-crs__s{font-size:12px;font-weight:500;color:var(--sd-ink-mute);margin-top:4px;font-variant-numeric:tabular-nums;}
-  .lr-crs__s b{color:var(--sd-acc-deep);font-weight:700;}
+  /* «Ближайшие экзамены» — дата-бейдж + название + обратный отсчёт (ближайший подсвечен) */
+  .lr-exm{display:flex;flex-direction:column;margin-top:-2px;}
+  .lr-exmrow{display:flex;align-items:center;gap:13px;padding:12px 0;border-bottom:1px solid rgba(22,32,59,.06);}
+  .lr-exmrow:first-child{padding-top:0;}
+  .lr-exmrow:last-child{border-bottom:0;padding-bottom:0;}
+  .lr-exm__d{flex:0 0 46px;width:46px;height:46px;border-radius:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 1px rgba(21,32,59,.06);}
+  .lr-exm__dn{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:17px;letter-spacing:-.5px;color:var(--sd-ink);line-height:1;font-variant-numeric:tabular-nums;}
+  .lr-exm__dm{font-size:10.5px;font-weight:600;color:var(--sd-ink-mute);margin-top:2px;}
+  .lr-exm__b{flex:1 1 auto;min-width:0;}
+  .lr-exm__t{font-size:13.5px;font-weight:600;color:var(--sd-ink);line-height:1.2;}
+  .lr-exm__s{font-size:12px;font-weight:500;color:var(--sd-ink-mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lr-exm__chip{flex:0 0 auto;align-self:center;font-size:11px;font-weight:600;color:var(--sd-ink-mute);background:rgba(22,32,59,.06);padding:4px 10px;border-radius:99px;white-space:nowrap;}
+  .lr-exmrow.is-soon .lr-exm__d{background:rgba(43,143,255,.12);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2);}
+  .lr-exmrow.is-soon .lr-exm__dn{color:var(--sd-acc-deep);}
+  .lr-exmrow.is-soon .lr-exm__chip{color:var(--sd-acc-deep);background:rgba(43,143,255,.12);}
 
   /* ── центральная плавающая кнопка AI (вместо FAB и баннера) ──────────────── */
   .lr-aifab{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:840;
@@ -360,7 +366,7 @@
     /* карточки программ */
     .lr-prog{gap:15px;}
     .lr-card{padding:22px;border-radius:22px;}
-    .lr-card__name{font-size:31px;letter-spacing:-1.1px;}
+    .lr-card__name{font-size:35px;letter-spacing:-.8px;}
 
     /* низ */
     .lr-bot{gap:15px;}
@@ -460,15 +466,6 @@
     if (sc >= 70) return { bar: 'rgba(201,146,62,.62)', ink: '#936417' };  // средне / внимание
     return { bar: 'rgba(210,96,79,.62)', ink: '#B23B2A' };                 // слабо / риск
   }
-  // плоское кольцо прогресса (трек + дуга), % рисуем поверх в разметке
-  function ring(pct, color, sz) {
-    sz = sz || 54;
-    const r = sz / 2 - 5, cx = sz / 2, C = 2 * Math.PI * r, len = (pct / 100) * C;
-    return h('svg', { width: sz, height: sz, viewBox: '0 0 ' + sz + ' ' + sz, fill: 'none', 'aria-hidden': 'true' },
-      h('circle', { cx: cx, cy: cx, r: r, fill: 'none', stroke: 'rgba(22,32,59,.09)', strokeWidth: '5' }),
-      h('circle', { cx: cx, cy: cx, r: r, fill: 'none', stroke: color, strokeWidth: '5', strokeLinecap: 'round',
-        strokeDasharray: len.toFixed(1) + ' ' + (C - len).toFixed(1), transform: 'rotate(-90 ' + cx + ' ' + cx + ')' }));
-  }
 
   // ── данные
   const PILLS = [
@@ -511,10 +508,11 @@
     { t: 'Тоны и интонации', s: 'Китайский', score: 76 },
     { t: 'Listening · Part 2', s: 'IELTS', score: 88 },
   ];
-  // прогресс по курсам — пройдено/всего, % и следующий урок (сумма done = KPI «Уроков пройдено»)
-  const COURSES = [
-    { name: 'Китайский язык', done: 21, total: 32, pct: 66, next: 22, color: 'rgb(32,115,230)' },
-    { name: 'Курс IELTS', done: 9, total: 24, pct: 38, next: 10, color: 'rgb(90,175,255)' },
+  // ближайшие экзамены — дата + обратный отсчёт (ближайший подсвечен); всё от «сегодня» 2026-07-01
+  const EXAMS = [
+    { d: '6', mon: 'июл', name: 'Пробный HSK 4', sub: 'Китайский · тренировка', in: 'через 5 дней', soon: true },
+    { d: '16', mon: 'авг', name: 'HSK 4', sub: 'Китайский · целевой уровень', in: 'через 6 недель' },
+    { d: '20', mon: 'сен', name: 'IELTS 6.5', sub: 'Английский · целевой балл', in: 'через 11 недель' },
   ];
   // тепловая карта серии: 24 недели × 7 дней, интенсивность 0-4 (детерминированно)
   // шкала интенсивности (0–4) и месяцы
@@ -556,7 +554,7 @@
               h('div', { className: 'sd-stat__val' }, '5 из 7 дней'),
               h('div', { className: 'sd-stat__bar' }, h('i', { style: { width: '71%' } })))))),
       h('div', { className: 'sd-hero2__mtwrap', 'aria-hidden': 'true' },
-        h('img', { className: 'sd-hero2__mt', src: 'assets/hero-learn.png', alt: '' })));
+        h('img', { className: 'sd-hero2__mt', src: 'assets/hero-stairs.png', alt: '' })));
   }
 
   /* ── Программы ─────────────────────────────────────────────────────────── */
@@ -730,16 +728,17 @@
               return h('div', { key: i, className: 'lr-day' + (on ? '' : ' off') + (d.today ? ' is-today' : '') }, h('span', { className: 'lr-day__box', style: on ? { background: HM_COLORS[d.v] } : null }));
             })))),
         h('div', { className: 'lr-cpnl' },
-          h('div', { className: 'lr-cpnl__h' }, h('h3', null, 'Прогресс по курсам')),
-          h('div', { className: 'lr-crs' },
-            COURSES.map(function (c, i) {
-              return h('div', { key: i, className: 'lr-crsrow' },
-                h('div', { className: 'lr-crs__ring' },
-                  ring(c.pct, c.color, 58),
-                  h('span', { className: 'lr-crs__pct' }, c.pct + '%')),
-                h('div', { className: 'lr-crs__b' },
-                  h('div', { className: 'lr-crs__t' }, c.name),
-                  h('div', { className: 'lr-crs__s' }, c.done + ' из ' + c.total + ' уроков · дальше ', h('b', null, 'урок ' + c.next))));
+          h('div', { className: 'lr-cpnl__h' }, h('h3', null, 'Ближайшие экзамены')),
+          h('div', { className: 'lr-exm' },
+            EXAMS.map(function (e, i) {
+              return h('div', { key: i, className: 'lr-exmrow' + (e.soon ? ' is-soon' : '') },
+                h('div', { className: 'lr-exm__d' },
+                  h('span', { className: 'lr-exm__dn' }, e.d),
+                  h('span', { className: 'lr-exm__dm' }, e.mon)),
+                h('div', { className: 'lr-exm__b' },
+                  h('div', { className: 'lr-exm__t' }, e.name),
+                  h('div', { className: 'lr-exm__s' }, e.sub)),
+                h('span', { className: 'lr-exm__chip' }, e.in));
             })))));
   }
 

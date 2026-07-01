@@ -231,24 +231,36 @@
   .blk-eyebrow svg { width: 14px; height: 14px; }
   .blk-eyebrow.good { color: var(--jade-ink); }
   .blk-eyebrow.grow { color: var(--acc-ink); margin-top: 28px; }
-  /* единая лежачая карточка профиля: иконка-плитка слева, текст справа (по рефу).
-     одинаковый стиль и для сильных сторон, и для зон роста — без скачков формата */
-  .lcards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 18px; }
-  /* обводка как у карточек-ответов в анкете (.opt) — видимый сине-серый хайрлайн + мягкая тень, сапфир на ховере */
-  .lc { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 22px 26px; border-radius: 18px;
-    background: rgba(255,255,255,.72); border: 1.5px solid rgba(74,98,150,.22);
-    box-shadow: 0 2px 8px rgba(30,50,90,.05), inset 0 1px 0 rgba(255,255,255,.9); transition: border-color .15s ease, box-shadow .15s ease; }
-  .lc:hover { border-color: rgba(43,143,255,.6); box-shadow: 0 4px 14px rgba(43,143,255,.14), inset 0 1px 0 rgba(255,255,255,.9); }
-  .lc-ic { flex: none; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
-  .lc-ic svg { width: 24px; height: 24px; }
-  .lc-ic .lc-glyph { font-size: 23px; font-weight: 700; line-height: 1; letter-spacing: 0; }
-  .lc-ic.sky { background: linear-gradient(145deg, rgba(124,196,255,.55), rgba(43,143,255,.12)); border: 1px solid rgba(43,143,255,.34); color: #1E72E6; }
-  .lc-ic.violet { background: linear-gradient(145deg, rgba(165,143,255,.5), rgba(110,90,240,.12)); border: 1px solid rgba(130,110,240,.36); color: #6A52E0; }
-  .lc-body { min-width: 0; flex: 1; }
-  .lc-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
-  .lc-val { margin-top: 5px; font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .lc-sub { margin-top: 5px; font-size: 13px; font-weight: 600; line-height: 1.35; color: var(--ink-sub); white-space: nowrap; }
+  /* карточки сильных сторон («Вариант 6»): вертикальные, контент по центру —
+     круглый glass-бейдж сверху → ярлык → крупное значение → восходящая
+     спарклайн-волна в цвет карточки (метафора восхождения) → зелёный статус */
+  .lcards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-top: 18px; }
+  .lc { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: 20px 18px 18px; border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255,255,255,.82), rgba(255,255,255,.6));
+    border: 1px solid rgba(74,98,150,.16);
+    box-shadow: 0 6px 22px rgba(21,32,59,.05), inset 0 1px 0 rgba(255,255,255,.9);
+    transition: border-color .15s ease, box-shadow .15s ease; }
+  .lc:hover { border-color: rgba(43,143,255,.4); box-shadow: 0 10px 28px rgba(21,32,59,.07), inset 0 1px 0 rgba(255,255,255,.9); }
+  /* зелёный вариант — как остальные карточки, но зелёный акцент: бордер + бейдж + волна.
+     БЕЗ радиального подсвета/inset-glow — чтобы не отличалась «свечением» от синей/фиолетовой */
+  .lc.green { border-color: rgba(35,160,105,.28); }
+  .lc.green:hover { border-color: rgba(35,160,105,.5); }
+  /* круглый стеклянный бейдж-иконка — плоское стекло + inset-свечение (не «выпуклость») */
+  .lc-ic { flex: none; width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; }
+  .lc-ic svg { width: 23px; height: 23px; }
+  .lc-ic.sky { background: rgba(43,143,255,.10); border: 1px solid rgba(43,143,255,.30); color: #1E72E6;
+    box-shadow: inset 0 0 18px rgba(43,143,255,.22), inset 0 1px 0 rgba(255,255,255,.75); }
+  .lc-ic.violet { background: rgba(110,90,240,.10); border: 1px solid rgba(130,110,240,.32); color: #6A52E0;
+    box-shadow: inset 0 0 18px rgba(120,100,240,.22), inset 0 1px 0 rgba(255,255,255,.75); }
+  .lc-ic.green { background: rgba(35,160,105,.10); border: 1px solid rgba(35,160,105,.32); color: #1C7E52;
+    box-shadow: inset 0 0 18px rgba(35,160,105,.24), inset 0 1px 0 rgba(255,255,255,.75); }
+  .lc-eyebrow { margin-top: 13px; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
+  .lc-val { margin-top: 4px; font-size: 30px; font-weight: 800; letter-spacing: -.03em; line-height: 1.02; color: var(--ink); font-variant-numeric: tabular-nums; }
+  /* спарклайн бледит до краёв карточки (clip по её радиусу через overflow:hidden) */
+  .lc-spark { display: block; width: calc(100% + 36px); height: 30px; margin: 10px -18px 0; }
+  .lc-spark svg { display: block; width: 100%; height: 100%; }
+  .lc-sub { margin-top: 11px; font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--ink-sub); white-space: nowrap; }
   .lc-sub.good { color: var(--jade-ink); }
   /* отступ перед подблоком «Зоны роста» внутри секции */
   .grow-h { margin-top: var(--rhythm-subgroup); }
@@ -1005,16 +1017,14 @@
   .ch3-label { position: relative; min-height: 38px; font-size: 14px; font-weight: 700; color: var(--ink-sub); line-height: 1.34; }
   .ch3-pct { position: relative; margin-top: 10px; font-size: 46px; font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; color: var(--ink); }
 
-  /* ════ ГРАНТЫ: 3 карточки — верх Row (круг-горка + число), список в tint-контейнере, крупный масштаб ════ */
-  .gcards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 18px; align-items: stretch; }
-  /* подпись НАД карточкой — крупная, спокойная */
+  /* ════ ГРАНТЫ: вертикальные карточки (как в рефе), в столбик по центру, родная ширина ════ */
+  .gcards { display: grid; grid-template-columns: minmax(0, 360px); justify-content: center; gap: 26px; margin-top: 18px; }
   .gcol { --c: #0070F3; --c-lite: #5BA6FF; --cr: 0,112,243; display: flex; flex-direction: column; min-width: 0; }
   .gcol.v-violet { --c: #7B2CBF; --c-lite: #A66BE0; --cr: 123,44,191; }
   .gcol.v-jade   { --c: #2D8A4E; --c-lite: #4FC870; --cr: 45,138,78; }
-  /* шапка над картой: заголовок-тариф + (для главного) пилюля «ваша цель» — резерв 2 строк, чтобы карты не разъехались */
-  .gcol-head { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; min-height: 56px; padding: 0 4px 16px; }
+  /* шапка НАД картой: заголовок-тариф + (для главного) пилюля «ваша цель» */
+  .gcol-head { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 8px; padding: 0 4px 14px; }
   .gcol-head .name { font-size: 19px; font-weight: 700; color: var(--c); letter-spacing: 0; line-height: 1.15; text-transform: uppercase; }
-  /* метка главного варианта — пилюля по центру под заголовком (анти-дефолт «3 равные») */
   .g-goal { display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px 4px 9px;
     border-radius: 99px; background: rgba(var(--cr), .10); border: 1px solid rgba(var(--cr), .20);
     color: var(--acc-ink); font-size: 11.5px; font-weight: 600; letter-spacing: 0; line-height: 1; white-space: nowrap; }
@@ -1025,19 +1035,18 @@
     box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 8px 22px rgba(20,24,58,.05);
     transition: transform .2s ease, box-shadow .2s ease; }
   .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20,24,58,.06), 0 14px 32px rgba(20,24,58,.09); }
-  /* выделенный «полный грант» — сапфировая обводка + тихое свечение изнутри (§6.2 — фирменный приём активного) */
   .gcol.is-goal .gcard { box-shadow: 0 1px 2px rgba(20,24,58,.04), 0 12px 30px rgba(0,112,243,.12), inset 0 0 0 1.5px rgba(0,112,243,.32); }
   .gcol.is-goal .gcard:hover { transform: translateY(-2px); box-shadow: 0 2px 6px rgba(20,24,58,.06), 0 18px 40px rgba(0,112,243,.16), inset 0 0 0 1.5px rgba(0,112,243,.42); }
-  /* ВЕРХ: Row — горка в тонированном круге СЛЕВА + колонка число/подпись СПРАВА (левый край) */
-  .g-top { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding-bottom: 22px; }
-  .g-mtn { width: 108px; height: 108px; flex: none; border-radius: 50%; display: grid; place-items: center;
+  /* ВЕРХ: горка в круге СЛЕВА + число/подпись СПРАВА */
+  .g-top { display: flex; align-items: center; gap: 18px; padding-bottom: 22px; }
+  .g-mtn { width: 92px; height: 92px; flex: none; border-radius: 50%; display: grid; place-items: center;
     background: radial-gradient(circle at 50% 44%, rgba(var(--cr), .22), rgba(var(--cr), .07) 56%, transparent 74%); }
-  .g-mtn img { width: 88px; height: 88px; object-fit: contain; display: block; }
-  .g-cost { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; }
-  .g-cost-v { font-size: 42px; font-weight: 700; letter-spacing: -.03em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .g-mtn img { width: 74px; height: 74px; object-fit: contain; display: block; }
+  .g-cost { display: flex; flex-direction: column; min-width: 0; }
+  .g-cost-v { font-size: 40px; font-weight: 700; letter-spacing: -.03em; line-height: 1; color: var(--c); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .g-cost-v .u { font-size: .62em; font-weight: 600; color: inherit; margin-left: 2px; letter-spacing: 0; }
-  .g-cost-c { font-size: 13px; font-weight: 400; color: rgba(20,24,58,.5); line-height: 1.35; margin-top: 2px; min-height: 34px; max-width: 19ch; }
-  /* блок: что покрывает — список в лёгком тонированном контейнере (чуть ярче круга) */
+  .g-cost-c { font-size: 13px; font-weight: 400; color: rgba(20,24,58,.5); line-height: 1.35; margin-top: 6px; max-width: 19ch; }
+  /* блок: что покрывает — список в лёгком тонированном контейнере */
   .g-blk { padding: 4px 0 6px; }
   .g-blk-h { font-size: 14px; font-weight: 700; letter-spacing: -.005em; color: rgba(20,24,58,.72); margin-bottom: 14px; }
   .g-listbox { background: rgba(var(--cr), .08); border-radius: 12px; padding: 14px 16px; }
@@ -1061,12 +1070,8 @@
   .g-ch-arr { width: 16px; height: 16px; color: rgba(20,24,58,.32); }
   .g-bar { position: relative; height: 8px; border-radius: 999px; margin-top: 16px; background: rgba(20,24,58,.09); }
   .g-bar > i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px; background: var(--c); }
-  /* ползунок: заметный, объёмный — на точке нового значения */
   .g-bar > i::after { content: ''; position: absolute; right: -1px; top: 50%; transform: translateY(-50%);
-    width: 16px; height: 16px; border-radius: 50%; background: #fff;
-    box-shadow: 0 0 0 2.5px var(--c), 0 2px 5px rgba(20,24,58,.18); }
-  .gcol.v-jade .g-bar > i { background: #2D8A4E; }
-  .gcol.v-jade .g-bar > i::after { box-shadow: 0 0 0 2.5px #2D8A4E, 0 2px 5px rgba(20,24,58,.18); }
+    width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2.5px var(--c), 0 2px 5px rgba(20,24,58,.18); }
   .gtbl-note { margin-top: 18px; display: flex; align-items: flex-start; gap: 12px;
     padding: 16px 18px; border-radius: 14px; background: rgba(36,40,90,.035); border: 1px solid rgba(36,40,90,.07);
     font-size: 13px; line-height: 1.5; color: var(--ink-sub); }
@@ -1415,15 +1420,24 @@
         <div class="lcards">
           <div class="lc">
             <span class="lc-ic sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 8.5l10-4.5 10 4.5-10 4.5z"/><path d="M6.5 10.6V15c0 1.4 2.5 2.6 5.5 2.6s5.5-1.2 5.5-2.6v-4.4"/><path d="M22 8.5V14"/></svg></span>
-            <div class="lc-body"><div class="lc-eyebrow">Средний балл</div><div class="lc-val">5.0</div><div class="lc-sub good">Сильная сторона</div></div>
+            <div class="lc-eyebrow">Средний балл</div>
+            <div class="lc-val">5.0</div>
+            <span class="lc-spark"><svg viewBox="0 0 240 42" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sp1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B8FFF" stop-opacity=".26"/><stop offset="1" stop-color="#2B8FFF" stop-opacity="0"/></linearGradient></defs><path d="M0,35 C34,34 54,29 84,25 C112,21 132,16 162,13 C192,10 210,7 240,4 L240,42 L0,42 Z" fill="url(#sp1)"/><path d="M0,35 C34,34 54,29 84,25 C112,21 132,16 162,13 C192,10 210,7 240,4" fill="none" stroke="#2B8FFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></span>
+            <div class="lc-sub good">Сильная сторона</div>
           </div>
           <div class="lc">
-            <span class="lc-ic sky"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></span>
-            <div class="lc-body"><div class="lc-eyebrow">Запас времени</div><div class="lc-val">1 год</div><div class="lc-sub good">Времени достаточно</div></div>
+            <span class="lc-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg></span>
+            <div class="lc-eyebrow">Запас времени</div>
+            <div class="lc-val">1 год</div>
+            <span class="lc-spark"><svg viewBox="0 0 240 42" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sp2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6A52E0" stop-opacity=".26"/><stop offset="1" stop-color="#6A52E0" stop-opacity="0"/></linearGradient></defs><path d="M0,30 C22,20 38,10 62,13 C86,16 100,32 126,30 C150,28 166,10 194,8 C214,7 226,16 240,9 L240,42 L0,42 Z" fill="url(#sp2)"/><path d="M0,30 C22,20 38,10 62,13 C86,16 100,32 126,30 C150,28 166,10 194,8 C214,7 226,16 240,9" fill="none" stroke="#6A52E0" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></span>
+            <div class="lc-sub good">Времени достаточно</div>
           </div>
-          <div class="lc">
-            <span class="lc-ic violet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2.3 4.7-4.7 2.3 2.3-4.7z"/></svg></span>
-            <div class="lc-body"><div class="lc-eyebrow">Направление</div><div class="lc-val">Выбрано</div><div class="lc-sub good">Цель ясна</div></div>
+          <div class="lc green">
+            <span class="lc-ic green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="13" r="7.5"/><circle cx="11" cy="13" r="3"/><path d="M14.6 9.4L20 4"/><path d="M16.5 4H20v3.5"/></svg></span>
+            <div class="lc-eyebrow">Направление</div>
+            <div class="lc-val">Выбрано</div>
+            <span class="lc-spark"><svg viewBox="0 0 240 42" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="sp3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2EA06E" stop-opacity=".26"/><stop offset="1" stop-color="#2EA06E" stop-opacity="0"/></linearGradient></defs><path d="M0,33 C30,33 52,32 82,31 C108,30 124,27 146,22 C168,17 182,5 240,3 L240,42 L0,42 Z" fill="url(#sp3)"/><path d="M0,33 C30,33 52,32 82,31 C108,30 124,27 146,22 C168,17 182,5 240,3" fill="none" stroke="#2EA06E" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg></span>
+            <div class="lc-sub good">Цель ясна</div>
           </div>
         </div>
 
@@ -1567,7 +1581,6 @@
               </div>
             </div>
           </div>
-        </div>
         <div class="gtbl-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.3"/></svg>Главный рычаг для гранта — китайский до HSK 5 и собранное портфолио. С подготовкой по маршруту EastSide шанс на полный грант растет с 35% до 78%.</div>
 
         <!-- баннер: гранты и стипендии -->
