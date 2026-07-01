@@ -165,11 +165,15 @@
     };
   }
 
+  // Пустышка: без названия И без контента (0 блоков конспекта, 0 практик).
+  // Прячем такие из списка/плейлиста (например, брошенный «Новый урок»).
+  function notEmpty(s) { return !!(s && ((s.title && String(s.title).trim()) || (s.counts && (s.counts.doc || s.counts.blocks)))); }
   function listLocal() {
     return TABLE.order
       .map((id) => TABLE.items[id])
       .filter(Boolean)
-      .map(summaryOf);
+      .map(summaryOf)
+      .filter(notEmpty);
   }
 
   function getLocal(id) {
@@ -254,7 +258,7 @@
           // кеш подставляем ТОЛЬКО при сетевой ошибке (catch), иначе после создания
           // первого урока демо-кеш «затирал» бы бэкенд и мигал.
           if (arr.length && (arr[0].doc || arr[0].blocks)) mirrorAll(arr.map((l) => stamp(l, true)));
-          return arr.map((l) => (l && l.counts ? l : summaryOf(l)));
+          return arr.map((l) => (l && l.counts ? l : summaryOf(l))).filter(notEmpty);
         }
       } catch (e) { /* сеть упала — на кеш */ }
     }
