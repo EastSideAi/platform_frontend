@@ -1702,8 +1702,20 @@
       if (!routeId || routeId === 'blank') { writeUrl(); return; }
       if (routeId === curId) return;                 // уже на нужном уроке
       const l = Store.getSync(routeId);
-      if (l) { savedRef.current = l; past.current = []; future.current = []; setLessonRaw(l); setFocus(null); setActiveCe(null); setOpenCards({}); }
-      else writeUrl();                               // битый id → к реальному уроку
+      if (l) { savedRef.current = l; past.current = []; future.current = []; setLessonRaw(l); setFocus(null); setActiveCe(null); setOpenCards({}); return; }
+      // Нет в локальном кеше — на ДРУГОМ устройстве тянем урок с бэкенда по id
+      // (иначе прямая ссылка /learn/build/:id открывала бы пустой лист).
+      if (Store.isRemote()) {
+        Store.get(routeId).then(function (r) {
+          if (r && r.id === routeId && !(lessonRef.current && lessonRef.current.id === routeId)) {
+            savedRef.current = r; past.current = []; future.current = []; setLessonRaw(r); setFocus(null); setActiveCe(null); setOpenCards({});
+          } else if (!r) {
+            const c = lessonRef.current; if (c && c.id && c.id !== 'blank') { try { nav('/learn/build/' + c.id, { replace: true, top: false }); } catch (e) {} }
+          }
+        }).catch(function () {});
+        return;
+      }
+      writeUrl();                                    // битый id → к реальному уроку
     }, [routeId]);
 
     // ── Горячие клавиши: Ctrl/Cmd+Z undo, +Shift/Ctrl+Y redo, Ctrl+S save.
