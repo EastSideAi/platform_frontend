@@ -19,6 +19,7 @@ import './lib/mock.jsx';
 import './lib/lessons.jsx';
 import './lib/api.jsx';
 import './lib/lesson-store.jsx';   // репозиторий уроков (localStorage-таблица + REST)
+import './lib/media.jsx';          // оптимистичный загрузчик файлов (EMedia)
 import './lib/router.jsx';
 import './lib/theme.jsx';
 

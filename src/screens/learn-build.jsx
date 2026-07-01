@@ -32,38 +32,18 @@
   const Store = window.ELessonStore;
   const nav = (window.ERouter && window.ERouter.navigate) || function () {};
 
-  // ── Загрузка медиа урока: файл → бэкенд (bytea в Postgres), возвращает ссылку.
-  //    Без бэка (ES_LESSONS_BASE пусто) или на ошибке — временная blob-ссылка (как было).
-  //    Файлы больше лимита не грузим (для больших видео — внешняя ссылка).
-  const LB_MEDIA_BASE = (window.ES_LESSONS_BASE || window.ES_API_BASE || '').replace(/\/+$/, '');
-  const LB_MEDIA_MAX = 20 * 1024 * 1024; // 20 МБ
-  function lbReadDataUrl(file) {
-    return new Promise(function (res, rej) {
-      const r = new FileReader();
-      r.onload = function () { res(r.result); };
-      r.onerror = rej;
-      r.readAsDataURL(file);
-    });
-  }
-  async function uploadMedia(file) {
-    if (!file) return '';
-    if (!LB_MEDIA_BASE || file.size > LB_MEDIA_MAX) {
-      if (LB_MEDIA_BASE && file.size > LB_MEDIA_MAX) {
-        try { window.alert('Файл больше 20 МБ не сохранён на сервере. Для больших видео используйте ссылку (YouTube, Vimeo, RuTube, ВК).'); } catch (e) {}
-      }
-      return URL.createObjectURL(file);
-    }
-    try {
-      const dataUrl = await lbReadDataUrl(file);
-      const res = await fetch(LB_MEDIA_BASE + '/api/learning/media', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ filename: file.name, mime: file.type || 'application/octet-stream', data: dataUrl }),
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const d = await res.json();
-      return LB_MEDIA_BASE + d.url;
-    } catch (e) {
-      return URL.createObjectURL(file); // upload упал — не теряем файл, покажем локально
+  // ── Оптимистичная загрузка медиа урока (window.EMedia).
+  //    Сразу отдаём blob для мгновенного показа, заливка в бэкенд (bytea в
+  //    Supabase Postgres) идёт В ФОНЕ; как файл сохранён — apply подменяет blob
+  //    на постоянную ссылку. apply(url, uploading) зовётся дважды: (blob,true),
+  //    затем (постоянная|blob, false). Файлы > лимита не грузим (видео — ссылкой).
+  function pickMedia(file, apply) {
+    if (!file) return;
+    if (window.EMedia) {
+      if (window.EMedia.tooBig(file)) { try { window.alert('Файл больше 20 МБ не сохранён на сервере. Для больших видео используйте ссылку (YouTube, Vimeo, RuTube, ВК).'); } catch (e) {} }
+      window.EMedia.previewUpload(file, function (st) { apply(st.url, st.uploading); });
+    } else {
+      const u = URL.createObjectURL(file); apply(u, true); apply(u, false);
     }
   }
 
@@ -1210,7 +1190,7 @@
   function ImageBlock(props) {
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
-    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url, caption: block.caption || f.name }); };
+    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; pickMedia(f, function (url, up) { onCommit(up ? { url: url, caption: block.caption || f.name, uploading: true } : { url: url, uploading: false }); }); };
     if (block.url) return h('div', { className: 'lb-img' },
       h('img', { src: block.url, alt: block.caption || '' }),
       h('div', { className: 'lb-img__bar' },
@@ -1226,7 +1206,7 @@
   function AudioBlock(props) {
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
-    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url: url, title: block.title || f.name.replace(/\.[^.]+$/, '') }); };
+    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; pickMedia(f, function (url, up) { onCommit(up ? { url: url, title: block.title || f.name.replace(/\.[^.]+$/, ''), uploading: true } : { url: url, uploading: false }); }); };
     return h('div', { className: 'lb-aud' },
       AudioIc(16),
       h('input', { className: 'lb-aud__t', value: block.title || '', placeholder: 'Название записи', onChange: (e) => onCommit({ title: e.target.value }) }),
@@ -1241,7 +1221,7 @@
     const { block, onCommit, onRemove } = props;
     const fileRef = useRef(null);
     const fmtSize = (n) => { if (!n && n !== 0) return ''; if (n < 1024) return n + ' Б'; if (n < 1048576) return Math.round(n / 1024) + ' КБ'; return (n / 1048576).toFixed(1) + ' МБ'; };
-    const onPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); onCommit({ url: url, title: block.title || f.name.replace(/\.[^.]+$/, ''), fileName: f.name, size: f.size }); };
+    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; pickMedia(f, function (url, up) { onCommit(up ? { url: url, title: block.title || f.name.replace(/\.[^.]+$/, ''), fileName: f.name, size: f.size, uploading: true } : { url: url, uploading: false }); }); };
     const clearFile = () => onCommit({ url: '', fileName: '', size: 0 });
     const hasFile = !!block.fileName;
     return h('div', { className: 'lb-matblk' + (hasFile ? ' is-file' : '') },
@@ -1827,10 +1807,11 @@
     // ── мутаторы мета ──
     const setMeta = (patch) => setLesson((l) => Object.assign({}, l, patch), 'meta');
     const setVideo = (patch) => setLesson((l) => Object.assign({}, l, { video: Object.assign({}, l.video || {}, patch) }), 'video');
-    const onVideoPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); setVideo({ file: url, upload: f.name, title: (vid.title) || f.name.replace(/\.[^.]+$/, '') }); };
+    const onVideoPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const nm = f.name.replace(/\.[^.]+$/, ''); pickMedia(f, function (url, up) { setVideo(up ? { file: url, upload: f.name, title: (vid.title) || nm, uploading: true } : { file: url, uploading: false }); }); };
     const addMaterial = (patch) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).concat(Object.assign({ title: 'Новый материал', url: '' }, patch || {})) }));
     const patchMaterial = (i, patch) => setLesson((l) => { const a = (l.materials || []).slice(); a[i] = Object.assign({}, a[i], patch); return Object.assign({}, l, { materials: a }); }, 'mat:' + i);
     const delMaterial = (i) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).filter((_, k) => k !== i) }));
+    const updateMatById = (id, patch) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).map((m) => (m && m._id === id ? Object.assign({}, m, patch) : m)) }), 'mat:' + id);
 
     // ── «+» меню ──
     // позиционирование с учётом границ экрана: если снизу не влезает — открываем вверх,
@@ -1938,7 +1919,7 @@
           h('div', { className: 'lb-video__bar' },
             h('div', { className: 'lb-video__b' },
               h('input', { className: 'lb-video__t', value: vid.title || '', placeholder: 'Название видео', onChange: (e) => setVideo({ title: e.target.value }) }),
-              h('div', { className: 'lb-video__s' }, (emb ? emb.provider : (vid.file ? 'Файл' : 'Видео')) + (vid.duration ? ' · ' + vid.duration : ''))),
+              h('div', { className: 'lb-video__s' }, (emb ? emb.provider : (vid.file ? 'Файл' : 'Видео')) + (vid.duration ? ' · ' + vid.duration : '') + (vid.uploading ? ' · загрузка…' : (vid.file && !emb && String(vid.file).indexOf('blob:') !== 0 ? ' · сохранено' : '')))),
             h('button', { type: 'button', className: 'lb-row__x', onClick: () => setVideo({ url: '', file: '', upload: '' }), 'aria-label': 'Убрать видео' }, Ic.Close ? h(Ic.Close, { size: 16 }) : '×')))
       : h('div', { className: 'lb-vempty' },
           h('input', { ref: videoFileRef, type: 'file', accept: 'video/*', style: { display: 'none' }, onChange: onVideoPick }),
@@ -1946,7 +1927,7 @@
           h('input', { className: 'lb-in', value: vid.url || '', placeholder: 'или ссылка: YouTube, Vimeo, RuTube, ВК', onChange: (e) => setVideo({ url: e.target.value }), onFocus: () => setFocus('video') }));
 
     const mats = lesson.materials || [];
-    const onMatPick = async (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const url = await uploadMedia(f); addMaterial({ title: f.name.replace(/\.[^.]+$/, ''), url: url, filename: f.name, size: f.size }); };
+    const onMatPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const mid = 'mt' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); pickMedia(f, function (url, up) { if (up) addMaterial({ _id: mid, title: f.name.replace(/\.[^.]+$/, ''), url: url, filename: f.name, size: f.size, uploading: true }); else updateMatById(mid, { url: url, uploading: false }); }); };
     const materialsZone = mats.length
       ? h('div', { className: 'lb-mats' },
           h('input', { ref: matFileRef, type: 'file', style: { display: 'none' }, onChange: onMatPick }),
