@@ -73,12 +73,22 @@
   .sd-brand__logo{width:150px;height:auto;display:block;}
 
   .sd-nav{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;overflow-y:auto;min-height:0;}
-  /* «Создать урок» — основной CTA сайдбара (плоский сапфир, без выпуклости) */
-  .sd-newlesson{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 2px 6px;padding:12px 14px;border-radius:13px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:-.2px;color:#fff;
-    background:#2073E6;border:1px solid rgba(120,170,255,.38);
-    box-shadow:inset 0 0 18px rgba(120,190,255,.5),inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -8px rgba(20,60,160,.55);transition:background .16s,transform .16s;}
-  .sd-newlesson:hover{background:#2b8fff;transform:translateY(-1px);}
-  .sd-newlesson__ic{display:grid;place-items:center;}
+  /* «Создать урок» — стеклянная карточка сайдбара (сапфировое стекло + светящийся плюс-чип) */
+  .sd-newlesson{display:flex;align-items:center;gap:12px;margin:16px 2px 8px;padding:11px 12px;border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;width:calc(100% - 4px);
+    background:linear-gradient(150deg, rgba(43,143,255,.22), rgba(43,143,255,.05) 62%), #07143A;
+    border:1px solid rgba(60,150,250,.34);
+    box-shadow:inset 0 0 22px rgba(43,143,255,.14),inset 0 1px 0 rgba(255,255,255,.08);
+    transition:transform .16s cubic-bezier(.23,1,.32,1),box-shadow .16s,border-color .16s;}
+  .sd-newlesson:hover{transform:translateY(-1px);border-color:rgba(60,150,250,.6);
+    box-shadow:inset 0 0 30px rgba(43,143,255,.24),inset 0 1px 0 rgba(255,255,255,.12),0 12px 26px -14px rgba(20,60,160,.75);}
+  .sd-newlesson__ic{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#EAF2FF;
+    background:rgba(43,143,255,.16);box-shadow:inset 0 0 14px rgba(43,143,255,.9),inset 0 0 3px rgba(160,205,255,.7);transition:box-shadow .16s;}
+  .sd-newlesson:hover .sd-newlesson__ic{box-shadow:inset 0 0 18px rgba(43,143,255,1),inset 0 0 4px rgba(160,205,255,.9);}
+  .sd-newlesson__b{display:flex;flex-direction:column;line-height:1.15;min-width:0;flex:1 1 auto;}
+  .sd-newlesson__t{font-size:14px;font-weight:600;letter-spacing:-.2px;color:#fff;}
+  .sd-newlesson__s{font-size:11.5px;font-weight:500;color:rgba(200,210,240,.55);margin-top:2px;}
+  .sd-newlesson__go{flex:0 0 auto;color:rgba(180,205,255,.7);opacity:0;transform:translateX(-3px);transition:opacity .16s,transform .16s;}
+  .sd-newlesson:hover .sd-newlesson__go{opacity:1;transform:none;}
   .sd-nav::-webkit-scrollbar{width:0;}
   .sd-nav__item{
     display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
@@ -1440,15 +1450,16 @@
     .sd-app.is-drawer .sd-shift__in{will-change:transform;}
 
     /* push-меню: тёмный рейл, фикс. слева, ЗА картой (открывается её сдвигом) */
-    .sd-pushmenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:1;width:84vw;max-width:328px;
+    .sd-pushmenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:1;width:76vw;max-width:300px;
       background:linear-gradient(180deg,#0A1030 0%,#070C20 100%);padding-top:env(safe-area-inset-top,0px);opacity:.55;}
     .sd-pushmenu .sd-side{display:flex;width:100%;height:100%;flex:1 1 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 14px 18px;}
 
     /* плавающая кнопка-бургер — тихое морозное стекло, слева сверху (без шапки) */
     .sd-burger{display:grid;place-items:center;position:fixed;top:calc(13px + env(safe-area-inset-top,0px));left:14px;z-index:6;
-      width:44px;height:44px;border-radius:14px;cursor:pointer;color:#EAF0FF;
-      background:rgba(9,15,38,.5);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);
-      border:1px solid rgba(150,180,255,.22);box-shadow:0 10px 26px rgba(4,8,24,.3),inset 0 1px 0 rgba(255,255,255,.14);
+      width:44px;height:44px;border-radius:14px;cursor:pointer;color:#1E63C2;
+      background:rgba(255,255,255,.86);-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+      border:1px solid rgba(255,255,255,.9);
+      box-shadow:0 10px 26px rgba(20,50,140,.18),inset 0 0 16px rgba(43,143,255,.32),inset 0 0 4px rgba(120,190,255,.55),inset 0 1px 0 rgba(255,255,255,.9);
       transition:opacity .22s,transform .15s;}
     .sd-burger:active{transform:scale(.93);}
     .sd-app.is-drawer .sd-burger{opacity:0;pointer-events:none;}
@@ -1530,8 +1541,11 @@
       h('div', { className: 'sd-brand' },
         h('img', { className: 'sd-brand__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' })),
       h('button', { type: 'button', className: 'sd-newlesson', onClick: () => { createLesson(); if (props.onItemClick) props.onItemClick(); } },
-        h('span', { className: 'sd-newlesson__ic' }, Ic.Plus ? h(Ic.Plus, { size: 16 }) : null),
-        'Создать урок'),
+        h('span', { className: 'sd-newlesson__ic' }, Ic.Plus ? h(Ic.Plus, { size: 18 }) : null),
+        h('span', { className: 'sd-newlesson__b' },
+          h('span', { className: 'sd-newlesson__t' }, 'Создать урок'),
+          h('span', { className: 'sd-newlesson__s' }, 'Новый материал')),
+        h('span', { className: 'sd-newlesson__go' }, Ic.ArrowRight ? h(Ic.ArrowRight, { size: 15 }) : null)),
       h('nav', { className: 'sd-nav' },
         navItems.map((it) => h('button', {
           key: it.key, type: 'button',
@@ -1895,7 +1909,7 @@
       const card = () => app.querySelector(':scope > .sd-scroll') || app.querySelector(':scope > .sd-main');
       const inner = () => app.querySelector('.sd-shift__in');
       const menuEl = () => app.querySelector('.sd-pushmenu');
-      const MW = () => Math.min(window.innerWidth * 0.84, 328);
+      const MW = () => Math.min(window.innerWidth * 0.76, 300);
       let isOpen = false, active = false, dragging = false, axis = 0, sx = 0, sy = 0, scrollY = 0, prog = 0, vibed = false;
       const buzz = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
 
@@ -1926,8 +1940,8 @@
         const isCard = c.classList.contains('sd-scroll');
         c.style.transition = anim ? 'transform .4s cubic-bezier(.32,.72,0,1),border-radius .4s,box-shadow .4s' : 'none';
         if (isCard) {
-          c.style.transform = 'translateX(' + (p * mw).toFixed(1) + 'px) scale(' + (1 - p * 0.1).toFixed(3) + ')';
-          c.style.borderRadius = (p * 30).toFixed(1) + 'px';
+          c.style.transform = 'translateX(' + (p * mw).toFixed(1) + 'px)';
+          c.style.borderRadius = (p * 26).toFixed(1) + 'px';
           c.style.boxShadow = p > 0.008 ? '-28px 0 80px rgba(2,6,20,' + (0.6 * p).toFixed(2) + ')' : 'none';
         } else {
           c.style.transform = 'translateX(' + (p * mw).toFixed(1) + 'px)';

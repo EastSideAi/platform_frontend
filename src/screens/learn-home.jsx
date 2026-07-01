@@ -373,16 +373,19 @@
     .lr-bot{gap:15px;}
     .lr-panel{padding:20px 18px 15px;border-radius:22px;}
 
-    /* KPI крупнее — цифры и иконки дышат */
+    /* KPI крупнее — цифры и иконки дышат (выше, чтобы 88% и бар не жались) */
     .lr-kpi{grid-template-columns:1fr;gap:15px;}
-    .lr-kpic{min-height:152px;padding:24px 24px 22px;border-radius:22px;}
+    .lr-kpic{min-height:186px;padding:26px 24px 24px;border-radius:22px;}
     .lr-kpic__ic{flex:0 0 44px;width:44px;height:44px;border-radius:14px;}
-    .lr-kpic__num{font-size:52px;letter-spacing:-2.6px;}
+    .lr-kpic__num{font-size:54px;letter-spacing:-2.6px;}
 
     /* аналитика */
     .lr-charts{gap:15px;margin-top:15px;}
     .lr-charts2{gap:15px;margin-top:15px;}
     .lr-cpnl{padding:20px 20px 18px;border-radius:22px;}
+    /* активность за неделю — выше, «92 мин» не залезает на заголовок */
+    .lr-bars{margin-top:44px;}
+    .lr-bartrack{height:196px;max-width:42px;}
 
     /* Серия занятий — минималистичнее: убираем подробную легенду-пороги
        (не влазила), плитки крупнее и просторнее */
@@ -397,6 +400,13 @@
     .lr-ai{padding:24px 22px;border-radius:24px;}
     .lr-ai__t{font-size:20px;}
     .lr-ai__bot{width:120px;opacity:.35;}
+
+    /* AI-наставник — компактная аккуратная скруглённая пилюля, без подзаголовка */
+    .lr-aifab{gap:9px;padding:8px 15px 8px 8px;border-radius:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));}
+    .lr-aifab__ic{flex:0 0 30px;width:30px;height:30px;border-radius:10px;}
+    .lr-aifab__pulse{border-radius:10px;}
+    .lr-aifab__t{font-size:12.5px;}
+    .lr-aifab__s{display:none;}
   }
   @media (max-width:400px){
     .lr-page .sd-hero2__stats{grid-template-columns:1fr;}
@@ -463,10 +473,10 @@
   }
   // статус-полоса балла: цвет бара и чернил по диапазону (design.md §3)
   function tband(sc) {
-    if (sc >= 90) return { bar: 'rgba(46,160,110,.62)', ink: '#1C7E52' };  // надежно / успех
-    if (sc >= 80) return { bar: 'rgba(43,143,255,.58)', ink: '#1E63C2' };  // сильно
-    if (sc >= 70) return { bar: 'rgba(201,146,62,.62)', ink: '#936417' };  // средне / внимание
-    return { bar: 'rgba(210,96,79,.62)', ink: '#B23B2A' };                 // слабо / риск
+    if (sc >= 90) return { bar: 'rgba(34,183,113,.82)', ink: '#12A05C' };  // чистый зелёный
+    if (sc >= 80) return { bar: 'rgba(43,143,255,.74)', ink: '#1763C8' };  // сапфир
+    if (sc >= 70) return { bar: 'rgba(245,178,42,.85)', ink: '#B57C09' };  // чистый янтарь
+    return { bar: 'rgba(233,88,72,.74)', ink: '#C23A28' };                 // коралл
   }
 
   // ── данные
