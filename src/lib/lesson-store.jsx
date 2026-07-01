@@ -262,7 +262,7 @@
   }
 
   async function get(id) {
-    if (REMOTE && Api) {
+    if (REMOTE) {
       try {
         const data = await remote('GET', id);
         const l = (data && (data.lesson || data)) || null;
@@ -280,7 +280,7 @@
       base = tpl ? stamp(tpl.build()) : blankLesson();
       base.id = newId();                           // шаблон → свой id
     } else base = stamp(Object.assign(blankLesson(), seed));
-    if (REMOTE && Api) {
+    if (REMOTE) {
       try {
         const data = await remote('POST', '', base);
         const l = (data && (data.lesson || data)) || base;
@@ -293,7 +293,7 @@
   async function save(lesson) {
     if (!lesson) return null;
     const l = stamp(clone(lesson));
-    if (REMOTE && Api) {
+    if (REMOTE) {
       try {
         const data = await remote('PUT', l.id, l);
         const out = (data && (data.lesson || data)) || l;
@@ -304,14 +304,14 @@
   }
 
   async function remove(id) {
-    if (REMOTE && Api) {
+    if (REMOTE) {
       try { await remote('DELETE', id); } catch (e) { /* всё равно чистим кеш */ }
     }
     return removeLocal(id);
   }
 
   async function duplicate(id) {
-    if (REMOTE && Api) {
+    if (REMOTE) {
       const src = await get(id);
       if (!src) return null;
       const copy = Object.assign({}, src, { id: newId(), title: (src.title || 'Урок') + ' — копия', createdAt: nowISO(), updatedAt: nowISO() });
@@ -335,7 +335,7 @@
   let netTimer = null;
   function saveDebounced(lesson, ms) {
     const saved = saveLocalSync(lesson);           // мгновенно в кеш + legacy-зеркало
-    if (REMOTE && Api) {
+    if (REMOTE) {
       if (netTimer) clearTimeout(netTimer);
       const snap = clone(saved);
       netTimer = setTimeout(() => { save(snap).catch(() => {}); }, ms || 900);

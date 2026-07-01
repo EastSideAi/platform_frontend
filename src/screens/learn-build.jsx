@@ -1742,7 +1742,9 @@
     }, []);
 
     // ── мутаторы doc ──
-    const patchDoc = (i, patch) => setLesson((l) => { const d = (l.doc || []).slice(); d[i] = Object.assign({}, d[i], patch); return Object.assign({}, l, { doc: d }); }, 'doc:' + i);
+    const patchDoc = (i, patch) => setLesson((l) => { const d = (l.doc || []).slice(); if (!d[i]) return l; d[i] = Object.assign({}, d[i], patch); return Object.assign({}, l, { doc: d }); }, 'doc:' + i);
+    // Патч по _id (устойчив к перестановке/удалению блока во время фоновой загрузки медиа).
+    const patchDocById = (id, patch) => setLesson((l) => { const d = (l.doc || []).slice(); const k = d.findIndex((b) => b && b._id === id); if (k < 0) return l; d[k] = Object.assign({}, d[k], patch); return Object.assign({}, l, { doc: d }); }, 'doc:' + id);
     const insertDoc = (i, block) => setLesson((l) => { const d = (l.doc || []).slice(); d.splice(i, 0, block); return Object.assign({}, l, { doc: d }); });
     const splitDoc = (i) => { const nb = L.blankDocBlock('para'); insertDoc(i + 1, nb); setFocusTarget({ id: nb._id, nonce: Date.now() }); };
     const removeDoc = (i) => setLesson((l) => Object.assign({}, l, { doc: (l.doc || []).filter((_, k) => k !== i) }));
@@ -1807,7 +1809,7 @@
     // ── мутаторы мета ──
     const setMeta = (patch) => setLesson((l) => Object.assign({}, l, patch), 'meta');
     const setVideo = (patch) => setLesson((l) => Object.assign({}, l, { video: Object.assign({}, l.video || {}, patch) }), 'video');
-    const onVideoPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const nm = f.name.replace(/\.[^.]+$/, ''); pickMedia(f, function (url, up) { setVideo(up ? { file: url, upload: f.name, title: (vid.title) || nm, uploading: true } : { file: url, uploading: false }); }); };
+    const onVideoPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; const nm = f.name.replace(/\.[^.]+$/, ''); const lid = lessonRef.current && lessonRef.current.id; pickMedia(f, function (url, up) { if (up) setVideo({ file: url, upload: f.name, title: (vid.title) || nm, uploading: true }); else if (lessonRef.current && lessonRef.current.id === lid) setVideo({ file: url, uploading: false }); }); };
     const addMaterial = (patch) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).concat(Object.assign({ title: 'Новый материал', url: '' }, patch || {})) }));
     const patchMaterial = (i, patch) => setLesson((l) => { const a = (l.materials || []).slice(); a[i] = Object.assign({}, a[i], patch); return Object.assign({}, l, { materials: a }); }, 'mat:' + i);
     const delMaterial = (i) => setLesson((l) => Object.assign({}, l, { materials: (l.materials || []).filter((_, k) => k !== i) }));
@@ -1969,7 +1971,7 @@
               renderRow: (block, i, ctx) => h(DocRow, {
                 key: block._id, block, idx: i, ctx, isActive: activeCe === i || focus === block._id,
                 prevKind: i > 0 ? doc[i - 1].kind : null,
-                onCommit: (patch) => patchDoc(i, patch), onRemove: () => removeDoc(i),
+                onCommit: (patch) => patchDocById(block._id, patch), onRemove: () => removeDoc(i),
                 onConvertMd: convertMd, onPasteMultiRow: pasteMulti,
                 onEmptyBackspace: () => focusPrev(i), onSplit: () => splitDoc(i),
                 focusSignal: focusTarget && focusTarget.id === block._id ? focusTarget.nonce : 0,
