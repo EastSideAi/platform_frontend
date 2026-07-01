@@ -245,16 +245,18 @@
 
   /* ── ПУБЛИЧНЫЙ АСИНХРОННЫЙ API ───────────────────────────────────────────── */
   async function list() {
-    if (REMOTE && Api) {
+    if (REMOTE) {
       try {
         const data = await remote('GET', '');
         const arr = (data && (data.lessons || data.items || data)) || [];
-        if (Array.isArray(arr) && arr.length && arr[0] && arr[0].id) {
-          // если бэк отдаёт полные уроки — зеркалим; если только summary — просто отдаём
-          if (arr[0].doc || arr[0].blocks) mirrorAll(arr.map((l) => stamp(l, true)));
-          return arr.map((l) => (l.counts ? l : summaryOf(l)));
+        if (Array.isArray(arr)) {
+          // Успешный ответ бэка — источник правды (даже пустой список). Локальный
+          // кеш подставляем ТОЛЬКО при сетевой ошибке (catch), иначе после создания
+          // первого урока демо-кеш «затирал» бы бэкенд и мигал.
+          if (arr.length && (arr[0].doc || arr[0].blocks)) mirrorAll(arr.map((l) => stamp(l, true)));
+          return arr.map((l) => (l && l.counts ? l : summaryOf(l)));
         }
-      } catch (e) { /* падаем на кеш */ }
+      } catch (e) { /* сеть упала — на кеш */ }
     }
     return listLocal();
   }
