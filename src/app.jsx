@@ -52,15 +52,19 @@
     '/plan': S.StudentPlan,                    // этапы: кинематографичная лента
     '/stage': S.StudentStage,                  // детали одного этапа
     '/stage-b': S.StudentStageB,               // детали этапа — вариант B (моя версия, для сравнения)
-    '/parent': S.CabinetParent,               // кабинет родителя + дети
+    '/parent': S.ParentHome,                  // семейный дашборд родителя (parent-home.jsx)
+    '/parent/child': S.ParentChild,           // ребёнок глазами родителя (parent-child.jsx)
     '/diagnostics': S.Diagnostics,            // результаты диагностики (просмотр)
     '/documents': S.Documents,                // документы клиентского среза
     '/payments': S.Payments,                  // оплаты/финансы — ТОЛЬКО зона родителя
 
     // образовательная платформа
     '/learn': S.LearnHome,                    // «Обучение» — пересобранная learn-home.jsx
-    '/learn/lesson': S.LearnLesson,           // интерактивный урок-тренажёр
-    '/learn/build': S.LearnBuilder,           // конструктор урока (преподаватель)
+    '/learn/lessons': S.LearnLessons,         // библиотека уроков преподавателя
+    '/learn/lesson': S.LearnLesson,           // урок-тренажёр — текущий урок
+    '/learn/lesson/:id': S.LearnLesson,       // урок-тренажёр — конкретный урок по id
+    '/learn/build': S.LearnBuilder,           // конструктор — текущий/новый урок
+    '/learn/build/:id': S.LearnBuilder,       // конструктор — конкретный урок по id
 
     // Ассистент — НЕ первичная навигация (он FAB + попап). Маршрут-оболочку
     // оставляем как overlay-точку входа для устаревших ссылок из ещё не
@@ -88,12 +92,16 @@
     '/partner': true, '/crm': true, '/crm/client': true, '/crm/funnel': true,
     '/student': true, // дашборд ученика несёт свой тоггл (рейл/статус) + FAB ассистента
     '/learn': true,        // хаб обучения несёт каркас ученика (FAB ассистента в Shell)
+    '/learn/lessons': true,   // библиотека уроков — своя светлая раскладка
     '/learn/lesson': true, // урок-тренажёр — иммерсивный полноэкранный, свой выход
+    '/learn/lesson/:id': true,
     '/learn/build': true,  // конструктор — полноэкранный, своя верхняя панель
+    '/learn/build/:id': true,
     '/plan': true,    // этапы — своя тёмная раскладка, без плавающего тоггла
     '/stage': true,   // детали этапа — своя тёмная раскладка
     '/stage-b': true, // вариант B деталей этапа
     '/parent': true,  // дашборд родителя несёт свой тоггл (рейл/статус) + FAB ассистента
+    '/parent/child': true, // страница ребёнка — тот же каркас родителя
   };
 
   // ── Кабинетные маршруты, на которых нужен глобальный FAB ассистента ───────
@@ -111,6 +119,10 @@
   // Стиль — только токены (фикс-позиция, чип-подложка), без правок styles.css.
   function FloatingTheme() {
     const route = useRoute();
+    const p = route.path || '';
+    // Иммерсивные экраны конструктора/урока адресуются с id (/learn/build/:id) —
+    // ownsThemeToggle по точному пути их не поймает, ловим по префиксу.
+    if (p.indexOf('/learn/build') === 0 || p.indexOf('/learn/lesson') === 0) return null;
     if (ownsThemeToggle[route.path]) return null;
     return h('div', {
       'aria-label': 'Переключатель темы',

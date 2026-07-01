@@ -661,6 +661,68 @@
     .u-hero { height: 220px; }
     .u-head .hname { font-size: 26px; }
   }
+  /* кнопка «назад к списку» — только на телефоне в режиме деталей */
+  .u-back { display: none; }
+  /* прокрутка внутри списков/деталей не «пробивает» на страницу под попапом */
+  .u-list, .u-scroll, .ipop-card, .stg-body { overscroll-behavior: contain; }
+  /* блокировка прокрутки фона, пока открыт попап (класс ставит JS) */
+  html.pop-lock, html.pop-lock body { overflow: hidden !important; }
+
+  /* ── ТЕЛЕФОН: попап вузов = ДВА ЭКРАНА (iOS-паттерн). По умолчанию — список
+     карточек на весь экран; тап → полноэкранные детали с кнопкой «Все вузы».
+     Режимы переключает класс .detail на #ipopUni (см. JS). ── */
+  @media (max-width: 560px) {
+    .u-frame { width: 100vw; height: 100dvh; max-height: none; border-radius: 0; border: 0; }
+    .u-top { padding: 20px 18px 14px; }
+    .u-top-title { font-size: 22px; letter-spacing: -.4px; }
+    .u-top-desc { display: block; margin-top: 5px; font-size: 13px; line-height: 1.45; }   /* текст правится в JS */
+    .u-close { margin-top: 0; width: 36px; height: 36px; }
+
+    .u-body { display: block; min-height: 0; }
+
+    /* ── СПИСОК ── */
+    .u-rail { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 0; }
+    .u-list { flex: 1; min-height: 0; flex-direction: column; overflow-y: auto; overflow-x: hidden;
+      padding: 4px 16px calc(22px + env(safe-area-inset-bottom)); gap: 12px; }
+    .u-card { min-width: 0; width: 100%; padding: 13px 42px 13px 13px; align-items: center; border-radius: 18px; }
+    .u-card::after { content: ''; position: absolute; right: 17px; top: 50%; width: 9px; height: 9px;
+      border-right: 2px solid rgba(160,190,255,.5); border-top: 2px solid rgba(160,190,255,.5);
+      transform: translateY(-50%) rotate(45deg); }   /* шеврон «открыть» */
+    .u-photo { width: 98px; border-radius: 14px; }
+    .u-name { font-size: 16px; }
+    .u-detail { display: none; }
+
+    /* ── ДЕТАЛИ ── */
+    .u-pop.detail .u-top { display: none; }
+    .u-pop.detail .u-rail { display: none; }
+    .u-pop.detail .u-detail { display: flex; flex-direction: column; height: 100%; min-height: 0; padding: 0; }
+    /* чистая верхняя строка с «назад» (не плавающая пилюля над фото) */
+    .u-back { display: inline-flex; align-items: center; gap: 8px; flex: none; align-self: flex-start;
+      margin: calc(12px + env(safe-area-inset-top)) 14px 6px; padding: 9px 15px 9px 11px;
+      border-radius: 12px; cursor: pointer; background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12); color: #fff; font: 600 14px 'Onest',sans-serif; }
+    .u-back:active { background: rgba(255,255,255,.12); }
+    .u-back svg { width: 16px; height: 16px; }
+    .u-pop.detail .u-scroll { flex: 1; min-width: 0; overflow-y: auto; padding: 0 16px calc(28px + env(safe-area-inset-bottom)); }
+    /* hero — крупная карточка-обложка со скруглением, как на десктопе */
+    .u-pop.detail .u-hero { position: relative; height: 210px; border-radius: 18px; margin: 0; }
+    .u-pop.detail .u-hero::after { content: ''; position: absolute; inset: auto 0 0 0; height: 42%;
+      background: linear-gradient(180deg, transparent, rgba(3,7,22,.5)); }
+    .u-head { margin-top: 20px; }
+    .u-head .hname { font-size: 27px; letter-spacing: -.5px; }
+    .u-desc { margin-top: 16px; font-size: 14.5px; }
+    .u-facts { margin-top: 22px; grid-template-columns: 1fr 1fr; gap: 9px; }
+    .u-fact { padding: 12px; gap: 11px; }
+    .u-fic { width: 36px; height: 36px; }
+    .u-secs { margin-top: 22px; }
+    .u-sec { padding: 20px; }
+  }
+  /* ── ТЕЛЕФОН: инфо-попап (гранты и т.п.) плотнее, крестик ближе к краю ── */
+  @media (max-width: 560px) {
+    .ipop-card { width: 94vw; max-height: 88dvh; padding: 26px 20px 22px; border-radius: 20px; }
+    .ipop-title { font-size: 23px; letter-spacing: -.6px; }
+    .ipop-close { top: 12px; right: 12px; width: 34px; height: 34px; }
+  }
   /* ── попап маршрута: модалка-окно, страница за ней лишь слегка затемнена ── */
   .rm-pop { position: fixed; inset: 0; z-index: 60; visibility: hidden; }
   .rm-pop.on { visibility: visible; }
@@ -684,6 +746,15 @@
     transition: background .15s, color .15s, border-color .15s; }
   .rm-close:hover { background: rgba(43,143,255,.16); border-color: rgba(80,165,255,.55); color: #fff; }
   .rm-close svg { width: 16px; height: 16px; }
+  /* ── ТЕЛЕФОН: маршрут на весь экран (иначе landscape-окно вырождается в узкую
+     полоску по центру портретного экрана). Портретную раскладку внутри задаёт
+     сам roadmap-dark.html. ── */
+  @media (max-width: 560px) {
+    .rm-veil { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(2,6,18,.7); }
+    .rm-frame { top: 0; left: 0; width: 100vw; height: 100dvh; max-height: none; aspect-ratio: auto;
+      border-radius: 0; transform: none; }
+    .rm-pop.on .rm-frame { transform: none; }
+  }
 
   /* ── закрепленный футер: Назад · шаг · Дальше (фростед, sticky) ── */
   .dbar { position: sticky; bottom: 0; z-index: 6; margin-top: 44px;
@@ -823,12 +894,46 @@
      display:block вместо grid 1fr — иначе грид-трек 1fr раздувается под
      min-content контента (радар 300px + параметры) ШИРЕ экрана, и текст
      с подписями радара режется правым краем (overflow:hidden у .display). */
+  /* мобильная шапка видна только на телефоне (переопределяется в @media ниже) */
+  .m-chrome { display: none; }
+
   @media (max-width: 720px) {
     .shell { display: block; padding: 0; gap: 0; }
     .sb { display: none; }
+    /* правая панель «Ваш результат» — десктопный сайдбар, на телефоне не нужна */
+    .path { display: none !important; }
     .plate { border-radius: 0; min-width: 0; min-height: 100vh; min-height: 100dvh; }
     .h1 { font-size: 32px; letter-spacing: -1.4px; }
     .plate-scroll { padding: 24px 16px 16px; }
+    /* мобильная шапка (сайдбар скрыт): бренд слева, настройки/выход справа */
+    .m-chrome { display: flex; align-items: center; justify-content: space-between; margin: 0 0 18px; }
+    .m-brand { font: 800 15px 'Onest', sans-serif; letter-spacing: -.3px; color: var(--ink); }
+    .m-brand span { color: #2073E6; }
+    .m-acts { display: flex; gap: 8px; }
+    .m-ico { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; cursor: pointer;
+      background: rgba(255,255,255,.72); border: 1px solid rgba(36,40,90,.12); color: var(--ink-2);
+      box-shadow: 0 2px 8px rgba(30,50,90,.05); -webkit-tap-highlight-color: transparent; transition: background .14s, border-color .14s; }
+    .m-ico:active { background: rgba(255,255,255,.95); }
+    .m-ico svg { width: 19px; height: 19px; }
+    .m-ico.m-exit { color: #C33A2B; border-color: rgba(195,58,43,.24); }
+  }
+
+  /* ── попап Настроек на телефоне: сетка тем не должна вылезать за модалку ── */
+  @media (max-width: 560px) {
+    .stg-ov { padding: 12px; }
+    .stg-modal { max-height: calc(100dvh - 24px); border-radius: 20px; }
+    .stg-head { padding: 18px 16px 14px; gap: 12px; }
+    .stg-head-ic { width: 40px; height: 40px; }
+    .stg-head-txt b { font-size: 18px; }
+    .stg-body { padding: 14px; gap: 12px; }
+    /* minmax(0,1fr) — колонки МОГУТ сжаться уже контента, иначе «По умолчанию» распирал сетку */
+    .theme-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; padding: 0 14px 14px; }
+    .theme-opt { min-width: 0; min-height: 90px; padding: 14px 6px 12px; gap: 8px; }
+    .theme-opt svg { width: 21px; height: 21px; }
+    .theme-opt b { font-size: 12px; text-align: center; line-height: 1.15; }
+    .theme-opt small { font-size: 9.5px; text-align: center; }
+    .stg-acc-side { width: 104px; padding: 14px 14px; }
+    .stg-sub { padding: 18px 16px 18px; }
   }
 
   /* ── узкий телефон: плотнее крупные блоки разбора (разбор, гранты, бронь) ── */
@@ -1146,61 +1251,20 @@
   @media (prefers-reduced-motion: reduce) {
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   }
-  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
-     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
-     на новой странице уходит влево, открывая её. Назад — зеркально. Только
-     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
-  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
-    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
-    transform: translateX(0); will-change: transform;
-    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
-  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
-  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
-  html.pt-back #pt{ animation-name: ptEnterBack; }
-  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
+
 </style>
 
 <script>
 (function(){
   try{ history.scrollRestoration='manual'; }catch(e){}
-  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
-  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
-  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.esGo = function(url, replace, dir){
-    var go = function(){ replace ? location.replace(url) : (location.href = url); };
-    var pt = document.getElementById('pt');
-    if (RM || !pt){ go(); return; }
-    dir = dir === 'back' ? 'back' : 'fwd';
-    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
-    pt.style.animation = 'none';
-    pt.style.transition = 'none';
-    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
-    void pt.offsetWidth;
-    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
-    pt.style.transform = 'translateX(0)';
-    setTimeout(go, 320);
-  };
-  document.addEventListener('click', function(e){
-    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
-    var href = a.getAttribute('href') || '';
-    if (!href || href.charAt(0) === '#') return;
-    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
-    if (!/\.html(\?|#|$)/.test(href)) return;
-    e.preventDefault();
-    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
-    window.esGo(href, false, back ? 'back' : 'fwd');
-  }, true);
-  addEventListener('pageshow', function(e){
-    try{ scrollTo(0,0); }catch(_){}
-    var pt = document.getElementById('pt');
-    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
-  });
+  // никакого накрывающего перехода — страницы «появляются» своими reveal-анимациями,
+  // старая держится браузером до отрисовки новой (без тёмного экрана на загрузке)
+  window.esGo = function(url, replace){ replace ? location.replace(url) : (location.href = url); };
+  addEventListener('pageshow', function(){ try{ scrollTo(0,0); }catch(e){} });
 })();
 </script>
 </head>
 <body>
-<div id="pt" aria-hidden="true"></div>
 <div class="shell">
 
   <!-- ════ Сайдбар ════ -->
@@ -1233,6 +1297,20 @@
   <main class="plate">
     <div class="plate-scroll">
      <div class="plate-col">
+
+      <!-- мобильная шапка: бренд + доступ к настройкам/выходу (на десктопе это в сайдбаре,
+           который на телефоне скрыт) -->
+      <div class="m-chrome">
+        <span class="m-brand">ИСТСАЙД<span>.РФ</span></span>
+        <div class="m-acts">
+          <button class="m-ico" id="mSettings" type="button" aria-label="Настройки">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5h8M15 7.5h6"/><path d="M3 16.5h6M13 16.5h8"/><circle cx="13" cy="7.5" r="2.4"/><circle cx="11" cy="16.5" r="2.4"/></svg>
+          </button>
+          <button class="m-ico m-exit" id="mExit" type="button" aria-label="Выйти">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4H7a2 2 0 00-2 2v12a2 2 0 002 2h7"/><path d="M11 12h10M17 8l4 4-4 4"/></svg>
+          </button>
+        </div>
+      </div>
 
       <div class="crumb" data-rv><span>Анкета</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
@@ -1986,6 +2064,10 @@
         <div class="u-list" id="uniList"></div>
       </aside>
       <section class="u-detail">
+        <button class="u-back" type="button" data-uback>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg>
+          Все вузы
+        </button>
         <div class="u-scroll" id="uniScroll"></div>
       </section>
     </div>
@@ -2028,8 +2110,10 @@
 (function () {
   // инфо-попапы разделов: открытие по кнопке с data-ipop, закрытие по вуали/крестику/Esc
   var openId = null;
-  function openIpop(id) { var el = document.getElementById(id); if (!el) return; el.classList.add('on'); openId = id; }
-  function closeIpop() { if (!openId) return; var el = document.getElementById(openId); if (el) el.classList.remove('on'); openId = null; }
+  // блокируем прокрутку страницы под попапом (иначе фон скроллится «под» попапом)
+  function lockScroll(on) { document.documentElement.classList.toggle('pop-lock', on); }
+  function openIpop(id) { var el = document.getElementById(id); if (!el) return; el.classList.add('on'); openId = id; lockScroll(true); }
+  function closeIpop() { if (!openId) return; var el = document.getElementById(openId); if (el) el.classList.remove('on'); openId = null; lockScroll(false); }
   document.querySelectorAll('[data-ipop]').forEach(function (b) {
     b.addEventListener('click', function () { openIpop(b.getAttribute('data-ipop')); });
     b.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openIpop(b.getAttribute('data-ipop')); } });
@@ -2122,11 +2206,13 @@
     clearTimeout(closeTimer);
     frame.src = 'roadmap-dark.html';
     pop.classList.add('on');
+    document.documentElement.classList.add('pop-lock');
     if (!rmHist) { history.pushState({ rmOpen: true }, ''); rmHist = true; }
     setTimeout(function () { try { frame.contentWindow.focus(); } catch (e) {} }, 400);
   }
   function closeRm(fromPopstate) {
     pop.classList.remove('on');
+    document.documentElement.classList.remove('pop-lock');
     closeTimer = setTimeout(function () { frame.src = 'about:blank'; }, 470);
     // закрыли крестиком/вуалью/Esc — снимаем фиктивную запись истории сами;
     // если закрытие пришло из popstate (нажали «назад») — она уже снята браузером
@@ -2165,8 +2251,8 @@
 
   function showMain() { main.style.display = ''; subs.forEach(function (s) { s.classList.remove('on'); }); }
   function showSub(el) { main.style.display = 'none'; subs.forEach(function (s) { s.classList.remove('on'); }); el.classList.add('on'); }
-  function open() { ov.classList.add('open'); showMain(); }
-  function close() { ov.classList.remove('open'); }
+  function open() { ov.classList.add('open'); showMain(); document.documentElement.classList.add('pop-lock'); }
+  function close() { ov.classList.remove('open'); document.documentElement.classList.remove('pop-lock'); }
 
   // тост-подтверждение
   var toast = $('stgToast'), toastTxt = $('stgToastTxt'), toastTimer = null;
@@ -2279,7 +2365,11 @@
   'use strict';
   var list = document.getElementById('uniList');
   var scroll = document.getElementById('uniScroll');
+  var pop = document.getElementById('ipopUni');
   if (!list || !scroll) return;
+  function isMobile(){ return window.matchMedia('(max-width: 560px)').matches; }
+  // на телефоне детали открываются на весь экран (не «справа») — правим подпись
+  if (isMobile()) { var _desc = pop && pop.querySelector('.u-top-desc'); if (_desc) _desc.textContent = 'Подобраны под ваш профиль, язык и сроки подачи. Нажмите на вуз, чтобы открыть детали.'; }
 
   var IC = {
     pin:  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0114 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.4"/></svg>',
@@ -2417,29 +2507,42 @@
   list.innerHTML = UNIS.map(cardHTML).join('');
 
   // клик по карточке-открывалке конкретного вуза на странице — открыть именно его
+  // (на телефоне сразу в режим деталей)
   document.querySelectorAll('[data-ipop="ipopUni"][data-uni]').forEach(function (b){
-    b.addEventListener('click', function (){ selectUni(+b.getAttribute('data-uni')); });
+    b.addEventListener('click', function (){ selectUni(+b.getAttribute('data-uni'), true); });
   });
 
-  function selectUni(i){
+  // goDetail — на телефоне переключить попап в полноэкранный режим деталей
+  function selectUni(i, goDetail){
     var cards = list.querySelectorAll('.u-card');
     for (var k = 0; k < cards.length; k++) cards[k].classList.toggle('sel', +cards[k].getAttribute('data-i') === i);
     scroll.classList.add('swap');
     setTimeout(function () { scroll.scrollTop = 0; scroll.innerHTML = detailHTML(UNIS[i]); scroll.classList.remove('swap'); }, 140);
     var el = list.querySelector('.u-card[data-i="' + i + '"]');
     if (el) el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    if (goDetail && pop && isMobile()) pop.classList.add('detail');
   }
 
+  // тап по карточке в списке → детали (на телефоне); на десктопе просто выбор
   list.addEventListener('click', function (e){
     var c = e.target.closest ? e.target.closest('.u-card') : null;
-    if (c) selectUni(+c.getAttribute('data-i'));
+    if (c) selectUni(+c.getAttribute('data-i'), true);
   });
   list.addEventListener('keydown', function (e){
     if (e.key !== 'Enter' && e.key !== ' ') return;
     var c = e.target.closest ? e.target.closest('.u-card') : null;
     if (!c) return;
-    e.preventDefault(); selectUni(+c.getAttribute('data-i'));
+    e.preventDefault(); selectUni(+c.getAttribute('data-i'), true);
   });
+
+  // «Все вузы» — назад к списку (моб.)
+  if (pop) {
+    var backBtn = pop.querySelector('[data-uback]');
+    if (backBtn) backBtn.addEventListener('click', function () { pop.classList.remove('detail'); });
+    // закрытие попапа (крестик/вуаль/Esc) — сбрасываем режим деталей на список
+    pop.querySelectorAll('[data-close]').forEach(function (c) { c.addEventListener('click', function () { pop.classList.remove('detail'); }); });
+    window.addEventListener('keydown', function (e) { if (e.key === 'Escape') pop.classList.remove('detail'); });
+  }
 
   scroll.innerHTML = detailHTML(UNIS[0]);
 })();
@@ -2585,6 +2688,15 @@
   });
 
   renderMonth();
+})();
+</script>
+<script>
+/* мобильная шапка: настройки/выход триггерят те же модалки, что и скрытый сайдбар */
+(function () {
+  var ms = document.getElementById('mSettings'), mx = document.getElementById('mExit');
+  var bs = document.getElementById('btnSettings'), bx = document.getElementById('btnExit');
+  if (ms && bs) ms.addEventListener('click', function () { bs.click(); });
+  if (mx && bx) mx.addEventListener('click', function () { bx.click(); });
 })();
 </script>
 <script>

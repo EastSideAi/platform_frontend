@@ -64,12 +64,10 @@
 
   /* ── Сайдбар ─────────────────────────────────────────────────────────── */
   .sd-side{
-    flex:0 0 236px; width:236px; height:100%; box-sizing:border-box;
-    /* floating-панель: меню парит отдельной карточкой, заодно со светлой .sd-main */
-    background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03));
-    border:1px solid rgba(255,255,255,.10); border-radius:26px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
-    display:flex; flex-direction:column; padding:18px 14px 14px;
+    flex:0 0 252px; width:252px; height:100%; box-sizing:border-box;
+    /* БЕЗ внешнего контейнера — «голый» сайдбар прямо на тёмном холсте, шире (как в анкете) */
+    background:transparent; border:0; border-radius:0; box-shadow:none;
+    display:flex; flex-direction:column; padding:10px 8px 14px;
   }
   .sd-brand{display:flex; align-items:center; padding:2px 8px 4px; margin-bottom:26px;}
   .sd-brand__logo{width:150px;height:auto;display:block;}
@@ -115,6 +113,13 @@
   .sd-prof__xpfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sd-acc-2),var(--sd-acc));box-shadow:0 0 8px rgba(43,143,255,.8);}
   .sd-prof__xprow{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10.5px;color:#9AA6CE;}
   .sd-prof__lvl{display:inline-flex;align-items:center;gap:4px;color:#CFE2FF;font-weight:600;}
+  /* профиль без маскота (родитель): инициалы-аватар в языке chip-glow (design.md §5) */
+  .sd-prof--avatar{padding:13px 14px;display:flex;align-items:center;gap:12px;min-height:0;}
+  .sd-prof__ava{flex:0 0 44px;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
+    font-weight:700;font-size:15px;letter-spacing:.3px;color:#EAF2FF;
+    background:rgba(43,143,255,.16);box-shadow:inset 0 0 14px rgba(43,143,255,.9),inset 0 0 3px rgba(160,205,255,.7);}
+  .sd-prof--avatar .sd-prof__b{flex:1 1 auto;min-width:0;}
+  .sd-prof--avatar .sd-prof__name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   .sd-help-mini{
     margin-top:10px;flex:0 0 auto;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;
@@ -1051,8 +1056,12 @@
   @keyframes sdFade{from{opacity:0}to{opacity:1}}
   .sd-ov--center{align-items:center;justify-content:center;padding:34px;}
   .sd-ov--right{justify-content:flex-end;}
-  .sd-modal{width:100%;max-width:540px;max-height:86vh;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;
-    background:linear-gradient(180deg,#0C1230,#0A0F26);border:1px solid rgba(70,140,240,.28);box-shadow:0 30px 80px rgba(0,0,0,.5);animation:sdRise .24s cubic-bezier(.16,1,.3,1);}
+  .sd-modal{width:100%;max-width:540px;max-height:86vh;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;color:#fff;
+    background:rgba(13,20,46,.58);
+    -webkit-backdrop-filter:blur(34px) saturate(150%);backdrop-filter:blur(34px) saturate(150%);
+    border:1px solid rgba(120,160,255,.28);
+    box-shadow:0 32px 84px rgba(6,12,36,.5),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 46px rgba(40,110,240,.1);
+    animation:sdRise .24s cubic-bezier(.16,1,.3,1);}
   @keyframes sdRise{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
   .sd-modal__media{height:150px;position:relative;flex:0 0 auto;}
   .sd-modal__media-bg{position:absolute;inset:0;background-size:cover;background-position:center;}
@@ -1086,15 +1095,14 @@
   .sd-pilltag--us{background:rgba(43,143,255,.16);color:var(--sd-acc-2);}
 
   /* ── AI-попап: светлое стеклянное окно по центру + печатание ───────────── */
+  /* AI-попап — то же матовое тёмное стекло, что у попапа задачи (.et) */
   .sd-ai{position:relative;width:100%;max-width:640px;height:min(760px,90vh);display:flex;flex-direction:column;overflow:hidden;
-    border-radius:30px;
-    background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(246,249,255,.78));
-    border:1px solid rgba(255,255,255,.85);
-    -webkit-backdrop-filter:blur(36px) saturate(155%);backdrop-filter:blur(36px) saturate(155%);
+    border-radius:24px;color:#fff;
+    background:rgba(13,20,46,.58);
+    border:1px solid rgba(120,160,255,.28);
+    -webkit-backdrop-filter:blur(34px) saturate(150%);backdrop-filter:blur(34px) saturate(150%);
+    box-shadow:0 32px 84px rgba(6,12,36,.5),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 46px rgba(40,110,240,.1);
     animation:sdRise .26s cubic-bezier(.16,1,.3,1);}
-  .sd-ai::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-    background:radial-gradient(580px 340px at 84% -10%,rgba(43,143,255,.13),transparent 62%),
-              radial-gradient(480px 360px at -4% 112%,rgba(43,143,255,.07),transparent 64%);}
   .sd-ai>*{position:relative;z-index:1;}
   /* шапка — без разделителей */
   .sd-ai__head{display:flex;align-items:center;gap:14px;padding:22px 22px 12px 24px;}
@@ -1102,38 +1110,38 @@
     background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));
     box-shadow:inset 0 0 18px rgba(175,215,255,.7),inset 0 1px 0 rgba(255,255,255,.5);}
   .sd-ai__id{flex:1 1 auto;min-width:0;}
-  .sd-ai__name{font-size:16.5px;font-weight:700;color:var(--sd-ink);letter-spacing:-.3px;line-height:1.15;}
-  .sd-ai__status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--sd-ink-mute);margin-top:3px;}
+  .sd-ai__name{font-size:16.5px;font-weight:700;color:#fff;letter-spacing:-.3px;line-height:1.15;}
+  .sd-ai__status{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:#8B93B8;margin-top:3px;}
   .sd-ai__status i{width:6px;height:6px;border-radius:50%;background:var(--sd-acc);box-shadow:0 0 8px rgba(43,143,255,.85);font-style:normal;}
-  .sd-ai__x{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:var(--sd-ink-mute);
-    background:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.7);transition:background .15s,color .15s,transform .15s;}
-  .sd-ai__x:hover{background:rgba(255,255,255,.92);color:var(--sd-ink);transform:translateY(-1px);}
-  .sd-ai__ctx{padding:6px 24px 0;font-size:12.5px;color:var(--sd-ink-mute);}
-  .sd-ai__ctx b{color:var(--sd-acc-deep);font-weight:600;}
+  .sd-ai__x{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:grid;place-items:center;cursor:pointer;color:#8B93B8;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);transition:background .15s,color .15s,transform .15s;}
+  .sd-ai__x:hover{background:rgba(255,255,255,.1);color:#fff;transform:translateY(-1px);}
+  .sd-ai__ctx{padding:6px 24px 0;font-size:12.5px;color:#8B93B8;}
+  .sd-ai__ctx b{color:#9FCBFF;font-weight:600;}
   /* лента сообщений */
   .sd-ai__feed{flex:1 1 auto;overflow-y:auto;padding:18px 24px 10px;display:flex;flex-direction:column;gap:13px;}
   .sd-ai__feed::-webkit-scrollbar{width:0;}
   .sd-bub{max-width:80%;padding:13px 17px;border-radius:19px;font-size:14.5px;line-height:1.56;white-space:pre-wrap;word-wrap:break-word;}
-  .sd-bub.ai{align-self:flex-start;background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.72);color:var(--sd-ink);
+  .sd-bub.ai{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#DFE4F3;
     border-bottom-left-radius:7px;}
   .sd-bub.me{align-self:flex-end;background:linear-gradient(150deg,var(--sd-acc),var(--sd-acc-deep));color:#fff;
     border-bottom-right-radius:7px;box-shadow:inset 0 0 16px rgba(175,215,255,.32),inset 0 1px 0 rgba(255,255,255,.25);}
   .sd-bub__caret{display:inline-block;width:2px;height:1.02em;vertical-align:-2px;margin-left:1px;border-radius:1px;
-    background:var(--sd-acc-deep);animation:sdCaret 1s steps(1) infinite;}
+    background:#9FCBFF;animation:sdCaret 1s steps(1) infinite;}
   @keyframes sdCaret{50%{opacity:0;}}
   /* индикатор «печатает» */
   .sd-ai__typing{align-self:flex-start;display:inline-flex;align-items:center;gap:5px;padding:16px 18px;border-radius:19px;border-bottom-left-radius:7px;
-    background:rgba(255,255,255,.62);border:1px solid rgba(255,255,255,.72);}
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);}
   .sd-ai__typing i{width:7px;height:7px;border-radius:50%;background:var(--sd-acc);opacity:.45;animation:sdDot 1.25s ease-in-out infinite;}
   .sd-ai__typing i:nth-child(2){animation-delay:.16s;} .sd-ai__typing i:nth-child(3){animation-delay:.32s;}
   @keyframes sdDot{0%,60%,100%{transform:translateY(0);opacity:.4;}30%{transform:translateY(-4px);opacity:1;}}
   /* композер — одна цельная плашка-капсула, без разделителей */
   .sd-ai__compose{padding:14px 20px 22px;}
-  .sd-ai__field{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.78);
+  .sd-ai__field{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);
     border-radius:22px;padding:7px 7px 7px 22px;transition:border-color .16s,background .16s;}
-  .sd-ai__field:focus-within{border-color:var(--sd-acc-line);background:rgba(255,255,255,.86);}
-  .sd-ai__input{flex:1 1 auto;background:0;border:0;outline:0;color:var(--sd-ink);font-size:15px;font-family:inherit;padding:13px 0;}
-  .sd-ai__input::placeholder{color:var(--sd-ink-mute);}
+  .sd-ai__field:focus-within{border-color:rgba(43,143,255,.5);background:rgba(43,143,255,.05);}
+  .sd-ai__input{flex:1 1 auto;background:0;border:0;outline:0;color:#fff;font-size:15px;font-family:inherit;padding:13px 0;}
+  .sd-ai__input::placeholder{color:#8B93B8;}
   .sd-ai__send{width:46px;height:46px;flex:0 0 46px;border-radius:16px;border:0;cursor:pointer;color:#fff;display:grid;place-items:center;
     background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));
     box-shadow:inset 0 0 16px rgba(160,205,255,.6),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .15s,opacity .15s;}
@@ -1181,7 +1189,7 @@
     .sd-modal,.sd-ai{max-width:100%;}
     .sd-ai{height:90vh;}
     .sd-side{display:none;}
-    .sd-wrap{padding:20px 18px 60px;}
+    .sd-wrap{padding:64px 16px 44px;}
     .sd-grid2{grid-template-columns:1fr;}
     .sd-botrow{grid-template-columns:1fr;}
     .sd-hero,.sd-phero{flex-direction:column;align-items:flex-start;}
@@ -1356,6 +1364,8 @@
   /* ── Футер «Атмосфера»: белый контент уходит в ночь ─────────────────────── */
   .sd-foot{position:relative;color:#EAF0FF;background:transparent;margin-top:28px;padding:40px 0 44px;}
   .sd-foot__in{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 52px;}
+  /* футер выравнивается по контенту каждой страницы: обучение (.lr-page) уже 1248/44 */
+  .sd-scroll:has(.lr-page) .sd-foot__in{max-width:1248px;padding:0 44px;}
   .sd-foot__grid{display:grid;grid-template-columns:1.85fr 1fr 1fr 1.1fr;gap:40px;}
   .sd-foot__logo{height:clamp(42px,4.2vw,56px);width:auto;display:block;}
   .sd-foot__tag{margin-top:22px;font-size:13.5px;line-height:1.64;color:#8E9BC4;max-width:300px;}
@@ -1370,9 +1380,64 @@
   .sd-foot__legal-links a{font-size:12.5px;color:#6E7AA6;text-decoration:none;transition:color .15s;cursor:pointer;}
   .sd-foot__legal-links a:hover{color:#C5D0F0;}
   @media (max-width:880px){
-    .sd-foot{padding:42px 20px 24px;}
-    .sd-foot__grid{grid-template-columns:1fr 1fr;gap:26px 20px;}
-    .sd-foot__legal{flex-direction:column;align-items:flex-start;gap:12px;}
+    /* мобильный футер — во всю ширину (внутренние поля обнуляем), бренд сверху
+       на всю строку с читаемым тэглайном, ссылки аккуратной сеткой, воздух больше */
+    .sd-foot{margin-top:36px;padding:46px 20px 30px;}
+    .sd-foot__in,.sd-scroll:has(.lr-page) .sd-foot__in{max-width:100%;padding:0;}
+    .sd-foot__grid{grid-template-columns:1fr 1fr;gap:34px 20px;}
+    .sd-foot__brand{grid-column:1 / -1;}
+    .sd-foot__tag{max-width:340px;margin-top:16px;font-size:14px;}
+    .sd-foot__col h4{margin-bottom:11px;}
+    .sd-foot__col a{padding:7px 0;font-size:14px;}
+    .sd-foot__legal{margin-top:38px;flex-direction:column;align-items:flex-start;gap:14px;}
+  }
+  @media (max-width:360px){
+    .sd-foot__grid{grid-template-columns:1fr;gap:26px;}
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     МОБИЛЬНАЯ ХРОМОТА (≤980): без «белого окна» и без верхней шапки. Навигация —
+     push-drawer «как в X/Twitter»: контент СЖИМАЕТСЯ в скруглённую карту, уезжает
+     вправо и наезжает поверх тёмного фона, слева открывается рейл. Управляется
+     жестом (свайп от края / свайп по карте) + хаптик — вся логика трансформа в JS,
+     CSS только раскладка. Всё скрыто на десктопе.
+  ───────────────────────────────────────────────────────────────────────── */
+  .sd-pushmenu,.sd-burger,.sd-pushcatch{display:none;}
+  .sd-shift__in{display:contents;}
+
+  @media (max-width:980px){
+    /* каркас → страничный скролл; тёмный фон-подложка (карта наезжает поверх него) */
+    .sd-app{display:block;height:auto;min-height:100dvh;overflow-x:clip;overflow-y:visible;padding:0;gap:0;background:#04081A;}
+    .sd-main{height:auto;overflow-x:clip;overflow-y:visible;border-radius:0;border:0;box-shadow:none;}
+    .sd-main--inflow{min-height:100dvh;}
+    .sd-main--inflow .sd-wrap{padding-bottom:40px;}
+    .sd-shift__in{display:block;}
+    /* контент-карта — непрозрачный слой над меню; трансформ пишет JS (origin слева) */
+    .sd-scroll,.sd-app > .sd-main{display:block;height:auto;overflow-x:clip;overflow-y:visible;
+      position:relative;z-index:2;background:var(--sd-base);transform-origin:left center;will-change:transform;}
+    /* активный drawer: карта = фикс. окно во весь экран (чтобы скругления были видны) */
+    .sd-app.is-drawer > .sd-scroll,.sd-app.is-drawer > .sd-main{position:fixed;inset:0;height:100dvh;overflow:hidden;}
+    .sd-app.is-drawer .sd-shift__in{will-change:transform;}
+
+    /* push-меню: тёмный рейл, фикс. слева, ЗА картой (открывается её сдвигом) */
+    .sd-pushmenu{display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:1;width:84vw;max-width:328px;
+      background:linear-gradient(180deg,#0A1030 0%,#070C20 100%);padding-top:env(safe-area-inset-top,0px);opacity:.55;}
+    .sd-pushmenu .sd-side{display:flex;width:100%;height:100%;flex:1 1 auto;padding:calc(16px + env(safe-area-inset-top,0px)) 14px 18px;}
+
+    /* плавающая кнопка-бургер — тихое морозное стекло, слева сверху (без шапки) */
+    .sd-burger{display:grid;place-items:center;position:fixed;top:calc(13px + env(safe-area-inset-top,0px));left:14px;z-index:6;
+      width:44px;height:44px;border-radius:14px;cursor:pointer;color:#EAF0FF;
+      background:rgba(9,15,38,.5);-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);
+      border:1px solid rgba(150,180,255,.22);box-shadow:0 10px 26px rgba(4,8,24,.3),inset 0 1px 0 rgba(255,255,255,.14);
+      transition:opacity .22s,transform .15s;}
+    .sd-burger:active{transform:scale(.93);}
+    .sd-app.is-drawer .sd-burger{opacity:0;pointer-events:none;}
+
+    /* ловушка-закрытие — ВНУТРИ карты, тап по отодвинутому контенту закрывает */
+    .sd-app.is-drawer .sd-pushcatch{display:block;position:absolute;inset:0;z-index:50;background:transparent;}
+
+    /* AI-FAB прячем на время drawer */
+    .sd-app.is-drawer .lr-aifab{opacity:0;pointer-events:none;}
   }
   `;
 
@@ -1431,35 +1496,44 @@
   }
 
   /* ── Sidebar ───────────────────────────────────────────────────────── */
+  // props: active (ключ нав). Опционально nav / user — чтобы ТОТ ЖЕ сайдбар
+  // переиспользовать под роль родителя (см. parent-home.jsx). Дефолты — ученик,
+  // поэтому старые вызовы Shell без этих пропсов ведут себя как раньше.
   function Sidebar(props) {
     const active = props.active;
+    const navItems = props.nav || NAV;
+    const user = props.user || USER;
+    const hasXp = user.xp != null && user.xpMax != null;
     return h('aside', { className: 'sd-side' },
       h('div', { className: 'sd-brand' },
         h('img', { className: 'sd-brand__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' })),
       h('nav', { className: 'sd-nav' },
-        NAV.map((it) => h('button', {
+        navItems.map((it) => h('button', {
           key: it.key, type: 'button',
           className: 'sd-nav__item' + (it.key === active ? ' is-active' : ''),
-          onClick: () => onNav(it),
+          onClick: () => { onNav(it); if (props.onItemClick) props.onItemClick(); },
         },
           h('span', { className: 'sd-nav__ic' }, it.icon ? h(it.icon, { size: 19 }) : null),
           h('span', { className: 'sd-nav__lab' }, it.label),
           it.badge != null ? h('span', { className: 'sd-nav__badge sd-num' }, it.badge) : null,
           it.done ? h('span', { className: 'sd-nav__tick' }, Ic.Check ? h(Ic.Check, { size: 15 }) : '✓') : null))),
-      // профиль
-      h('div', { className: 'sd-prof' },
-        h('div', { className: 'sd-prof__mascot' }, h('img', { src: 'assets/mascot-cut.png', alt: '' })),
-        h('div', { className: 'sd-prof__name' }, USER.name),
-        h('div', { className: 'sd-prof__role' }, USER.role),
-        h('div', { className: 'sd-prof__xp' },
-          h('div', { className: 'sd-prof__xptrack' },
-            h('div', { className: 'sd-prof__xpfill', style: { width: Math.round(USER.xp / USER.xpMax * 100) + '%' } })),
-          h('div', { className: 'sd-prof__xprow' },
-            h('span', { className: 'sd-num' }, USER.xp + ' / ' + USER.xpMax + ' XP'),
-            h('span', { className: 'sd-prof__lvl' }, Ic.Star ? h(Ic.Star, { size: 11 }) : null, 'Уровень ' + USER.lvl)))),
-      h('button', { type: 'button', className: 'sd-help-mini', onClick: () => onNav({ label: 'Куратор' }) },
+      // профиль: у ученика — маскот + XP; у родителя (user.avatar) — инициалы-аватар без XP
+      h('div', { className: 'sd-prof' + (user.avatar ? ' sd-prof--avatar' : '') },
+        user.avatar
+          ? h('div', { className: 'sd-prof__ava' }, user.initials || '')
+          : h('div', { className: 'sd-prof__mascot' }, h('img', { src: user.mascot || 'assets/mascot-cut.png', alt: '' })),
+        h('div', { className: 'sd-prof__b' },
+          h('div', { className: 'sd-prof__name' }, user.name),
+          h('div', { className: 'sd-prof__role' }, user.role),
+          hasXp ? h('div', { className: 'sd-prof__xp' },
+            h('div', { className: 'sd-prof__xptrack' },
+              h('div', { className: 'sd-prof__xpfill', style: { width: Math.round(user.xp / user.xpMax * 100) + '%' } })),
+            h('div', { className: 'sd-prof__xprow' },
+              h('span', { className: 'sd-num' }, user.xp + ' / ' + user.xpMax + ' XP'),
+              h('span', { className: 'sd-prof__lvl' }, Ic.Star ? h(Ic.Star, { size: 11 }) : null, 'Уровень ' + user.lvl))) : null)),
+      h('button', { type: 'button', className: 'sd-help-mini', onClick: () => { onNav({ label: 'Куратор' }); if (props.onItemClick) props.onItemClick(); } },
         h('span', { className: 'sd-help-mini__ic' }, Ic.Chat ? h(Ic.Chat, { size: 15 }) : null),
-        h('span', null, 'Нужна помощь? Напиши куратору')));
+        h('span', null, user.help || 'Нужна помощь? Напиши куратору')));
   }
 
   /* ── TopBar ────────────────────────────────────────────────────────── */
@@ -1497,30 +1571,27 @@
     el.id = 'es-article-css';
     el.textContent = `
     .ar{position:relative;width:100%;max-width:840px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
-      border-radius:30px;font-family:'Manrope','Segoe UI',system-ui,-apple-system,sans-serif;color:#16203B;
-      background:
-        radial-gradient(720px 480px at 88% -10%,rgba(43,143,255,.13),transparent 62%),
-        radial-gradient(560px 400px at -6% 110%,rgba(43,111,224,.07),transparent 60%),
-        linear-gradient(180deg,#FCFDFF 0%,#F6F8FD 62%,#EEF1FA 100%);
-      border:1px solid rgba(255,255,255,.9);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 70px rgba(255,255,255,.4),0 36px 96px rgba(8,16,44,.42),0 2px 8px rgba(8,16,44,.16);
-      -webkit-backdrop-filter:blur(30px) saturate(150%);backdrop-filter:blur(30px) saturate(150%);
+      border-radius:24px;font-family:'Manrope','Segoe UI',system-ui,-apple-system,sans-serif;color:#fff;
+      background:rgba(13,20,46,.58);
+      border:1px solid rgba(120,160,255,.28);
+      box-shadow:0 32px 84px rgba(6,12,36,.5),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 46px rgba(40,110,240,.1);
+      -webkit-backdrop-filter:blur(34px) saturate(150%);backdrop-filter:blur(34px) saturate(150%);
       animation:arRise .3s cubic-bezier(.16,1,.3,1);-webkit-font-smoothing:antialiased;}
     @keyframes arRise{from{transform:translateY(18px);opacity:0}to{transform:translateY(0);opacity:1}}
     .ar *{box-sizing:border-box;}
 
     /* плавающая кнопка закрытия — тихая, поверх листа */
     .ar__x{position:absolute;z-index:6;top:20px;right:20px;width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;
-      color:rgba(22,32,59,.55);background:rgba(255,255,255,.64);border:1px solid rgba(22,32,59,.1);
-      -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px rgba(8,16,44,.1);transition:transform .15s,background .15s,color .15s;}
-    .ar__x:hover{background:#fff;color:#15203B;transform:translateY(-1px);}
+      color:#8B93B8;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);
+      -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);transition:transform .15s,background .15s,color .15s;}
+    .ar__x:hover{background:rgba(255,255,255,.1);color:#fff;transform:translateY(-1px);}
     .ar__x:active{transform:scale(.94);}
 
     /* прокручиваемый лист */
     .ar__body{position:relative;z-index:1;flex:1 1 auto;overflow-y:auto;padding:0;}
     .ar__body::-webkit-scrollbar{width:10px;}
-    .ar__body::-webkit-scrollbar-thumb{background:rgba(22,32,59,.14);border-radius:99px;border:3px solid transparent;background-clip:padding-box;}
-    .ar__body::-webkit-scrollbar-thumb:hover{background:rgba(22,32,59,.24);background-clip:padding-box;}
+    .ar__body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:99px;border:3px solid transparent;background-clip:padding-box;}
+    .ar__body::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.24);background-clip:padding-box;}
 
     /* ══ СИСТЕМА (прописана и соблюдается, всё по сетке design.md) ══════════
        Колонка: 648px, поля 64px — единая левая ось у всех блоков.
@@ -1542,20 +1613,20 @@
        оси; картинки, статы и таблица занимают всю ширину колонки. */
     .ar__kick,.ar__title,.ar__lead,.ar__h,.ar__p,.ar__list,.ar__quote{max-width:620px;}
 
-    .ar__kick{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(22,32,59,.38);}
-    .ar__kick b{color:var(--sd-acc-deep,#2073E6);font-weight:700;}
-    .ar__kick i{width:3px;height:3px;border-radius:99px;background:rgba(22,32,59,.28);}
+    .ar__kick{display:flex;align-items:center;gap:9px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.42);}
+    .ar__kick b{color:#9FCBFF;font-weight:700;}
+    .ar__kick i{width:3px;height:3px;border-radius:99px;background:rgba(255,255,255,.3);}
     .ar__title{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;
-      font-weight:300;font-size:32px;letter-spacing:-.03em;line-height:1.14;color:#15203B;text-wrap:balance;}
+      font-weight:300;font-size:32px;letter-spacing:-.03em;line-height:1.14;color:#fff;text-wrap:balance;}
     .ar__img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:20px;background:#0A1538;
-      border:1px solid rgba(22,32,59,.08);box-shadow:0 26px 64px rgba(8,16,44,.18),inset 0 1px 0 rgba(255,255,255,.4);}
-    .ar__lead{font-size:16px;line-height:1.62;color:rgba(22,32,59,.74);font-weight:400;letter-spacing:-.003em;}
-    .ar__h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;line-height:1.3;color:#15203B;}
-    .ar__p{font-size:15px;line-height:1.72;color:rgba(22,32,59,.76);}
+      border:1px solid rgba(255,255,255,.1);box-shadow:0 26px 64px rgba(6,12,36,.4),inset 0 1px 0 rgba(255,255,255,.14);}
+    .ar__lead{font-size:16px;line-height:1.62;color:rgba(255,255,255,.74);font-weight:400;letter-spacing:-.003em;}
+    .ar__h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;line-height:1.3;color:#fff;}
+    .ar__p{font-size:15px;line-height:1.72;color:rgba(255,255,255,.74);}
     .ar__list{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px;}
-    .ar__li{display:flex;gap:13px;align-items:flex-start;font-size:15px;line-height:1.55;color:rgba(22,32,59,.8);}
-    .ar__li-mk{flex:0 0 24px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;color:var(--sd-acc-deep,#2073E6);margin-top:1px;
-      background:rgba(43,143,255,.1);box-shadow:inset 0 0 0 1px rgba(43,143,255,.2);}
+    .ar__li{display:flex;gap:13px;align-items:flex-start;font-size:15px;line-height:1.55;color:rgba(255,255,255,.8);}
+    .ar__li-mk{flex:0 0 24px;width:24px;height:24px;border-radius:8px;display:grid;place-items:center;color:#9FCBFF;margin-top:1px;
+      background:rgba(43,143,255,.12);box-shadow:inset 0 0 0 1px rgba(43,143,255,.28);}
 
     /* метрики — тройка сапфировых плашек с фирменным внутренним белым свечением
        (та же подпись, что у главной кнопки .sd-btn--primary), числа табличные */
@@ -1569,49 +1640,58 @@
 
     /* вторая картинка с подписью */
     .ar__fig img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:50% 32%;border-radius:16px;background:#0A1538;
-      border:1px solid rgba(22,32,59,.08);box-shadow:0 20px 50px rgba(8,16,44,.15),inset 0 1px 0 rgba(255,255,255,.35);}
-    .ar__fig figcaption{margin:12px auto 0;max-width:52ch;text-align:center;font-size:13px;line-height:1.5;color:rgba(22,32,59,.46);}
+      border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 50px rgba(6,12,36,.4),inset 0 1px 0 rgba(255,255,255,.12);}
+    .ar__fig figcaption{margin:12px auto 0;max-width:52ch;text-align:center;font-size:13px;line-height:1.5;color:rgba(255,255,255,.5);}
 
     /* таблица-сравнение — стеклянная, тонкие полупрозрачные разделители */
-    .ar__tablewrap{border-radius:16px;overflow:hidden;border:1px solid rgba(22,32,59,.1);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 14px 36px rgba(8,16,44,.07);
-      background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(244,247,255,.42));-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+    .ar__tablewrap{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.1);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 14px 36px rgba(6,12,36,.2);
+      background:rgba(255,255,255,.03);}
     .ar__table{width:100%;border-collapse:collapse;font-size:14px;}
-    .ar__table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(22,32,59,.5);padding:13px 18px;}
-    .ar__table thead tr{background:rgba(43,111,224,.06);}
-    .ar__table th:nth-child(2){color:var(--sd-acc-deep,#2073E6);}
-    .ar__table td{padding:13px 18px;border-top:1px solid rgba(22,32,59,.08);color:rgba(22,32,59,.78);vertical-align:top;line-height:1.45;}
-    .ar__table td:first-child{font-weight:600;color:#15203B;}
-    .ar__table td:nth-child(2){color:#173a78;font-weight:500;}
-    .ar__table tbody tr:nth-child(odd){background:rgba(255,255,255,.28);}
+    .ar__table th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.5);padding:13px 18px;}
+    .ar__table thead tr{background:rgba(43,143,255,.1);}
+    .ar__table th:nth-child(2){color:#9FCBFF;}
+    .ar__table td{padding:13px 18px;border-top:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.78);vertical-align:top;line-height:1.45;}
+    .ar__table td:first-child{font-weight:600;color:#fff;}
+    .ar__table td:nth-child(2){color:#9FCBFF;font-weight:500;}
+    .ar__table tbody tr:nth-child(odd){background:rgba(255,255,255,.03);}
 
     .ar__tip{display:flex;gap:14px;align-items:flex-start;padding:18px 20px;border-radius:12px;
-      background:linear-gradient(150deg,rgba(43,143,255,.09),rgba(43,143,255,.03));border:1px solid rgba(43,143,255,.2);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+      background:rgba(43,143,255,.08);border:1px solid rgba(43,143,255,.22);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
     .ar__tip-ic{flex:0 0 34px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;margin-top:1px;
       background:linear-gradient(150deg,#5CB4FF,#2073E6);box-shadow:inset 0 0 12px rgba(175,215,255,.6),0 5px 14px rgba(43,143,255,.28);}
-    .ar__tip-tx{flex:1 1 auto;min-width:0;font-size:14.5px;line-height:1.6;color:rgba(22,32,59,.8);}
+    .ar__tip-tx{flex:1 1 auto;min-width:0;font-size:14.5px;line-height:1.6;color:rgba(255,255,255,.8);}
     .ar__quote{position:relative;padding:4px 0 4px 22px;border-left:3px solid #2B8FFF;
-      font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-size:19px;font-weight:300;line-height:1.45;letter-spacing:-.015em;color:#1B2747;text-wrap:balance;}
+      font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-size:19px;font-weight:300;line-height:1.45;letter-spacing:-.015em;color:#EAF0FF;text-wrap:balance;}
 
     /* «Читать дальше» — карточки других материалов на всю ширину колонки */
-    .ar__more{margin-top:60px;padding-top:34px;border-top:1px solid rgba(22,32,59,.09);}
-    .ar__more-h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;color:#15203B;margin-bottom:18px;}
+    .ar__more{margin-top:60px;padding-top:34px;border-top:1px solid rgba(255,255,255,.09);}
+    .ar__more-h{font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Onest',system-ui,sans-serif;font-weight:600;font-size:19px;letter-spacing:-.015em;color:#fff;margin-bottom:18px;}
     .ar__more-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-    .ar__more-card{display:flex;flex-direction:column;text-align:left;cursor:pointer;font-family:inherit;padding:0;overflow:hidden;
-      border-radius:16px;background:linear-gradient(160deg,rgba(255,255,255,.7),rgba(244,247,255,.46));
-      border:1px solid rgba(43,111,224,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 26px rgba(8,16,44,.06);
-      transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s,border-color .2s;}
-    .ar__more-card:hover{transform:translateY(-3px);border-color:rgba(43,143,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 18px 40px rgba(43,90,200,.12);}
-    .ar__more-thumb{position:relative;width:100%;aspect-ratio:16/10;overflow:hidden;background:#0A1538;}
-    .ar__more-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1);}
-    .ar__more-card:hover .ar__more-thumb img{transform:scale(1.06);}
-    .ar__more-thumb__tint{position:absolute;inset:0;background:radial-gradient(85% 70% at 28% 16%,rgba(43,143,255,.2),transparent 70%);}
-    .ar__more-cap{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sd-acc-deep,#2073E6);padding:14px 15px 0;}
-    .ar__more-title{font-size:14px;font-weight:600;color:#15203B;letter-spacing:-.2px;line-height:1.34;padding:6px 15px 0;
-      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    .ar__more-meta{display:flex;align-items:center;gap:7px;padding:9px 15px 15px;margin-top:auto;font-size:11.5px;font-weight:500;color:rgba(22,32,59,.5);font-variant-numeric:tabular-nums;}
-    .ar__more-meta svg{color:rgba(43,111,224,.7);}
+    /* full-bleed карточка как на главной (#/student · .kb-c): картинка на весь размер + скрим + чип + заголовок + стеклянная стрелка */
+    .ar__more-card{position:relative;overflow:hidden;cursor:pointer;text-align:left;font-family:inherit;padding:0;border:0;width:100%;
+      aspect-ratio:1/1;border-radius:18px;background:#070E2A;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 14px 36px rgba(6,12,36,.22);
+      transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s;}
+    .ar__more-card:hover{transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 24px 52px rgba(6,12,36,.42);}
+    .ar__more-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
+    .ar__more-card:hover .ar__more-img{transform:scale(1.05);}
+    .ar__more-scrim{position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(180deg,rgba(5,10,28,.5) 0%,rgba(5,10,28,.06) 30%,rgba(5,10,28,.24) 56%,rgba(5,10,28,.86) 100%),rgba(5,10,28,.2);}
+    .ar__more-b{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:space-between;padding:15px 16px;}
+    .ar__more-chip{align-self:flex-start;display:inline-flex;align-items:center;border-radius:8px;font-size:10.5px;font-weight:600;color:#fff;padding:4px 11px;
+      -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);text-shadow:0 1px 2px rgba(4,9,28,.4);}
+    .ar__more-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
+    .ar__more-ttl{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px;line-height:1.26;text-wrap:balance;
+      text-shadow:0 2px 14px rgba(4,9,28,.66),0 1px 3px rgba(4,9,28,.5);
+      display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+    .ar__more-sq{flex:0 0 auto;display:grid;place-items:center;width:34px;height:34px;border-radius:11px;color:#fff;
+      background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);
+      transition:transform .18s,background .18s;}
+    .ar__more-sq svg{transform:rotate(-45deg);transition:transform .2s;}
+    .ar__more-card:hover .ar__more-sq{transform:translateY(-2px);background:rgba(255,255,255,.22);}
+    .ar__more-card:hover .ar__more-sq svg{transform:rotate(-45deg) translate(1.5px,-1.5px);}
 
     @media (prefers-reduced-motion: reduce){ .ar{animation:none;} }
     @media (max-width:760px){
@@ -1633,6 +1713,7 @@
     const body = a.body && a.body.length ? a.body : [{ type: 'p', text: 'Скоро здесь будет полный текст статьи.' }];
     const check = Ic.Check ? h(Ic.Check, { size: 14, strokeWidth: 2.6 }) : '✓';
     const clock = (s) => Ic.Clock ? h(Ic.Clock, { size: s || 12 }) : null;
+    const hexA = (hex, al) => { const n = parseInt((hex || '#2B8FFF').slice(1), 16); return 'rgba(' + ((n >> 16) & 255) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + al + ')'; };
     const block = (b, i) => {
       if (typeof b === 'string') return h('p', { className: 'ar__p', key: i }, b);
       switch (b.type) {
@@ -1670,11 +1751,13 @@
             h('div', { className: 'ar__more-h' }, 'Читать дальше'),
             h('div', { className: 'ar__more-cards' },
               more.map((m, i) => h('button', { key: i, type: 'button', className: 'ar__more-card', onClick: () => openArticle(m, all) },
-                h('span', { className: 'ar__more-thumb' },
-                  h('img', { src: m.image, alt: '', style: { objectPosition: m.thumbPos || '50% 42%' } }),
-                  h('span', { className: 'ar__more-thumb__tint' })),
-                h('span', { className: 'ar__more-cap' }, m.cap),
-                h('span', { className: 'ar__more-title' }, m.title))))) : null)));
+                h('img', { className: 'ar__more-img', src: m.image, alt: '', style: { objectPosition: m.thumbPos || '50% 42%' } }),
+                h('span', { className: 'ar__more-scrim' }),
+                h('span', { className: 'ar__more-b' },
+                  h('span', { className: 'ar__more-chip', style: { background: hexA(m.tint, .30), borderColor: hexA(m.tint, .44) } }, m.cap),
+                  h('span', { className: 'ar__more-foot' },
+                    h('span', { className: 'ar__more-ttl' }, m.title),
+                    h('span', { className: 'ar__more-sq' }, Ic.ArrowRight ? h(Ic.ArrowRight, { size: 16 }) : '→'))))))) : null)));
   }
 
   function TaskModal(props) {
@@ -1728,7 +1811,7 @@
 
   /* ── Shell — каркас страницы ученика ───────────────────────────────── */
   // props: active (ключ нав), surface ('light'|'dark'), title, sub, children
-  function Footer() {
+  function Footer(props) {
     const goto = (to) => (e) => { e.preventDefault(); nav(to); };
     const col = (title, items) => h('div', { className: 'sd-foot__col' },
       h('h4', null, title),
@@ -1739,7 +1822,7 @@
           h('div', { className: 'sd-foot__brand' },
             h('img', { className: 'sd-foot__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' }),
             h('p', { className: 'sd-foot__tag' }, 'Спокойный путь к поступлению в университет Китая — от диагностики до заселения, рядом на каждом шаге.')),
-          col('Платформа', [
+          col('Платформа', props.links || [
             { label: 'Главная', to: '/student' },
             { label: 'Мой путь', to: '/student' },
             { label: 'Документы', to: '/documents' },
@@ -1762,19 +1845,134 @@
 
   function Shell(props) {
     const surface = props.surface === 'dark' ? 'dark' : 'light';
-    return h('div', { className: 'sd-app' },
-      h(Sidebar, { active: props.active }),
+    const appRef = useRef(null);
+    const ctrl = useRef(null);   // { open, close } — заполняется жестовым контроллером
+
+    /* ── Жестовый push-drawer «как в X»: контент сжимается в скруглённую карту,
+       уезжает вправо поверх тёмного фона, слева открывается рейл. Свайп от левого
+       края открывает, свайп по карте — закрывает. Трансформ пишем инлайном (rAF-free),
+       CSS только раскладка. Хаптик через navigator.vibrate (Android; iOS игнорит). ── */
+    useEffect(() => {
+      const app = appRef.current;
+      if (!app || typeof window === 'undefined') return;
+      const mq = window.matchMedia('(max-width: 980px)');
+      const card = () => app.querySelector(':scope > .sd-scroll') || app.querySelector(':scope > .sd-main');
+      const inner = () => app.querySelector('.sd-shift__in');
+      const menuEl = () => app.querySelector('.sd-pushmenu');
+      const MW = () => Math.min(window.innerWidth * 0.84, 328);
+      let isOpen = false, active = false, dragging = false, axis = 0, sx = 0, sy = 0, scrollY = 0, prog = 0, vibed = false;
+      const buzz = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
+
+      function enter() {
+        if (active) return;
+        scrollY = window.scrollY || window.pageYOffset || 0;
+        app.classList.add('is-drawer');
+        const inn = inner(); if (inn) inn.style.transform = 'translateY(' + (-scrollY) + 'px)';
+        document.body.style.overflow = 'hidden';
+        active = true;
+        render(prog, false);
+      }
+      function leave() {
+        if (!active) return;
+        app.classList.remove('is-drawer');
+        const c = card(), inn = inner(), m = menuEl();
+        if (c) { c.style.transition = ''; c.style.transform = ''; c.style.borderRadius = ''; c.style.boxShadow = ''; }
+        if (inn) inn.style.transform = '';
+        if (m) { m.style.transition = ''; m.style.transform = ''; m.style.opacity = ''; }
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+        active = false; prog = 0;
+      }
+      function render(p, anim) {
+        const c = card(); if (!c) return;
+        p = p < 0 ? 0 : p > 1 ? 1 : p; prog = p;
+        const mw = MW(), m = menuEl();
+        const isCard = c.classList.contains('sd-scroll');
+        c.style.transition = anim ? 'transform .4s cubic-bezier(.32,.72,0,1),border-radius .4s,box-shadow .4s' : 'none';
+        if (isCard) {
+          c.style.transform = 'translateX(' + (p * mw).toFixed(1) + 'px) scale(' + (1 - p * 0.1).toFixed(3) + ')';
+          c.style.borderRadius = (p * 30).toFixed(1) + 'px';
+          c.style.boxShadow = p > 0.008 ? '-28px 0 80px rgba(2,6,20,' + (0.6 * p).toFixed(2) + ')' : 'none';
+        } else {
+          c.style.transform = 'translateX(' + (p * mw).toFixed(1) + 'px)';
+          c.style.boxShadow = p > 0.008 ? '-20px 0 56px rgba(2,6,20,' + (0.6 * p).toFixed(2) + ')' : 'none';
+        }
+        if (m) {
+          m.style.transition = anim ? 'transform .4s cubic-bezier(.32,.72,0,1),opacity .4s' : 'none';
+          m.style.transform = 'translateX(' + (-(1 - p) * 24).toFixed(1) + 'px)';
+          m.style.opacity = (0.55 + 0.45 * p).toFixed(3);
+        }
+      }
+      function open() { if (!mq.matches) return; enter(); requestAnimationFrame(() => render(1, true)); isOpen = true; buzz(10); }
+      function close() { if (!active) { isOpen = false; return; } render(0, true); isOpen = false; buzz(7); setTimeout(() => { if (!dragging && prog === 0) leave(); }, 420); }
+      ctrl.current = { open: open, close: close };
+
+      function onStart(e) {
+        if (!mq.matches) return;
+        const t = e.touches ? e.touches[0] : e; sx = t.clientX; sy = t.clientY; axis = 0; vibed = false;
+        dragging = isOpen || sx <= 26;   // открыто — тянем откуда угодно; закрыто — только от левого края
+      }
+      function onMove(e) {
+        if (!dragging || !mq.matches) return;
+        const t = e.touches ? e.touches[0] : e; const dx = t.clientX - sx, dy = t.clientY - sy;
+        if (!axis) {
+          if (Math.abs(dx) > Math.abs(dy) + 4) { axis = 1; if (!isOpen) enter(); }
+          else if (Math.abs(dy) > Math.abs(dx) + 4) { axis = -1; dragging = false; return; }
+          else return;
+        }
+        if (axis !== 1) return;
+        if (e.cancelable) e.preventDefault();
+        let p = isOpen ? 1 + dx / MW() : dx / MW();
+        p = p < 0 ? 0 : p > 1 ? 1 : p;
+        if (!vibed && ((isOpen && p < 0.5) || (!isOpen && p > 0.5))) { buzz(5); vibed = true; }
+        render(p, false);
+      }
+      function onEnd() {
+        if (!dragging) return; dragging = false;
+        if (axis !== 1) return;
+        if (prog > (isOpen ? 0.62 : 0.4)) { render(1, true); if (!isOpen) buzz(9); isOpen = true; }
+        else { render(0, true); isOpen = false; setTimeout(() => { if (!dragging && prog === 0) leave(); }, 420); }
+      }
+      const pv = { passive: false };
+      document.addEventListener('touchstart', onStart, { passive: true });
+      document.addEventListener('touchmove', onMove, pv);
+      document.addEventListener('touchend', onEnd, { passive: true });
+      document.addEventListener('touchcancel', onEnd, { passive: true });
+      const onHash = () => { if (isOpen) close(); };
+      window.addEventListener('hashchange', onHash);
+      return () => {
+        document.removeEventListener('touchstart', onStart);
+        document.removeEventListener('touchmove', onMove, pv);
+        document.removeEventListener('touchend', onEnd);
+        document.removeEventListener('touchcancel', onEnd);
+        window.removeEventListener('hashchange', onHash);
+        leave();
+      };
+    }, []);
+
+    const closeMenu = () => { if (ctrl.current) ctrl.current.close(); };
+    const inShift = (kids) => h('div', { className: 'sd-shift__in' }, kids);
+    const catcher = h('div', { className: 'sd-pushcatch', onClick: closeMenu, 'aria-label': 'Закрыть меню' });
+    const bar = props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello });
+
+    return h('div', { className: 'sd-app', ref: appRef },
+      h(Sidebar, { active: props.active, nav: props.nav, user: props.user }),
+      // push-меню (мобилка): тёмный рейл под картой контента, открывается её сдвигом
+      h('aside', { className: 'sd-pushmenu' },
+        h(Sidebar, { active: props.active, nav: props.nav, user: props.user, onItemClick: closeMenu })),
+      // плавающая кнопка-бургер (без шапки) — только мобилка
+      h('button', { type: 'button', className: 'sd-burger', onClick: () => ctrl.current && ctrl.current.open(), 'aria-label': 'Открыть меню' },
+        Ic.Menu ? h(Ic.Menu, { size: 21 }) : '≡'),
       props.footer
         ? h('div', { className: 'sd-scroll' },
-            h('div', { className: 'sd-main sd-main--' + surface + ' sd-main--inflow' },
-              h('div', { className: 'sd-wrap' },
-                props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
-                props.children)),
-            h(Footer, null))
+            inShift([
+              h('div', { key: 'm', className: 'sd-main sd-main--' + surface + ' sd-main--inflow' },
+                h('div', { className: 'sd-wrap' }, bar, props.children)),
+              h(Footer, { key: 'f', links: props.footerLinks })]),
+            catcher)
         : h('div', { className: 'sd-main sd-main--' + surface },
-            h('div', { className: 'sd-wrap' },
-              props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
-              props.children)),
+            inShift(h('div', { className: 'sd-wrap' }, bar, props.children)),
+            catcher),
       h('button', { type: 'button', className: 'lr-aifab', onClick: () => openChat(), 'aria-label': 'Спросить AI-наставника' },
         h('span', { className: 'lr-aifab__ic' },
           h('span', { className: 'lr-aifab__pulse', 'aria-hidden': 'true' }),

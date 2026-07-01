@@ -395,7 +395,7 @@
   function TeacherDoor() {
     return h('div', { className: 'lh-teacher' },
       'Вы преподаватель?',
-      h('button', { type: 'button', onClick: () => nav('/learn/build') }, Ic.Edit ? h(Ic.Edit, { size: 14 }) : null, 'Открыть конструктор урока'));
+      h('button', { type: 'button', onClick: () => nav('/learn/lessons') }, Ic.Edit ? h(Ic.Edit, { size: 14 }) : null, 'Библиотека уроков'));
   }
 
   function LearnHub() {

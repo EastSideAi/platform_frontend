@@ -2,5 +2,8 @@
   "framework": null,
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "outputDirectory": "dist"
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/kb/:path*", "destination": "https://eastside-bot-kb-bot.up.railway.app/kb/:path*" }
+  ]
 }

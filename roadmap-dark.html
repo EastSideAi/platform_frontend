@@ -210,6 +210,33 @@
   .node.goal.sel .tag .n { background: var(--star-2); color: #3A2A07; }
 
   @media (prefers-reduced-motion: reduce) { .card, .close, .node { transition: opacity 1ms; } }
+
+  /* ── ТЕЛЕФОН (портрет): окно во весь экран, гора прижата К ВЕРХУ, карточка
+     этапа — нижний лист (bottom sheet). Гору вверх двигает placeMarks() —
+     offY=0 + preserveAspectRatio "xMidYMin" (см. JS ниже). ── */
+  @media (max-width: 560px) {
+    .popup { width: 100vw; height: 100dvh; aspect-ratio: auto; border-radius: 0; border: 0; }
+    .close { top: 14px; right: 14px; width: 38px; height: 38px; }
+    .card { top: auto; bottom: 0; left: 0; right: 0; width: auto; max-width: none;
+      height: auto; max-height: 62vh; border-radius: 22px 22px 0 0;
+      padding: 20px 20px calc(16px + env(safe-area-inset-bottom));
+      background: linear-gradient(180deg, rgba(8,16,42,0.94), rgba(4,8,22,0.97));
+      border: 1px solid var(--line-strong); border-bottom: 0;
+      box-shadow: 0 -22px 60px rgba(0,1,8,0.6); }
+    .c-title { font-size: 23px; }
+    .c-lead { margin-top: 12px; font-size: 13.5px; line-height: 1.55; max-width: none; }
+    .c-points { margin-top: 18px; }
+    .c-result { margin-top: 16px; }
+    .foot { margin-top: 16px; }
+    /* подписи этапов уводились вбок и резались за краем узкого экрана — на телефоне
+       оставляем компактный номер-чип, название этапа даёт карточка снизу */
+    .node .tag .t { display: none; }
+    .node .tag { padding: 5px; gap: 0; }
+    .node .tag::before { display: none; }
+    .node.r .tag { left: 11px; }
+    .node.l .tag { right: 11px; }
+    .node .tag .n { width: 21px; height: 21px; font-size: 12px; }
+  }
   /* ── Мягкая смена страниц: тихий кроссфейд (без «странного» блюра). Где
      cross-document VT не поддержан — мгновенно, без регрессии. */
   ::view-transition-old(root){ animation: vtFadeOut .26s ease both; }
@@ -219,61 +246,20 @@
   @media (prefers-reduced-motion: reduce) {
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   }
-  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
-     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
-     на новой странице уходит влево, открывая её. Назад — зеркально. Только
-     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
-  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
-    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
-    transform: translateX(0); will-change: transform;
-    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
-  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
-  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
-  html.pt-back #pt{ animation-name: ptEnterBack; }
-  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
+
 </style>
 
 <script>
 (function(){
   try{ history.scrollRestoration='manual'; }catch(e){}
-  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
-  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
-  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.esGo = function(url, replace, dir){
-    var go = function(){ replace ? location.replace(url) : (location.href = url); };
-    var pt = document.getElementById('pt');
-    if (RM || !pt){ go(); return; }
-    dir = dir === 'back' ? 'back' : 'fwd';
-    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
-    pt.style.animation = 'none';
-    pt.style.transition = 'none';
-    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
-    void pt.offsetWidth;
-    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
-    pt.style.transform = 'translateX(0)';
-    setTimeout(go, 320);
-  };
-  document.addEventListener('click', function(e){
-    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
-    var href = a.getAttribute('href') || '';
-    if (!href || href.charAt(0) === '#') return;
-    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
-    if (!/\.html(\?|#|$)/.test(href)) return;
-    e.preventDefault();
-    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
-    window.esGo(href, false, back ? 'back' : 'fwd');
-  }, true);
-  addEventListener('pageshow', function(e){
-    try{ scrollTo(0,0); }catch(_){}
-    var pt = document.getElementById('pt');
-    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
-  });
+  // никакого накрывающего перехода — страницы «появляются» своими reveal-анимациями,
+  // старая держится браузером до отрисовки новой (без тёмного экрана на загрузке)
+  window.esGo = function(url, replace){ replace ? location.replace(url) : (location.href = url); };
+  addEventListener('pageshow', function(){ try{ scrollTo(0,0); }catch(e){} });
 })();
 </script>
 </head>
 <body>
-<div id="pt" aria-hidden="true"></div>
 <div class="popup" id="popup">
   <div class="stage" id="stage">
     <svg class="scene" id="svg" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet">
@@ -420,7 +406,10 @@ function placeMarks() {
   const pr = $('popup').getBoundingClientRect();
   const scale = Math.min(pr.width / IMG_W, pr.height / IMG_H);
   const offX = (pr.width - IMG_W * scale) / 2;
-  const offY = (pr.height - IMG_H * scale) / 2;
+  // телефон-портрет: гору прижимаем к верху (карточка — нижний лист), иначе центр
+  const portrait = pr.height > pr.width && pr.width <= 560;
+  svg.setAttribute('preserveAspectRatio', portrait ? 'xMidYMin meet' : 'xMidYMid meet');
+  const offY = portrait ? 0 : (pr.height - IMG_H * scale) / 2;
   STAGES.forEach((s, i) => {
     const n = s.nudge || [0, 0];
     nodes[i].style.left = (offX + (s.pos[0] + n[0]) * scale) + 'px';

@@ -34,6 +34,10 @@
   <script>
     // TODO: вписать боевой URL API при деплое (РФ-хостинг). Пусто = mock-режим.
     window.ES_API_BASE = '';
+    // База AI-ассистента (бот EastSide, /kb/ask). Пусто = same-origin: браузер
+    // бьёт по /kb/* своего домена, а прокси (Vite dev / vercel.json rewrites)
+    // server-side ходит на бота. Так CORS бота не нужен вовсе.
+    window.ES_BOT_BASE = '';
   </script>
 </head>
 <body>

@@ -27,8 +27,8 @@
     --lx-acc:#2073E6; --lx-acc-2:#5CB4FF; --lx-acc-deep:#1E63C2; --lx-acc-ink:#1763C8;
     --lx-acc-soft:rgba(43,143,255,.10); --lx-acc-line:rgba(43,143,255,.40);
     --lx-ink:#15203B; --lx-ink-sub:rgba(21,32,59,.62); --lx-ink-mute:rgba(21,32,59,.44);
-    --lx-jade:#1C7E52; --lx-jade-soft:#E2F4EA; --lx-jade-line:rgba(46,160,110,.5);
-    --lx-rose:#B23B2A; --lx-rose-soft:#FBE7E2; --lx-rose-line:rgba(210,96,79,.5);
+    --lx-jade:#0E9F6E; --lx-jade-soft:#E2F4EA; --lx-jade-line:rgba(16,185,120,.5);
+    --lx-rose:#E5484D; --lx-rose-soft:#FBE7E2; --lx-rose-line:rgba(240,84,72,.5);
     --lx-gold:#E2A52E;
     font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;
   }
@@ -38,6 +38,14 @@
   .lx-kick{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--lx-acc-ink);
     background:var(--lx-acc-soft);padding:6px 12px 6px 10px;border-radius:99px;margin-bottom:16px;}
   .lx-kick svg{display:inline-flex;}
+  /* единая шапка задания: иконка-тайл + инструкция (одна строка, без дубля-eyebrow) */
+  .lx-head{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .lx-head.has-sub{align-items:flex-start;}
+  .lx-head__ic{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 14px rgba(43,143,255,.55),inset 0 0 3px rgba(160,205,255,.5);}
+  .lx-head.has-sub .lx-head__ic{margin-top:1px;}
+  .lx-head__tx{flex:1 1 auto;min-width:0;}
+  .lx-head__t{min-width:0;font-family:var(--le-display,inherit);font-weight:600;font-size:20px;letter-spacing:-.02em;line-height:1.22;color:var(--lx-ink);text-wrap:balance;}
+  .lx-head__s{margin-top:3px;font-size:13.5px;font-weight:500;line-height:1.4;letter-spacing:-.01em;color:var(--lx-ink-sub);}
 
   /* ── Теория ─────────────────────────────────────────────────────────────── */
   .lx-theory__t{font-weight:600;font-size:22px;letter-spacing:-.4px;line-height:1.2;color:var(--lx-ink);text-wrap:balance;}
@@ -61,28 +69,29 @@
   .lx-opts{display:flex;flex-direction:column;gap:10px;margin-top:22px;}
   .lx-opts--wrap{flex-direction:row;flex-wrap:wrap;gap:10px;margin-top:18px;}
   .lx-opt{position:relative;display:flex;align-items:center;gap:14px;width:100%;text-align:left;cursor:pointer;
-    padding:15px 16px;border-radius:16px;background:#fff;border:1.5px solid rgba(22,32,59,.09);
-    box-shadow:0 1px 2px rgba(18,28,58,.03);color:var(--lx-ink);
+    padding:16px 17px;border-radius:16px;background:rgba(255,255,255,.55);border:1px solid rgba(22,32,59,.09);color:var(--lx-ink);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s,background .15s,box-shadow .15s;}
   .lx-opts--wrap .lx-opt{width:auto;flex:0 0 auto;}
-  .lx-opt:hover:not(.is-locked){border-color:var(--lx-acc-line);transform:translateY(-2px);box-shadow:0 12px 26px -16px rgba(32,90,200,.4);}
-  .lx-opt:hover:not(.is-locked):not(.is-sel) .lx-opt__mk{color:var(--lx-acc-deep);background:var(--lx-acc-soft);}
-  .lx-opt:active:not(.is-locked){transform:translateY(0) scale(.99);}
-  .lx-opt__mk{flex:0 0 34px;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;
-    color:var(--lx-ink-mute);background:rgba(22,32,59,.05);transition:all .15s;}
+  .lx-opt:hover:not(.is-locked){border-color:rgba(43,143,255,.4);background:rgba(255,255,255,.72);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 28px rgba(43,143,255,.08);}
+  .lx-opt:active:not(.is-locked){transform:scale(.98);}
+  .lx-opt.is-sel{transform:translateY(-1px);}
+  @keyframes lx-pop{0%{transform:scale(1);}42%{transform:scale(1.018);}100%{transform:scale(1);}}
+  @keyframes lx-badgepop{0%{transform:scale(.4);}62%{transform:scale(1.18);}100%{transform:scale(1);}}
+  .lx-opt__mk{flex:0 0 36px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:14px;font-weight:700;
+    color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 12px rgba(43,143,255,.45),inset 0 0 3px rgba(160,205,255,.5);transition:all .15s;}
   .lx-opt__t{flex:1 1 auto;font-size:17px;font-weight:600;letter-spacing:-.2px;}
   .lx-opt__fb{flex:0 0 auto;display:none;}
-  .lx-opt.is-sel{border-color:var(--lx-acc);background:var(--lx-acc-soft);
-    box-shadow:inset 0 0 0 1px var(--lx-acc),0 10px 24px -12px rgba(43,143,255,.4);}
-  .lx-opt.is-sel .lx-opt__mk{color:#fff;background:var(--lx-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.3);}
+  .lx-opt.is-sel{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 32px rgba(43,143,255,.24),inset 0 0 8px rgba(43,143,255,.14);}
+  .lx-opt.is-sel .lx-opt__mk{color:#fff;background:#2073E6;box-shadow:inset 0 0 14px rgba(120,190,255,.9),inset 0 1px 0 rgba(255,255,255,.3);animation:lx-badgepop .34s cubic-bezier(.23,1,.32,1);}
   .lx-opt.is-sel .lx-opt__t{color:var(--lx-acc-deep);}
   .lx-opt.is-locked{cursor:default;}
-  .lx-opt.is-correct{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);}
-  .lx-opt.is-correct .lx-opt__mk{color:#fff;background:var(--lx-jade);box-shadow:none;}
+  .lx-opt.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.1);box-shadow:inset 0 0 34px rgba(16,185,120,.24),inset 0 0 9px rgba(16,185,120,.14);animation:lx-pop .42s cubic-bezier(.23,1,.32,1);}
+  .lx-opt.is-correct .lx-opt__mk{color:#fff;background:#0E9F6E;box-shadow:inset 0 0 12px rgba(120,235,180,.7),inset 0 1px 0 rgba(255,255,255,.25);}
   .lx-opt.is-correct .lx-opt__t{color:var(--lx-jade);}
   .lx-opt.is-correct .lx-opt__fb{display:inline-flex;color:var(--lx-jade);}
-  .lx-opt.is-wrong{border-color:var(--lx-rose-line);background:var(--lx-rose-soft);animation:lx-shake .32s cubic-bezier(.36,.07,.19,.97);}
-  .lx-opt.is-wrong .lx-opt__mk{color:#fff;background:var(--lx-rose);box-shadow:none;}
+  .lx-opt.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 32px rgba(240,84,72,.18),inset 0 0 8px rgba(240,84,72,.1);animation:lx-shake .32s cubic-bezier(.36,.07,.19,.97);}
+  .lx-opt.is-wrong .lx-opt__mk{color:#fff;background:#E5484D;box-shadow:inset 0 0 12px rgba(250,165,150,.6),inset 0 1px 0 rgba(255,255,255,.2);}
   .lx-opt.is-wrong .lx-opt__t{color:var(--lx-rose);}
   .lx-opt.is-wrong .lx-opt__fb{display:inline-flex;color:var(--lx-rose);}
   .lx-opt.is-dim{opacity:.5;}
@@ -93,32 +102,32 @@
   .lx-slot{display:inline-flex;align-items:center;justify-content:center;min-width:96px;height:38px;padding:0 14px;margin:0 4px;vertical-align:middle;
     border-radius:11px;border:1.5px dashed var(--lx-acc-line);background:var(--lx-acc-soft);color:var(--lx-acc-ink);font-weight:700;
     transition:all .15s;}
-  .lx-slot.filled{border-style:solid;background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(238,244,255,.8));box-shadow:inset 0 0 16px rgba(43,143,255,.1);}
-  .lx-slot.ok{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);color:var(--lx-jade);}
-  .lx-slot.bad{border-color:var(--lx-rose-line);background:var(--lx-rose-soft);color:var(--lx-rose);}
+  .lx-slot.filled{border-style:solid;border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 22px rgba(43,143,255,.2),inset 0 0 6px rgba(43,143,255,.13);}
+  .lx-slot.ok{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.1);color:var(--lx-jade);box-shadow:inset 0 0 20px rgba(16,185,120,.2);}
+  .lx-slot.bad{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.09);color:var(--lx-rose);box-shadow:inset 0 0 20px rgba(240,84,72,.18);}
 
   /* ── Пары (match) ───────────────────────────────────────────────────────── */
-  .lx-match{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-top:22px;}
-  .lx-mcol{display:flex;flex-direction:column;gap:10px;}
-  .lx-mcol__h{align-self:flex-start;font-size:11px;font-weight:700;color:var(--lx-acc-ink);background:var(--lx-acc-soft);padding:4px 10px;border-radius:99px;margin-bottom:2px;}
-  .lx-mi{position:relative;display:flex;align-items:center;gap:10px;cursor:pointer;padding:13px 14px;border-radius:14px;min-height:54px;
-    background:#fff;border:1.5px solid rgba(22,32,59,.09);box-shadow:0 1px 2px rgba(18,28,58,.03);
+  .lx-match{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-top:18px;}
+  .lx-mcol{display:flex;flex-direction:column;gap:12px;}
+  .lx-mcol__h{align-self:flex-start;font-size:12.5px;font-weight:600;color:var(--lx-ink-mute);letter-spacing:-.01em;padding:0 2px;margin-bottom:2px;}
+  .lx-mi{position:relative;display:flex;align-items:center;gap:10px;cursor:pointer;padding:14px 15px;border-radius:15px;min-height:60px;
+    background:rgba(255,255,255,.55);border:1px solid rgba(22,32,59,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s,background .15s,box-shadow .15s;}
-  .lx-mi:hover:not(.is-locked){border-color:var(--lx-acc-line);transform:translateY(-2px);box-shadow:0 12px 26px -16px rgba(32,90,200,.4);}
+  .lx-mi:active:not(.is-locked){transform:scale(.975);}
+  .lx-mi:hover:not(.is-locked){border-color:rgba(43,143,255,.4);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 24px rgba(43,143,255,.07);}
   .lx-mi__t{flex:1 1 auto;font-size:16px;font-weight:600;color:var(--lx-ink);letter-spacing:-.2px;}
   .lx-mcol--l .lx-mi{justify-content:center;background:linear-gradient(180deg,rgba(43,143,255,.06),rgba(43,143,255,.02));}
   .lx-mcol--l .lx-mi__t{flex:0 0 auto;font-family:var(--le-display,inherit);font-size:24px;color:var(--lx-acc-deep);letter-spacing:1px;}
-  .lx-mi__b{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;
-    color:#fff;font-variant-numeric:tabular-nums;opacity:0;transform:scale(.6);transition:opacity .15s,transform .18s cubic-bezier(.23,1,.32,1);}
+  .lx-mi__b{flex:0 0 auto;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;
+    color:#fff;font-variant-numeric:tabular-nums;opacity:0;transform:scale(.6);box-shadow:inset 0 0 10px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);transition:opacity .15s,transform .18s cubic-bezier(.23,1,.32,1);}
   .lx-mcol--l .lx-mi__b{position:absolute;top:8px;right:8px;}
-  .lx-mi.has-b .lx-mi__b{opacity:1;transform:none;}
-  .lx-mi.is-active{border-color:var(--lx-acc-line);background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(238,244,255,.86));
-    box-shadow:inset 0 0 0 1px var(--lx-acc-line),inset 0 0 26px rgba(43,143,255,.12);}
-  .lx-mi.is-matched{border-color:var(--lx-acc-line);background:rgba(238,244,255,.6);}
+  .lx-mi.has-b .lx-mi__b{opacity:1;transform:none;animation:lx-badgepop .34s cubic-bezier(.23,1,.32,1);}
+  .lx-mi.is-active{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 30px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13);}
+  .lx-mi.is-matched{border-color:rgba(43,143,255,.4);background:rgba(255,255,255,.66);box-shadow:inset 0 0 24px rgba(43,143,255,.14),inset 0 0 6px rgba(43,143,255,.1);}
   .lx-mi.is-locked{cursor:default;}
-  .lx-mi.is-correct{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);}
+  .lx-mi.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.09);box-shadow:inset 0 0 26px rgba(16,185,120,.18),inset 0 0 7px rgba(16,185,120,.11);}
   .lx-mi.is-correct .lx-mi__b{background:var(--lx-jade);}
-  .lx-mi.is-wrong{border-color:var(--lx-rose-line);background:var(--lx-rose-soft);}
+  .lx-mi.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 26px rgba(240,84,72,.16),inset 0 0 7px rgba(240,84,72,.1);}
   .lx-mi.is-wrong .lx-mi__b{background:var(--lx-rose);}
   /* бейдж-связка по умолчанию сапфировый */
   .lx-mi__b{background:var(--lx-acc-deep);}
@@ -135,8 +144,8 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 4px 12px rgba(43,90,200,.06);transition:transform .14s cubic-bezier(.23,1,.32,1),border-color .14s,background .14s;}
   .lx-tok:hover:not(.is-locked){transform:translateY(-1px);border-color:var(--lx-acc-line);}
   .lx-tok--line{background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(238,244,255,.86));border-color:var(--lx-acc-line);color:var(--lx-acc-deep);}
-  .lx-tok.is-correct{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);color:var(--lx-jade);}
-  .lx-tok.is-wrong{border-color:var(--lx-rose-line);background:var(--lx-rose-soft);color:var(--lx-rose);}
+  .lx-tok.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.1);color:var(--lx-jade);box-shadow:inset 0 0 18px rgba(16,185,120,.2);}
+  .lx-tok.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.09);color:var(--lx-rose);box-shadow:inset 0 0 18px rgba(240,84,72,.18);}
   .lx-tok.is-locked{cursor:default;}
 
   /* ── Ввод ответа (type) ─────────────────────────────────────────────────── */
@@ -167,25 +176,57 @@
   .lx-tone__mark svg{display:block;width:38px;height:20px;}
   .lx-tone__n{font-weight:800;color:var(--lx-ink);font-variant-numeric:tabular-nums;margin-right:5px;}
   .lx-tone__name{flex:1 1 auto;font-size:13.5px;font-weight:600;color:var(--lx-ink-sub);}
-  .lx-tone__b.is-sel{border-color:var(--lx-acc-line);background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(238,244,255,.86));box-shadow:inset 0 0 26px rgba(43,143,255,.1);}
-  .lx-tone__b.is-correct{border-color:var(--lx-jade-line);background:var(--lx-jade-soft);}
+  .lx-tone__b.is-sel{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 30px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13);}
+  .lx-tone__b.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.09);box-shadow:inset 0 0 24px rgba(16,185,120,.18);}
   .lx-tone__b.is-correct .lx-tone__mark,.lx-tone__b.is-correct .lx-tone__name{color:var(--lx-jade);}
-  .lx-tone__b.is-wrong{border-color:var(--lx-rose-line);background:var(--lx-rose-soft);}
+  .lx-tone__b.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 24px rgba(240,84,72,.16);}
   .lx-tone__b.is-wrong .lx-tone__mark,.lx-tone__b.is-wrong .lx-tone__name{color:var(--lx-rose);}
   .lx-tone__b.is-dim{opacity:.5;}
   .lx-tone__b.is-locked{cursor:default;}
 
+  /* ── Открытое задание (отправка на проверку: текст + файлы/скрины) ────────── */
+  .lx-task__brief{margin-top:16px;padding:15px 17px;border-radius:14px;background:rgba(43,143,255,.06);border:1px solid rgba(43,143,255,.22);box-shadow:inset 0 0 26px rgba(43,143,255,.06);font-size:14.5px;line-height:1.58;color:var(--lx-ink);}
+  .lx-task__brief{white-space:pre-line;}
+  .lx-task__brief b{font-weight:700;color:var(--lx-acc-deep);}
+  .lx-task__req{margin-top:18px;}
+  .lx-task__req-h{font-size:13.5px;font-weight:700;color:var(--lx-ink);margin-bottom:11px;letter-spacing:-.01em;}
+  .lx-task__req-list{display:flex;flex-direction:column;gap:9px;}
+  .lx-task__req-i{display:flex;align-items:flex-start;gap:12px;font-size:14.5px;line-height:1.5;color:var(--lx-ink);padding:12px 14px;border-radius:13px;background:rgba(255,255,255,.55);border:1px solid rgba(22,32,59,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+  .lx-task__req-n{flex:0 0 24px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 11px rgba(43,143,255,.45),inset 0 0 3px rgba(160,205,255,.5);margin-top:1px;font-variant-numeric:tabular-nums;}
+  .lx-task__label{margin-top:22px;margin-bottom:9px;font-size:13.5px;font-weight:700;color:var(--lx-ink);letter-spacing:-.01em;}
+  .lx-task__text{display:block;width:100%;min-height:104px;resize:vertical;font-family:inherit;font-size:15.5px;line-height:1.5;color:var(--lx-ink);padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.55);border:1px solid rgba(22,32,59,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);transition:border-color .15s,box-shadow .15s;}
+  .lx-task__text::placeholder{color:var(--lx-ink-mute);}
+  .lx-task__text:focus{outline:0;border-color:rgba(43,143,255,.45);box-shadow:inset 0 0 28px rgba(43,143,255,.1),inset 0 1px 0 rgba(255,255,255,.7);}
+  .lx-task__drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;margin-top:14px;padding:26px 20px;border-radius:16px;cursor:pointer;text-align:center;
+    border:1.5px dashed rgba(43,143,255,.4);background:rgba(43,143,255,.05);transition:border-color .15s,background .15s,box-shadow .15s;}
+  .lx-task__drop:hover{border-color:rgba(43,143,255,.6);background:rgba(43,143,255,.09);box-shadow:inset 0 0 32px rgba(43,143,255,.09);}
+  .lx-task__drop-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#2B8FFF;background:rgba(43,143,255,.12);box-shadow:inset 0 0 16px rgba(43,143,255,.32),inset 0 1px 0 rgba(255,255,255,.7);}
+  .lx-task__drop:hover .lx-task__drop-ic{color:#2073E6;background:rgba(43,143,255,.16);}
+  .lx-task__drop-t{font-size:14.5px;font-weight:600;color:var(--lx-ink);}
+  .lx-task__drop-t b{color:var(--lx-acc-deep);}
+  .lx-task__drop-s{font-size:12.5px;font-weight:500;color:var(--lx-ink-mute);}
+  .lx-task__files{display:flex;flex-direction:column;gap:9px;margin-top:12px;}
+  .lx-task__file{display:flex;align-items:center;gap:12px;padding:11px 13px;border-radius:12px;background:rgba(255,255,255,.6);border:1px solid rgba(22,32,59,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);animation:lx-fbup .26s cubic-bezier(.23,1,.32,1);}
+  .lx-task__file-ic{flex:0 0 36px;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 12px rgba(43,143,255,.45),inset 0 0 3px rgba(160,205,255,.5);font-size:10px;font-weight:800;}
+  .lx-task__file-b{flex:1 1 auto;min-width:0;}
+  .lx-task__file-t{font-size:14px;font-weight:600;color:var(--lx-ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lx-task__file-s{font-size:12px;font-weight:500;color:var(--lx-ink-mute);margin-top:1px;font-variant-numeric:tabular-nums;}
+  .lx-task__file-x{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;cursor:pointer;color:var(--lx-ink-mute);background:0;border:0;transition:color .15s,background .15s;}
+  .lx-task__file-x:hover{color:#E5484D;background:rgba(240,84,72,.1);}
+
   /* ── Разбор (объяснение после проверки) ─────────────────────────────────── */
   .lx-explain{display:flex;gap:12px;align-items:flex-start;margin-top:20px;padding:15px 17px;border-radius:14px;font-size:14.5px;line-height:1.55;}
   .lx-explain__ic{flex:0 0 auto;display:inline-flex;margin-top:1px;}
-  .lx-explain.ok{background:var(--lx-jade-soft);color:var(--lx-jade);}
-  .lx-explain.bad{background:var(--lx-rose-soft);color:var(--lx-rose);}
+  .lx-explain{border:1px solid transparent;}
+  .lx-explain.ok{background:rgba(16,185,120,.09);border-color:rgba(16,185,120,.3);color:var(--lx-jade);box-shadow:inset 0 0 26px rgba(16,185,120,.1);}
+  .lx-explain.bad{background:rgba(43,143,255,.06);border-color:rgba(43,143,255,.26);color:var(--lx-ink);box-shadow:inset 0 0 24px rgba(43,143,255,.07);}
+  .lx-explain.bad .lx-explain__ic{color:var(--lx-acc-deep);}
 
   /* ═══════════════ СТРАНИЦА УРОКА · Режим B — вайб «Главной»/«Пути»: светлое стекло ═══════════════
      Правила владельца (§6.4): НЕТ разрядке букв, НЕТ серым мелким uppercase-eyebrow'ам
      (заголовки нормальные, тёмные), НЕТ выпуклым градиентам (плоско, прозрачно, стекло).
      Якорь — кастомный светлый плеер. Модули/уроки справа — чистая тропа. Тест — попап. */
-  .sd-wrap:has(.le-root){max-width:1240px;padding:38px 52px 96px;}
+  .sd-wrap:has(.le-root){max-width:1240px;padding:38px 52px 26px;}
   @media (max-width:680px){.sd-wrap:has(.le-root){padding:18px 18px 48px;}}
 
   /* .lt-modal — попап-тест рендерится сиблингом .le-root, поэтому токены ОБЯЗАНЫ
@@ -196,10 +237,10 @@
     --le-acc:#2B8FFF; --le-acc-2:#5CB4FF; --le-acc-deep:#2073E6; --le-acc-ink:#1763C8;
     --le-acc-soft:rgba(43,143,255,.09); --le-acc-line:rgba(43,143,255,.36);
     --le-ink:#16203B; --le-ink-sub:rgba(22,32,59,.62); --le-ink-mute:rgba(22,32,59,.44); --le-ink-faint:rgba(22,32,59,.28);
-    --le-jade:#1C7E52; --le-jade-soft:#E2F4EA; --le-gold:#E2A52E; --le-rose:#B23B2A;
+    --le-jade:#0E9F6E; --le-jade-soft:#E2F4EA; --le-gold:#E2A52E; --le-rose:#E5484D;
     --le-line:rgba(22,32,59,.08); --le-line-soft:rgba(22,32,59,.05); --le-line-strong:rgba(22,32,59,.14);
-    --le-card:rgba(255,255,255,.5); --le-hi:inset 0 1px 0 rgba(255,255,255,.85); --le-cbord:rgba(255,255,255,.85);
-    --le-sel:inset 0 0 30px rgba(43,143,255,.26),inset 0 0 7px rgba(43,143,255,.14); --le-sh:0 0 0 0 rgba(0,0,0,0);
+    --le-card:rgba(255,255,255,.66); --le-hi:inset 0 1px 0 rgba(255,255,255,.95); --le-cbord:rgba(22,32,59,.1); --le-cbord-hi:rgba(255,255,255,.9);
+    --le-lift:0 0 0 0 transparent; --le-glow:inset 0 0 32px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13); --le-sel:inset 0 0 30px rgba(43,143,255,.24),inset 0 0 7px rgba(43,143,255,.13); --le-sh:0 0 0 0 transparent;
     font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--le-ink);-webkit-font-smoothing:antialiased;
   }
   /* чистая светлая поверхность — как «Главная»/кабинет: без аврор и свечений.
@@ -207,6 +248,7 @@
   .le-root{position:relative;}
   .le-root *{box-sizing:border-box;}
   .le-head,.le-grid{position:relative;z-index:1;}
+  body:has(.le-root) .lr-aifab{display:none!important;}
 
   /* хедер — чистая крошка + белая пилюля-навигация, без тяжёлого бара (по референсу) */
   .le-head{display:flex;align-items:center;gap:16px;margin:0 0 24px;}
@@ -218,7 +260,7 @@
   .le-crumb__cur{color:var(--le-ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
   /* пилюля-навигация «‹ Урок N / M ›» */
   .le-switch{flex:0 0 auto;display:flex;align-items:center;gap:2px;padding:4px;border-radius:99px;background:rgba(255,255,255,.78);
-    border:1px solid var(--le-line);box-shadow:0 8px 20px -14px rgba(12,26,64,.3),inset 0 1px 0 rgba(255,255,255,.75);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+    border:1px solid var(--le-cbord);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
   .le-switch__lab{font-size:13px;font-weight:600;color:var(--le-ink);font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 8px;}
   .le-nav{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--le-ink-sub);
     background:0;border:0;transition:color .15s,background .15s,opacity .15s;}
@@ -232,14 +274,14 @@
   /* титул — «Урок N» крупно и уверенно + пилюля модуля + описание (крафт «Главной») */
   .le-titlerow{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
   .le-h1{font-family:var(--le-display);font-weight:800;font-size:42px;letter-spacing:-.032em;line-height:1.02;color:var(--le-ink);margin:0;text-wrap:balance;}
-  .le-modpill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--le-ink);background:#fff;
-    border:1px solid var(--le-line);border-radius:99px;padding:9px 16px;box-shadow:var(--le-sh);}
+  .le-modpill{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;color:var(--le-ink);background:rgba(255,255,255,.55);
+    border:1px solid var(--le-cbord);border-radius:99px;padding:9px 16px;box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
   .le-modpill svg{color:var(--le-acc-deep);flex:0 0 auto;}
   .le-sub{font-size:17px;line-height:1.55;color:var(--le-ink-sub);margin-top:14px;max-width:62ch;font-weight:400;}
 
   /* ── ПЛЕЕР — единственный якорь: реальное превью + кастомная панель (вайб ютуба, но чисто) ── */
   .le-player{position:relative;margin-top:30px;border-radius:22px;overflow:hidden;aspect-ratio:16/9;background:#111A2E;
-    border:1px solid var(--le-line);box-shadow:0 30px 64px -34px rgba(12,26,64,.42);}
+    border:1px solid var(--le-cbord);box-shadow:0 14px 36px -30px rgba(12,26,64,.34);}
   /* пустое состояние — НЕ тёмная дыра с фейковой кнопкой play, а тихая заглушка:
      честно говорит «видео ещё не добавлено», ничего не имитирует и не кликается */
   .le-player--empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
@@ -329,7 +371,7 @@
   .le-gv__ic:hover{color:#fff;background:rgba(255,255,255,.12);}
 
   /* ── КОНСПЕКТ — раскрытая панель, крупно и чисто ──────────────────────────── */
-  .le-digest{margin-top:30px;border-radius:22px;border:1px solid var(--le-cbord);background:var(--le-card);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
+  .le-digest{margin-top:34px;border-radius:22px;border:1px solid var(--le-cbord);background:var(--le-card);box-shadow:inset 0 1px 0 var(--le-cbord-hi);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
   .le-digest__bar{width:100%;display:flex;align-items:center;gap:16px;padding:19px 24px;cursor:pointer;background:0;border:0;font:inherit;text-align:left;color:var(--le-ink);transition:background .15s;}
   .le-digest__bar:hover{background:rgba(43,143,255,.02);}
   .le-digest__ti{flex:1 1 auto;min-width:0;}
@@ -338,17 +380,17 @@
   .le-digest__chev{flex:0 0 auto;width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:var(--le-ink-mute);border:1px solid var(--le-line);transition:transform .25s cubic-bezier(.23,1,.32,1),color .15s,border-color .15s;}
   .le-digest__bar:hover .le-digest__chev{color:var(--le-acc-deep);border-color:var(--le-acc-line);}
   .le-digest.open .le-digest__chev{transform:rotate(180deg);}
-  .le-digest__body{padding:6px 28px 28px;border-top:1px solid var(--le-line-soft);}
+  .le-digest__body{padding:24px 30px 18px;}
   /* шапка конспекта — статичная (иконка + название), без сворачивания (по референсу) */
-  .le-digest__hd{display:flex;align-items:center;gap:13px;padding:24px 28px 0;}
-  .le-digest__hd-ic{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);}
+  .le-digest__hd{display:flex;align-items:center;gap:14px;padding:28px 30px 0;}
+  .le-digest__hd-ic{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 15px rgba(43,143,255,.42),inset 0 0 3px rgba(160,205,255,.45);}
   .le-digest__hd-t{font-family:var(--le-display);font-weight:700;font-size:21px;letter-spacing:-.016em;color:var(--le-ink);}
   /* табы конспекта — сегмент-контрол */
   .le-dtabs{display:flex;gap:8px;flex-wrap:wrap;padding:20px 28px 0;}
   .le-dtab{font-family:inherit;font-size:13.5px;font-weight:600;color:var(--le-ink-sub);background:rgba(255,255,255,.5);border:1px solid var(--le-line);
     padding:9px 16px;border-radius:99px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;white-space:nowrap;}
   .le-dtab:hover{color:var(--le-acc-deep);border-color:var(--le-acc-line);}
-  .le-dtab.is-on{color:var(--le-acc-deep);background:var(--le-acc-soft);border-color:var(--le-acc-line);box-shadow:inset 0 0 0 1px rgba(43,143,255,.14);}
+  .le-dtab.is-on{color:var(--le-acc-deep);background:rgba(43,143,255,.1);border-color:rgba(43,143,255,.4);box-shadow:inset 0 0 16px rgba(43,143,255,.24),inset 0 0 4px rgba(160,205,255,.4);}
   .le-dpane{padding:24px 28px 26px;animation:leReveal .22s cubic-bezier(.23,1,.32,1);}
   .le-dpane__h{font-family:var(--le-display);font-size:20px;font-weight:700;letter-spacing:-.016em;color:var(--le-ink);margin:0 0 16px;}
   /* двухколоночная таблица слов (по референсу) */
@@ -387,9 +429,9 @@
 
   .le-aims{margin:22px 0 6px;}
   .le-aims__l{font-family:var(--le-display);font-size:17px;font-weight:500;color:var(--le-ink);letter-spacing:-.014em;}
-  .le-aims__list{margin-top:15px;display:flex;flex-direction:column;gap:11px;}
-  .le-aims__i{display:flex;align-items:center;gap:14px;font-size:16px;font-weight:450;color:var(--le-ink);line-height:1.45;padding:11px 14px;border-radius:13px;background:rgba(255,255,255,.5);border:1px solid var(--le-line);box-shadow:var(--le-hi);}
-  .le-aims__c{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);border:1px solid var(--le-acc-line);}
+  .le-aims__list{margin-top:16px;display:flex;flex-direction:column;gap:12px;}
+  .le-aims__i{display:flex;align-items:center;gap:14px;font-size:16px;font-weight:450;color:var(--le-ink);line-height:1.45;padding:14px 17px;border-radius:14px;background:rgba(255,255,255,.5);border:1px solid var(--le-cbord);box-shadow:var(--le-hi);}
+  .le-aims__c{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 12px rgba(43,143,255,.42),inset 0 0 3px rgba(160,205,255,.45);}
 
   .le-note-h{font-family:var(--le-display);font-weight:600;font-size:19px;letter-spacing:-.018em;color:var(--le-ink);margin:32px 0 0;}
   .le-note-p{font-size:16px;line-height:1.66;color:var(--le-ink);margin:10px 0 0;font-weight:400;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;}
@@ -480,10 +522,14 @@
 .le-doc-example__hz{font-family:var(--le-display);font-size:20px;font-weight:600;color:var(--le-ink);letter-spacing:.5px;line-height:1.3;overflow-wrap:break-word;}
 .le-doc-example__py{font-size:13px;font-weight:500;color:var(--le-acc-deep);margin-top:2px;overflow-wrap:break-word;}
 .le-doc-example__ru{font-size:14.5px;color:var(--le-ink-soft,var(--le-ink));margin-top:3px;overflow-wrap:break-word;}
-.le-doc-material{display:flex;align-items:center;gap:9px;max-width:100%;margin:12px 0 4px;padding:11px 15px;border-radius:12px;background:rgba(255,255,255,.6);border:1px solid var(--le-line);color:var(--le-acc-ink);font-size:14px;font-weight:600;text-decoration:none;transition:border-color .15s,transform .15s;}
-.le-doc-material__t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.le-doc-material svg{flex:0 0 auto;}
-.le-doc-material:hover{border-color:var(--le-acc-line);transform:translateY(-1px);}
+.le-doc-material{display:flex;align-items:center;gap:13px;max-width:540px;margin:16px 0 6px;padding:12px 14px;border-radius:15px;background:rgba(255,255,255,.7);border:1px solid var(--le-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);text-decoration:none;color:var(--le-ink);transition:border-color .15s,background .15s,transform .15s;}
+.le-doc-material__ic{flex:0 0 42px;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--le-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);}
+.le-doc-material__b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.le-doc-material__t{min-width:0;font-size:14.5px;font-weight:600;color:var(--le-ink);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.le-doc-material__meta{font-size:12px;font-weight:500;color:var(--le-ink-mute);font-variant-numeric:tabular-nums;}
+.le-doc-material__dl{flex:0 0 auto;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--le-ink-mute);background:rgba(22,32,59,.04);transition:color .15s,background .15s;}
+.le-doc-material:hover{border-color:var(--le-acc-line);background:#fff;transform:translateY(-1px);}
+.le-doc-material:hover .le-doc-material__dl{color:var(--le-acc-deep);background:var(--le-acc-soft);}
 .le-doc-divider{border:0;border-top:1px solid var(--le-line);margin:22px 0;}
 .le-study.is-compact .le-doc{gap:0;}
 .le-study.is-compact .le-doc .le-note-h{font-size:18px;font-weight:600;margin-top:26px;}
@@ -511,7 +557,11 @@
 .le-study.is-compact .le-doc-example{margin:12px 0 2px;padding:11px 12px;gap:10px;}
 .le-study.is-compact .le-doc-example__hz{font-size:17px;}
 .le-study.is-compact .le-doc-example__py,.le-study.is-compact .le-doc-example__ru{font-size:12.5px;}
-.le-study.is-compact .le-doc-material{margin:12px 0 2px;padding:9px 12px;font-size:13px;}
+.le-study.is-compact .le-doc-material{margin:12px 0 2px;padding:9px 11px;gap:11px;}
+.le-study.is-compact .le-doc-material__ic{flex-basis:36px;width:36px;height:36px;border-radius:10px;}
+.le-study.is-compact .le-doc-material__t{font-size:13px;}
+.le-study.is-compact .le-doc-material__meta{font-size:11px;}
+.le-study.is-compact .le-doc-material__dl{width:28px;height:28px;}
 .le-study.is-compact .le-doc-divider{margin:16px 0;}
 
   .le-fig{margin:22px 0 0;border-radius:16px;padding:20px 22px 16px;background:rgba(43,143,255,.04);border:1px solid var(--le-line);}
@@ -532,10 +582,12 @@
   .le-gl__ru{font-size:15px;font-weight:500;color:var(--le-ink);text-align:right;}
 
   /* ── ДОМАШНЕЕ ЗАДАНИЕ / ТЕСТ — чистая белая карточка, акцент несёт кнопка ───── */
-  .le-hw{position:relative;margin-top:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-radius:22px;padding:24px 26px;
-    border:1px solid var(--le-cbord);background:var(--le-card);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
-  .le-hw__ic{position:relative;flex:0 0 46px;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--le-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);}
-  .le-hw__cta.le-btn{padding:13px 24px;font-size:14.5px;}
+  .le-hw{position:relative;margin-top:0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;border-radius:22px;padding:24px 26px;
+    border:1px solid rgba(43,143,255,.34);background:rgba(43,143,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.6),var(--le-glow);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
+  .le-hw__ic{position:relative;flex:0 0 46px;width:46px;height:46px;border-radius:14px;display:grid;place-items:center;color:#fff;background:var(--le-acc-deep);box-shadow:inset 0 0 16px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.32);}
+  .le-hw__cta.le-btn{padding:15px 30px;font-size:15px;}
+  .le-hwhead{display:flex;align-items:center;gap:9px;font-family:var(--le-display);font-size:17px;font-weight:700;color:var(--le-ink);letter-spacing:-.014em;margin:38px 0 14px;}
+  .le-hwhead svg{color:var(--le-acc-deep);}
   .le-study.is-compact .le-hw__cta.le-btn{padding:11px 16px;font-size:13px;}
   .le-hw.is-done .le-hw__ic{background:var(--le-jade);}
   .le-hw__b{flex:1 1 200px;min-width:0;}
@@ -551,20 +603,27 @@
   .le-hw__cta{flex:0 0 auto;}
 
   /* ── материалы урока (файлы/ссылки от преподавателя) ──────────────────────── */
-  .le-mats{margin-top:30px;}
+  .le-mats{margin-top:36px;}
   .le-mats__h{display:flex;align-items:center;gap:9px;font-family:var(--le-display);font-size:17px;font-weight:700;color:var(--le-ink);letter-spacing:-.014em;margin-bottom:13px;}
   .le-mats__h svg{color:var(--le-acc-deep);}
   .le-mats__list{display:flex;flex-direction:column;gap:9px;}
-  .le-mat{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:13px;background:var(--le-card);border:1px solid var(--le-line);box-shadow:var(--le-hi);text-decoration:none;color:var(--le-ink);transition:border-color .15s,transform .15s,box-shadow .15s;}
-  .le-mat:hover{border-color:var(--le-acc-line);transform:translateY(-1px);box-shadow:0 12px 26px -16px rgba(32,90,200,.34);}
-  .le-mat__ic{flex:0 0 38px;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);}
-  .le-mat__t{flex:1 1 auto;min-width:0;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .le-mat__dl{flex:0 0 auto;color:var(--le-ink-mute);}
+  .le-mat{display:flex;align-items:center;gap:12px;padding:13px 15px;border-radius:14px;background:var(--le-card);border:1px solid var(--le-cbord);box-shadow:inset 0 1px 0 var(--le-cbord-hi);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);text-decoration:none;color:var(--le-ink);transition:border-color .15s,box-shadow .15s;}
+  .le-mat:hover{border-color:rgba(43,143,255,.4);box-shadow:inset 0 0 20px rgba(43,143,255,.14),var(--le-hi);}
+  .le-mat__ic{flex:0 0 42px;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--le-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);}
+  .le-mat__ext{font-family:var(--le-display);font-size:11px;font-weight:800;letter-spacing:.01em;color:#fff;}
+  .le-mat__b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .le-mat__t{font-size:14.5px;font-weight:600;color:var(--le-ink);letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .le-mat__meta{font-size:12px;font-weight:500;color:var(--le-ink-mute);font-variant-numeric:tabular-nums;}
+  .le-mat__dl{flex:0 0 auto;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--le-ink-mute);background:rgba(22,32,59,.04);transition:color .15s,background .15s;}
+  .le-mat:hover .le-mat__dl{color:var(--le-acc-deep);background:var(--le-acc-soft);}
   .le-study.is-compact .le-mats{margin-top:16px;}
   .le-study.is-compact .le-mats__h{font-size:14px;margin-bottom:9px;}
-  .le-study.is-compact .le-mat{padding:10px 12px;gap:10px;}
-  .le-study.is-compact .le-mat__ic{flex-basis:30px;width:30px;height:30px;border-radius:9px;}
+  .le-study.is-compact .le-mat{padding:9px 11px;gap:11px;}
+  .le-study.is-compact .le-mat__ic{flex-basis:36px;width:36px;height:36px;border-radius:10px;}
+  .le-study.is-compact .le-mat__ext{font-size:10px;}
   .le-study.is-compact .le-mat__t{font-size:13px;}
+  .le-study.is-compact .le-mat__meta{font-size:11px;}
+  .le-study.is-compact .le-mat__dl{width:28px;height:28px;}
 
   /* ── РЕЙЛ · контейнер «Ваш прогресс»: круговой график + текст ──────────────── */
   .le-prog{border-radius:18px;border:1px solid var(--le-line);background:rgba(255,255,255,.56);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:var(--le-hi);padding:18px 20px 20px;}
@@ -582,53 +641,44 @@
   .le-prog__sub{font-size:12.5px;font-weight:450;color:var(--le-ink-sub);margin-top:6px;line-height:1.42;}
   .le-prog__sub b{font-weight:700;color:var(--le-acc-ink);}
 
-  /* ── РЕЙЛ · ПЛЕЙЛИСТ модуля — ТАЙМЛАЙН восхождения ────────────────────────
-     Вертикальная линия с узлами слева, крупные квадратные превью, тонкий
-     прогресс-бар под шапкой. Пройдено (нефрит) · сейчас (сапфир) · закрыто. */
-  .le-pl{border-radius:22px;border:1px solid var(--le-cbord);background:var(--le-card);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
-  .le-pl__hd{display:flex;align-items:center;gap:11px;padding:18px 18px 12px;}
-  .le-pl__hd-ic{flex:0 0 34px;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;color:var(--le-acc-deep);background:var(--le-acc-soft);}
+  /* ── РЕЙЛ · ПЛЕЙЛИСТ модуля — чистые стеклянные строки, БЕЗ таймлайна.
+     Текущий урок — фирменное свечение изнутри (inset), как чойс-чипсы анкеты.
+     Никаких линий, узлов и внешних теней. */
+  .le-pl{border-radius:22px;border:1px solid var(--le-cbord);background:var(--le-card);box-shadow:inset 0 1px 0 var(--le-cbord-hi),var(--le-glow);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);overflow:hidden;}
+  .le-pl__hd{display:flex;align-items:center;gap:13px;padding:20px 20px 16px;border-bottom:1px solid var(--le-line-soft);}
+  .le-pl__hd-ic{flex:0 0 40px;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#2073E6;
+    background:rgba(43,143,255,.12);box-shadow:inset 0 0 13px rgba(43,143,255,.42),inset 0 0 3px rgba(160,205,255,.45);}
   .le-pl__hd-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;}
-  .le-pl__hd-t{display:block;font-family:var(--le-display);font-size:15px;font-weight:600;color:var(--le-ink);letter-spacing:-.014em;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .le-pl__hd-m{display:block;font-size:11.5px;font-weight:500;color:var(--le-ink-mute);margin-top:3px;font-variant-numeric:tabular-nums;}
-  /* тонкий прогресс-бар модуля (линия, не выпуклость) */
-  .le-pl__bar{margin:0 18px 4px;height:5px;border-radius:99px;background:rgba(22,32,59,.08);overflow:hidden;}
-  .le-pl__bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--le-acc-deep),var(--le-acc));box-shadow:0 0 8px rgba(43,143,255,.5);transition:width .9s cubic-bezier(.22,.61,.36,1);}
-  /* таймлайн: вертикальная линия слева + узлы, карточки правее (линия не под ними) */
-  .le-pl__list{position:relative;padding:14px 10px 8px 6px;display:flex;flex-direction:column;gap:6px;}
-  .le-pl__list::before{content:'';position:absolute;left:22px;top:38px;bottom:40px;width:2px;border-radius:99px;background:var(--le-line);}
-  .le-pli{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:0;border:1px solid transparent;border-radius:16px;padding:8px 10px 8px 40px;cursor:pointer;
-    transition:background .16s,border-color .16s,box-shadow .16s,transform .16s cubic-bezier(.23,1,.32,1);}
-  .le-pli:hover:not(.locked):not(.current){background:rgba(43,143,255,.05);}
-  /* узел на линии */
-  .le-pli__node{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;z-index:1;background:#fff;box-shadow:inset 0 0 0 2px var(--le-line-strong);}
-  .le-pli.done .le-pli__node{background:var(--le-jade);box-shadow:inset 0 0 0 2px var(--le-jade),0 0 0 3px rgba(46,160,110,.14);}
-  .le-pli.current .le-pli__node{background:var(--le-acc-deep);box-shadow:inset 0 0 0 2px var(--le-acc-deep),0 0 0 4px rgba(43,143,255,.2);}
-  /* квадратное превью, кадр в волосяной рамке — без чёрного фона и без серой обводки */
-  .le-pli__th{position:relative;flex:0 0 56px;width:56px;height:56px;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(22,32,59,.07);}
+  .le-pl__hd-t{display:block;font-family:var(--le-display);font-size:17px;font-weight:700;color:var(--le-ink);letter-spacing:-.016em;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .le-pl__hd-m{display:block;font-size:12.5px;font-weight:500;color:var(--le-ink-sub);margin-top:4px;font-variant-numeric:tabular-nums;}
+  .le-pl__bar{margin:0 18px 6px;height:5px;border-radius:99px;background:rgba(22,32,59,.07);overflow:hidden;}
+  .le-pl__bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#5CB4FF,#2073E6);box-shadow:0 0 10px rgba(43,143,255,.6);transition:width .9s cubic-bezier(.22,.61,.36,1);}
+  .le-pl__list{padding:8px;display:flex;flex-direction:column;gap:3px;}
+  .le-pli{position:relative;display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;background:0;border:1px solid transparent;border-radius:15px;padding:9px 11px;cursor:pointer;
+    transition:background .16s,border-color .16s,box-shadow .16s;}
+  .le-pli:hover:not(.locked):not(.current){background:rgba(255,255,255,.42);border-color:var(--le-cbord);box-shadow:var(--le-hi);}
+  .le-pli__th{position:relative;flex:0 0 54px;width:54px;height:54px;border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7),inset 0 0 0 2.5px rgba(43,143,255,.06);}
   .le-pli__th img{width:100%;height:100%;object-fit:cover;display:block;}
-  .le-pli__badge{position:absolute;right:4px;bottom:4px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;color:#fff;
-    box-shadow:0 2px 6px rgba(6,12,30,.4),0 0 0 2px #fff;font-size:10px;font-weight:800;font-variant-numeric:tabular-nums;}
-  .le-pli.done .le-pli__badge{background:var(--le-jade);}
-  .le-pli.locked .le-pli__badge{background:rgba(22,32,59,.55);}
-  .le-pli__play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,rgba(8,14,34,.04),rgba(8,14,34,.32));}
-  .le-pli.current .le-pli__th{box-shadow:inset 0 0 0 1px var(--le-acc-line),0 0 0 3px rgba(43,143,255,.2),0 10px 20px -10px rgba(32,90,200,.4);}
-  .le-pli.locked .le-pli__th img{filter:grayscale(.5) brightness(.86);}
-  .le-pli.locked .le-pli__th{opacity:.82;}
+  .le-pli__play{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:linear-gradient(180deg,rgba(8,14,34,.02),rgba(8,14,34,.26));}
+  .le-pli.locked .le-pli__th img{filter:grayscale(.5) brightness(.88);}
+  .le-pli.locked .le-pli__th{opacity:.8;}
   .le-pli__b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px;}
   .le-pli__t{font-size:14px;font-weight:600;color:var(--le-ink);letter-spacing:-.01em;line-height:1.26;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .le-pli.locked .le-pli__t{color:var(--le-ink-mute);font-weight:500;}
   .le-pli__m{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:500;color:var(--le-ink-mute);font-variant-numeric:tabular-nums;}
   .le-pli__m i{width:2.5px;height:2.5px;border-radius:50%;background:var(--le-ink-faint);flex:0 0 auto;}
-  .le-pli.current{background:linear-gradient(180deg,rgba(43,143,255,.09),rgba(43,143,255,.045));border-color:var(--le-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.6);}
+  .le-pli.current{background:rgba(255,255,255,.6);border-color:rgba(43,143,255,.42);box-shadow:var(--le-sel);}
   .le-pli.current .le-pli__t{font-weight:700;}
+  .le-pli.current .le-pli__th{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.85),0 0 0 2px rgba(43,143,255,.32);}
   .le-pli.locked{cursor:default;}
-  .le-pli__r{flex:0 0 auto;display:inline-flex;align-items:center;padding-right:3px;}
-  .le-pli__sc{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;background:var(--le-jade);font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
-  .le-pli__now{font-size:10.5px;font-weight:700;color:#fff;background:var(--le-acc-deep);padding:4px 10px;border-radius:99px;white-space:nowrap;box-shadow:inset 0 1px 0 rgba(255,255,255,.3);}
+  .le-pli__r{flex:0 0 auto;display:inline-flex;align-items:center;padding-right:2px;}
+  .le-pli__sc{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#0E9F6E;
+    background:rgba(16,185,120,.12);box-shadow:inset 0 0 12px rgba(16,185,120,.5),inset 0 0 0 1px rgba(16,185,120,.42);}
+  .le-pli__now{font-size:10.5px;font-weight:700;color:#fff;background:var(--le-acc-deep);padding:4px 11px;border-radius:99px;white-space:nowrap;
+    box-shadow:inset 0 0 12px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.35);}
   .le-pli__lock{color:var(--le-ink-faint);display:inline-flex;}
-  .le-pl__all{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--le-ink-sub);padding:14px;border:0;border-top:1px solid var(--le-line-soft);background:0;transition:color .15s,background .15s;}
-  .le-pl__all:hover{color:var(--le-acc-deep);background:rgba(43,143,255,.03);}
+  .le-pl__all{width:100%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:700;color:#fff;padding:15px;border:0;background:#2073E6;box-shadow:inset 0 0 18px rgba(120,190,255,.85),inset 0 1px 0 rgba(255,255,255,.3);transition:background .12s;}
+  .le-pl__all:hover{background:#2B8FFF;}
   .le-pl__all svg{transition:transform .15s;}
   .le-pl__all:hover svg{transform:translateX(2px);}
 
@@ -636,11 +686,11 @@
      Настоящее фото в квадратно-скруглённом аватаре + онлайн-точка, тихое
      сапфировое свечение ПОЗАДИ (не выпуклый пузырь на плашке), имя/роль,
      чип-доверие и чистая кнопка. Хочется написать живому человеку. */
-  .le-card{position:relative;overflow:hidden;border-radius:20px;padding:22px;background:var(--le-card);border:1px solid var(--le-cbord);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);}
+  .le-card{position:relative;overflow:hidden;border-radius:20px;padding:22px;background:var(--le-card);border:1px solid var(--le-cbord);box-shadow:inset 0 1px 0 var(--le-cbord-hi),var(--le-glow);-webkit-backdrop-filter:blur(22px) saturate(1.2);backdrop-filter:blur(22px) saturate(1.2);}
   .le-card__h{position:relative;display:flex;align-items:center;gap:9px;padding:0 2px;}
-  .le-card__hdot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--le-jade);box-shadow:0 0 0 3px rgba(46,160,110,.16);}
+  .le-card__hdot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--le-jade);box-shadow:0 0 0 3px rgba(16,185,120,.16);}
   .le-card__t{font-size:13px;font-weight:600;letter-spacing:-.01em;color:var(--le-ink-sub);}
-  .le-tch{position:relative;display:flex;align-items:center;gap:14px;padding:2px;margin-top:16px;}
+  .le-tch{position:relative;display:flex;align-items:center;gap:14px;padding:2px;margin-top:2px;}
   /* аватар преподавателя — КРУГЛЫЙ (по референсу) */
   .le-tch__av{position:relative;flex:0 0 58px;width:58px;height:58px;border-radius:50%;display:grid;place-items:center;
     font-family:var(--le-display);font-size:23px;font-weight:600;color:#fff;background:var(--le-acc-deep);
@@ -649,23 +699,24 @@
   .le-tch__b{flex:1 1 auto;min-width:0;}
   .le-tch__n{font-size:17px;font-weight:600;color:var(--le-ink);letter-spacing:-.012em;line-height:1.2;}
   .le-tch__r{font-size:12.5px;font-weight:450;color:var(--le-ink-mute);margin-top:4px;line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .le-tchbtn{position:relative;margin-top:17px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;padding:13px;border-radius:13px;color:#fff;background:var(--le-acc-deep);border:0;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 22px -14px rgba(20,70,180,.55);transition:background .15s,transform .15s;}
+  .le-tchbtn{position:relative;margin-top:17px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;padding:13px;border-radius:13px;color:#fff;background:#2073E6;border:0;
+    box-shadow:inset 0 0 18px rgba(120,190,255,.85),inset 0 1px 0 rgba(255,255,255,.3);transition:background .15s,transform .15s;}
   .le-tchbtn:hover{background:#2B8FFF;transform:translateY(-1px);}
   .le-tchbtn:active{transform:translateY(0);}
 
   /* ── НИЖНЯЯ ПАНЕЛЬ урока — ПЛАВАЮЩАЯ пилюля: «Назад · Урок N из M · Дальше».
      Отрывается от контента (sticky снизу + тень + зазор), стекло-блюр (футер —
      единственное разрешённое место настоящего blur в системе). ─────────────── */
-  .le-foot{position:sticky;bottom:16px;z-index:8;margin-top:34px;display:flex;align-items:center;gap:14px;padding:11px 13px 11px 14px;border-radius:18px;
-    background:rgba(255,255,255,.68);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);
-    border:1px solid var(--le-line);box-shadow:0 16px 40px -26px rgba(12,26,64,.36),inset 0 1px 0 rgba(255,255,255,.72);}
-  .le-foot__mid{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:12px;min-width:0;}
+  .le-foot{position:sticky;bottom:22px;z-index:12;margin:26px 402px 0 0;display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:20px;
+    background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);border:1px solid rgba(22,32,59,.08);box-shadow:0 16px 40px -18px rgba(20,32,64,.24);}
+  .le-foot__mid{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:16px;min-width:0;}
   .le-foot__step{font-size:12.5px;font-weight:500;color:var(--le-ink-mute);white-space:nowrap;font-variant-numeric:tabular-nums;}
-  .le-foot__dots{display:flex;align-items:center;gap:5px;}
-  .le-foot__dot{width:6px;height:6px;border-radius:50%;background:rgba(22,32,59,.2);}
-  .le-foot__dot.on{background:var(--le-acc-deep);width:18px;border-radius:99px;}
-  .le-foot .le-btn{padding:12px 22px;font-size:14px;}
+  .le-foot__dots{display:flex;align-items:center;}
+  .le-foot__ln{width:6px;height:3px;border-radius:2px;background:#D3D8F0;margin:0 5px;flex:none;}
+  .le-foot__dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px #C4CAE6;flex:none;}
+  .le-foot__dot.done{background:#2B8FFF;box-shadow:none;}
+  .le-foot__dot.cur{width:15px;height:15px;background:#2B8FFF;box-shadow:0 0 0 4px rgba(43,143,255,.22),inset 0 0 0 3px rgba(255,255,255,.92);}
+  .le-foot .le-btn{padding:14px 26px;font-size:14.5px;}
   @media (max-width:560px){ .le-foot__dots{display:none;} }
 
   /* кнопки (общие с попапом) — плоские, без выпуклости */
@@ -673,28 +724,30 @@
   .le-btn svg{transition:transform .15s;}
   /* канон-кнопка «Дальше» — сапфир + свечение ВНУТРИ (как анкета/роадмап), но
      ореол приглушён, чтобы плотный сапфир читался и кнопка не «выцветала» в белое */
-  .le-btn--primary{background:var(--le-acc-deep);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 9px 20px -8px rgba(150,200,255,.6),0 10px 24px -14px rgba(20,70,180,.5);}
+  .le-btn--primary{background:#2073E6;color:#fff;box-shadow:inset 0 0 18px rgba(120,190,255,.85),inset 0 1px 0 rgba(255,255,255,.3);}
   .le-btn--primary:hover{background:#2B8FFF;transform:translateY(-1px);}
   .le-btn--primary:active{transform:translateY(1px);}
   .le-btn--primary:disabled{background:#C3CCDE;color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.2);cursor:not-allowed;opacity:.75;}
   .le-btn--ok{background:var(--le-jade);box-shadow:0 10px 22px -12px rgba(28,126,82,.55);color:#fff;}
   .le-btn--ok:hover{background:#1F8F5C;transform:translateY(-1px);}
   /* secondary «Назад» — видимая всегда (не белое на белом): тёмная подложка-чернило + чёткая обводка */
-  .le-btn--ghost{background:rgba(22,32,59,.045);color:var(--le-ink-sub);border:1px solid var(--le-line-strong);}
-  .le-btn--ghost:hover{background:rgba(22,32,59,.08);color:var(--le-ink);border-color:var(--le-ink-faint);transform:translateY(-1px);}
+  .le-btn--ghost{background:#fff;color:#3A3A55;border:1px solid rgba(120,120,200,.2);}
+  .le-btn--ghost:hover{background:#F2F3FC;}
   .le-btn--ghost:disabled{opacity:.4;cursor:not-allowed;}
-  .le-btn .bk{transform:rotate(135deg);} .le-btn--ghost:hover .bk{transform:rotate(135deg) translateX(2px);}
+  .le-btn .bk{transform:rotate(-45deg);} .le-btn--ghost:hover .bk{transform:rotate(-45deg) translateX(-2px);}
   .le-btn .arr{transform:rotate(-45deg);} .le-btn:hover .arr{transform:rotate(-45deg) translateX(2px);}
 
   /* ═══════════ ТЕСТ — ПОПАП (чисто, плоско, без блюра и выкрутасов) ═══════════ */
-  .lt-modal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:28px;background:rgba(10,16,38,.46);animation:lt-fade .2s ease;}
+  .lt-modal{position:fixed;inset:0;z-index:90;display:flex;align-items:center;justify-content:center;padding:28px;background:rgba(10,16,38,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:lt-fade .24s ease;}
   @keyframes lt-fade{from{opacity:0;}to{opacity:1;}}
-  .lt-modal__panel{position:relative;width:min(820px,100%);max-height:88vh;display:flex;flex-direction:column;border-radius:24px;background:#F7F9FE;border:1px solid rgba(255,255,255,.8);box-shadow:0 44px 120px -30px rgba(3,8,28,.5);overflow:hidden;animation:lt-rise .32s cubic-bezier(.23,1,.32,1);}
-  @keyframes lt-rise{from{opacity:0;transform:translateY(16px) scale(.99);}to{opacity:1;transform:none;}}
+  .lt-modal__panel{position:relative;width:min(720px,100%);height:min(680px,86vh);display:flex;flex-direction:column;border-radius:24px;background:#F7F9FE;border:1px solid rgba(255,255,255,.85);box-shadow:0 44px 120px -32px rgba(3,8,28,.5);overflow:hidden;animation:lt-rise .32s cubic-bezier(.23,1,.32,1);will-change:transform;}
+  .lt-modal__panel::before{content:'';position:absolute;top:9px;left:50%;transform:translateX(-50%);width:40px;height:4px;border-radius:99px;background:rgba(22,32,59,.16);z-index:5;pointer-events:none;display:none;}
+  @keyframes lt-rise{from{opacity:0;transform:translateY(14px) scale(.985);}to{opacity:1;transform:none;}}
+  @keyframes lt-sheet{from{transform:translateY(100%);}to{transform:translateY(0);}}
   .lt-modal__head{flex:0 0 auto;display:flex;flex-direction:column;gap:14px;padding:18px 22px 16px;border-bottom:1px solid var(--le-line);
     background:radial-gradient(420px 120px at 18% 0%,rgba(43,143,255,.08),transparent 70%);}
   .lt-modal__hrow{display:flex;align-items:center;gap:11px;}
-  .lt-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--le-acc-ink);background:var(--le-acc-soft);padding:6px 12px 6px 10px;border-radius:99px;}
+  .lt-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--le-acc-ink);background:rgba(43,143,255,.12);padding:6px 13px 6px 11px;border-radius:99px;box-shadow:inset 0 0 14px rgba(43,143,255,.3),inset 0 0 3px rgba(160,205,255,.4);}
   .lt-badge svg{color:var(--le-acc-deep);}
   .lt-xp{font-size:12.5px;font-weight:700;color:var(--le-gold);font-variant-numeric:tabular-nums;}
   .lt-xp__u{font-weight:600;opacity:.8;}
@@ -710,22 +763,30 @@
   .lt-seg__i.is-ok{background:var(--le-jade);}
   .lt-seg__i.is-bad{background:var(--le-rose);}
   .lt-seg__i.is-cur{background:var(--le-acc);box-shadow:0 0 0 3px rgba(43,143,255,.16);}
-  .lt-modal__body{flex:1 1 auto;overflow-y:auto;padding:30px 32px 16px;}
+  .lt-prog{height:13px;border-radius:99px;background:rgba(22,32,59,.09);overflow:hidden;box-shadow:inset 0 1px 2px rgba(22,32,59,.08);}
+  .lt-prog i{display:block;height:100%;min-width:13px;border-radius:99px;background:linear-gradient(90deg,#5CB4FF,#2073E6);box-shadow:0 0 12px rgba(43,143,255,.5),inset 0 2px 0 rgba(255,255,255,.4),inset 0 -2px 0 rgba(20,70,180,.18);transition:width .55s cubic-bezier(.34,1.35,.5,1);}
+  .lt-modal__body{flex:1 1 auto;overflow-y:auto;padding:28px 30px 18px;}
   .lt-q{animation:lt-in .3s cubic-bezier(.23,1,.32,1);}
   @keyframes lt-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
-  .lt-modal__foot{flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:14px 18px;border-top:1px solid var(--le-line);
-    background:rgba(232,236,251,.66);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);}
+    .lt-foot{flex:0 0 auto;}
+  .lt-fbbar{display:flex;align-items:center;gap:14px;padding:16px 22px 15px;animation:lt-fbup .34s cubic-bezier(.23,1,.32,1);}
+  @keyframes lt-fbup{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+  .lt-foot.is-ok .lt-fbbar{background:rgba(16,185,120,.11);border-top:1px solid rgba(16,185,120,.3);}
+  .lt-foot.is-bad .lt-fbbar{background:rgba(240,84,72,.1);border-top:1px solid rgba(240,84,72,.3);}
+  .lt-fbbar__ic{flex:0 0 42px;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;animation:lx-badgepop .4s cubic-bezier(.23,1,.32,1);}
+  .lt-foot.is-ok .lt-fbbar__ic{background:#0E9F6E;box-shadow:inset 0 0 13px rgba(120,235,180,.75),inset 0 1px 0 rgba(255,255,255,.3),0 8px 18px -8px rgba(16,185,120,.6);}
+  .lt-foot.is-bad .lt-fbbar__ic{background:#E5484D;box-shadow:inset 0 0 13px rgba(250,165,150,.65),inset 0 1px 0 rgba(255,255,255,.25),0 8px 18px -8px rgba(240,84,72,.55);}
+  .lt-fbbar__tx{flex:1 1 auto;min-width:0;}
+  .lt-fbbar__t{font-size:17px;font-weight:700;letter-spacing:-.01em;}
+  .lt-foot.is-ok .lt-fbbar__t{color:#0B8A5A;}
+  .lt-foot.is-bad .lt-fbbar__t{color:#C4362B;}
+  .lt-fbbar__s{font-size:13.5px;font-weight:500;color:var(--le-ink-sub);margin-top:2px;line-height:1.4;overflow-wrap:break-word;}
+  .lt-fbbar__s b{font-weight:700;color:var(--le-ink);}
+  .lt-modal__foot{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid var(--le-line);
+    background:rgba(232,236,251,.5);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 rgba(255,255,255,.55);}
+  .lt-foot.is-ok .lt-modal__foot,.lt-foot.is-bad .lt-modal__foot{border-top:0;box-shadow:none;}
+  .lt-hint{flex:1 1 auto;min-width:0;font-size:13px;font-weight:500;color:var(--le-ink-mute);}
   .lt-back{flex:0 0 auto;}
-  .lt-fb__hint{color:var(--le-ink-mute);font-weight:500;font-size:13px;}
-  .lt-fb{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;line-height:1.4;transition:color .2s;}
-  .lt-fb__ic{opacity:0;transform:translateY(3px) scale(.9);transition:opacity .25s,transform .25s;}
-  .lt-fb.show .lt-fb__ic{opacity:1;transform:none;}
-  .lt-fb.show{opacity:1;transform:none;}
-  .lt-fb.ok{color:var(--le-jade);} .lt-fb.bad{color:var(--le-rose);}
-  .lt-fb__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:#fff;}
-  .lt-fb.ok .lt-fb__ic{background:var(--le-jade);}
-  .lt-fb.bad .lt-fb__ic{background:var(--le-rose);}
-  .lt-fb__xp{color:var(--le-acc-deep);font-weight:700;}
 
   .lt-done{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:46px 28px 40px;
     background:radial-gradient(540px 280px at 50% -8%,rgba(245,200,76,.1),transparent 64%);}
@@ -736,17 +797,54 @@
   .lt-done__star::before{content:'';position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(245,200,76,.5);animation:lt-ring .85s cubic-bezier(.23,1,.32,1) .15s both;}
   @keyframes lt-star{0%{transform:scale(.4) rotate(-18deg);opacity:0;}60%{transform:scale(1.08) rotate(4deg);}100%{transform:scale(1) rotate(0);opacity:1;}}
   @keyframes lt-ring{from{transform:scale(.7);opacity:0;}45%{opacity:.85;}to{transform:scale(1.55);opacity:0;}}
-  .lt-done__k{margin-top:22px;display:inline-flex;align-items:center;font-size:12px;font-weight:700;color:var(--le-jade);background:var(--le-jade-soft);padding:5px 13px;border-radius:99px;}
-  .lt-done__h{font-family:var(--le-display);font-weight:500;font-size:34px;letter-spacing:-.028em;line-height:1.05;color:var(--le-ink);margin-top:16px;text-wrap:balance;}
+  .lt-done__cel{position:relative;display:grid;place-items:center;}
+  .lt-conf{position:absolute;top:44px;left:50%;width:0;height:0;pointer-events:none;z-index:0;}
+  .lt-conf i{position:absolute;left:0;top:0;width:9px;height:9px;border-radius:2px;opacity:0;animation:lt-conf 1.1s cubic-bezier(.2,.7,.3,1) forwards;}
+  @keyframes lt-conf{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0);}18%{opacity:1;}100%{opacity:0;transform:translate(var(--cx),var(--cy)) scale(1) rotate(var(--cr));}}
+  .lt-done__k{margin-top:22px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--le-acc-ink);background:rgba(43,143,255,.12);padding:7px 14px;border-radius:99px;box-shadow:inset 0 0 14px rgba(43,143,255,.3),inset 0 0 3px rgba(160,205,255,.4);}
+  .lt-done__h{font-family:var(--le-display);font-weight:700;font-size:32px;letter-spacing:-.03em;line-height:1.06;color:var(--le-ink);margin-top:16px;text-wrap:balance;}
   .lt-done__s{font-size:15.5px;color:var(--le-ink-sub);margin-top:12px;max-width:40ch;line-height:1.55;font-weight:400;}
   .lt-stats{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
-  .lt-stat{min-width:124px;padding:17px 20px;border-radius:16px;background:#fff;border:1px solid var(--le-line);box-shadow:0 1px 2px rgba(18,28,58,.03);}
+  .lt-stat{min-width:124px;padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 30px rgba(43,143,255,.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
   .lt-stat--gold{background:linear-gradient(180deg,rgba(245,200,76,.12),rgba(245,200,76,.04));border-color:rgba(226,165,46,.28);}
   .lt-stat__v{font-family:var(--le-display);font-size:30px;font-weight:600;letter-spacing:-.02em;color:var(--le-acc-deep);font-variant-numeric:tabular-nums;line-height:1;}
   .lt-stat__v.gold{color:var(--le-gold);}
   .lt-stat__k{font-size:12px;font-weight:500;color:var(--le-ink-mute);margin-top:10px;}
   .lt-done__cta{display:flex;gap:13px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
   @media (prefers-reduced-motion:reduce){ .lt-done__star,.lt-done__star::before{animation:none;} }
+
+  /* ── contained-режим Тренажёра: bottom sheet внутри рамки телефона (превью конструктора).
+     Тест = попап поверх урока: скрим + блюр, шторка снизу со скруглённым верхом и грабером.
+     Закрытие — кликом по фону, крестиком или Esc. ─────────────────────────────────────── */
+  .lt-modal.lt-modal--in{position:absolute;inset:0;z-index:5;padding:0;flex-direction:column;justify-content:flex-end;align-items:stretch;
+    background:rgba(8,14,34,.34);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:lt-fade .24s ease;}
+  .lt-modal--in .lt-modal__panel{position:relative;width:100%;max-width:none;max-height:92%;border-radius:26px 26px 0 0;
+    box-shadow:0 -24px 60px -26px rgba(6,12,30,.5),inset 0 1px 0 rgba(255,255,255,.9);animation:lt-sheet-up .4s cubic-bezier(.23,1,.32,1);}
+  @keyframes lt-sheet-up{from{transform:translateY(36px);opacity:.4;}to{transform:none;opacity:1;}}
+  .lt-modal--in .lt-modal__panel::before{content:'';position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;
+    width:40px;height:5px;border-radius:99px;background:rgba(22,32,59,.16);}
+  .lt-modal--in .lt-modal__head{padding-top:22px;}
+  .lt-modal--in .lt-modal__body{padding:22px 18px 12px;}
+  /* футер узкой шторки: не даём тексту-отзыву распирать строку с кнопками.
+     Дежурную подсказку прячем, отзыв «Верно/Почти» — отдельной строкой сверху,
+     основную кнопку тянем во всю оставшуюся ширину рядом с «Назад». */
+  .lt-modal--in .lt-modal__foot{flex-wrap:wrap;padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));gap:10px 12px;}
+  .lt-modal--in .lt-fb{order:-1;flex:1 1 100%;font-size:13.5px;}
+  .lt-modal--in .lt-fb:not(.show){display:none;}          /* нет отзыва — нет пустой строки */
+  .lt-modal--in .lt-back{flex:0 0 auto;}
+  .lt-modal--in .lt-modal__foot .le-btn:not(.lt-back){flex:1 1 auto;justify-content:center;}
+  /* экран результата под узкую шторку */
+  .lt-modal--in .lt-done{padding:30px 20px 26px;}
+  .lt-modal--in .lt-done__star{width:84px;height:84px;}
+  .lt-modal--in .lt-done__star svg{width:44px;height:44px;}
+  .lt-modal--in .lt-done__h{font-size:25px;}
+  .lt-modal--in .lt-done__s{font-size:14px;margin-top:10px;}
+  .lt-modal--in .lt-stats{gap:9px;margin-top:22px;flex-wrap:nowrap;}
+  .lt-modal--in .lt-stat{min-width:0;flex:1 1 0;padding:14px 10px;text-align:center;}
+  .lt-modal--in .lt-stat__v{font-size:21px;}
+  .lt-modal--in .lt-stat__k{font-size:10.5px;margin-top:6px;}
+  .lt-modal--in .lt-done__cta{margin-top:26px;flex-direction:column;width:100%;gap:10px;}
+  .lt-modal--in .lt-done__cta .le-btn{width:100%;justify-content:center;}
 
   /* компактный режим — превью телефона в конструкторе */
   .le-study.is-compact .le-h1{font-size:23px;letter-spacing:-.02em;}
@@ -763,29 +861,74 @@
   .le-study.is-compact .le-aims__i{font-size:13px;}
   .le-study.is-compact .le-gl{grid-template-columns:48px 1fr auto;gap:12px;padding:11px 14px;}
   .le-study.is-compact .le-gl__hz{font-size:19px;}
-  .le-study.is-compact .le-hw{margin-top:18px;padding:15px 16px;gap:14px;}
+  .le-study.is-compact .le-hw{margin-top:18px;padding:16px 16px 18px;gap:12px 14px;}
   .le-study.is-compact .le-hw__ic{flex-basis:38px;width:38px;height:38px;border-radius:11px;}
+  .le-study.is-compact .le-hw__b{flex:1 1 auto;}
   .le-study.is-compact .le-hw__t{font-size:15px;}
-  .le-study.is-compact .le-hw__cta{font-size:12.5px;padding:10px 14px;}
+  /* CTA домашки в узком превью — во всю ширину, отдельной строкой (реальный CTA) */
+  .le-study.is-compact .le-hw__cta{flex:1 1 100%;width:100%;order:3;}
+  .le-study.is-compact .le-hw__cta.le-btn{width:100%;padding:12px 16px;font-size:13.5px;margin-top:2px;}
 
   @media (max-width:1080px){
     .le-grid{grid-template-columns:1fr;}
-    .le-rail{position:static;flex-direction:row;flex-wrap:wrap;gap:14px;}
-    .le-prog{flex:1 1 100%;}
+    .le-foot{margin-right:0;}
+    .le-rail{position:static;flex-direction:row;flex-wrap:wrap;gap:16px;margin-top:8px;}
     .le-pl{flex:1 1 360px;}
-    .le-rail>.le-card{flex:1 1 280px;}
+    .le-card{flex:1 1 280px;}
   }
   @media (max-width:680px){
-    .le-head{margin:0 0 8px;top:10px;padding:9px 10px 9px 14px;}
-    .le-head::before{left:-18px;right:-18px;}
-    .le-h1{font-size:30px;} .le-sub{font-size:15px;}
-    .le-digest__body{padding:6px 18px 22px;}
+    .le-head{margin:0 0 18px;padding:0;}
+    .le-crumb{font-size:13.5px;min-width:0;}
+    .le-crumb__mod,.le-crumb__cur,.le-crumb__sep{display:none;}
+    .le-titlerow{gap:12px;}
+    .le-h1{font-size:30px;letter-spacing:-.028em;}
+    .le-sub{font-size:15px;margin-top:11px;}
+    .le-player{margin-top:22px;border-radius:18px;}
+    .le-vtitle{display:none;}
+    .le-play{width:58px;height:58px;}
+    .le-poster__cap{left:12px;top:12px;font-size:11px;}
+    .le-vctrl{padding:0 12px 12px;gap:10px;}
+    .le-digest{margin-top:26px;border-radius:20px;}
+    .le-digest__hd{padding:20px 18px 0;}
+    .le-digest__hd-t{font-size:19px;}
+    .le-digest__body{padding:18px 18px 12px;}
+    .le-dfoot{margin:4px 18px 18px;}
+    .le-hwhead{margin:28px 0 12px;font-size:16px;}
+    .le-hw{padding:20px 18px;gap:15px;}
+    .le-hw__b{flex:1 1 100%;}
+    .le-hw__cta.le-btn{width:100%;justify-content:center;padding:14px;}
+    .le-mats{margin-top:28px;}
     .le-tones{grid-template-columns:repeat(2,1fr);}
-    .le-bar__spd,.le-bar__ic{display:none;}
-    .lt-modal{padding:0;align-items:stretch;}
-    .lt-modal__panel{width:100%;max-height:100%;border-radius:0;}
-    .lt-modal__body{padding:24px 20px 14px;} .lx-voc,.lx-match,.lx-tone__opts{grid-template-columns:1fr;}
-    .le-crumb__sep--mod,.le-crumb__mod{display:none;}
+    .le-rail{flex-direction:column;margin-top:24px;}
+    .le-pl,.le-card{flex:1 1 100%;}
+    .le-foot{padding:10px 12px;gap:8px;bottom:12px;border-radius:16px;}
+    .le-foot .le-btn{padding:12px 16px;font-size:13.5px;flex:1 1 auto;}
+    .le-foot__mid{display:none;}
+    .lt-modal{padding:0;align-items:flex-end;}
+    .lt-modal__panel{width:100%;height:86vh;border-radius:22px 22px 0 0;box-shadow:0 -30px 90px -24px rgba(3,8,28,.42);animation:lt-sheet .4s cubic-bezier(.32,.72,0,1);}
+    .lt-modal__panel::before{display:block;}
+    .lt-modal__head{padding:22px 18px 14px;}
+    .lt-modal__head{padding:16px 16px 14px;}
+    .lt-modal__body{padding:22px 16px 16px;}
+    .lx-voc,.lx-tone__opts{grid-template-columns:1fr;}
+    .lx-match{grid-template-columns:1fr 1fr;gap:9px 10px;}
+    .lx-mcol{gap:9px;}
+    .lx-mi{padding:12px 11px;min-height:54px;}
+    .lx-mcol--l .lx-mi__t{font-size:21px;}
+    .lx-mi__t{font-size:14.5px;}
+    .lx-opt{padding:14px 15px;}
+    .lx-opt__t{font-size:16px;}
+    .lx-gapline{font-size:18px;}
+    .lx-prompt{font-size:19px;}
+    .lt-modal__foot{padding:12px 14px;gap:10px;}
+    .lt-hint{display:none;}
+    .lt-modal__foot .le-btn{padding:12px 15px;font-size:13.5px;}
+    .lt-fb{font-size:13px;gap:8px;}
+    .lt-done{padding:34px 18px 30px;}
+    .lt-done__h{font-size:26px;}
+    .lt-done__s{font-size:14.5px;}
+    .lt-stats{gap:10px;}
+    .lt-stat{min-width:0;flex:1 1 42%;padding:15px 14px;}
   }
   @media (prefers-reduced-motion: reduce){
     .lt-q,.lt-done__star,.lt-modal,.lt-modal__panel,.lx-opt.is-wrong{animation:none;}
@@ -811,6 +954,48 @@
     return k == null ? null : +k;
   }
 
+  function TaskView(props) {
+    const block = props.block || {};
+    const st = props.st || {};
+    const files = st.files || [];
+    const text = st.text || '';
+    const set = function (patch) { if (props.onChange) props.onChange(Object.assign({}, st, patch)); };
+    const fmtSize = function (b) { return b >= 1048576 ? (b / 1048576).toFixed(1) + ' МБ' : Math.max(1, Math.round((b || 0) / 1024)) + ' КБ'; };
+    const onPick = function (e) {
+      const fl = Array.prototype.slice.call(e.target.files || []).map(function (f) { return { name: f.name, size: f.size, ext: (f.name.split('.').pop() || '').toUpperCase().slice(0, 4) }; });
+      if (fl.length) set({ files: files.concat(fl) });
+      e.target.value = '';
+    };
+    return h('div', { className: 'lx-scope lx-task' },
+      h('div', { className: 'lx-head' + (block.body ? ' has-sub' : '') },
+        h('span', { className: 'lx-head__ic' }, Ic.Edit ? h(Ic.Edit, { size: 19 }) : null),
+        h('div', { className: 'lx-head__tx' },
+          h('div', { className: 'lx-head__t' }, block.prompt || 'Задание'),
+          block.body ? h('div', { className: 'lx-head__s' }, block.body) : null)),
+      block.brief ? h('div', { className: 'lx-task__brief' }, block.brief) : null,
+      (block.checklist && block.checklist.length) ? h('div', { className: 'lx-task__req' },
+        h('div', { className: 'lx-task__req-h' }, 'Что нужно сделать'),
+        h('div', { className: 'lx-task__req-list' }, block.checklist.map(function (it, i) {
+          return h('div', { key: i, className: 'lx-task__req-i' }, h('span', { className: 'lx-task__req-n' }, i + 1), h('span', null, it));
+        }))) : null,
+      h('div', { className: 'lx-task__label' }, 'Ваш ответ'),
+      h('textarea', { className: 'lx-task__text', placeholder: 'Напишите ответ или комментарий (по желанию)…', value: text, onChange: function (e) { set({ text: e.target.value }); } }),
+      h('div', { className: 'lx-task__label' }, 'Прикрепите работу'),
+      h('label', { className: 'lx-task__drop' },
+        h('input', { type: 'file', hidden: true, multiple: true, onChange: onPick }),
+        h('span', { className: 'lx-task__drop-ic' }, Ic.Upload ? h(Ic.Upload, { size: 21 }) : (Ic.Paperclip ? h(Ic.Paperclip, { size: 20 }) : null)),
+        h('span', { className: 'lx-task__drop-t' }, 'Перетащите файл или ', h('b', null, 'нажмите, чтобы выбрать')),
+        h('span', { className: 'lx-task__drop-s' }, block.accept || 'PDF, DOCX, JPG, PNG · до 10 МБ')),
+      files.length ? h('div', { className: 'lx-task__files' }, files.map(function (f, i) {
+        return h('div', { key: i, className: 'lx-task__file' },
+          h('span', { className: 'lx-task__file-ic' }, f.ext || (Ic.File ? h(Ic.File, { size: 16 }) : null)),
+          h('div', { className: 'lx-task__file-b' },
+            h('div', { className: 'lx-task__file-t' }, f.name),
+            h('div', { className: 'lx-task__file-s' }, fmtSize(f.size))),
+          h('button', { type: 'button', className: 'lx-task__file-x', onClick: function () { set({ files: files.filter(function (_, j) { return j !== i; }) }); }, 'aria-label': 'Убрать' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×'));
+      })) : null);
+  }
+
   function BlockView(props) {
     const { block, st, revealed, onChange } = props;
     if (!block) return null;
@@ -820,8 +1005,7 @@
     if (block.type === 'theory') {
       const vocab = (block.vocab || []).filter((v) => v.hanzi || v.ru);
       return h('div', { className: 'lx-scope' },
-        h('div', { className: 'lx-kick' }, Ic.Book ? h(Ic.Book, { size: 15 }) : null, 'Запоминаем'),
-        block.title ? h('div', { className: 'lx-theory__t' }, block.title) : null,
+        exHead(Ic.Book ? h(Ic.Book, { size: 19 }) : null, block.title || 'Новые слова'),
         block.body ? h('div', { className: 'lx-theory__b' }, block.body) : null,
         vocab.length ? h('div', { className: 'lx-voc' }, vocab.map((v, i) => h('div', { key: i, className: 'lx-voc__c' },
           h('div', { className: 'lx-voc__top' },
@@ -830,6 +1014,9 @@
           v.hanzi ? h('div', { className: 'lx-voc__hz' }, v.hanzi) : null,
           v.ru ? h('div', { className: 'lx-voc__ru' }, v.ru) : null))) : null);
     }
+
+    // ── Открытое задание (отправка на проверку) ──
+    if (block.type === 'task') return h(TaskView, { block, st, onChange });
 
     // ── Выбор / Пропуск: общий рендер вариантов ──
     if (block.type === 'choice' || block.type === 'gap') {
@@ -860,8 +1047,7 @@
 
       const head = block.type === 'gap'
         ? [
-          h('div', { key: 'k', className: 'lx-kick' }, Ic.Edit ? h(Ic.Edit, { size: 15 }) : null, 'Соберите фразу'),
-          h('div', { key: 'p', className: 'lx-prompt' }, block.prompt),
+          exHead(Ic.Edit ? h(Ic.Edit, { size: 19 }) : null, block.prompt || 'Соберите фразу', 'k', locked ? null : 'Выберите слово в пропуск'),
           h('div', { key: 'g', className: 'lx-gapline' },
             block.before ? (block.before + ' ') : '',
             h('span', { className: 'lx-slot' + (sel != null ? ' filled' : '') + (locked ? (sel != null && block.options[sel] && block.options[sel].correct ? ' ok' : ' bad') : '') },
@@ -869,8 +1055,7 @@
             block.after ? (' ' + block.after) : ''),
         ]
         : [
-          h('div', { key: 'k', className: 'lx-kick' }, Ic.CheckCircle ? h(Ic.CheckCircle, { size: 15 }) : null, 'Выберите ответ'),
-          h('div', { key: 'p', className: 'lx-prompt' }, block.prompt),
+          exHead(Ic.CheckCircle ? h(Ic.CheckCircle, { size: 19 }) : null, block.prompt || 'Выберите ответ', 'k', locked ? null : 'Выберите один вариант'),
         ];
 
       return h('div', { className: 'lx-scope' }, head,
@@ -928,8 +1113,8 @@
         }));
 
       return h('div', { className: 'lx-scope' },
-        h('div', { className: 'lx-kick' }, Ic.Grid ? h(Ic.Grid, { size: 15 }) : null, 'Соедините пары'),
-        h('div', { className: 'lx-prompt' }, block.prompt),
+        exHead(Ic.Grid ? h(Ic.Grid, { size: 19 }) : null, block.prompt || 'Соедините пары', 'k',
+          locked ? null : 'Нажмите иероглиф, затем его перевод'),
         h('div', { className: 'lx-match' }, leftCol, rightCol),
         revealed && block.explain ? explainRow(block, L.isCorrect(block, st)) : null);
     }
@@ -951,8 +1136,7 @@
         }, toks[ti]))
         : h('span', { className: 'lx-order__ph' }, 'Нажимайте слова внизу по порядку');
       return h('div', { className: 'lx-scope' },
-        h('div', { className: 'lx-kick' }, Ic.Route ? h(Ic.Route, { size: 15 }) : null, 'Соберите предложение'),
-        h('div', { className: 'lx-prompt' }, block.prompt),
+        exHead(Ic.Route ? h(Ic.Route, { size: 19 }) : null, block.prompt || 'Соберите предложение', 'k', locked ? null : 'Нажимайте слова по порядку'),
         h('div', { className: 'lx-order__line' + (placed.length ? '' : ' is-empty') }, lineChips),
         h('div', { className: 'lx-order__bank' }, bank.length
           ? bank.map((i) => h('button', { key: i, type: 'button', className: 'lx-tok' + (locked ? ' is-locked' : ''), onClick: () => addTok(i) }, toks[i]))
@@ -966,8 +1150,7 @@
       const ok = locked && L.isCorrect(block, st);
       const set = (v) => { if (!locked) onChange({ value: v }); };
       return h('div', { className: 'lx-scope' },
-        h('div', { className: 'lx-kick' }, Ic.Send ? h(Ic.Send, { size: 15 }) : null, 'Впишите ответ'),
-        h('div', { className: 'lx-prompt' }, block.prompt),
+        exHead(Ic.Send ? h(Ic.Send, { size: 19 }) : null, block.prompt || 'Впишите ответ', 'k', locked ? null : 'Введите перевод и проверьте себя'),
         h('div', { className: 'lx-type__field' },
           h('input', {
             className: 'lx-type__in' + (locked ? (ok ? ' ok' : ' bad') : ''), value: val, placeholder: 'Ваш ответ…',
@@ -990,8 +1173,7 @@
         return c;
       };
       return h('div', { className: 'lx-scope' },
-        h('div', { className: 'lx-kick' }, Ic.Target ? h(Ic.Target, { size: 15 }) : null, 'Какой тон?'),
-        h('div', { className: 'lx-prompt' }, block.prompt || 'Определите тон иероглифа'),
+        exHead(Ic.Target ? h(Ic.Target, { size: 19 }) : null, block.prompt || 'Определите тон иероглифа', 'k', locked ? null : 'Выберите верный тон'),
         h('div', { className: 'lx-tone__card' },
           h('div', { className: 'lx-tone__top' },
             h('div', { className: 'lx-tone__hz' }, block.hanzi || '?'),
@@ -1236,6 +1418,48 @@
           b.url ? h('span', null, '−' + fmtAudioTime(Math.max(0, dur - cur))) : null)));
   }
 
+  // ── Материал как настоящая файловая карточка: тип (по расширению) + размер ──
+  function fmtBytes(n) {
+    if (!n && n !== 0) return '';
+    if (n < 1024) return n + ' Б';
+    if (n < 1048576) return Math.round(n / 1024) + ' КБ';
+    return (n / 1048576).toFixed(1) + ' МБ';
+  }
+  function fileMeta(m) {
+    const raw = String((m && (m.filename || m.fileName || m.url || m.title)) || '');
+    const em = raw.match(/\.([a-z0-9]{1,5})(?:[?#].*)?$/i);
+    const ext = em ? em[1].toUpperCase() : '';
+    const isLink = !ext && !!(m && m.url) && !(m && (m.filename || m.fileName));
+    const size = (m && m.size) ? fmtBytes(m.size) : '';
+    const kind = ext
+      ? (ext === 'PDF' ? 'PDF-документ'
+        : /^(PNG|JPG|JPEG|GIF|WEBP|SVG)$/.test(ext) ? 'Изображение'
+        : /^(MP3|WAV|M4A|OGG)$/.test(ext) ? 'Аудио'
+        : /^(MP4|MOV|WEBM)$/.test(ext) ? 'Видео'
+        : /^(DOC|DOCX)$/.test(ext) ? 'Документ Word'
+        : /^(XLS|XLSX|CSV)$/.test(ext) ? 'Таблица'
+        : /^(PPT|PPTX)$/.test(ext) ? 'Презентация'
+        : /^(ZIP|RAR|7Z)$/.test(ext) ? 'Архив'
+        : ext + '-файл')
+      : (isLink ? 'Ссылка' : 'Файл');
+    let name = (m && m.title) || (m && (m.filename || m.fileName) || '').replace(/\.[^.]+$/, '') || '';
+    const looksHash = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}/i.test(name) || /^[0-9a-f]{20,}$/i.test(name);
+    if (!name || looksHash) name = kind;
+    const badge = ext || (isLink ? 'URL' : '');
+    const meta = size || kind;
+    return { name, ext, badge, kind, size, meta };
+  }
+
+  // Единая шапка задания: иконка-тайл + инструкция. Инструкция = сам prompt
+  // (он же и есть задание) — без дублирующего eyebrow над тем же текстом.
+  function exHead(icon, title, key, sub) {
+    return h('div', { className: 'lx-head' + (sub ? ' has-sub' : ''), key: key || 'exhead' },
+      icon ? h('span', { className: 'lx-head__ic' }, icon) : null,
+      h('div', { className: 'lx-head__tx' },
+        h('div', { className: 'lx-head__t' }, title || ''),
+        sub ? h('div', { className: 'lx-head__s' }, sub) : null));
+  }
+
   function renderDoc(doc) {
     return (doc || []).map((b, i) => {
       const key = (b && b._id) || ('d' + i);
@@ -1266,7 +1490,17 @@
           b.hanzi ? h('div', { className: 'le-doc-example__hz' }, b.hanzi) : null,
           b.pinyin ? h('div', { className: 'le-doc-example__py' }, b.pinyin) : null,
           b.ru ? h('div', { className: 'le-doc-example__ru' }, b.ru) : null));
-      if (b.kind === 'material') return h('a', { key, className: 'le-doc-material', href: b.url || '#', target: '_blank', rel: 'noreferrer' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 15 }) : null, h('span', { className: 'le-doc-material__t' }, b.title || b.url || 'Материал'));
+      if (b.kind === 'material') {
+        const fm = fileMeta({ title: b.title, url: b.url, filename: b.fileName || b.filename, size: b.size });
+        return h('a', { key, className: 'le-doc-material', href: b.url || '#', target: '_blank', rel: 'noreferrer' },
+          h('span', { className: 'le-doc-material__ic' }, fm.badge
+            ? h('span', { className: 'le-mat__ext' }, fm.badge)
+            : (Ic.Paperclip ? h(Ic.Paperclip, { size: 16 }) : null)),
+          h('span', { className: 'le-doc-material__b' },
+            h('span', { className: 'le-doc-material__t' }, fm.name || 'Материал'),
+            h('span', { className: 'le-doc-material__meta' }, fm.meta)),
+          Ic.Download ? h('span', { className: 'le-doc-material__dl' }, h(Ic.Download, { size: 16 })) : null);
+      }
       if (b.kind === 'divider') return h('hr', { key, className: 'le-doc-divider' });
       return null;
     });
@@ -1480,10 +1714,6 @@
                 : h('span', { className: 'le-poster__sky' }),
             h('span', { className: 'le-poster__scrim' }),
             compact ? null : h('span', { className: 'le-poster__cap' }, PlayGlyph(11), 'Видеоурок'),
-            compact ? null : h('span', { className: 'le-vtitle' },
-              h('span', { className: 'le-vtitle__t' }, lesson.title || (props.item && props.item.title) || 'Видеоурок'),
-              heroHz ? h('span', { className: 'le-vtitle__hz' }, heroHz) : null,
-              heroPy ? h('span', { className: 'le-vtitle__py' }, heroPy) : null),
             h('span', { className: 'le-play' }, PlayGlyph(compact ? 19 : 27)),
             compact ? null : h('span', { className: 'le-vctrl' },
               h('span', { className: 'le-vctrl__pl' }, PlayGlyph(16)),
@@ -1527,38 +1757,24 @@
           return h('p', { key: i, className: 'le-note-p' }, n.text);
         })) : null);
 
-    // словарь урока: слова из doc, иначе глоссарий (для таба «Основные слова»)
-    const docWords = hasDoc ? lesson.doc.filter((b) => b && b.kind === 'word').map((b) => ({ hanzi: b.hanzi, pinyin: b.pinyin, ru: b.ru })) : [];
-    const vocab = docWords.length ? docWords : glossary;
-    const vocabTable = function (list) {
-      const half = Math.ceil(list.length / 2);
-      const cols = [list.slice(0, half), list.slice(half)];
-      return h('div', { className: 'le-vt' }, cols.map((col, ci) => h('div', { key: ci, className: 'le-vt__col' },
-        col.map((g, i) => h('div', { key: i, className: 'le-vt__row' },
-          h('span', { className: 'le-vt__hz' }, g.hanzi || '—'),
-          h('span', { className: 'le-vt__py' }, g.pinyin || ''),
-          h('span', { className: 'le-vt__ru' }, g.ru || ''))))));
-    };
-
-    // табы конспекта — только те, для которых есть содержимое (по референсу)
-    // Порядок: сначала сам урок («Разбор» — то, что пишет преподаватель и что
-    // видит ученик потоком), потом словарь-выжимка и цели. Ведём разбором, а не
-    // сырым списком слов — так превью конструктора сразу показывает документ.
-    const tabs = [];
-    if (notesBody) tabs.push({ label: 'Разбор урока', node: h('div', { className: 'le-dpane', key: 'n' }, notesBody) });
-    if (vocab.length) tabs.push({ label: 'Основные слова', node: h('div', { className: 'le-dpane', key: 'w' }, h('div', { className: 'le-dpane__h' }, 'Основные слова'), vocabTable(vocab)) });
-    if (objectives.length) tabs.push({ label: 'Цели', node: h('div', { className: 'le-dpane', key: 'a' }, aims) });
-    const ti = Math.min(tab[0], Math.max(0, tabs.length - 1));
+    // глоссарий-таблица (только когда урок без doc — иначе слова уже в потоке doc)
+    const words = (!hasDoc && glossary.length) ? h('div', { className: 'le-words' },
+      h('div', { className: 'le-words__l' }, 'Новые слова'),
+      h('div', { className: 'le-gloss' }, glossary.map((g, i) => h('div', { key: i, className: 'le-gl' },
+        h('span', { className: 'le-gl__hz' }, g.hanzi || '—'),
+        h('span', { className: 'le-gl__py' }, g.pinyin || ''),
+        h('span', { className: 'le-gl__ru' }, g.ru || ''))))) : null;
 
     const pdfMat = (lesson.materials || []).find(function (m) { return m && /pdf/i.test((m.filename || '') + (m.url || '') + (m.title || '')); });
-    const onPdf = function () { if (pdfMat && pdfMat.url) window.open(pdfMat.url, '_blank'); else toast('PDF-конспект скоро будет доступен'); };
+    const onPdf = function () { if (pdfMat && pdfMat.url && pdfMat.url !== '#') window.open(pdfMat.url, '_blank'); else toast('PDF-конспект скоро будет доступен'); };
 
-    const digestEl = tabs.length ? h('div', { className: 'le-digest open' },
+    // Конспект — единый поток (цели, разбор, слова, выноски) тем же renderDoc,
+    // что и превью конструктора (build). Без табов — как во всём продукте.
+    const digestEl = (aims || notesBody || words) ? h('div', { className: 'le-digest open' },
       h('div', { className: 'le-digest__hd' },
         h('span', { className: 'le-digest__hd-ic' }, Ic.Book ? h(Ic.Book, { size: 17 }) : null),
         h('span', { className: 'le-digest__hd-t' }, 'Конспект урока')),
-      tabs.length > 1 ? h('div', { className: 'le-dtabs' }, tabs.map((t, i) => h('button', { key: i, type: 'button', className: 'le-dtab' + (i === ti ? ' is-on' : ''), onClick: () => tab[1](i) }, t.label))) : null,
-      tabs[ti].node,
+      h('div', { className: 'le-digest__body' }, aims, notesBody, words),
       compact ? null : h('div', { className: 'le-dfoot' },
         h('button', { type: 'button', className: 'le-dfoot__lnk', onClick: onPdf }, Ic.Download ? h(Ic.Download, { size: 16 }) : null, 'Скачать PDF-конспект'),
         h('button', { type: 'button', className: 'le-dfoot__dl', onClick: onPdf, 'aria-label': 'Скачать конспект' }, Ic.Download ? h(Ic.Download, { size: 17 }) : null))) : null;
@@ -1573,10 +1789,12 @@
       : h('button', { type: 'button', className: 'le-btn le-btn--ghost le-hw__cta', onClick: start }, 'Пройти заново');
     var hwTasks = blocks.filter(function (b) { return b && b.type !== 'theory'; }).length || blocks.length;
     var hwMin = Math.max(1, Math.round(blocks.length * 1.2));
+    const hwHead = (blocks.length && !compact) ? h('div', { className: 'le-hwhead' },
+      Ic.Edit ? h(Ic.Edit, { size: 16 }) : null, h('span', null, 'Домашнее задание')) : null;
     const hwBody = blocks.length ? h('div', { className: 'le-hw' + (homeworkDone ? ' is-done' : '') },
-      h('span', { className: 'le-hw__ic' }, homeworkDone ? (Ic.Check ? h(Ic.Check, { size: 21, strokeWidth: 2.6 }) : '✓') : (Ic.Edit ? h(Ic.Edit, { size: 19 }) : '✎')),
+      h('span', { className: 'le-hw__ic' }, homeworkDone ? (Ic.Check ? h(Ic.Check, { size: 21, strokeWidth: 2.6 }) : '✓') : (Ic.Edit ? h(Ic.Edit, { size: 20 }) : '✎')),
       h('div', { className: 'le-hw__b' },
-        h('div', { className: 'le-hw__k' }, homeworkDone ? (acc != null ? 'Сдано · точность ' + acc + '%' : 'Сдано') : 'Домашнее задание'),
+        homeworkDone ? h('div', { className: 'le-hw__k' }, acc != null ? 'Сдано · точность ' + acc + '%' : 'Сдано') : null,
         h('div', { className: 'le-hw__t' }, homeworkDone ? 'Задание пройдено' : 'Закрепите урок на практике'),
         homeworkDone ? null : h('div', { className: 'le-hw__meta' },
           h('span', { className: 'le-hw__mi' }, (Ic.CheckCircle ? h(Ic.CheckCircle, { size: 13 }) : null), hwTasks + ' ' + plural(hwTasks, 'задание', 'задания', 'заданий')),
@@ -1589,10 +1807,15 @@
     const matsEl = mats.length ? h('div', { className: 'le-mats' },
       h('div', { className: 'le-mats__h' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 15 }) : null, h('span', null, 'Материалы')),
       h('div', { className: 'le-mats__list' }, mats.map(function (m, i) {
-        return h('a', { key: i, className: 'le-mat', href: m.url || '#', target: '_blank', rel: 'noreferrer' },
-          h('span', { className: 'le-mat__ic' }, Ic.File ? h(Ic.File, { size: 16 }) : null),
-          h('span', { className: 'le-mat__t' }, m.title || m.filename || 'Файл'),
-          Ic.Download ? h('span', { className: 'le-mat__dl' }, h(Ic.Download, { size: 15 })) : null);
+        const fm = fileMeta(m);
+        return h('a', { key: i, className: 'le-mat', href: m.url || '#', target: '_blank', rel: 'noreferrer', onClick: function (e) { if (!m.url || m.url === '#') { e.preventDefault(); toast('Файл скоро будет доступен для скачивания'); } } },
+          h('span', { className: 'le-mat__ic' }, fm.badge
+            ? h('span', { className: 'le-mat__ext' }, fm.badge)
+            : (Ic.File ? h(Ic.File, { size: 18 }) : null)),
+          h('span', { className: 'le-mat__b' },
+            h('span', { className: 'le-mat__t' }, fm.name),
+            h('span', { className: 'le-mat__meta' }, fm.meta)),
+          Ic.Download ? h('span', { className: 'le-mat__dl' }, h(Ic.Download, { size: 16 })) : null);
       }))) : null;
 
     const titleEl = compact
@@ -1607,10 +1830,11 @@
       player,
       digestEl,
       matsEl,
+      hwHead,
       hwBody);
   }
 
-  window.ELessonUI = { BlockView, explainRow, StudyView, PlayGlyph };
+  window.ELessonUI = { BlockView, explainRow, StudyView, PlayGlyph, Trainer };
 
   /* ─────────────────────────────────────────────────────────────────────────
      ТРЕНАЖЁР (домашка) — попап-модалка поверх страницы урока.
@@ -1631,15 +1855,13 @@
     const total = blocks.length;
     const st = states[idx];
     const revealed = reveals[idx];
-    const checkable = block && block.type !== 'theory';
-    const complete = L.isComplete(block, st);
+    const isTask = block && block.type === 'task';
+    const checkable = block && block.type !== 'theory' && !isTask;
+    const complete = isTask ? !!(st && ((st.text && st.text.trim()) || (st.files && st.files.length))) : L.isComplete(block, st);
     const arrEl = () => Ic.ArrowRight ? h(Ic.ArrowRight, { size: 16, className: 'arr' }) : null;
 
     // деривация очков (back/forward-безопасно)
     const rightCount = scored.filter((x) => x === true).length;
-    const theoryRevealed = blocks.filter((b, i) => b.type === 'theory' && reveals[i]).length;
-    const baseXp = rightCount * 10 + theoryRevealed * 5;
-    const gain = scored[idx] === true ? 10 : 0;
 
     const back = props.onExit || (() => nav('/learn'));
     const finish = props.onDone || back;
@@ -1647,8 +1869,9 @@
     const setSt = (v) => setStates((arr) => { const a = arr.slice(); a[idx] = (typeof v === 'function' ? v(arr[idx]) : v); return a; });
     const setAt = (setter, i, val) => setter((arr) => { const a = arr.slice(); a[i] = val; return a; });
 
-    // блокируем прокрутку фона, пока открыт попап
+    // блокируем прокрутку фона, пока открыт попап (в contained-режиме превью — не трогаем страницу)
     useEffect(() => {
+      if (props.contained) return;
       const mn = document.querySelector('.sd-main');
       const prev = mn ? mn.style.overflow : '';
       if (mn) mn.style.overflow = 'hidden';
@@ -1681,7 +1904,7 @@
           e.preventDefault();
           if (revealed) advance();
           else if (block && block.type === 'theory') onTheoryNext();
-          else if (complete) onCheck();
+          else if (checkable && complete) onCheck();
         } else if ((e.key === 'ArrowLeft' || e.key === 'Backspace') && idx > 0) {
           e.preventDefault(); goBack();
         }
@@ -1696,63 +1919,64 @@
     const backdrop = (e) => { if (e.target === e.currentTarget) back(); };
 
     if (done) {
-      const scoredCount = blocks.filter((b) => b.type !== 'theory').length || 1;
+      const scoredCount = blocks.filter((b) => b.type !== 'theory' && b.type !== 'task').length || 1;
       const acc = Math.round((rightCount / scoredCount) * 100);
-      const xp = baseXp + 20;
-      return h('div', { className: 'lt-modal', onMouseDown: backdrop },
+      return h('div', { className: 'lt-modal' + (props.contained ? ' lt-modal--in' : ''), onMouseDown: backdrop },
         h('div', { className: 'lt-modal__panel', role: 'dialog', 'aria-modal': 'true' },
           closeX(true),
           h('div', { className: 'lt-done' },
-            h('div', { className: 'lt-done__star' + (acc >= 80 ? ' is-win' : '') }, Ic.Star ? h(Ic.Star, { size: 54 }) : '★'),
-            h('div', { className: 'lt-done__k' }, 'Домашка сдана'),
-            h('h2', { className: 'lt-done__h' }, acc >= 80 ? 'Отлично! Ещё шаг к вершине' : 'Хороший заход'),
-            h('p', { className: 'lt-done__s' }, acc >= 80
-              ? 'Сильно. Вы уверенно держите новые слова — так и поднимаемся к HSK.'
-              : 'Эти слова уже ваши, остальное закрепим на следующем уроке.'),
+            h('div', { className: 'lt-done__cel' },
+              h('div', { className: 'lt-conf' }, [
+                { c: '#2B8FFF', cx: '-72px', cy: '86px', cr: '220deg', d: '0s' },
+                { c: '#F5C84C', cx: '74px', cy: '76px', cr: '-190deg', d: '.05s' },
+                { c: '#0E9F6E', cx: '-96px', cy: '26px', cr: '130deg', d: '.1s' },
+                { c: '#5CB4FF', cx: '96px', cy: '34px', cr: '-150deg', d: '.08s' },
+                { c: '#F5C84C', cx: '-44px', cy: '116px', cr: '210deg', d: '.15s' },
+                { c: '#2B8FFF', cx: '52px', cy: '116px', cr: '-210deg', d: '.13s' },
+              ].map(function (cp, i) { return h('i', { key: i, style: { background: cp.c, '--cx': cp.cx, '--cy': cp.cy, '--cr': cp.cr, animationDelay: cp.d } }); })),
+              h('div', { className: 'lt-done__star' }, Ic.Star ? h(Ic.Star, { size: 52 }) : '★')),
+            h('div', { className: 'lt-done__k' }, Ic.Clock ? h(Ic.Clock, { size: 13 }) : null, h('span', null, 'На проверке у преподавателя')),
+            h('h2', { className: 'lt-done__h' }, acc >= 80 ? 'Отлично, домашка сдана!' : 'Готово — домашка отправлена!'),
+            h('p', { className: 'lt-done__s' }, 'Ответы ушли преподавателю — он проверит и даст обратную связь. Предварительный результат ниже.'),
             h('div', { className: 'lt-stats' },
-              h('div', { className: 'lt-stat lt-stat--gold' }, h('div', { className: 'lt-stat__v gold' }, '+' + xp), h('div', { className: 'lt-stat__k' }, 'XP за домашку')),
               h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, acc + '%'), h('div', { className: 'lt-stat__k' }, 'Точность')),
               h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, rightCount + '/' + scoredCount), h('div', { className: 'lt-stat__k' }, 'Верных ответов'))),
             h('div', { className: 'lt-done__cta' },
-              h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: () => finish({ acc: acc, xp: xp }) }, 'Вернуться к уроку', arrEl()),
+              h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: () => finish({ acc: acc }) }, 'Вернуться к уроку', arrEl()),
               h('button', { type: 'button', className: 'le-btn le-btn--ghost', onClick: restart }, 'Пройти ещё раз')))));
     }
 
     const pct = Math.round(((idx + (revealed ? 1 : 0)) / total) * 100);
     const ansOk = revealed && checkable && L.isCorrect(block, st);
     const ansBad = revealed && checkable && !L.isCorrect(block, st);
+    const correctText = (block && block.type === 'choice') ? (((block.options || []).find(function (o) { return o.correct; }) || {}).text || null) : null;
 
     let footBtn;
     if (revealed) footBtn = h('button', { type: 'button', className: 'le-btn ' + (ansBad ? 'le-btn--primary' : 'le-btn--ok'), onClick: advance }, idx + 1 >= total ? 'Завершить' : 'Дальше', arrEl());
     else if (block.type === 'theory') footBtn = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onTheoryNext }, 'Понятно, дальше', arrEl());
+    else if (isTask) footBtn = h('button', { type: 'button', className: 'le-btn le-btn--primary', disabled: !complete, onClick: function () { setAt(setReveals, idx, true); advance(); } }, 'Отправить на проверку', arrEl());
     else footBtn = h('button', { type: 'button', className: 'le-btn le-btn--primary', disabled: !complete, onClick: onCheck }, 'Проверить');
 
-    return h('div', { className: 'lt-modal', onMouseDown: backdrop },
+    return h('div', { className: 'lt-modal' + (props.contained ? ' lt-modal--in' : ''), onMouseDown: backdrop },
       h('div', { className: 'lt-modal__panel', role: 'dialog', 'aria-modal': 'true' },
         h('div', { className: 'lt-modal__head' },
           h('div', { className: 'lt-modal__hrow' },
             h('span', { className: 'lt-badge' }, Ic.Edit ? h(Ic.Edit, { size: 13 }) : null, h('span', null, 'Домашка')),
-            baseXp > 0 ? h('span', { className: 'lt-xp' }, '+' + baseXp, h('span', { className: 'lt-xp__u' }, ' XP')) : null,
             h('span', { className: 'lt-modal__count' }, (idx + 1), h('span', { className: 'lt-modal__count-d' }, ' / ' + total)),
             closeX(false)),
-          h('div', { className: 'lt-seg' }, blocks.map(function (b, i) {
-            var c = 'lt-seg__i';
-            if (scored[i] === true) c += ' is-ok';
-            else if (scored[i] === false) c += ' is-bad';
-            else if (i === idx) c += ' is-cur';
-            else if (i < idx || reveals[i]) c += ' is-done';
-            return h('span', { key: i, className: c });
-          }))),
+          h('div', { className: 'lt-prog' }, h('i', { style: { width: Math.round((reveals.filter(Boolean).length / total) * 100) + '%' } }))),
         h('div', { className: 'lt-modal__body' },
           h('div', { className: 'lt-q', key: idx }, h(BlockView, { block, st, revealed, onChange: setSt }))),
-        h('div', { className: 'lt-modal__foot' },
-          h('button', { type: 'button', className: 'le-btn le-btn--ghost lt-back', disabled: idx === 0, onClick: goBack },
-            Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 16 }) : '‹', 'Назад'),
-          h('div', { className: 'lt-fb' + ((ansOk || ansBad) ? ' show ' : ' ') + (ansOk ? 'ok' : ansBad ? 'bad' : '') },
-            (ansOk || ansBad) ? h('span', { className: 'lt-fb__ic' }, ansOk ? (Ic.Check ? h(Ic.Check, { size: 17, strokeWidth: 2.6 }) : '✓') : (Ic.Close ? h(Ic.Close, { size: 17 }) : '×')) : null,
-            ansOk ? h('span', null, 'Верно! ', h('span', { className: 'lt-fb__xp' }, '+' + (gain || 10), ' XP'))
-              : ansBad ? h('span', null, 'Почти — посмотрите верный вариант') : h('span', { className: 'lt-fb__hint' }, checkable ? 'Выберите ответ и проверьте' : '')),
-          footBtn)));
+        h('div', { className: 'lt-foot' + (ansOk ? ' is-ok' : ansBad ? ' is-bad' : '') },
+          (ansOk || ansBad) ? h('div', { className: 'lt-fbbar' },
+            h('span', { className: 'lt-fbbar__ic' }, ansOk ? (Ic.Check ? h(Ic.Check, { size: 22, strokeWidth: 2.6 }) : '✓') : (Ic.Close ? h(Ic.Close, { size: 21, strokeWidth: 2.6 }) : '×')),
+            h('div', { className: 'lt-fbbar__tx' },
+              h('div', { className: 'lt-fbbar__t' }, ansOk ? 'Верно!' : 'Почти!'),
+              h('div', { className: 'lt-fbbar__s' }, ansOk ? 'Отличный ответ' : (correctText ? ['Верный ответ: ', h('b', { key: 'b' }, correctText)] : 'Верный вариант выделен зелёным')))) : null,
+          h('div', { className: 'lt-modal__foot' },
+            h('button', { type: 'button', className: 'le-btn le-btn--ghost lt-back', disabled: idx === 0, onClick: goBack }, Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 16 }) : '‹', 'Назад'),
+            h('span', { className: 'lt-hint' }, (!revealed && checkable) ? 'Выберите ответ' : (!revealed && isTask ? 'Прикрепите работу или напишите ответ' : '')),
+            footBtn))));
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -1802,7 +2026,6 @@
         h('span', { className: 'le-pl__hd-b' },
           h('span', { className: 'le-pl__hd-t' }, C.module || 'Модуль 1 · Первые слова'),
           h('span', { className: 'le-pl__hd-m' }, doneCount + ' из ' + lessons.length + ' ' + plural(lessons.length, 'урок', 'урока', 'уроков') + ' пройдено'))),
-      h('div', { className: 'le-pl__bar' }, h('i', { style: { width: progPct + '%' } })),
       h('div', { className: 'le-pl__list' }, lessons.map((it) => {
         const cur = it.n === n;
         const onClick = it.state === 'locked'
@@ -1814,7 +2037,6 @@
             ? h('span', { className: 'le-pli__sc' }, Ic.Check ? h(Ic.Check, { size: 14, strokeWidth: 3 }) : '✓')
             : it.state === 'locked' ? h('span', { className: 'le-pli__lock' }, Ic.Lock ? h(Ic.Lock, { size: 15 }) : null) : null;
         return h('button', { key: it.n, type: 'button', className: 'le-pli ' + it.state + (cur ? ' current' : ''), onClick: onClick },
-          h('span', { className: 'le-pli__node' }),
           h('span', { className: 'le-pli__th' },
             it.thumb ? h('img', { src: it.thumb, alt: '', loading: 'lazy' }) : null,
             cur ? h('span', { className: 'le-pli__play' }, PlayGlyph(16)) : null),
@@ -1827,16 +2049,13 @@
           h('span', { className: 'le-pli__r' }, right));
       })),
       h('button', { type: 'button', className: 'le-pl__all', onClick: () => nav('/learn') },
-        'Показать все уроки', Ic.ArrowRight ? h(Ic.ArrowRight, { size: 14 }) : null));
+        'Показать все уроки'));
   }
 
   function TeacherCard() {
     const t = (L.COURSE && L.COURSE.teacher) || { name: 'Преподаватель', role: '', initial: 'И' };
     const initial = t.initial || (t.name || 'И').charAt(0);
     return h('div', { className: 'le-card' },
-      h('div', { className: 'le-card__h' },
-        h('span', { className: 'le-card__hdot', title: 'На связи' }),
-        h('span', { className: 'le-card__t' }, 'Ваш преподаватель')),
       h('div', { className: 'le-tch' },
         h('span', { className: 'le-tch__av' },
           initial,
@@ -1867,18 +2086,17 @@
   // «Дальше» ведёт по сценарию: не сдан тест → к тесту; сдан → следующий урок.
   function LessonFoot(props) {
     const { item, total, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart } = props;
-    const arr = () => Ic.ArrowRight ? h(Ic.ArrowRight, { size: 16, className: 'arr' }) : null;
+    const arr = () => h('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round', className: 'arr' }, h('path', { d: 'M5 12h14M13 6l6 6-6 6' }));
     const back = h('button', { type: 'button', className: 'le-btn le-btn--ghost', disabled: !prevOk, onClick: prevOk ? onPrev : undefined },
-      Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 16 }) : '‹', 'Назад');
+      h('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round', className: 'bk' }, h('path', { d: 'M19 12H5M11 6l-6 6 6 6' })), 'Назад');
     let next;
-    if (!homeworkDone) next = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onStart }, 'Перейти к тесту', arr());
-    else if (nextOk) next = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onNext }, 'Следующий урок', arr());
+    if (nextOk) next = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onNext }, 'Следующий урок', arr());
     else next = h('button', { type: 'button', className: 'le-btn le-btn--primary', disabled: true }, 'Модуль пройден');
     return h('div', { className: 'le-foot' },
       back,
       h('div', { className: 'le-foot__mid' },
-        h('span', { className: 'le-foot__dots' }, lessons.map((it) => h('span', { key: it.n, className: 'le-foot__dot' + (it.n === item.n ? ' on' : '') }))),
-        h('span', { className: 'le-foot__step' }, 'Урок ' + item.n + ' из ' + total)),
+        h('span', { className: 'le-foot__step' }, 'Урок ' + item.n + ' из ' + total),
+        h('span', { className: 'le-foot__dots' }, lessons.reduce(function (acc, it, i) { if (i) acc.push(h('span', { key: 'l' + it.n, className: 'le-foot__ln' })); acc.push(h('span', { key: 'd' + it.n, className: 'le-foot__dot' + (it.n === item.n ? ' cur' : (it.state === 'done' ? ' done' : '')) })); return acc; }, []))),
       next);
   }
 
@@ -1889,21 +2107,91 @@
       h(LessonHeader, { item, total, onPrev, onNext, prevOk, nextOk }),
       h('div', { className: 'le-grid' },
         h('div', { className: 'le-main' },
-          h(StudyView, { lesson, item, moduleName: (L.COURSE && L.COURSE.module) || 'Модуль 1', onStart, homeworkDone, hwResult, playing, onPlay }),
-          h(LessonFoot, { item, total, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart })),
+          h(StudyView, { lesson, item, moduleName: (L.COURSE && L.COURSE.module) || 'Модуль 1', onStart, homeworkDone, hwResult, playing, onPlay })),
         h('aside', { className: 'le-rail' },
           h(Playlist, { lessons, activeN: item.n, onSwitch }),
-          h(TeacherCard, null))));
+          h(TeacherCard, null))),
+      h(LessonFoot, { item, total, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart }));
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
      LearnLesson — корневой экран внутри сайдбара ученика. study ⇄ homework,
      переключение между уроками модуля.
   ───────────────────────────────────────────────────────────────────────── */
-  function LearnLesson() {
+  const DEMO_LESSON = {
+    id: 'demo-numbers', title: 'Числа от 1 до 10',
+    subtitle: 'Изучаем числа от 1 до 10 на китайском языке — счет, тоны и написание иероглифов.', level: 'HSK 1',
+    video: { file: 'assets/lesson-sample.mp4', title: 'Видеоурок: числа 1–10', duration: '08:40', poster: 'funnel-assets/universities/fudan.jpg', hanzi: '一二三' },
+    materials: [{ title: 'Рабочая тетрадь · числа 1–10', url: '#', filename: 'numbers.pdf' }],
+    doc: [
+      { kind: 'heading', text: 'Счет от одного до десяти' },
+      { kind: 'para', text: 'Китайские числа складываются логично: выучив первые десять, вы легко построите любое число до ста. Начнем с самих иероглифов и их звучания.' },
+      { kind: 'word', hanzi: '一', pinyin: 'yī', ru: 'один' }, { kind: 'word', hanzi: '二', pinyin: 'èr', ru: 'два' },
+      { kind: 'word', hanzi: '三', pinyin: 'sān', ru: 'три' }, { kind: 'word', hanzi: '四', pinyin: 'sì', ru: 'четыре' },
+      { kind: 'word', hanzi: '五', pinyin: 'wǔ', ru: 'пять' },
+      { kind: 'important', text: 'Тон меняет смысл: одно и то же сочетание звуков в разных тонах — разные слова. Слушайте аудио и повторяйте вслух.' },
+      { kind: 'word', hanzi: '六', pinyin: 'liù', ru: 'шесть' }, { kind: 'word', hanzi: '七', pinyin: 'qī', ru: 'семь' },
+      { kind: 'word', hanzi: '八', pinyin: 'bā', ru: 'восемь' }, { kind: 'word', hanzi: '九', pinyin: 'jiǔ', ru: 'девять' },
+      { kind: 'word', hanzi: '十', pinyin: 'shí', ru: 'десять' },
+      { kind: 'divider' },
+      { kind: 'heading', text: 'Как считать людей и предметы' },
+      { kind: 'para', text: 'Между числом и существительным ставится счетное слово. Универсальное счетное слово — 个 (gè).' },
+      { kind: 'example', hanzi: '三个学生', pinyin: 'sān gè xuésheng', ru: 'три студента' },
+      { kind: 'hint', text: 'Для «два» перед счетным словом используйте 两 (liǎng), а не 二: 两个人 — два человека.' },
+      { kind: 'numbered', items: ['Назовите число', 'Добавьте счетное слово 个', 'Назовите предмет или человека'] },
+      { kind: 'quote', text: 'Считать по-китайски проще, чем кажется: десять иероглифов открывают путь к тысячам.' },
+      { kind: 'heading', text: 'Проверьте себя' },
+      { kind: 'spoiler', title: 'Как сказать «пять человек»?', text: '五个人 (wǔ gè rén): число 五 + счетное слово 个 + 人 «человек».' },
+      { kind: 'bullets', items: ['一 = 1, 十 = 10', 'Перед счетным словом «два» — 两, а не 二', 'Счетное слово 个 — универсальное'] },
+    ],
+    blocks: [
+      { type: 'choice', prompt: 'Как будет «пять»?', options: [{ text: '四' }, { text: '五', correct: true }, { text: '六' }], explain: '五 (wǔ) — пять.' },
+      { type: 'match', prompt: 'Соедините иероглиф и перевод', pairs: [{ left: '三', right: 'три' }, { left: '七', right: 'семь' }, { left: '十', right: 'десять' }] },
+      { type: 'gap', prompt: 'Вставьте пропущенное', before: '', after: '个人', options: [{ text: '两', correct: true }, { text: '二' }], explain: 'Перед счетным словом «два» — 两.' },
+    ],
+    objectives: ['Считать от 1 до 10 на слух', 'Писать иероглифы чисел', 'Слышать тоны в счете'], glossary: [], notes: '',
+  };
+
+  var DEMO_TASK = Object.assign({}, DEMO_LESSON, {
+    blocks: [{
+      type: 'task',
+      prompt: 'Напишите письмо другу по-китайски',
+      body: 'Открытое задание — его проверит преподаватель.',
+      brief: 'Составьте короткое письмо (5–7 предложений): поздоровайтесь, расскажите, сколько вам лет и что вы изучаете. Используйте новые слова урока. Прикрепите файлом (PDF/DOCX) или фото рукописного текста.',
+      accept: 'PDF, DOCX, JPG, PNG · до 10 МБ',
+    }],
+  });
+
+  var DEMO_TASK2 = Object.assign({}, DEMO_LESSON, {
+    blocks: [{
+      type: 'task',
+      prompt: 'Итоговое задание по теме «Числа»',
+      body: 'Большое открытое задание — преподаватель проверит каждую часть.',
+      brief: 'Соберите работу по числам 1–10 и пришлите одним или несколькими файлами. Можно приложить документ, фото рукописного текста и аудио — сколько нужно.',
+      checklist: [
+        'Напишите числа 1–10 иероглифами от руки и сфотографируйте.',
+        'Составьте 5 предложений со счётным словом (например, 三个人 — три человека).',
+        'Запишите короткое аудио, как вы считаете вслух от 1 до 10.',
+      ],
+      accept: 'PDF, DOCX, JPG, PNG, MP3 · до 20 МБ · можно несколько файлов',
+    }],
+  });
+
+  function LearnLesson(props) {
     if (!L) return h('div', { style: { padding: 40 } }, 'Учебный модуль не загружен');
+    const Store = window.ELessonStore;
+    const routeId = (props && props.params && props.params.id) || null;
     const loadedRef = useRef(null);
-    if (!loadedRef.current) loadedRef.current = L.load();
+    const isDemo = /[?&]demo\b/.test(window.location.hash || '');
+    const isTask2 = /demo=task2/.test(window.location.hash || '');
+    const isTaskDemo = /demo=task\b/.test(window.location.hash || '');
+    // Конкретный урок — по id из URL (/learn/lesson/:id); без id — последний открытый.
+    const fromStore = () => {
+      if (!Store) return L.load();
+      if (routeId) return Store.getSync(routeId) || L.load();
+      return Store.getSync(Store.currentId()) || L.load();
+    };
+    if (!loadedRef.current) loadedRef.current = isTask2 ? DEMO_TASK2 : (isTaskDemo ? DEMO_TASK : (isDemo ? DEMO_LESSON : fromStore()));
     const live = loadedRef.current;
     const lessons = ((L.COURSE && L.COURSE.lessons) || []).map((it) => it.live ? Object.assign({}, it, { title: live.title || it.title }) : it);
     const currentItem = lessons.find((it) => it.live) || lessons[lessons.length - 1] || { n: 1, state: 'current' };

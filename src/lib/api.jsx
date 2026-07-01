@@ -17,6 +17,10 @@
   'use strict';
 
   const BASE = (window.ES_API_BASE || '').replace(/\/+$/, '');
+  // База AI-ассистента (бот, эндпоинт /kb/ask). Пусто = same-origin: запрос идёт
+  // на /kb/ask своего домена, а прокси (Vite dev / vercel.json) уводит на бота —
+  // поэтому CORS бота не задействован. Отдельно от BASE: бот — другой сервис.
+  const BOT_BASE = (window.ES_BOT_BASE != null ? window.ES_BOT_BASE : '').replace(/\/+$/, '');
   let authToken = null; // короткоживущий JWT держим в памяти, не в localStorage
   let csrfToken = null; // CSRF для мутаций (бэк кладет в не-httpOnly cookie es_csrf)
 
@@ -47,6 +51,7 @@
     else if (/^\/assessment\/[^/]+$/.test(p)) p = '/diagnostics';
     else if (/^\/anketa\/sessions\/[^/]+$/.test(p)) p = '/diagnostics';
     else if (/^\/learning\/lessons\/[^/]+$/.test(p)) p = '/learning/lesson';
+    else if (/^\/learning\/lessons$/.test(p)) p = '/learning/lessons';
     else if (/^\/learning\/progress\/[^/]+$/.test(p)) p = '/learning/progress';
     else if (/^\/crm\/deals\/board$/.test(p)) p = '/crm/funnel';
     else if (/^\/crm\/clients\/[^/]+$/.test(p)) p = '/crm/clients';
@@ -97,6 +102,39 @@
       await delay(180);
       const data = mockFor(method, path);
       return { ok: true, data, mocked: true, error: err.message };
+    }
+  }
+
+  // ── AI-ассистент: живой вопрос в базу знаний бота (POST /kb/ask) ─────────
+  // Отдельный путь мимо request()/BASE: бот — другой сервис, без наших cookie и
+  // CSRF, ответ приходит 15-30с. Возвращаем нормализованный результат, наверху
+  // сам решает — показать answer или мягкий фолбэк. Никогда не бросаем.
+  async function kbAsk(text, opts) {
+    opts = opts || {};
+    const q = String(text || '').trim().slice(0, 2000);
+    if (!q) return { ok: false, answer: '', answered: false, error: 'empty' };
+    const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    const to = setTimeout(() => { if (ctrl) ctrl.abort(); }, opts.timeout || 90000);
+    try {
+      const res = await fetch(BOT_BASE + '/kb/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: q, user_id: (opts.userId != null ? opts.userId : null) }),
+        signal: ctrl ? ctrl.signal : undefined,
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json().catch(() => null);
+      return {
+        ok: true,
+        answer: (data && typeof data.answer === 'string') ? data.answer : '',
+        answered: !!(data && data.answered),
+        hits: (data && Array.isArray(data.hits)) ? data.hits : [],
+      };
+    } catch (err) {
+      if (window.console) console.warn('[EApi] kbAsk fail:', err && err.message);
+      return { ok: false, answer: '', answered: false, error: (err && err.message) || 'network' };
+    } finally {
+      clearTimeout(to);
     }
   }
 
@@ -191,9 +229,20 @@
     lesson: (id) => request('GET', '/api/learning/lessons/' + (id || 'demo')),
     learningProgress: (clientId) => request('GET', '/api/learning/progress/' + (clientId || 'me')),
 
+    // ── learning: уроки как ресурс (конструктор + библиотека) ──────────────
+    // Контракт — docs/lessons-api.md. Клиент-репозиторий window.ELessonStore
+    // ходит сюда, когда задан ES_API_BASE; иначе живёт на локальной таблице.
+    lessonsList: () => request('GET', '/api/learning/lessons'),
+    lessonGet: (id) => request('GET', '/api/learning/lessons/' + id),
+    lessonCreate: (body) => request('POST', '/api/learning/lessons', body),
+    lessonUpdate: (id, body) => request('PUT', '/api/learning/lessons/' + id, body),
+    lessonDelete: (id) => request('DELETE', '/api/learning/lessons/' + id),
+
     // ── bot / ассистент (API.md §10) ──────────────────────────────────────
     botThread: (clientId) => request('GET', '/api/bot/conversations/' + (clientId || 'me')),
     botSend: (body) => request('POST', '/api/bot/messages', body),
+    // AI-ассистент в кабинете: вопрос в базу знаний бота (same-origin /kb/ask).
+    kbAsk: (text, opts) => kbAsk(text, opts),
 
     // ── knowledge base (вузы/гранты) ──────────────────────────────────────
     universities: (q) => request('GET', '/api/kb/universities' + (q ? '?' + q : '')),

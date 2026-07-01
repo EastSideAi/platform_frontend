@@ -29,6 +29,7 @@
   const Ic = window.EIcons || {};
   const L = window.ELessons;
   const UI = window.ELessonUI;
+  const Store = window.ELessonStore;
   const nav = (window.ERouter && window.ERouter.navigate) || function () {};
 
   /* ── Inline-SVG иконки (не в общем lib/icons.jsx — локально в экране) ─────── */
@@ -48,6 +49,9 @@
   const AudioIc = (s) => svg(s, [P('M11 5 6 9H3v6h3l5 4z', 'a'), P('M15.5 8.5a5 5 0 0 1 0 7', 'b'), P('M18 6a8 8 0 0 1 0 12', 'c')]);
   const Duplicate = (s) => svg(s, [h('rect', { key: 'a', x: 8, y: 8, width: 12, height: 12, rx: 2.5 }), P('M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3', 'b')]);
   const LinkIc = (s) => svg(s, [P('M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1.5 1.5', 'a'), P('M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1.5-1.5', 'b')]);
+  const UndoIc = (s) => svg(s, [P('M9 14 4 9l5-5', 'u1'), P('M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5 5.5 5.5 0 0 1-5.5 5.5H11', 'u2')]);
+  const RedoIc = (s) => svg(s, [P('m15 14 5-5-5-5', 'r1'), P('M20 9H9.5A5.5 5.5 0 0 0 4 14.5 5.5 5.5 0 0 0 9.5 20H13', 'r2')]);
+  const SaveIc = (s) => svg(s, [P('M15.2 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7.8L15.2 3z', 's1'), P('M17 21v-7H7v7', 's2'), P('M7 3v4h8', 's3')]);
   /* иконки для кастомного видеоплеера */
   const PlayTri = (s) => svg(s, [P('M7 4.5l12 7.5-12 7.5z', 'a')], { fill: true });
   const PauseIc = (s) => svg(s, [h('rect', { key: 'a', x: 6.5, y: 5, width: 3.6, height: 14, rx: 1.2, fill: 'currentColor' }), h('rect', { key: 'b', x: 13.9, y: 5, width: 3.6, height: 14, rx: 1.2, fill: 'currentColor' })]);
@@ -129,21 +133,36 @@
   .lb-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:0;white-space:nowrap;font-family:inherit;
     font-size:13.5px;font-weight:600;padding:10px 16px;border-radius:11px;transition:transform .14s,background .14s,box-shadow .14s;}
   .lb-btn svg{transition:transform .15s;}
-  .lb-btn--primary{background:var(--lb-acc-deep);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -12px rgba(32,115,230,.5);}
-  .lb-btn--primary:hover{background:#2B8FFF;transform:translateY(-1px);}
+  .lb-btn--primary{background:#2073E6;color:#fff;box-shadow:inset 0 0 18px rgba(120,190,255,.8),inset 0 1px 0 rgba(255,255,255,.32);}
+  .lb-btn--primary:hover{background:#2B8FFF;transform:translateY(-1px);box-shadow:inset 0 0 22px rgba(150,205,255,.9),inset 0 1px 0 rgba(255,255,255,.36);}
   .lb-btn--primary .arr{transform:rotate(-45deg);} .lb-btn--primary:hover .arr{transform:rotate(-45deg) translateX(2px);}
   .lb-btn--ghost{background:rgba(255,255,255,.65);color:var(--lb-ink);border:1.5px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}
   .lb-btn--ghost:hover{background:#fff;transform:translateY(-1px);}
 
-  /* история undo/redo + статус сохранения */
+  /* история undo/redo (с подписями) · очистить · сохранить */
   .lb-history{display:flex;gap:1px;padding:3px;border-radius:11px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}
   .lb-iconbtn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-sub);background:transparent;border:0;transition:color .14s,background .14s;}
   .lb-iconbtn:hover:not(:disabled){color:var(--lb-ink);background:rgba(22,32,59,.06);}
   .lb-iconbtn:disabled{opacity:.32;cursor:default;}
-  .lb-savebtn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-jade);
-    padding:8px 13px;border-radius:10px;background:#E8F6EE;border:1px solid rgba(46,160,110,.22);transition:background .14s,transform .14s,color .14s;}
-  .lb-savebtn:hover{background:#DFF1E7;transform:translateY(-1px);}
-  .lb-savebtn.is-saving{color:var(--lb-ink-sub);background:rgba(255,255,255,.72);border-color:var(--lb-line);}
+  /* undo/redo — подписанные кнопки внутри сегмента: ясно, что это откат/возврат */
+  .lb-hbtn{display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 12px 0 10px;border-radius:8px;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-ink-sub);background:transparent;border:0;cursor:pointer;transition:color .14s,background .14s;}
+  .lb-hbtn:hover:not(:disabled){color:var(--lb-ink);background:rgba(22,32,59,.06);}
+  .lb-hbtn:disabled{opacity:.34;cursor:default;}
+  .lb-hbtn svg{flex:0 0 auto;}
+  /* очистить урок — полноценная кнопка с подписью, не голая иконка */
+  .lb-clearbtn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 14px;border-radius:11px;font-family:inherit;font-size:13px;font-weight:600;color:var(--lb-ink-sub);cursor:pointer;
+    background:rgba(255,255,255,.65);border:1.5px solid var(--lb-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);transition:color .14s,background .14s,border-color .14s,transform .14s;}
+  .lb-clearbtn:hover{color:var(--lb-rose);background:#fff;border-color:rgba(210,96,79,.35);transform:translateY(-1px);}
+  .lb-clearbtn svg{flex:0 0 auto;}
+  /* сохранить — РУЧНОЕ сохранение по кнопке. dirty=есть правки (зовущий сапфир),
+     saved=записано (тихая зелёная плашка), saving=пишем */
+  .lb-savebtn{display:inline-flex;align-items:center;gap:7px;height:36px;padding:0 15px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;border-radius:11px;border:1.5px solid transparent;
+    transition:color .14s,background .14s,border-color .14s,transform .14s,box-shadow .14s;}
+  .lb-savebtn svg{flex:0 0 auto;}
+  .lb-savebtn.is-dirty{color:#fff;background:#2073E6;box-shadow:inset 0 0 16px rgba(120,190,255,.75),inset 0 1px 0 rgba(255,255,255,.3);}
+  .lb-savebtn.is-dirty:hover{background:#2B8FFF;transform:translateY(-1px);box-shadow:inset 0 0 20px rgba(150,205,255,.9),inset 0 1px 0 rgba(255,255,255,.34);}
+  .lb-savebtn.is-saved{color:var(--lb-jade);background:#E8F6EE;border-color:rgba(46,160,110,.24);cursor:default;}
+  .lb-savebtn.is-saving{color:var(--lb-ink-sub);background:rgba(255,255,255,.72);border-color:var(--lb-line);cursor:default;}
   .lb-savebtn__spin{width:13px;height:13px;border-radius:50%;border:2px solid rgba(22,32,59,.16);border-top-color:var(--lb-acc-deep);animation:lb-spin .7s linear infinite;}
   @keyframes lb-spin{to{transform:rotate(360deg);}}
 
@@ -169,9 +188,9 @@
     padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid var(--lb-line);color:var(--lb-ink);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.65);transition:background .15s,border-color .15s,box-shadow .15s,transform .15s;}
   .lb-rlink:hover{background:rgba(255,255,255,.8);border-color:var(--lb-line-strong);transform:translateY(-1px);}
-  .lb-rlink.is-sel{background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(238,244,255,.82));border-color:var(--lb-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 22px rgba(43,143,255,.08);}
+  .lb-rlink.is-sel{background:rgba(255,255,255,.9);border-color:var(--lb-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 26px rgba(43,143,255,.2),inset 0 0 7px rgba(43,143,255,.12);}
   .lb-rlink__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
-  .lb-rlink.is-sel .lb-rlink__ic{color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .lb-rlink.is-sel .lb-rlink__ic{color:#EAF2FF;background:#2073E6;box-shadow:inset 0 0 14px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-rlink__b{flex:1 1 auto;min-width:0;}
   .lb-rlink__t{font-size:13px;font-weight:600;color:var(--lb-ink);letter-spacing:-.1px;}
   .lb-rlink__s{font-size:11.5px;color:var(--lb-ink-mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
@@ -187,13 +206,13 @@
   /* ── ЦЕНТР: табы — плавающий стеклянный сегмент-контрол по центру холста ──── */
   .lb-tabs{position:sticky;top:12px;z-index:34;display:flex;justify-content:center;padding:4px 0 26px;pointer-events:none;}
   .lb-tabseg{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:16px;
-    background:rgba(255,255,255,.46);-webkit-backdrop-filter:blur(28px) saturate(1.7);backdrop-filter:blur(28px) saturate(1.7);
-    border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+    background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.96);box-shadow:0 10px 26px -16px rgba(20,32,64,.24),inset 0 1px 0 rgba(255,255,255,.9);}
   .lb-tab{position:relative;display:inline-flex;align-items:center;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-sub);background:0;border:0;cursor:pointer;padding:9px 18px;border-radius:12px;transition:color .18s var(--lb-ease,ease),background .18s,box-shadow .18s;}
   .lb-tab:hover{color:var(--lb-ink);}
   /* активный таб — сочный сапфировый градиент (цвет в верхнем меню) */
-  .lb-tab.is-on{color:#fff;background:linear-gradient(135deg,#2B8FFF,#1E63C2);
-    box-shadow:0 8px 18px -7px rgba(32,115,230,.6),inset 0 1px 0 rgba(255,255,255,.3);}
+  .lb-tab.is-on{color:#fff;background:#2073E6;
+    box-shadow:inset 0 0 18px rgba(120,190,255,.82),inset 0 1px 0 rgba(255,255,255,.32);}
   .lb-tab__c{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:rgba(22,32,59,.07);font-size:10.5px;font-weight:700;color:var(--lb-ink-sub);font-variant-numeric:tabular-nums;transition:background .18s,color .18s;}
   .lb-tab.is-on .lb-tab__c{background:rgba(255,255,255,.28);color:#fff;}
 
@@ -233,8 +252,8 @@
   .lb-modal__x:hover{background:rgba(22,32,59,.06);color:var(--lb-ink);}
   .lb-modal__grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .lb-modal__card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;text-align:left;cursor:pointer;padding:14px;border-radius:13px;background:#F4F6FD;border:1px solid var(--lb-line);font-family:inherit;transition:border-color .14s,background .14s,transform .12s,box-shadow .14s;}
-  .lb-modal__card:hover{border-color:var(--lb-acc-line);background:#fff;transform:translateY(-1px);box-shadow:0 8px 20px -14px rgba(32,115,230,.4);}
-  .lb-modal__ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.22);}
+  .lb-modal__card:hover{border-color:var(--lb-acc-line);background:#fff;transform:translateY(-1px);box-shadow:inset 0 0 22px rgba(43,143,255,.12),inset 0 1px 0 rgba(255,255,255,.9);}
+  .lb-modal__ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;color:#EAF2FF;background:#2073E6;box-shadow:inset 0 0 15px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-modal__label{font-size:14px;font-weight:600;color:var(--lb-ink);}
   .lb-modal__gets{font-size:12px;color:var(--lb-ink-mute);line-height:1.4;}
   @keyframes lb-fade{from{opacity:0;}to{opacity:1;}}
@@ -265,10 +284,10 @@
   .lb-vdrop__card{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;cursor:pointer;padding:26px 22px;border-radius:16px;
     background:rgba(255,255,255,.6);border:1.5px dashed var(--lb-line-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .14s,background .14s;}
   .lb-vdrop__card:hover{background:rgba(255,255,255,.85);border-color:var(--lb-ink-mute);}
-  .lb-vdrop__ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 8px 18px -10px rgba(32,115,230,.5);}
+  .lb-vdrop__ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;color:#EAF2FF;background:#2073E6;box-shadow:inset 0 0 16px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-vdrop__t{font-family:var(--lb-display);font-size:15px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;}
   .lb-vdrop__s{font-size:12.5px;color:var(--lb-ink-mute);line-height:1.5;max-width:300px;}
-  .lb-vdrop__or{display:flex;align-items:center;gap:12px;width:100%;color:var(--lb-ink-faint);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+  .lb-vdrop__or{display:flex;align-items:center;gap:12px;width:100%;color:var(--lb-ink-mute);font-size:12px;font-weight:600;}
   .lb-vdrop__or::before,.lb-vdrop__or::after{content:'';flex:1;height:1px;background:var(--lb-line);}
   /* кастомный видеоплеер (загруженный файл) — жидкое стекло, Apple TV/iOS
      референс: трио круглых frosted-кнопок (±10с + play/pause), нижняя
@@ -315,7 +334,7 @@
 
   /* ── ПОТОК ДОКУМЕНТА: блоки + gutter «+» + drag handle ──────────────────── */
   .lb-flow{margin-top:2px;position:relative;}
-  .lb-flow__h{font-family:var(--lb-display);font-size:12px;font-weight:700;color:var(--lb-ink-mute);letter-spacing:.08em;text-transform:uppercase;margin:0 0 16px;}
+  .lb-flow__h{font-family:var(--lb-display);font-size:14px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;margin:0 0 16px;}
 
   /* Отступ между блоками задаётся ИНЛАЙН-СТИЛЕМ из JS (docRowGap) — ReorderList
      оборачивает каждую строку в свой .lb-rw, поэтому соседние .lb-row не
@@ -511,8 +530,12 @@
   .lb-pcard.is-open .lb-pcard__chev{transform:rotate(180deg);}
   .lb-pcard__body{padding:4px 16px 18px;border-top:1px solid var(--lb-line);margin-top:0;}
   .lb-pcard.is-open .lb-pcard__body{display:block;} .lb-pcard:not(.is-open) .lb-pcard__body{display:none;}
-  .lb-pcard__acts{position:absolute;right:12px;top:14px;display:flex;gap:4px;opacity:0;transition:opacity .15s;}
+  /* дублировать + удалить: сдвинуты ЛЕВЕЕ шеврона-раскрытия (шеврон всегда крайний
+     справа), иначе корзина и стрелка накладывались друг на друга */
+  .lb-pcard__acts{position:absolute;right:40px;top:13px;display:flex;gap:4px;opacity:0;transition:opacity .15s;
+    background:rgba(250,251,254,.9);border-radius:10px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);}
   .lb-pcard:hover .lb-pcard__acts,.lb-pcard.is-open .lb-pcard__acts{opacity:1;}
+  .lb-pcard__chev{position:relative;z-index:1;}
   .lb-ib{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-mute);background:rgba(22,32,59,.05);border:0;transition:color .15s,background .15s;}
   .lb-ib:hover{color:var(--lb-acc-deep);background:var(--lb-acc-soft);} .lb-ib.del:hover{color:var(--lb-rose);background:rgba(210,96,79,.1);}
 
@@ -563,14 +586,21 @@
     background:linear-gradient(152deg,#171E33 0%,#0B1224 46%,#070C18 100%);
     box-shadow:0 44px 90px -30px rgba(8,14,34,.6),0 12px 30px -16px rgba(8,14,34,.5),
       inset 0 0 0 1.5px rgba(255,255,255,.07),inset 0 1.5px 1px rgba(255,255,255,.16),inset 0 -2px 2px rgba(0,0,0,.4);}
+  /* поверхность экрана — светлый лавандово-синий режим B (как реальный кабинет),
+     а не почти-белый: так белые стеклянные карточки внутри «всплывают», а превью
+     перестаёт выглядеть «супер-бело» и пусто. */
   .lb-phone__screen{position:relative;border-radius:40px;overflow:hidden;background:
-      radial-gradient(420px 300px at 88% -12%, rgba(118,150,255,.18), transparent 64%),
-      linear-gradient(180deg,#FBFCFF,#F3F6FD);flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;
+      radial-gradient(460px 320px at 88% -12%, rgba(120,158,255,.22), transparent 64%),
+      linear-gradient(180deg,#ECF0FB 0%,#E6EBF7 58%,#EAEEF9 100%);flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;
       box-shadow:inset 0 0 0 1px rgba(8,14,34,.5);}
   .lb-phone__island{position:absolute;left:50%;top:13px;transform:translateX(-50%);width:78px;height:23px;border-radius:99px;background:#05070E;z-index:6;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 1px 3px rgba(0,0,0,.4);}
   .lb-phone__body{flex:1 1 auto;overflow-y:auto;padding:46px 16px 20px;}
   .lb-phone__body::-webkit-scrollbar{width:0;}
+  /* превью теста = попап: сам урок остаётся сзади, но притемнён и не кликается.
+     Шторку рисует сам Тренажёр (.lt-modal--in), позиционируясь в .lb-phone__screen. */
+  .lb-phone__screen.has-sheet .lb-phone__body{overflow:hidden;}
+  .lb-phone__body.is-behind{pointer-events:none;filter:saturate(.92);}
   .lb-prev__note{font-size:11.5px;color:var(--lb-ink-mute);margin-top:14px;text-align:center;line-height:1.5;max-width:320px;}
   .lb-prev-empty{width:100%;max-width:390px;padding:48px 24px;border-radius:20px;text-align:center;background:rgba(255,255,255,.4);border:1px dashed var(--lb-line);color:var(--lb-ink-mute);font-size:13px;line-height:1.55;}
 
@@ -579,11 +609,13 @@
     border:1px solid var(--lb-line);box-shadow:0 24px 56px -18px rgba(8,16,44,.4),inset 0 1px 0 rgba(255,255,255,.9);animation:lb-pop .16s cubic-bezier(.23,1,.32,1);}
   .lb-menu::-webkit-scrollbar{width:7px;} .lb-menu::-webkit-scrollbar-thumb{background:rgba(22,32,59,.14);border-radius:99px;}
   @keyframes lb-pop{from{opacity:0;transform:translateY(-6px) scale(.98);}to{opacity:1;transform:none;}}
-  .lb-menu__g{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--lb-ink-mute);padding:7px 11px 5px;}
+  .lb-menu__g{font-size:11px;font-weight:700;color:var(--lb-ink-sub);padding:8px 11px 5px;}
   .lb-menu__i{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--lb-ink);
     padding:8px 11px;border-radius:10px;background:0;border:0;transition:background .12s,color .12s;}
   .lb-menu__i:hover{background:var(--lb-acc-soft);color:var(--lb-acc-deep);}
   .lb-menu__ic{flex:0 0 28px;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
+  /* иконки-чипы с тихим внутренним сапфировым свечением — язык страницы урока */
+  .lb-rlink__ic,.lb-card__ic,.lb-pcard__ic,.lb-menu__ic{box-shadow:inset 0 0 13px rgba(43,143,255,.24),inset 0 1px 0 rgba(255,255,255,.55);}
   .lb-menu__sep{height:1px;background:var(--lb-line);margin:5px 8px;}
 
   /* ── ghost перетаскивания ───────────────────────────────────────────────── */
@@ -592,9 +624,89 @@
   .lb-drag-ghost.lb-ghost--plain{transform:rotate(.5deg);}
   @media (prefers-reduced-motion: reduce){ .lb-drag-ghost{transform:none !important;} .lb-row,.lb-pcard,.lb-menu{transition:none;} }
 
+  /* только мобилка — на десктопе скрыто */
+  .lb-mnav{display:none;}
+  .lb-mhead{display:none;}
+  .lb-btn__txm{display:none;}
+
   @media (max-width:1240px){ .lb-body{grid-template-columns:240px minmax(0,1fr) 400px;} }
   @media (max-width:1080px){ .lb-body{grid-template-columns:230px minmax(0,1fr);} .lb-pane--prev{display:none;} }
-  @media (max-width:820px){ .lb-body{grid-template-columns:1fr;} .lb-pane--rail{display:none;} }
+
+  /* ── МОБИЛКА: одна панель за раз + нижний переключатель ─────────────────────
+     На телефоне все три поверхности (структура / редактор / превью) достижимы
+     через нижнюю навигацию; на экране всегда ровно одна — data-m на .lb-body. */
+  @media (max-width:820px){
+    .lb-body{grid-template-columns:1fr;}
+    .lb-pane--rail,.lb-pane--center,.lb-pane--prev{display:none;}
+    .lb-body[data-m="rail"] .lb-pane--rail{display:block;}
+    .lb-body[data-m="editor"] .lb-pane--center{display:block;}
+    .lb-body[data-m="preview"] .lb-pane--prev{display:flex;}
+    .lb-pane--rail{border-right:0;}
+    .lb-pane--prev{border-left:0;}
+    .lb-pane{padding:20px 16px calc(80px + env(safe-area-inset-bottom,0px));}
+    .lb-pane--center{padding:0 14px calc(96px + env(safe-area-inset-bottom,0px));}
+    .lb-pane--prev{padding:14px 12px calc(84px + env(safe-area-inset-bottom,0px));}
+    /* на десктопе .lb-doc держит 72px слева под колонку-гуттер; на телефоне это
+       мёртвое поле — весь конспект уезжает вправо. Убираем, гуттер живёт справа. */
+    .lb-doc{padding:6px 0 0;}
+    /* на телефоне 38px-заголовок-инпут обрезается справа — уменьшаем кегль, чтобы влезало больше */
+    .lb-titlein{font-size:27px;letter-spacing:-.025em;}
+
+    /* липкие табы: прижаты к верху панели (top:0, без зазора-щели) + полноширинная
+       маска-подложка, чтобы контент не просвечивал из-под пилюли при скролле */
+    .lb-tabs{top:0;margin:0 -14px;padding:13px 14px 15px;
+      background:linear-gradient(180deg,#F4F6FD 0%,#F4F6FD 80%,rgba(244,246,253,0) 100%);}
+
+    /* ── топбар: назад · заголовок урока + статус · undo/redo · очистить · «Ученик»
+       Заполняем центр названием урока (а не пустотой), автосохранение показываем
+       строкой-статусом (кнопку «Сохранено» на мобилке прячем — autosave и так пишет),
+       главную кнопку подписываем «Ученик», чтобы синий глаз не был ребусом. */
+    .lb-top{gap:8px;padding:9px 12px;}
+    .lb-brand,.lb-top__sp{display:none;}
+    .lb-mhead{display:flex;flex-direction:column;justify-content:center;flex:1 1 auto;min-width:0;gap:1px;padding-left:2px;}
+    .lb-mhead__t{font-family:var(--lb-display);font-size:14.5px;font-weight:700;letter-spacing:-.02em;color:var(--lb-ink);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .lb-mhead__s{font-size:11px;font-weight:500;color:var(--lb-ink-mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .lb-mhead__s.is-dirty{color:var(--lb-acc-deep);}
+    .lb-history{flex:0 0 auto;}
+    /* компактный верх на телефоне: undo/redo/очистить/сохранить — иконки без подписей */
+    .lb-hbtn{padding:0;width:32px;justify-content:center;}
+    .lb-hbtn__tx{display:none;}
+    .lb-clearbtn{width:36px;padding:0;justify-content:center;}
+    .lb-clearbtn__tx{display:none;}
+    .lb-savebtn{width:38px;padding:0;justify-content:center;flex:0 0 auto;}
+    .lb-savebtn__tx{display:none;}
+    .lb-top .lb-btn__tx,.lb-top .lb-btn--primary .arr{display:none;}
+    .lb-top .lb-btn__txm{display:inline;}
+    .lb-top .lb-btn--primary{flex:0 0 auto;padding:9px 13px;gap:6px;font-size:13px;}
+
+    /* нижняя навигация панелей */
+    .lb-mnav{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;position:fixed;left:0;right:0;bottom:0;z-index:50;
+      padding:7px 10px calc(7px + env(safe-area-inset-bottom,0px));
+      background:rgba(248,250,254,.92);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);
+      border-top:1px solid var(--lb-line);box-shadow:0 -12px 30px -18px rgba(21,32,59,.28);}
+    .lb-mnav__b{display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px 6px;border-radius:13px;
+      font-family:inherit;font-size:11px;font-weight:600;color:var(--lb-ink-mute);background:0;border:0;cursor:pointer;
+      transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;}
+    .lb-mnav__b.is-on{color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
+    .lb-mnav__b .lb-mnav__c{margin-left:5px;font-variant-numeric:tabular-nums;opacity:.7;}
+
+    /* гуттер строки-документа: штатное место −103px слева уезжает за экран телефона.
+       На мобилке при фокусе резервируем справа место (текст обтекает) и кладём туда
+       панельку — она НЕ перекрывает контент. */
+    .lb-row__gutter{left:auto;right:0;top:3px;gap:1px;padding:3px;border-radius:11px;
+      background:rgba(255,255,255,.94);border:1px solid var(--lb-line);
+      box-shadow:0 6px 16px -8px rgba(21,32,59,.3);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);}
+    .lb-row:hover .lb-row__gutter{opacity:0;}
+    .lb-row.is-focus .lb-row__gutter{opacity:1;}
+    .lb-row.is-focus .lb-row__body{padding-right:106px;}
+    .lb-handle,.lb-gdel,.lb-plus{width:31px;height:31px;}
+
+    /* превью на самом телефоне: тоньше рамка, во всю ширину колонки */
+    .lb-prevh{max-width:none;}
+    .lb-phone{max-width:none;border-radius:36px;padding:7px;}
+    .lb-prev__note{max-width:none;}
+  }
   `;
 
   if (!document.getElementById('learn-build-styles')) {
@@ -1349,9 +1461,10 @@
   ═════════════════════════════════════════════════════════════════════════ */
   function PhoneFrame(props) {
     return h('div', { className: 'lb-phone' },
-      h('div', { className: 'lb-phone__screen' },
+      h('div', { className: 'lb-phone__screen' + (props.sheet ? ' has-sheet' : '') },
         h('div', { className: 'lb-phone__island' }),
-        h('div', { className: 'lb-phone__body' }, props.children)));
+        h('div', { className: 'lb-phone__body' + (props.sheet ? ' is-behind' : ''), 'aria-hidden': props.sheet ? 'true' : undefined }, props.children),
+        props.overlay || null));
   }
 
   /* Кастомный видеоплеер для загруженного файла: сапфировые контролы, своя перемотка,
@@ -1413,21 +1526,26 @@
       btn('Цитата', QuoteIc(15), () => onKind('quote')));
   }
   function PracticePreview(props) {
-    const { block } = props;
-    const [st, setSt] = useState(() => L.initState(block));
-    const [revealed, setRevealed] = useState(false);
-    useEffect(() => { setSt(L.initState(block)); setRevealed(false); }, [block && block._id, block && block.type]);
-    if (!block) return h('div', { className: 'lb-prev-empty' }, 'Выберите карточку задания,чтобы увидеть превью.');
-    const complete = L.isComplete(block, st);
-    const reset = () => { setSt(L.initState(block)); setRevealed(false); };
+    const { lesson } = props;
+    const blocks = (lesson && lesson.blocks) || [];
+    const [open, setOpen] = useState(true);
+    if (!blocks.length) return h('div', { className: 'lb-prev-empty' }, 'Практика пуста. Добавьте задание, чтобы увидеть тест.');
+
+    // тест = попап: bottom sheet поверх притемнённого урока. Внутри — реальный Тренажёр
+    // ученика: все задачи, прогресс, экран результата и закрытие (крестик / фон / Esc).
+    const close = () => setOpen(false);
+    const sig = blocks.map(function (b) { return (b && b._id) || (b && b.type) || '?'; }).join('|'); // remount при смене состава задач
+    const overlay = open && UI && UI.Trainer
+      ? h(UI.Trainer, { key: sig, lesson, contained: true, onExit: close, onDone: close })
+      : null;
+
     return h(R.Fragment, null,
-      h(PhoneFrame, null,
-        UI ? h('div', { className: 'lx-scope' }, h(UI.BlockView, { block, st, revealed, onChange: setSt })) : null,
-        h('div', { style: { padding: '16px 16px 18px', borderTop: '1px solid rgba(22,32,59,.06)' } },
-          revealed
-            ? h('button', { type: 'button', className: 'lb-btn lb-btn--ghost', style: { width: '100%' }, onClick: reset }, Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 15 }) : null, 'Пройти заново')
-            : h('button', { type: 'button', className: 'lb-btn lb-btn--primary', style: { width: '100%' }, disabled: !complete, onClick: () => setRevealed(true) }, 'Проверить'))),
-      h('div', { className: 'lb-prev__note' }, 'Кликайте прямо в экране — превью ведёт себя как реальный тренажёр ученика.'));
+      h(PhoneFrame, { sheet: open, overlay },
+        UI ? h(UI.StudyView, { lesson, compact: true, onStart: function () { setOpen(true); } }) : null),
+      h('div', { className: 'lb-prev__note' },
+        open
+          ? 'Так ученик проходит тест: все задания подряд, прогресс сверху и экран результата в конце. Закрыть — крестик, клик по фону или Esc.'
+          : 'Тест закрыт. Нажмите «Начать» в уроке, чтобы открыть его снова.'));
   }
 
   /* ══════════════════════════════════════════════════════════════════════════
@@ -1455,13 +1573,22 @@
   /* ══════════════════════════════════════════════════════════════════════════
      КОРНЕВОЙ ЭКРАН
   ═════════════════════════════════════════════════════════════════════════ */
-  function LearnBuilder() {
+  function LearnBuilder(props) {
     if (!L || !UI) return h('div', { style: { padding: 40 } }, 'Учебный модуль не загружен');
-    // ?blank=1 — чистый лист без демо-контента (для предпросмотра пустого состояния).
+    // Конкретный урок адресуется по id в URL: /learn/build/:id. Без id —
+    // резюмируем последний открытый (или создаём новый). ?blank=1 — превью пустого.
+    const routeId = (props && props.params && props.params.id) || null;
     const forceBlank = typeof window !== 'undefined' && (/[?&]blank=1/.test(window.location.search || '') || /[?&]blank=1/.test(window.location.hash || ''));
     const [lesson, setLessonRaw] = useState(() => {
       const blank = { id: 'blank', title: '', subtitle: '', goal: '', level: 'HSK 1', video: {}, objectives: [], glossary: [], notes: '', doc: [], blocks: [], materials: [] };
       if (forceBlank) return blank;
+      // Стор — источник правды: урок по id, иначе текущий, иначе новый (свой id).
+      if (Store) {
+        if (routeId) { const l = Store.getSync(routeId); if (l) return l; }
+        else { const cur = Store.currentId(); const l = cur && Store.getSync(cur); if (l) return l; }
+        return Store.blankLesson();
+      }
+      // Fallback без стора — старое поведение (одиночный черновик).
       const l = L.load();
       const isDemo = l && l.id && String(l.id).indexOf('demo') === 0;
       const isEmpty = l && (l.doc || []).length === 0 && (l.blocks || []).length === 0;
@@ -1517,6 +1644,7 @@
     const canUndo = past.current.length > 0;
     const canRedo = future.current.length > 0;
     const [tab, setTab] = useState('theory');
+    const [mView, setMView] = useState('editor'); // мобилка: 'rail'|'editor'|'preview' (какая панель видна)
     const [focus, setFocus] = useState(null); // theory: 'video'|'materials'|docId|null ; practice: индекс
     const [activeCe, setActiveCe] = useState(null); // индекс текстового блока в фокусе
     const [bubble, setBubble] = useState(null); // {x,y} — позиция всплывающей панели форматирования
@@ -1533,14 +1661,33 @@
     const blocks = lesson.blocks || [];
     const cur = tab === 'practice' && typeof focus === 'number' ? blocks[focus] : null;
 
-    // автосохранение (debounce-эффект: пишем сразу, но индикатор дергаем)
+    // ── Ручное сохранение (по кнопке, БЕЗ автосейва). savedRef хранит ссылку на
+    //    последний записанный в стор урок; любая правка делает lesson !== savedRef →
+    //    состояние «есть несохранённые изменения» (dirty). Кнопка «Сохранить»
+    //    (или Ctrl+S) пишет в стор и обнуляет dirty.
+    const savedRef = useRef(lesson);
     useEffect(() => {
       if (forceBlank) return;
-      setSaveState('saving');
-      L.save(lesson);
-      const t = setTimeout(() => setSaveState('saved'), 480);
-      return () => clearTimeout(t);
+      setSaveState(lesson === savedRef.current ? 'saved' : 'dirty');
     }, [lesson, forceBlank]);
+
+    // URL-адресация урока (единый эффект, зависимость только [routeId] —
+    // на правки самого урока не дёргаемся):
+    //  · нет id в URL (/learn/build) → вписываем текущий id (replace, без скролла);
+    //  · id указывает на ДРУГОЙ существующий урок → загружаем его (back/forward,
+    //    переход из библиотеки при смонтированном конструкторе), сбрасываем историю;
+    //  · id битый → нормализуем URL к фактическому уроку.
+    useEffect(() => {
+      if (!Store || forceBlank) return;
+      const cur = lessonRef.current;
+      const curId = cur && cur.id;
+      const writeUrl = () => { if (curId && curId !== 'blank') { try { nav('/learn/build/' + curId, { replace: true, top: false }); } catch (e) {} } };
+      if (!routeId || routeId === 'blank') { writeUrl(); return; }
+      if (routeId === curId) return;                 // уже на нужном уроке
+      const l = Store.getSync(routeId);
+      if (l) { savedRef.current = l; past.current = []; future.current = []; setLessonRaw(l); setFocus(null); setActiveCe(null); setOpenCards({}); }
+      else writeUrl();                               // битый id → к реальному уроку
+    }, [routeId]);
 
     // ── Горячие клавиши: Ctrl/Cmd+Z undo, +Shift/Ctrl+Y redo, Ctrl+S save.
     //    Ctrl+A намеренно НЕ перехватываем — нативно выделяет текст в блоке.
@@ -1551,7 +1698,7 @@
         const k = String(e.key || '').toLowerCase();
         if (k === 'z' && !e.shiftKey) { e.preventDefault(); undo(); }
         else if ((k === 'z' && e.shiftKey) || k === 'y') { e.preventDefault(); redo(); }
-        else if (k === 's') { e.preventDefault(); L.save(lessonRef.current); setSaveState('saved'); }
+        else if (k === 's') { e.preventDefault(); if (!forceBlank) { if (Store) Store.saveLocalSync(lessonRef.current); else L.save(lessonRef.current); savedRef.current = lessonRef.current; setSaveState('saving'); setTimeout(() => setSaveState('saved'), 350); } }
       };
       window.addEventListener('keydown', onKey);
       return () => window.removeEventListener('keydown', onKey);
@@ -1635,7 +1782,7 @@
 
     // ── мутаторы blocks (практика) ──
     const patchBlock = (i, patch) => setLesson((l) => { const a = l.blocks.slice(); a[i] = Object.assign({}, a[i], patch); return Object.assign({}, l, { blocks: a }); }, 'blk:' + i);
-    const addBlock = (type) => { setLesson((l) => { const a = l.blocks.concat(L.blankBlock(type)); const ni = a.length - 1; setOpenCards((s) => Object.assign({}, s, { [ni]: true })); setFocus(ni); return Object.assign({}, l, { blocks: a }); }); setTab('practice'); setPalette(null); };
+    const addBlock = (type) => { setLesson((l) => { const a = l.blocks.concat(L.blankBlock(type)); const ni = a.length - 1; setOpenCards((s) => Object.assign({}, s, { [ni]: true })); setFocus(ni); return Object.assign({}, l, { blocks: a }); }); setTab('practice'); setPalette(null); setMView('editor'); };
     const dupBlock = (i) => setLesson((l) => { const a = l.blocks.slice(); a.splice(i + 1, 0, L.clone(l.blocks[i])); setOpenCards((s) => Object.assign({}, s, { [i + 1]: true })); setFocus(i + 1); return Object.assign({}, l, { blocks: a }); });
     const delBlock = (i) => setLesson((l) => { const a = l.blocks.filter((_, k) => k !== i); setFocus((f) => (typeof f === 'number' ? Math.max(0, Math.min(f, a.length - 1)) : f)); return Object.assign({}, l, { blocks: a }); });
     const moveBlock = (from, to) => setLesson((l) => { const a = l.blocks.slice(); const [x] = a.splice(from, 1); a.splice(to, 0, x); return Object.assign({}, l, { blocks: a }); });
@@ -1682,14 +1829,28 @@
       patchDoc(i, { text: data.text, marks: data.marks });
     };
 
-    const openAsStudent = () => { L.save(lessonRef.current); nav('/learn/lesson'); };
-    const saveNow = () => { if (!forceBlank) L.save(lessonRef.current); setSaveState('saved'); };
+    const persist = (l) => { if (Store) Store.saveLocalSync(l); else L.save(l); };
+    const openAsStudent = () => {
+      const cur = lessonRef.current || {};
+      persist(cur);
+      savedRef.current = cur; setSaveState('saved');
+      nav('/learn/lesson' + (cur.id && cur.id !== 'blank' ? '/' + cur.id : ''));
+    };
+    const saveNow = () => {
+      if (forceBlank) { setSaveState('saved'); return; }
+      persist(lessonRef.current);
+      savedRef.current = lessonRef.current;
+      setSaveState('saving');
+      setTimeout(() => setSaveState('saved'), 350);
+    };
     const clearLesson = () => {
       let ok = true;
       try { ok = window.confirm('Очистить урок и начать с пустого листа?'); } catch (e) {}
       if (!ok) return;
       const prev = lessonRef.current || {};
-      const blank = { id: 'blank', title: '', subtitle: '', goal: '', level: prev.level || 'HSK 1', video: {}, objectives: [], glossary: [], notes: '', doc: [], blocks: [], materials: [] };
+      // Тот же id — очищаем урок «на месте» (остаётся той же записью в библиотеке).
+      const keepId = prev.id && prev.id !== 'blank' ? prev.id : (Store ? Store.newId() : 'blank');
+      const blank = { id: keepId, title: '', subtitle: '', goal: '', level: prev.level || 'HSK 1', video: {}, objectives: [], glossary: [], notes: '', doc: [], blocks: [], materials: [], createdAt: prev.createdAt, updatedAt: prev.updatedAt };
       setLesson(blank);
       setFocus(null); setActiveCe(null); setOpenCards({});
     };
@@ -1705,20 +1866,20 @@
       h('div', { className: 'lb-rail__h' }, 'Структура урока'),
       h('div', { className: 'lb-grp' },
         h('div', { className: 'lb-grp__t' }, 'Теория'),
-        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === 'video' ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus('video'); } },
+        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === 'video' ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus('video'); setMView('editor'); } },
           h('span', { className: 'lb-rlink__ic' }, UI && UI.PlayGlyph ? UI.PlayGlyph(14) : (Ic.Monitor ? h(Ic.Monitor, { size: 15 }) : null)),
           h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, 'Видео'), h('div', { className: 'lb-rlink__s' }, hasVideo ? (emb ? emb.provider : 'загружено') : 'не добавлено'))),
-        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === 'materials' ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus('materials'); } },
+        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === 'materials' ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus('materials'); setMView('editor'); } },
           h('span', { className: 'lb-rlink__ic' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 15 }) : null),
           h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, 'Материалы'), h('div', { className: 'lb-rlink__s' }, ((lesson.materials || []).length || 0) + ' ' + (((lesson.materials || []).length) === 1 ? 'файл' : 'файлов')))),
-        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === null ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus(null); } },
+        h('button', { type: 'button', className: 'lb-rlink' + (tab === 'theory' && focus === null ? ' is-sel' : ''), onClick: () => { setTab('theory'); setFocus(null); setMView('editor'); } },
           h('span', { className: 'lb-rlink__ic' }, Ic.Doc ? h(Ic.Doc, { size: 15 }) : null),
           h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, 'Документ'), h('div', { className: 'lb-rlink__s' }, doc.length + ' ' + (doc.length === 1 ? 'блок' : 'блоков'))))),
       h('div', { className: 'lb-grp' },
         h('div', { className: 'lb-grp__t' }, 'Практика', h('span', { className: 'lb-tab__c', style: { marginLeft: 'auto', background: 'rgba(22,32,59,.08)' } }, blocks.length)),
         blocks.length ? h('div', { style: { display: 'flex', flexDirection: 'column', gap: 8 } }, blocks.map((b, i) => {
           const meta = L.typeMeta(b.type); const IcT = Ic[meta.icon] || Ic.Book;
-          return h('button', { key: i, type: 'button', className: 'lb-rlink' + (tab === 'practice' && focus === i ? ' is-sel' : ''), onClick: () => { setTab('practice'); setFocus(i); setOpenCards((s) => Object.assign({}, s, { [i]: true })); } },
+          return h('button', { key: i, type: 'button', className: 'lb-rlink' + (tab === 'practice' && focus === i ? ' is-sel' : ''), onClick: () => { setTab('practice'); setFocus(i); setOpenCards((s) => Object.assign({}, s, { [i]: true })); setMView('editor'); } },
             h('span', { className: 'lb-rlink__n', style: { flex: '0 0 22px', width: 22, height: 22, borderRadius: 7, display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 700, color: 'var(--lb-ink-mute)', background: 'rgba(22,32,59,.05)' } }, i + 1),
             h('span', { className: 'lb-rlink__ic' }, IcT ? h(IcT, { size: 14 }) : null),
             h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, meta.label)));
@@ -1745,7 +1906,7 @@
           h('input', { className: 'lb-in', value: vid.url || '', placeholder: 'или ссылка: YouTube, Vimeo, RuTube, ВК', onChange: (e) => setVideo({ url: e.target.value }), onFocus: () => setFocus('video') }));
 
     const mats = lesson.materials || [];
-    const onMatPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; addMaterial({ title: f.name.replace(/\.[^.]+$/, ''), url: URL.createObjectURL(f), filename: f.name }); };
+    const onMatPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = ''; addMaterial({ title: f.name.replace(/\.[^.]+$/, ''), url: URL.createObjectURL(f), filename: f.name, size: f.size }); };
     const materialsZone = mats.length
       ? h('div', { className: 'lb-mats' },
           h('input', { ref: matFileRef, type: 'file', style: { display: 'none' }, onChange: onMatPick }),
@@ -1838,9 +1999,9 @@
         h('span', { className: 'lb-prevh__s' }, tab === 'theory' ? 'Теория' : 'Практика')),
       tab === 'theory'
         ? h(R.Fragment, null,
-            h(PhoneFrame, null, UI ? h(UI.StudyView, { lesson, compact: true, onStart: function () {} }) : null),
+            h(PhoneFrame, null, UI ? h(UI.StudyView, { lesson, compact: true, onStart: function () { setTab('practice'); if (blocks.length) { setFocus(0); setOpenCards(function (s) { return Object.assign({}, s, { 0: true }); }); } } }) : null),
             h('div', { className: 'lb-prev__note' }, 'Так ученик видит урок: видео, конспект и вход в домашнее задание.'))
-        : h(PracticePreview, { block: cur }));
+        : h(PracticePreview, { block: cur, lesson }));
 
     /* ── палитра заданий (модалка) ── */
     const paletteModal = palette ? h('div', { className: 'lb-overlay', onClick: () => setPalette(null) },
@@ -1859,23 +2020,38 @@
 
     return h('div', { className: 'lb-app' },
       h('div', { className: 'lb-top' },
-        h('button', { type: 'button', className: 'lb-back', onClick: () => nav('/learn'), 'aria-label': 'Назад' }, Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 18 }) : '‹'),
-        h('div', null, h('div', { className: 'lb-brand__kick' }, 'ИСТСАЙД · Конструктор'), h('div', { className: 'lb-brand__role' }, 'Кабинет преподавателя')),
+        h('button', { type: 'button', className: 'lb-back', onClick: () => { if (saveState === 'dirty') { let ok = true; try { ok = window.confirm('Есть несохранённые изменения. Выйти без сохранения?'); } catch (e) {} if (!ok) return; } nav('/learn/lessons'); }, 'aria-label': 'К библиотеке уроков', title: 'К библиотеке уроков' }, Ic.ArrowLeft ? h(Ic.ArrowLeft, { size: 18 }) : '‹'),
+        h('div', { className: 'lb-brand' }, h('div', { className: 'lb-brand__kick' }, 'ИСТСАЙД · Конструктор'), h('div', { className: 'lb-brand__role' }, 'Кабинет преподавателя')),
+        h('div', { className: 'lb-mhead' },
+          h('div', { className: 'lb-mhead__t' }, lesson.title || 'Новый урок'),
+          h('div', { className: 'lb-mhead__s' + (saveState === 'dirty' ? ' is-dirty' : '') }, saveState === 'saving' ? 'Сохранение…' : saveState === 'dirty' ? 'Не сохранено' : 'Сохранено')),
         h('div', { className: 'lb-top__sp' }),
         h('div', { className: 'lb-history' },
-          h('button', { type: 'button', className: 'lb-iconbtn', onClick: undo, disabled: !canUndo, title: 'Отменить (Ctrl+Z)', 'aria-label': 'Отменить' }, Ic.ChevronLeft ? h(Ic.ChevronLeft, { size: 18 }) : '‹'),
-          h('button', { type: 'button', className: 'lb-iconbtn', onClick: redo, disabled: !canRedo, title: 'Вернуть (Ctrl+Shift+Z)', 'aria-label': 'Вернуть' }, Ic.ChevronRight ? h(Ic.ChevronRight, { size: 18 }) : '›')),
-        h('button', { type: 'button', className: 'lb-iconbtn', onClick: clearLesson, title: 'Очистить урок', 'aria-label': 'Очистить урок' }, Ic.Trash ? h(Ic.Trash, { size: 17 }) : '✕'),
-        h('button', { type: 'button', className: 'lb-savebtn' + (saveState === 'saving' ? ' is-saving' : ''), onClick: saveNow, title: 'Сохранить (Ctrl+S)' },
+          h('button', { type: 'button', className: 'lb-hbtn', onClick: undo, disabled: !canUndo, title: 'Отменить (Ctrl+Z)', 'aria-label': 'Отменить' }, UndoIc(15), h('span', { className: 'lb-hbtn__tx' }, 'Отменить')),
+          h('button', { type: 'button', className: 'lb-hbtn', onClick: redo, disabled: !canRedo, title: 'Вернуть (Ctrl+Shift+Z)', 'aria-label': 'Вернуть' }, RedoIc(15), h('span', { className: 'lb-hbtn__tx' }, 'Вернуть'))),
+        h('button', { type: 'button', className: 'lb-clearbtn', onClick: clearLesson, title: 'Очистить урок — начать с пустого листа', 'aria-label': 'Очистить урок' }, Ic.Trash ? h(Ic.Trash, { size: 16 }) : '✕', h('span', { className: 'lb-clearbtn__tx' }, 'Очистить')),
+        h('button', { type: 'button', className: 'lb-savebtn ' + (saveState === 'saving' ? 'is-saving' : saveState === 'dirty' ? 'is-dirty' : 'is-saved'), onClick: saveNow, disabled: saveState === 'saved', title: 'Сохранить (Ctrl+S)' },
           saveState === 'saving'
             ? h('span', { className: 'lb-savebtn__spin', 'aria-hidden': true })
-            : (Ic.Check ? h(Ic.Check, { size: 14, strokeWidth: 2.6 }) : null),
-          saveState === 'saving' ? 'Сохранение…' : 'Сохранено'),
-        h('button', { type: 'button', className: 'lb-btn lb-btn--primary', onClick: openAsStudent }, Ic.Eye ? h(Ic.Eye, { size: 15 }) : null, 'Открыть как ученик', arr())),
-      h('div', { className: 'lb-body' },
+            : saveState === 'saved'
+              ? (Ic.Check ? h(Ic.Check, { size: 15, strokeWidth: 2.6 }) : null)
+              : SaveIc(15),
+          h('span', { className: 'lb-savebtn__tx' }, saveState === 'saving' ? 'Сохранение…' : saveState === 'dirty' ? 'Сохранить' : 'Сохранено')),
+        h('button', { type: 'button', className: 'lb-btn lb-btn--primary', onClick: openAsStudent }, Ic.Eye ? h(Ic.Eye, { size: 15 }) : null, h('span', { className: 'lb-btn__tx' }, 'Открыть как ученик'), h('span', { className: 'lb-btn__txm' }, 'Ученик'), arr())),
+      h('div', { className: 'lb-body', 'data-m': mView },
         h('div', { className: 'lb-pane lb-pane--rail' }, rail),
         center,
         preview),
+      h('div', { className: 'lb-mnav' },
+        [
+          { k: 'rail', label: 'Структура', ic: Ic.Compass },
+          { k: 'editor', label: 'Редактор', ic: Ic.Doc },
+          { k: 'preview', label: 'Превью', ic: Ic.Monitor },
+        ].map((it) => h('button', {
+          key: it.k, type: 'button',
+          className: 'lb-mnav__b' + (mView === it.k ? ' is-on' : ''),
+          onClick: () => setMView(it.k),
+        }, it.ic ? h(it.ic, { size: 19 }) : null, h('span', null, it.label)))),
       plusAt ? h(PlusMenu, { pos: { x: plusAt.x, y: plusAt.y }, onPick: pickPlus, onClose: () => setPlusAt(null) }) : null,
       bubble && typeof activeCe === 'number' && doc[activeCe] ? h(BubbleBar, { x: bubble.x, y: bubble.y, onBold: () => toggleMark('bold'), onItalic: () => toggleMark('italic'), onKind: (k) => convertDoc(activeCe, k) }) : null,
       paletteModal);

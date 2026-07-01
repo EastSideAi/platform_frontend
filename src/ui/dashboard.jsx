@@ -268,10 +268,10 @@
 .esa-panel{ position:relative; width:min(720px, 100%); height:min(720px, calc(100vh - 2*var(--sp-6)));
   display:flex; flex-direction:column; overflow:hidden; border-radius:28px;
   font-family:var(--font-text); color:var(--esa-ink);
-  background:rgba(15,20,39,.66);
-  backdrop-filter:blur(50px) saturate(155%); -webkit-backdrop-filter:blur(50px) saturate(155%);
-  border:1px solid rgba(130,165,255,.16);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.09); /* только тонкий стеклянный кант — без градиентов и свечений, чистое морозное стекло */
+  background:rgba(13,20,46,.58);
+  backdrop-filter:blur(34px) saturate(150%); -webkit-backdrop-filter:blur(34px) saturate(150%);
+  border:1px solid rgba(120,160,255,.28);
+  box-shadow:0 32px 84px rgba(6,12,36,.5),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 46px rgba(40,110,240,.1); /* тот же фон, что у попапа задачи (.et) */
   transform-origin:50% 100%;  /* растём от нижнего центра — из кнопки-вызова */
   animation:esa-emerge .55s cubic-bezier(.42,.52,.4,1) both,
             esa-frost .34s ease .42s both; }  /* СНАЧАЛА чётко раскрывается из кнопки (плотная панель), ПОТОМ застекляется блюром */
@@ -304,7 +304,7 @@
 .esa-bub{ max-width:min(82%, 560px); padding:11px 15px; font-size:15px; line-height:1.55; letter-spacing:-.003em; border-radius:18px; }
 .esa-bub.is-ai{ background:rgba(54,110,214,.15); border:1px solid rgba(128,168,255,.20); color:#EEF3FF; border-top-left-radius:7px; box-shadow:inset 0 1px 0 rgba(255,255,255,.07); }
 .esa-bub.is-me{ background:var(--esa-accent); color:#fff; border-top-right-radius:7px; box-shadow:inset 0 1px 0 rgba(255,255,255,.24); }
-.esa-bub.is-soft{ background:rgba(54,110,214,.08); color:var(--esa-ink-soft); }
+.esa-bub.is-soft{ background:rgba(54,110,214,.13); color:var(--esa-ink); }
 /* typing «печатает» */
 .esa-bub.esa-typing{ display:inline-flex; align-items:center; gap:5px; padding:13px 15px; }
 .esa-typing i{ width:6px; height:6px; border-radius:50%; background:var(--esa-ink-mute); opacity:.4;
@@ -336,14 +336,17 @@
   transition:transform .15s var(--esa-ease), background .15s, color .15s; }
 .esa-tool:hover{ background:rgba(255,255,255,.08); color:var(--esa-ink); }
 .esa-tool:active{ transform:scale(.92); }
-.esa-send{ flex:none; margin-left:auto; height:38px; padding:0 17px; border-radius:11px; display:inline-flex; align-items:center; gap:7px;
-  color:#fff; border:0; cursor:pointer; font-family:var(--font-text); font-weight:600; font-size:13.5px; letter-spacing:-.005em;
+.esa-send{ flex:none; margin-left:auto; width:40px; height:40px; padding:0; border-radius:12px; display:grid; place-items:center;
+  color:#fff; border:0; cursor:pointer;
   background:var(--esa-accent);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.30);
   transition:transform .15s var(--esa-ease), filter .15s, opacity .15s; }
-.esa-send:hover{ filter:brightness(1.06); }
-.esa-send:active{ transform:scale(.96); }
-.esa-send:disabled{ opacity:.4; cursor:default; filter:none; }
+.esa-send:hover{ filter:brightness(1.06); transform:translateY(-1px); }
+.esa-send:active{ transform:scale(.94); }
+.esa-send:disabled{ opacity:.4; cursor:default; filter:none; transform:none; }
+/* фирменная стрелка −45° (↗), лёгкий сдвиг вверх-вправо на hover */
+.esa-send__arr{ transform:rotate(-45deg); transition:transform .15s var(--esa-ease); }
+.esa-send:hover .esa-send__arr{ transform:rotate(-45deg) translate(1.5px,-1.5px); }
 /* FAB — единственная сапфировая кнопка, чистая, без тени */
 .esa-fab{ position:fixed; right:var(--sp-6); bottom:var(--sp-6); z-index:var(--z-sticky);
   display:inline-flex; align-items:center; gap:9px; padding:10px 16px 10px 11px; border-radius:999px; border:0; cursor:pointer; color:#fff;
@@ -372,7 +375,7 @@
 /* панель застекляется ПОСЛЕ раскрытия: плотная и чёткая → морозное стекло */
 @keyframes esa-frost{
   from{ background:rgba(13,17,34,.95); backdrop-filter:blur(0) saturate(100%); -webkit-backdrop-filter:blur(0) saturate(100%); }
-  to{ background:rgba(15,20,39,.66); backdrop-filter:blur(50px) saturate(155%); -webkit-backdrop-filter:blur(50px) saturate(155%); } }
+  to{ background:rgba(13,20,46,.58); backdrop-filter:blur(34px) saturate(150%); -webkit-backdrop-filter:blur(34px) saturate(150%); } }
 /* фон-подложка сначала чёткая, потом размывается */
 @keyframes esa-bd-frost{
   from{ backdrop-filter:blur(0); -webkit-backdrop-filter:blur(0); }
@@ -424,6 +427,8 @@
     const feedRef = useRef(null);
     const inputRef = useRef(null);
     const fileRef = useRef(null);
+    const aliveRef = useRef(true); // не трогаем state, если попап закрыли пока AI думал
+    useEffect(() => { aliveRef.current = true; return () => { aliveRef.current = false; }; }, []);
 
     // при открытии / смене контекста — нить начинается с приветствия этапа
     useEffect(() => {
@@ -452,6 +457,10 @@
 
     if (!open) return null;
 
+    // Мягкий фолбэк, если AI не ответил (сеть/таймаут/пустой ответ) — не тупик,
+    // а передача вопроса живому куратору. Голос на «вы» (eastside-copy).
+    const SOFT = 'Пока не смог ответить сам — ваш вопрос уже у куратора, он на связи и поможет. Скоро отвечу прямо здесь.';
+
     const send = (val) => {
       const t = (val != null ? val : text).trim();
       if (!t) return;
@@ -459,11 +468,19 @@
       setText('');
       if (inputRef.current) inputRef.current.style.height = 'auto';
       setTyping(true);
-      // мозги вне скоупа — живая заглушка: «печатает», затем мягкий ответ
-      setTimeout(() => {
-        setTyping(false);
-        setMsgs((m) => m.concat({ from: 'ai', soft: true, text: 'Я еще учусь отвечать сам, но твой вопрос уже у куратора: он на связи и поможет. Скоро буду отвечать прямо здесь.' }));
-      }, 950);
+
+      const Api = window.EApi;
+      const finish = (msg) => { if (!aliveRef.current) return; setTyping(false); setMsgs((m) => m.concat(msg)); };
+
+      // Реальный AI: вопрос в базу знаний бота (EApi.kbAsk → /kb/ask). Ответ 15-30с,
+      // всё это время держим «печатает». Нет ответа/ошибка — мягкий фолбэк.
+      if (Api && Api.kbAsk) {
+        Api.kbAsk(t)
+          .then((r) => finish(r && r.ok && r.answer ? { from: 'ai', text: r.answer } : { from: 'ai', soft: true, text: SOFT }))
+          .catch(() => finish({ from: 'ai', soft: true, text: SOFT }));
+      } else {
+        setTimeout(() => finish({ from: 'ai', soft: true, text: SOFT }), 800);
+      }
     };
 
     const showChips = seed.chips && seed.chips.length && msgs.length <= 1 && !typing;
@@ -498,12 +515,12 @@
           h('form', { className: 'esa-compose', key: 'cmp', onSubmit: (e) => { e.preventDefault(); send(); } },
             h('input', { type: 'file', ref: fileRef, onChange: onAttach, style: { display: 'none' }, 'aria-hidden': 'true', key: 'file' }),
             h('div', { className: 'esa-composer', key: 'box' },
-              h('textarea', { className: 'esa-input', ref: inputRef, rows: 1, placeholder: 'Спроси про вузы, гранты, сроки…', value: text, onChange: (e) => { setText(e.target.value); grow(); }, onKeyDown: onKey, 'aria-label': 'Сообщение ассистенту' }),
+              h('textarea', { className: 'esa-input', ref: inputRef, rows: 1, placeholder: 'Спросите про вузы, гранты, сроки…', value: text, onChange: (e) => { setText(e.target.value); grow(); }, onKeyDown: onKey, 'aria-label': 'Сообщение ассистенту' }),
               h('div', { className: 'esa-bar', key: 'bar' },
                 h('button', { type: 'button', className: 'esa-tool', 'aria-label': 'Новый диалог', title: 'Новый диалог', onClick: resetThread, key: 'new' }, Ic.Plus ? h(Ic.Plus, { size: 18 }) : '+'),
                 h('button', { type: 'button', className: 'esa-tool', 'aria-label': 'Прикрепить файл', title: 'Прикрепить файл', onClick: () => fileRef.current && fileRef.current.click(), key: 'att' }, Ic.Paperclip ? h(Ic.Paperclip, { size: 18 }) : '📎'),
                 h('button', { type: 'submit', className: 'esa-send', 'aria-label': 'Отправить', disabled: !text.trim(), key: 'sb' },
-                  h('span', { key: 't' }, 'Отправить'), Ic.Send ? h(Ic.Send, { size: 16, key: 'i' }) : '→')))))));
+                  h('svg', { className: 'esa-send__arr', width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', 'stroke-width': 2.2, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', key: 'i' }, h('path', { d: 'M5 12h14M13 6l6 6-6 6' })))))))));
   }
 
   Object.assign(EUI, {

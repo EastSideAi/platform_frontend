@@ -181,61 +181,20 @@
   @media (prefers-reduced-motion: reduce) {
     ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   }
-  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
-     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
-     на новой странице уходит влево, открывая её. Назад — зеркально. Только
-     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
-  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
-    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
-    transform: translateX(0); will-change: transform;
-    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
-  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
-  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
-  html.pt-back #pt{ animation-name: ptEnterBack; }
-  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
+
 </style>
 
 <script>
 (function(){
   try{ history.scrollRestoration='manual'; }catch(e){}
-  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
-  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
-  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  window.esGo = function(url, replace, dir){
-    var go = function(){ replace ? location.replace(url) : (location.href = url); };
-    var pt = document.getElementById('pt');
-    if (RM || !pt){ go(); return; }
-    dir = dir === 'back' ? 'back' : 'fwd';
-    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
-    pt.style.animation = 'none';
-    pt.style.transition = 'none';
-    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
-    void pt.offsetWidth;
-    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
-    pt.style.transform = 'translateX(0)';
-    setTimeout(go, 320);
-  };
-  document.addEventListener('click', function(e){
-    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
-    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
-    var href = a.getAttribute('href') || '';
-    if (!href || href.charAt(0) === '#') return;
-    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
-    if (!/\.html(\?|#|$)/.test(href)) return;
-    e.preventDefault();
-    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
-    window.esGo(href, false, back ? 'back' : 'fwd');
-  }, true);
-  addEventListener('pageshow', function(e){
-    try{ scrollTo(0,0); }catch(_){}
-    var pt = document.getElementById('pt');
-    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
-  });
+  // никакого накрывающего перехода — страницы «появляются» своими reveal-анимациями,
+  // старая держится браузером до отрисовки новой (без тёмного экрана на загрузке)
+  window.esGo = function(url, replace){ replace ? location.replace(url) : (location.href = url); };
+  addEventListener('pageshow', function(){ try{ scrollTo(0,0); }catch(e){} });
 })();
 </script>
 </head>
 <body>
-<div id="pt" aria-hidden="true"></div>
 <div class="sky"></div>
 <div class="glow"></div>
 

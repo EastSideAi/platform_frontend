@@ -18,6 +18,7 @@ import './lib/icons.jsx';
 import './lib/mock.jsx';
 import './lib/lessons.jsx';
 import './lib/api.jsx';
+import './lib/lesson-store.jsx';   // репозиторий уроков (localStorage-таблица + REST)
 import './lib/router.jsx';
 import './lib/theme.jsx';
 
@@ -53,8 +54,11 @@ import './screens/crm-client.jsx';
 import './screens/crm-funnel.jsx';
 import './screens/learn-hub.jsx';
 import './screens/learn-home.jsx';        // пересобранная «Обучение» (#/learn), живёт в ESStudentShell
+import './screens/learn-lessons.jsx';     // библиотека уроков преподавателя (#/learn/lessons)
 import './screens/learn-lesson.jsx';
 import './screens/learn-build.jsx';
+import './screens/parent-home.jsx';        // семейный дашборд родителя (#/parent), живёт в ESStudentShell
+import './screens/parent-child.jsx';       // ребёнок глазами родителя (#/parent/child?id=)
 
 // оркестратор каркаса — монтирует приложение в #app (ReactDOM.createRoot)
 import './app.jsx';

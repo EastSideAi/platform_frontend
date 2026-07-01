@@ -31,6 +31,16 @@
 
   const icon = (name, props) => (Ic[name] ? h(Ic[name], props || {}) : null);
 
+  /* искры салюта на экране успеха (радиально расходятся) */
+  const SPARKS = [
+    { tx: -40, ty: -24, d: .16, c: '#5CB4FF' },
+    { tx: 36, ty: -32, d: .26, c: '#3EE08F' },
+    { tx: -30, ty: 18, d: .32, c: '#9FCBFF' },
+    { tx: 42, ty: 6, d: .2, c: '#3EE08F' },
+    { tx: -6, ty: -44, d: .36, c: '#F5C84C' },
+    { tx: 20, ty: 28, d: .29, c: '#5CB4FF' },
+  ];
+
   /* ─────────────────────────────────────────────────────────────────────────
      СТИЛИ — инжектятся один раз. Префикс .et- (everest task).
      Плоская тёмная поверхность, тонкие полупрозрачные обводки, сапфир-акцент.
@@ -45,10 +55,10 @@
     width:100%; max-width:552px; max-height:88vh; display:flex; flex-direction:column;
     position:relative; border-radius:22px; overflow:hidden; color:#fff;
     font-family:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
-    background:rgba(12,19,44,.82);
-    -webkit-backdrop-filter:blur(24px) saturate(160%); backdrop-filter:blur(24px) saturate(160%);
-    border:1px solid rgba(120,160,255,.30);
-    box-shadow:0 32px 84px rgba(6,12,36,.5), inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 46px rgba(40,110,240,.12);
+    background:rgba(13,20,46,.58);
+    -webkit-backdrop-filter:blur(34px) saturate(150%); backdrop-filter:blur(34px) saturate(150%);
+    border:1px solid rgba(120,160,255,.28);
+    box-shadow:0 32px 84px rgba(6,12,36,.5), inset 0 1px 0 rgba(255,255,255,.14), inset 0 0 46px rgba(40,110,240,.1);
     animation:etRise .24s cubic-bezier(.16,1,.3,1);
     -webkit-font-smoothing:antialiased;
   }
@@ -57,9 +67,9 @@
   .et__num{font-variant-numeric:tabular-nums;}
 
   /* ── Шапка: заголовок задачи + срок (тихо) + закрытие ─────────────────── */
-  .et__top{position:relative;padding:24px 26px 0;}
-  .et__title{font-size:20px;font-weight:700;letter-spacing:-.4px;line-height:1.22;color:#fff;max-width:calc(100% - 44px);text-wrap:balance;}
-  .et__dl{display:inline-flex;align-items:center;gap:7px;margin-top:12px;height:27px;padding:0 12px 0 11px;border-radius:9px;
+  .et__top{position:relative;padding:30px 32px 0;}
+  .et__title{font-size:25px;font-weight:700;letter-spacing:-.6px;line-height:1.16;color:#fff;max-width:calc(100% - 46px);text-wrap:balance;}
+  .et__dl{display:inline-flex;align-items:center;gap:7px;margin-top:15px;height:28px;padding:0 13px 0 12px;border-radius:9px;
     font-size:12px;font-weight:600;color:var(--tx);background:rgba(255,255,255,.05);border:1px solid var(--line2);}
   .et__dl svg{color:currentColor;opacity:.9;}
   .et__dldot{position:relative;width:6px;height:6px;flex:0 0 6px;border-radius:50%;background:currentColor;}
@@ -87,23 +97,23 @@
   .et__body{flex:1 1 auto;overflow-y:auto;}
   .et__body::-webkit-scrollbar{width:8px;}
   .et__body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px;border:2px solid transparent;background-clip:padding-box;}
-  .et__pane{padding:22px 26px 30px;animation:etPane .24s cubic-bezier(.16,1,.3,1);}
+  .et__pane{padding:30px 32px 40px;animation:etPane .24s cubic-bezier(.16,1,.3,1);}
   @keyframes etPane{from{transform:translateY(6px);opacity:0}to{transform:translateY(0);opacity:1}}
 
-  .et__h{font-size:17px;font-weight:700;letter-spacing:-.2px;line-height:1.3;color:#fff;text-wrap:balance;}
-  .et__lead{font-size:14.5px;line-height:1.62;color:var(--tx);margin-top:9px;}
-  .et__p{font-size:14.5px;line-height:1.62;color:var(--tx);margin:13px 0 0;}
+  .et__h{font-size:22px;font-weight:700;letter-spacing:-.4px;line-height:1.26;color:#fff;text-wrap:balance;}
+  .et__lead{font-size:15px;line-height:1.66;color:var(--tx);margin-top:14px;}
+  .et__p{font-size:15px;line-height:1.66;color:var(--tx);margin:18px 0 0;}
 
   /* нумерованные шаги-инструкция */
-  .et__bullets{display:flex;flex-direction:column;gap:12px;margin-top:18px;}
-  .et__bullet{display:flex;gap:12px;align-items:flex-start;}
+  .et__bullets{display:flex;flex-direction:column;gap:15px;margin-top:26px;}
+  .et__bullet{display:flex;gap:14px;align-items:flex-start;}
   .et__bnum{width:23px;height:23px;flex:0 0 23px;border-radius:7px;display:flex;align-items:center;justify-content:center;
     font-size:12px;font-weight:700;color:var(--soft);background:rgba(43,143,255,.1);border:1px solid rgba(43,143,255,.22);
     font-variant-numeric:tabular-nums;margin-top:1px;}
-  .et__btext{flex:1 1 auto;min-width:0;font-size:14px;line-height:1.5;color:var(--tx2);}
+  .et__btext{flex:1 1 auto;min-width:0;font-size:14.5px;line-height:1.55;color:var(--tx2);}
 
   /* приложенные материалы — плоские тёмные строки */
-  .et__mats{margin-top:20px;display:flex;flex-direction:column;gap:8px;}
+  .et__mats{margin-top:28px;display:flex;flex-direction:column;gap:10px;}
   .et__mats-h{font-size:12px;font-weight:600;color:var(--tx);opacity:.62;margin-bottom:2px;}
   .et__mat{display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;font-family:inherit;
     padding:12px 13px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid var(--line);
@@ -118,8 +128,8 @@
   .et__mat:hover .et__mat-go{color:var(--soft);transform:translateX(2px);}
 
   /* лента «что дальше» — тонкая линия с узлами */
-  .et__flow{display:flex;flex-direction:column;margin-top:18px;}
-  .et__fstep{display:flex;gap:14px;position:relative;padding-bottom:18px;}
+  .et__flow{display:flex;flex-direction:column;margin-top:26px;}
+  .et__fstep{display:flex;gap:14px;position:relative;padding-bottom:22px;}
   .et__fstep:last-child{padding-bottom:0;}
   .et__fmk{width:26px;height:26px;flex:0 0 26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;z-index:1;
     font-variant-numeric:tabular-nums;background:rgba(255,255,255,.04);color:var(--mute);border:1px solid var(--line2);}
@@ -133,7 +143,7 @@
   .et__fs{font-size:12.5px;color:var(--mute);margin-top:3px;line-height:1.45;}
 
   /* сноска tip/warn/info — плоское стекло с тинтом, иконка без коробки */
-  .et__note{display:flex;gap:11px;align-items:flex-start;margin-top:20px;padding:13px 15px;border-radius:12px;border:1px solid;}
+  .et__note{display:flex;gap:12px;align-items:flex-start;margin-top:28px;padding:16px 18px;border-radius:13px;border:1px solid;}
   .et__note--info{background:rgba(43,143,255,.06);border-color:rgba(43,143,255,.2);}
   .et__note--tip{background:rgba(62,224,143,.06);border-color:rgba(62,224,143,.22);}
   .et__note--warn{background:rgba(255,122,122,.06);border-color:rgba(255,122,122,.24);}
@@ -146,8 +156,8 @@
   .et__note--warn .et__notek{color:#FFC9C9;}
 
   /* ── Действие: дропзона ───────────────────────────────────────────────── */
-  .et__drop{display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;margin-top:18px;
-    padding:34px 24px;border-radius:16px;cursor:pointer;
+  .et__drop{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;margin-top:24px;
+    padding:44px 28px;border-radius:16px;cursor:pointer;
     background:rgba(255,255,255,.02);border:1.5px dashed rgba(43,143,255,.35);transition:background .15s,border-color .15s;}
   .et__drop:hover{background:rgba(43,143,255,.05);border-color:rgba(43,143,255,.5);}
   .et__drop.is-over{border-style:solid;border-color:var(--acc);background:rgba(43,143,255,.09);}
@@ -168,7 +178,7 @@
   .et__filex:hover{color:#fff;background:rgba(255,255,255,.05);}
 
   /* ── Действие: форма ──────────────────────────────────────────────────── */
-  .et__form{display:flex;flex-direction:column;gap:14px;margin-top:18px;}
+  .et__form{display:flex;flex-direction:column;gap:16px;margin-top:24px;}
   .et__field{display:flex;flex-direction:column;gap:8px;}
   .et__lab{font-size:12.5px;font-weight:600;color:var(--tx);}
   .et__inp,.et__area{width:100%;background:rgba(255,255,255,.03);border:1.5px solid var(--line2);border-radius:11px;
@@ -178,7 +188,7 @@
   .et__inp:focus,.et__area:focus{border-color:rgba(43,143,255,.5);background:rgba(43,143,255,.04);box-shadow:0 0 0 3px rgba(43,143,255,.1);}
 
   /* ── Низ: Назад / Далее ───────────────────────────────────────────────── */
-  .et__foot{display:flex;align-items:center;gap:14px;padding:13px 18px;border-top:1px solid var(--line);
+  .et__foot{display:flex;align-items:center;gap:14px;padding:16px 22px;border-top:1px solid var(--line);
     background:linear-gradient(180deg,rgba(6,12,36,0),rgba(6,12,36,.35));}
   .et__btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;border:0;white-space:nowrap;flex:0 0 auto;
     font-family:inherit;font-size:14px;font-weight:600;padding:12px 18px;border-radius:11px;transition:transform .15s,background .15s,box-shadow .15s,color .15s,opacity .15s;}
@@ -195,12 +205,27 @@
   .et__btn--primary:hover:not(:disabled) .et-arr{transform:rotate(-45deg) translateX(2px);}
   .et__spacer{flex:1 1 auto;}
 
-  /* ── Успех ────────────────────────────────────────────────────────────── */
-  .et__done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:38px 30px 30px;}
-  .et__donebadge{width:56px;height:56px;border-radius:18px;display:flex;align-items:center;justify-content:center;color:var(--jade);margin-bottom:4px;
-    background:rgba(62,224,143,.1);border:1px solid rgba(62,224,143,.3);box-shadow:inset 0 0 20px rgba(62,224,143,.14);}
-  .et__doneh{font-size:19px;font-weight:700;letter-spacing:-.3px;color:#fff;text-wrap:balance;}
-  .et__dones{font-size:14px;color:var(--tx);line-height:1.6;max-width:42ch;}
+  /* ── Успех — салют завершения ─────────────────────────────────────────── */
+  .et__done{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:52px 34px 42px;}
+  .et__burst{position:relative;width:100px;height:100px;display:grid;place-items:center;margin-bottom:6px;}
+  .et__badge{position:relative;z-index:2;width:62px;height:62px;border-radius:20px;display:flex;align-items:center;justify-content:center;color:#C9F7E0;
+    background:rgba(62,224,143,.13);border:1px solid rgba(62,224,143,.36);
+    box-shadow:inset 0 0 24px rgba(62,224,143,.3),inset 0 1px 0 rgba(255,255,255,.18),0 10px 30px rgba(20,120,70,.34);}
+  .et__ring{position:absolute;z-index:1;top:50%;left:50%;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:20px;border:1.5px solid rgba(62,224,143,.55);opacity:0;}
+  .et__ring--2{width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:23px;border-color:rgba(120,190,255,.45);}
+  .et__spark{position:absolute;z-index:1;top:50%;left:50%;width:5px;height:5px;margin:-2.5px 0 0 -2.5px;border-radius:50%;opacity:0;}
+  @keyframes etBadge{0%{transform:scale(.2);opacity:0}55%{transform:scale(1.12);opacity:1}100%{transform:scale(1);opacity:1}}
+  @keyframes etRing{0%{transform:scale(.5);opacity:.75}100%{transform:scale(2.4);opacity:0}}
+  @keyframes etSpark{0%{transform:translate(0,0) scale(0);opacity:0}30%{opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1);opacity:0}}
+  @media (prefers-reduced-motion:no-preference){
+    .et__badge{animation:etBadge .55s cubic-bezier(.34,1.56,.64,1) both;}
+    .et__ring{animation:etRing .95s ease-out .18s forwards;}
+    .et__ring--2{animation-delay:.42s;}
+    .et__spark{animation:etSpark .95s ease-out both;}
+  }
+  .et__doneh{font-size:23px;font-weight:700;letter-spacing:-.5px;color:#fff;text-wrap:balance;margin-top:4px;}
+  .et__doneline{font-size:15px;font-weight:600;color:var(--jade-tx);}
+  .et__dones{font-size:14px;color:var(--tx);line-height:1.62;max-width:42ch;margin-top:2px;}
 
   @media (prefers-reduced-motion: reduce){
     .et,.et__pane{animation:none;}
@@ -209,12 +234,14 @@
   }
   @media (max-width:600px){
     .et{max-width:100%;border-radius:18px;}
-    .et__top{padding:20px 20px 0;}
-    .et__x{top:16px;right:16px;}
-    .et__pane{padding:20px 20px 26px;}
-    .et__foot{padding:12px 14px;gap:10px;}
+    .et__top{padding:24px 22px 0;}
+    .et__x{top:18px;right:16px;}
+    .et__pane{padding:24px 22px 30px;}
+    .et__foot{padding:13px 16px;gap:10px;}
     .et__stepcap{display:none;}
-    .et__title{max-width:calc(100% - 40px);}
+    .et__title{font-size:22px;max-width:calc(100% - 42px);}
+    .et__h{font-size:20px;}
+    .et__done{padding:40px 24px 32px;}
   }
   `;
 
@@ -532,14 +559,23 @@
                     }))))));
     }
 
-    /* ── успех ────────────────────────────────────────────────────────── */
+    /* ── успех — салют завершения ─────────────────────────────────────── */
     function DonePane() {
       return h('div', { className: 'et__pane', key: 'done', style: { padding: 0 } },
         h('div', { className: 'et__done' },
-          h('div', { className: 'et__donebadge' }, icon('Check', { size: 26, strokeWidth: 2.4 })),
+          h('div', { className: 'et__burst' },
+            h('span', { className: 'et__ring' }),
+            h('span', { className: 'et__ring et__ring--2' }),
+            SPARKS.map((s, i) => h('span', {
+              key: 'sp' + i, className: 'et__spark',
+              style: { '--tx': s.tx + 'px', '--ty': s.ty + 'px', animationDelay: s.d + 's',
+                background: s.c, boxShadow: '0 0 7px ' + s.c },
+            })),
+            h('span', { className: 'et__badge' }, icon('Check', { size: 28, strokeWidth: 2.4 }))),
           h('div', { className: 'et__doneh' }, act.type === 'upload' ? 'Файл отправлен' : 'Ответ отправлен'),
+          h('div', { className: 'et__doneline' }, 'Скоро вернемся с ответом'),
           h('div', { className: 'et__dones' }, act.doneText ||
-            'Готово. Мы проверим и дадим знать, если что-то нужно поправить — обычно это 1-2 дня. Можно закрыть окно.')));
+            'Обычно это занимает 1-2 дня. Если что-то нужно будет поправить — напишем прямо здесь. Можно закрыть окно.')));
     }
 
     const currentStep = !onAction ? model.steps[idx] : null;
