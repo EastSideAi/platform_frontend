@@ -14,7 +14,7 @@
 (function () {
   'use strict';
   const R = window.React || React;
-  const { createElement: h, useState, useCallback } = R;
+  const { createElement: h, useState, useEffect, useCallback } = R;
   const Ic = window.EIcons || {};
   const Store = window.ELessonStore;
   const nav = (window.ERouter && window.ERouter.navigate) || function () {};
@@ -202,7 +202,12 @@
   function LearnLessons() {
     if (!Store) return h('div', { style: { padding: 40 } }, 'Хранилище уроков не загружено');
     const [items, setItems] = useState(() => Store.listSync());
-    const refresh = useCallback(() => setItems(Store.listSync()), []);
+    const refresh = useCallback(function () {
+      setItems(Store.listSync());
+      if (Store.list && Store.isRemote && Store.isRemote()) Store.list().then(function (a) { if (Array.isArray(a)) setItems(a); }).catch(function () {});
+    }, []);
+    // Гидрация библиотеки из БД на входе (поверх локального кеша).
+    useEffect(function () { refresh(); }, [refresh]);
 
     const create = useCallback(() => {
       Store.create().then((l) => { if (l) nav('/learn/build/' + l.id); }).catch(() => {});

@@ -790,29 +790,43 @@
   .lt-hint{flex:1 1 auto;min-width:0;font-size:13px;font-weight:500;color:var(--le-ink-mute);}
   .lt-back{flex:0 0 auto;}
 
-  .lt-done{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:46px 28px 40px;
-    background:radial-gradient(540px 280px at 50% -8%,rgba(245,200,76,.1),transparent 64%);}
-  .lt-done__star{position:relative;width:104px;height:104px;border-radius:50%;display:grid;place-items:center;
-    background:radial-gradient(62% 62% at 50% 40%,rgba(255,242,206,.98),rgba(245,200,76,.3));
-    box-shadow:0 0 0 10px rgba(245,200,76,.09),0 20px 48px -14px rgba(226,165,46,.45);animation:lt-star .6s cubic-bezier(.23,1,.32,1);}
-  .lt-done__star svg{color:#E2A52E;}
-  .lt-done__star::before{content:'';position:absolute;inset:-10px;border-radius:50%;border:2px solid rgba(245,200,76,.5);animation:lt-ring .85s cubic-bezier(.23,1,.32,1) .15s both;}
+  .lt-done{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:50px 30px 42px;
+    background:radial-gradient(600px 330px at 50% -14%,rgba(245,200,76,.15),transparent 60%);}
+  .lt-done__cel{position:relative;display:grid;place-items:center;}
+  /* Тёплое свечение — цель восхождения — лежит ПОЗАДИ медальона (слой, не ореол). */
+  .lt-done__cel::before{content:'';position:absolute;width:230px;height:230px;border-radius:50%;z-index:0;pointer-events:none;
+    background:radial-gradient(circle,rgba(245,200,76,.38),rgba(245,200,76,.05) 58%,transparent 72%);}
+  /* Якорь — золотой медальон-звезда: плоское тёплое стекло, тонкое кольцо, inset-блик. */
+  .lt-done__star{position:relative;z-index:1;width:114px;height:114px;border-radius:50%;display:grid;place-items:center;
+    background:rgba(255,251,242,.82);border:1px solid rgba(226,165,46,.44);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 26px rgba(245,200,76,.32),inset 0 -14px 26px rgba(226,165,46,.09);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:lt-star .6s cubic-bezier(.23,1,.32,1);}
+  .lt-done__star svg,.lt-done__star svg path{fill:#E7A828;stroke:#E7A828;}
+  .lt-done__star svg{filter:drop-shadow(0 3px 6px rgba(196,138,30,.34));}
+  .lt-done__star::before{content:'';position:absolute;inset:-9px;border-radius:50%;border:1.5px solid rgba(245,200,76,.55);animation:lt-ring .85s cubic-bezier(.23,1,.32,1) .15s both;}
   @keyframes lt-star{0%{transform:scale(.4) rotate(-18deg);opacity:0;}60%{transform:scale(1.08) rotate(4deg);}100%{transform:scale(1) rotate(0);opacity:1;}}
   @keyframes lt-ring{from{transform:scale(.7);opacity:0;}45%{opacity:.85;}to{transform:scale(1.55);opacity:0;}}
-  .lt-done__cel{position:relative;display:grid;place-items:center;}
-  .lt-conf{position:absolute;top:44px;left:50%;width:0;height:0;pointer-events:none;z-index:0;}
+  .lt-conf{position:absolute;top:48px;left:50%;width:0;height:0;pointer-events:none;z-index:2;}
   .lt-conf i{position:absolute;left:0;top:0;width:9px;height:9px;border-radius:2px;opacity:0;animation:lt-conf 1.1s cubic-bezier(.2,.7,.3,1) forwards;}
   @keyframes lt-conf{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0);}18%{opacity:1;}100%{opacity:0;transform:translate(var(--cx),var(--cy)) scale(1) rotate(var(--cr));}}
-  .lt-done__k{margin-top:22px;display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--le-acc-ink);background:rgba(43,143,255,.12);padding:7px 14px;border-radius:99px;box-shadow:inset 0 0 14px rgba(43,143,255,.3),inset 0 0 3px rgba(160,205,255,.4);}
-  .lt-done__h{font-family:var(--le-display);font-weight:700;font-size:32px;letter-spacing:-.03em;line-height:1.06;color:var(--le-ink);margin-top:16px;text-wrap:balance;}
-  .lt-done__s{font-size:15.5px;color:var(--le-ink-sub);margin-top:12px;max-width:40ch;line-height:1.55;font-weight:400;}
-  .lt-stats{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap;justify-content:center;}
-  .lt-stat{min-width:124px;padding:18px 20px;border-radius:16px;background:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 30px rgba(43,143,255,.07);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
-  .lt-stat--gold{background:linear-gradient(180deg,rgba(245,200,76,.12),rgba(245,200,76,.04));border-color:rgba(226,165,46,.28);}
-  .lt-stat__v{font-family:var(--le-display);font-size:30px;font-weight:600;letter-spacing:-.02em;color:var(--le-acc-deep);font-variant-numeric:tabular-nums;line-height:1;}
+  .lt-done__k{margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--le-acc-ink);
+    background:rgba(43,143,255,.08);border:1px solid rgba(43,143,255,.2);padding:7px 15px 7px 12px;border-radius:99px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+  .lt-done__k svg{opacity:.85;}
+  .lt-done__h{font-family:var(--le-display);font-weight:700;font-size:33px;letter-spacing:-.032em;line-height:1.04;color:var(--le-ink);margin-top:17px;text-wrap:balance;}
+  .lt-done__s{font-size:15px;color:var(--le-ink-sub);margin-top:11px;max-width:38ch;line-height:1.5;font-weight:400;text-wrap:balance;}
+  /* Статы — один стеклянный монолит с хейрлайн-делением (не две карточки-дефолта). */
+  .lt-stats{display:inline-flex;align-items:stretch;margin-top:30px;border-radius:18px;overflow:hidden;
+    background:rgba(255,255,255,.6);border:1px solid var(--le-cbord);
+    box-shadow:var(--le-hi),inset 0 0 34px rgba(43,143,255,.06);
+    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
+  .lt-stat{padding:16px 32px;text-align:center;position:relative;}
+  .lt-stat+.lt-stat{border-left:1px solid var(--le-line);}
+  .lt-stat--gold{background:rgba(245,200,76,.08);}
+  .lt-stat__v{font-family:var(--le-display);font-size:29px;font-weight:600;letter-spacing:-.02em;color:var(--le-acc-deep);font-variant-numeric:tabular-nums;line-height:1;}
   .lt-stat__v.gold{color:var(--le-gold);}
-  .lt-stat__k{font-size:12px;font-weight:500;color:var(--le-ink-mute);margin-top:10px;}
-  .lt-done__cta{display:flex;gap:13px;margin-top:32px;flex-wrap:wrap;justify-content:center;}
+  .lt-stat__k{font-size:11.5px;font-weight:500;color:var(--le-ink-mute);margin-top:9px;}
+  .lt-done__cta{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap;justify-content:center;}
   @media (prefers-reduced-motion:reduce){ .lt-done__star,.lt-done__star::before{animation:none;} }
 
   /* ── contained-режим Тренажёра: bottom sheet внутри рамки телефона (превью конструктора).
@@ -841,7 +855,7 @@
   .lt-modal--in .lt-done__star svg{width:44px;height:44px;}
   .lt-modal--in .lt-done__h{font-size:25px;}
   .lt-modal--in .lt-done__s{font-size:14px;margin-top:10px;}
-  .lt-modal--in .lt-stats{gap:9px;margin-top:22px;flex-wrap:nowrap;}
+  .lt-modal--in .lt-stats{margin-top:22px;display:flex;width:100%;}
   .lt-modal--in .lt-stat{min-width:0;flex:1 1 0;padding:14px 10px;text-align:center;}
   .lt-modal--in .lt-stat__v{font-size:21px;}
   .lt-modal--in .lt-stat__k{font-size:10.5px;margin-top:6px;}
@@ -929,8 +943,8 @@
     .lt-done{padding:34px 18px 30px;}
     .lt-done__h{font-size:26px;}
     .lt-done__s{font-size:14.5px;}
-    .lt-stats{gap:10px;}
-    .lt-stat{min-width:0;flex:1 1 42%;padding:15px 14px;}
+    .lt-stats{display:flex;width:100%;}
+    .lt-stat{min-width:0;flex:1 1 0;padding:15px 10px;}
   }
   @media (prefers-reduced-motion: reduce){
     .lt-q,.lt-done__star,.lt-modal,.lt-modal__panel,.lx-opt.is-wrong{animation:none;}
@@ -1915,14 +1929,34 @@
       return () => window.removeEventListener('keydown', onKey);
     });
 
+    // Сдача преподавателю: как только тест/домашка завершены — реально шлём ответы
+    // и балл в БД (ES_LESSONS_BASE). Из превью конструктора (contained) не шлём.
+    useEffect(function () {
+      if (!done || props.contained) return;
+      var base = (window.ES_LESSONS_BASE || window.ES_API_BASE || '').replace(/\/+$/, '');
+      var lid = (lesson && lesson.id) || '';
+      if (!base || !lid) return;
+      // Домашка (открытое задание) не оценивается автоматически: если оцениваемых
+      // блоков нет — score = null (не выдумываем 0), учитель проставит балл руками.
+      var scoredCount = blocks.filter(function (b) { return b.type !== 'theory' && b.type !== 'task'; }).length;
+      var acc = scoredCount ? Math.round((rightCount / scoredCount) * 100) : null;
+      var hasTask = blocks.some(function (b) { return b.type === 'task'; });
+      var answers = blocks.map(function (b, i) { return { type: b.type, prompt: b.prompt || '', state: states[i], correct: scored[i] }; });
+      fetch(base + '/api/learning/submissions', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonId: lid, kind: hasTask ? 'homework' : 'test', score: acc,
+          studentName: (window.ES_STUDENT_NAME || ''), payload: { rightCount: rightCount, total: scoredCount, answers: answers } }),
+      }).catch(function () {});
+    }, [done]);
+
     const closeX = (float) => h('button', {
       type: 'button', className: 'lt-modal__x' + (float ? ' lt-modal__x--float' : ''), onClick: back, 'aria-label': 'Закрыть тест',
     }, Ic.Close ? h(Ic.Close, { size: 18 }) : '×');
     const backdrop = (e) => { if (e.target === e.currentTarget) back(); };
 
     if (done) {
-      const scoredCount = blocks.filter((b) => b.type !== 'theory' && b.type !== 'task').length || 1;
-      const acc = Math.round((rightCount / scoredCount) * 100);
+      const scoredCount = blocks.filter((b) => b.type !== 'theory' && b.type !== 'task').length;
+      const acc = scoredCount ? Math.round((rightCount / scoredCount) * 100) : null;
       return h('div', { className: 'lt-modal' + (props.contained ? ' lt-modal--in' : ''), onMouseDown: backdrop },
         h('div', { className: 'lt-modal__panel', role: 'dialog', 'aria-modal': 'true' },
           closeX(true),
@@ -1940,9 +1974,9 @@
             h('div', { className: 'lt-done__k' }, Ic.Clock ? h(Ic.Clock, { size: 13 }) : null, h('span', null, 'На проверке у преподавателя')),
             h('h2', { className: 'lt-done__h' }, acc >= 80 ? 'Отлично, домашка сдана!' : 'Готово — домашка отправлена!'),
             h('p', { className: 'lt-done__s' }, 'Ответы ушли преподавателю — он проверит и даст обратную связь. Предварительный результат ниже.'),
-            h('div', { className: 'lt-stats' },
+            scoredCount ? h('div', { className: 'lt-stats' },
               h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, acc + '%'), h('div', { className: 'lt-stat__k' }, 'Точность')),
-              h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, rightCount + '/' + scoredCount), h('div', { className: 'lt-stat__k' }, 'Верных ответов'))),
+              h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, rightCount + '/' + scoredCount), h('div', { className: 'lt-stat__k' }, 'Верных ответов'))) : null,
             h('div', { className: 'lt-done__cta' },
               h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: () => finish({ acc: acc }) }, 'Вернуться к уроку', arrEl()),
               h('button', { type: 'button', className: 'le-btn le-btn--ghost', onClick: restart }, 'Пройти ещё раз')))));
@@ -2187,15 +2221,19 @@
     const isTask2 = /demo=task2/.test(window.location.hash || '');
     const isTaskDemo = /demo=task\b/.test(window.location.hash || '');
     const demoLive = isTask2 ? DEMO_TASK2 : (isTaskDemo ? DEMO_TASK : (isDemo ? DEMO_LESSON : null));
+    // Гидрация с бэкенда поверх локального кеша: реальный урок и лента приезжают
+    // из БД (ES_LESSONS_BASE), чтобы урок открывался по ссылке на любом устройстве.
+    const [rLesson, setRLesson] = useState(null);
+    const [rList, setRList] = useState(null);
 
     // Библиотека уроков из стора → плейлист. Демо-шорткаты (?demo) изолированы:
     // показываем только сам демо-урок, чтобы не путать с реальной лентой.
-    const lib = (!demoLive && Store) ? Store.listSync() : [];
+    const lib = demoLive ? [] : ((rList && rList.length ? rList : (Store ? Store.listSync() : [])) || []);
     const firstId = lib[0] && lib[0].id;
     const activeId = demoLive ? null : (routeId || (Store && Store.currentId()) || firstId || null);
 
     // Живой урок: демо, иначе конкретный по id из URL, иначе fallback на черновик.
-    const live = demoLive || (Store ? (Store.getSync(activeId) || L.load()) : L.load());
+    const live = demoLive || ((rLesson && rLesson.id === activeId) ? rLesson : (Store ? (Store.getSync(activeId) || L.load()) : L.load()));
 
     // Позиционный прогресс: до активного — пройдено, активный — сейчас, дальше — открыт.
     const activeIdx = lib.findIndex((s) => s.id === activeId);
@@ -2224,6 +2262,20 @@
     const [hwResult, setHwResult] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [run, setRun] = useState(0);
+    // async-гидрация: тянем ленту и активный урок из БД поверх кеша (мягко: пока
+    // ответа нет — показываем locSync/демо, приедет — подменяем без мигания).
+    useEffect(function () {
+      if (demoLive || !Store || !Store.isRemote || !Store.isRemote() || !Store.list) return;
+      var on = true;
+      Store.list().then(function (a) { if (on && Array.isArray(a)) setRList(a); }).catch(function () {});
+      return function () { on = false; };
+    }, [demoLive]);
+    useEffect(function () {
+      if (demoLive || !Store || !activeId || !Store.get || !Store.isRemote || !Store.isRemote()) return;
+      var on = true;
+      Store.get(activeId).then(function (l) { if (on && l && l.id === activeId) setRLesson(l); }).catch(function () {});
+      return function () { on = false; };
+    }, [activeId, demoLive]);
 
     // Смена урока (навигация по id / prev-next / клик в плейлисте) сбрасывает
     // режим изучения/домашку и скроллит наверх.
