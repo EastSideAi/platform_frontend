@@ -79,8 +79,8 @@
     useEffect(() => {
       const onChange = () => setRoute(parseHash());
       window.addEventListener('hashchange', onChange);
-      // гарантируем стартовый хеш
-      if (!window.location.hash) navigate('/', { replace: true });
+      // гарантируем стартовый хеш — корень домена сразу открывает «Обучение»
+      if (!window.location.hash || window.location.hash === '#/' || window.location.hash === '#') navigate('/learn', { replace: true });
       return () => window.removeEventListener('hashchange', onChange);
     }, []);
     return route;
