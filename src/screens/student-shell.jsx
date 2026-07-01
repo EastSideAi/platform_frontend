@@ -53,7 +53,11 @@
     background:
       radial-gradient(900px 520px at 86% -8%,rgba(30,114,240,.16),transparent 60%),
       radial-gradient(720px 520px at -2% 108%,rgba(22,100,230,.12),transparent 60%);}
-  .sd-side,.sd-main,.sd-fab{position:relative;z-index:1;}
+  .sd-side,.sd-main,.sd-fab,.sd-scroll{position:relative;z-index:1;}
+  /* колонка-скролл для режима с футером: белое окно + футер на тёмном холсте */
+  .sd-scroll{flex:1 1 auto;min-width:0;height:100%;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;}
+  .sd-main.sd-main--inflow{height:auto;min-height:calc(100vh - 32px);overflow:visible;flex:0 0 auto;}
+  .sd-main--inflow .sd-wrap{padding-bottom:54px;}
   .sd-app *{box-sizing:border-box;}
   .sd-num{font-variant-numeric:tabular-nums;}
   .sd-arkhip{font-family:var(--font-arkhip);font-weight:400;}
@@ -67,15 +71,8 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     display:flex; flex-direction:column; padding:18px 14px 14px;
   }
-  .sd-brand{display:flex; align-items:center; gap:11px; padding:4px 8px; margin-bottom:24px;}
-  .sd-brand__mark{
-    width:36px;height:36px;border-radius:11px;flex:0 0 36px;
-    background:linear-gradient(150deg,var(--sd-acc),var(--sd-acc-deep));
-    display:flex;align-items:center;justify-content:center;color:#fff;
-    box-shadow:inset 0 0 14px rgba(160,205,255,.55), inset 0 1px 0 rgba(255,255,255,.3);
-  }
-  .sd-brand__name{font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;font-weight:700;font-size:15.5px;letter-spacing:.5px;color:#fff;line-height:1.1;}
-  .sd-brand__sub{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:#7E88AE;margin-top:3px;}
+  .sd-brand{display:flex; align-items:center; padding:2px 8px 4px; margin-bottom:26px;}
+  .sd-brand__logo{width:150px;height:auto;display:block;}
 
   .sd-nav{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;overflow-y:auto;min-height:0;}
   .sd-nav::-webkit-scrollbar{width:0;}
@@ -1143,12 +1140,23 @@
   .sd-ai__send:hover{transform:translateY(-1px);}
   .sd-ai__send:disabled{opacity:.4;cursor:default;transform:none;}
 
-  /* плавающая кнопка бота — доступен с любого экрана */
-  .sd-fab{position:fixed;right:26px;bottom:26px;z-index:900;width:58px;height:58px;border-radius:18px;border:0;cursor:pointer;color:#fff;
-    display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,var(--sd-acc-2),var(--sd-acc-deep));
-    box-shadow:inset 0 0 18px rgba(160,205,255,.6),0 12px 30px rgba(43,143,255,.45);transition:transform .15s;}
-  .sd-fab:hover{transform:translateY(-3px) scale(1.04);}
-  .sd-fab::after{content:'';position:absolute;inset:0;border-radius:18px;border:1px solid rgba(255,255,255,.25);}
+  /* центральная плавающая кнопка AI — единый вызов ассистента с любого экрана кабинета */
+  .lr-aifab{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:900;
+    display:inline-flex;align-items:center;gap:12px;padding:11px 22px 11px 11px;border-radius:18px;cursor:pointer;font-family:inherit;
+    background:rgba(11,18,42,.82);-webkit-backdrop-filter:blur(22px) saturate(160%);backdrop-filter:blur(22px) saturate(160%);
+    border:1px solid rgba(120,160,255,.32);
+    box-shadow:0 20px 48px rgba(8,16,44,.34),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 32px rgba(40,110,240,.16);
+    transition:transform .2s cubic-bezier(.23,1,.32,1),box-shadow .2s;}
+  .lr-aifab:hover{transform:translateX(-50%) translateY(-3px);box-shadow:0 26px 58px rgba(8,16,44,.44),inset 0 1px 0 rgba(255,255,255,.2),inset 0 0 44px rgba(40,110,240,.26);}
+  .lr-aifab:active{transform:translateX(-50%) translateY(-1px) scale(.99);}
+  .lr-aifab__ic{position:relative;flex:0 0 38px;width:38px;height:38px;border-radius:13px;display:grid;place-items:center;color:#fff;
+    background:var(--sd-acc-deep);box-shadow:0 0 0 1px rgba(255,255,255,.14),0 6px 16px rgba(43,120,255,.5);}
+  .lr-aifab__pulse{position:absolute;inset:0;border-radius:13px;border:2px solid rgba(43,143,255,.55);}
+  .lr-aifab__tx{display:flex;flex-direction:column;text-align:left;line-height:1.12;}
+  .lr-aifab__t{font-size:13.5px;font-weight:700;color:#fff;letter-spacing:-.2px;}
+  .lr-aifab__s{font-size:11px;font-weight:500;color:rgba(190,208,255,.72);margin-top:1px;}
+  @media (prefers-reduced-motion:no-preference){.lr-aifab__pulse{animation:aifabPulse 2.6s cubic-bezier(.23,1,.32,1) infinite;}}
+  @keyframes aifabPulse{0%{transform:scale(1);opacity:.6;}70%{transform:scale(1.85);opacity:0;}100%{transform:scale(1.85);opacity:0;}}
 
   /* FAQ-аккордеон */
   .sd-faq{display:flex;flex-direction:column;gap:8px;}
@@ -1344,6 +1352,28 @@
     .sd-jp-node__halo{animation:none;}
     .sd-jp-row.clickable .sd-jp-min,.sd-jp-sub.current{transition:none;}
   }
+
+  /* ── Футер «Атмосфера»: белый контент уходит в ночь ─────────────────────── */
+  .sd-foot{position:relative;color:#EAF0FF;background:transparent;margin-top:28px;padding:40px 0 44px;}
+  .sd-foot__in{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 52px;}
+  .sd-foot__grid{display:grid;grid-template-columns:1.85fr 1fr 1fr 1.1fr;gap:40px;}
+  .sd-foot__logo{height:clamp(42px,4.2vw,56px);width:auto;display:block;}
+  .sd-foot__tag{margin-top:22px;font-size:13.5px;line-height:1.64;color:#8E9BC4;max-width:300px;}
+  .sd-foot__col h4{font-size:14px;font-weight:600;color:#E8EDFC;letter-spacing:-.01em;margin:2px 0 13px;}
+  .sd-foot__col a{display:block;width:fit-content;font-size:13.5px;color:#8B98C1;text-decoration:none;padding:6px 0;
+    transition:color .15s ease,transform .15s ease;cursor:pointer;}
+  .sd-foot__col a:hover{color:#fff;transform:translateX(3px);}
+  .sd-foot__legal{margin-top:46px;padding-top:22px;border-top:1px solid rgba(150,178,255,.12);
+    display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;}
+  .sd-foot__copy{font-size:12.5px;color:#6E7AA6;}
+  .sd-foot__legal-links{display:flex;gap:22px;}
+  .sd-foot__legal-links a{font-size:12.5px;color:#6E7AA6;text-decoration:none;transition:color .15s;cursor:pointer;}
+  .sd-foot__legal-links a:hover{color:#C5D0F0;}
+  @media (max-width:880px){
+    .sd-foot{padding:42px 20px 24px;}
+    .sd-foot__grid{grid-template-columns:1fr 1fr;gap:26px 20px;}
+    .sd-foot__legal{flex-direction:column;align-items:flex-start;gap:12px;}
+  }
   `;
 
   if (!document.getElementById('student-shell-styles')) {
@@ -1405,10 +1435,7 @@
     const active = props.active;
     return h('aside', { className: 'sd-side' },
       h('div', { className: 'sd-brand' },
-        h('span', { className: 'sd-brand__mark' }, Ic.Star ? h(Ic.Star, { size: 19 }) : 'E'),
-        h('div', null,
-          h('div', { className: 'sd-brand__name' }, 'ИСТСАЙД.РФ'),
-          h('div', { className: 'sd-brand__sub' }, 'Языковой центр'))),
+        h('img', { className: 'sd-brand__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' })),
       h('nav', { className: 'sd-nav' },
         NAV.map((it) => h('button', {
           key: it.key, type: 'button',
@@ -1456,71 +1483,8 @@
   const openArticle = (a, all) => openPopup({ kind: 'article', data: a, all: all || (a && a.more) || null });
   const openTask = (t) => openPopup({ kind: 'task', data: t });
   const closePopup = () => openPopup(null);
-  // Ответы навигатора (бэк еще не подключен — отвечаем по теме вопроса).
-  function pickReply(q) {
-    const s = (q || '').toLowerCase();
-    if (s.indexOf('срок') >= 0 || s.indexOf('успева') >= 0 || s.indexOf('дедлайн') >= 0)
-      return 'По срокам ты пока в графике, но одно дело горит: медсправку нужно переоформить до завтра. Остальные документы можно загрузить ближе к 28 июня. Закроем со справкой — и весь этап пройдем спокойно, без спешки.';
-    if (s.indexOf('медсправ') >= 0 || s.indexOf('справк') >= 0)
-      return 'Нужна новая медсправка по форме CSC (Foreigner Physical Examination Form) с печатями и переводом. Сделай ее в клинике, потом загрузи сюда фото или скан — проверю за 1-2 дня и добавлю в пакет. Сомневаешься в форме — пришли фото до визита, подскажу.';
-    if (s.indexOf('язык') >= 0 || s.indexOf('hsk') >= 0)
-      return 'Для большинства программ на грант CSC нужен HSK 4-5, но часть вузов берет и с подтверждением, что ты учишь язык. Скажи вуз и программу — посмотрю точное требование и подскажу, на какой уровень целиться.';
-    if (s.indexOf('сейчас') >= 0 || s.indexOf('что мне') >= 0 || s.indexOf('делать') >= 0)
-      return 'Прямо сейчас от тебя одно действие: переоформить медсправку по форме CSC и загрузить ее. Это разблокирует фото и скан паспорта. Остальное по этапу уже на нашей стороне — собираем пакет и готовим мотивационное письмо.';
-    return 'Понял вопрос. Я навигатор EastSide и помогу с поступлением, документами, языком и сроками по твоему пути. Уточни деталь — например, про какой документ или этап речь — и подскажу, что делать прямо сейчас.';
-  }
-
-  function Chat(props) {
-    const ctx = props.ctx;
-    const hello = (ctx && ctx.hello) || 'Привет! Я навигатор EastSide. Спроси что угодно про поступление, документы, язык или конкретный этап — отвечу прямо здесь.';
-    const [msgs, setMsgs] = useState([{ from: 'ai', text: hello, done: true }]);
-    const [text, setText] = useState('');
-    const [typing, setTyping] = useState(false);
-    const feed = useRef(null);
-    const inp = useRef(null);
-    const timers = useRef([]);
-    useEffect(() => {
-      if (inp.current) inp.current.focus();
-      return () => { timers.current.forEach((id) => { clearInterval(id); clearTimeout(id); }); };
-    }, []);
-    useEffect(() => { if (feed.current) feed.current.scrollTop = feed.current.scrollHeight; }, [msgs, typing]);
-
-    // печатаем ответ по символам — живой эффect набора
-    const stream = (reply) => {
-      setMsgs((m) => m.concat({ from: 'ai', text: '', done: false }));
-      let i = 0;
-      const id = setInterval(() => {
-        i += 1;
-        setMsgs((m) => { const c = m.slice(); c[c.length - 1] = { from: 'ai', text: reply.slice(0, i), done: i >= reply.length }; return c; });
-        if (i >= reply.length) { clearInterval(id); if (feed.current) feed.current.scrollTop = feed.current.scrollHeight; }
-      }, 16);
-      timers.current.push(id);
-    };
-    const send = (v) => {
-      const t = (v != null ? v : text).trim(); if (!t) return;
-      setMsgs((m) => m.concat({ from: 'me', text: t, done: true })); setText(''); setTyping(true);
-      const to = setTimeout(() => { setTyping(false); stream(pickReply(t)); }, 680);
-      timers.current.push(to);
-    };
-
-    return h('div', { className: 'sd-ai', onMouseDown: (e) => e.stopPropagation() },
-      h('div', { className: 'sd-ai__head' },
-        h('span', { className: 'sd-ai__bot' }, Ic.Spark ? h(Ic.Spark, { size: 21 }) : 'AI'),
-        h('div', { className: 'sd-ai__id' },
-          h('div', { className: 'sd-ai__name' }, 'Навигатор EastSide'),
-          h('div', { className: 'sd-ai__status' }, h('i', null), 'Готов помочь')),
-        h('button', { className: 'sd-ai__x', onClick: closePopup, 'aria-label': 'Закрыть' }, Ic.Close ? h(Ic.Close, { size: 17 }) : '×')),
-      ctx && ctx.label ? h('div', { className: 'sd-ai__ctx' }, 'По теме: ', h('b', null, ctx.label)) : null,
-      h('div', { className: 'sd-ai__feed', ref: feed },
-        msgs.map((m, i) => h('div', { key: i, className: 'sd-bub ' + m.from },
-          m.text,
-          (m.from === 'ai' && !m.done) ? h('span', { className: 'sd-bub__caret' }) : null)),
-        typing ? h('div', { className: 'sd-ai__typing' }, h('i', null), h('i', null), h('i', null)) : null),
-      h('form', { className: 'sd-ai__compose', onSubmit: (e) => { e.preventDefault(); send(); } },
-        h('div', { className: 'sd-ai__field' },
-          h('input', { className: 'sd-ai__input', ref: inp, placeholder: 'Спроси что угодно про поступление…', value: text, onChange: (e) => setText(e.target.value) })),
-        h('button', { type: 'submit', className: 'sd-ai__send', disabled: !text.trim(), 'aria-label': 'Отправить' }, Ic.Send ? h(Ic.Send, { size: 18 }) : '→')));
-  }
+  // AI-чат — единый канонический попап EUI.AssistantPopup (тот же, что на #/documents),
+  // рендерится из PopupHost по SH.openChat(). Локальный Chat удалён, чтобы попап был один.
 
   /* ── Светлый редакторский «лист для чтения» (Режим B, стекло + блёр) ──────
      Бренд-небо в шапке мягко растворяется в молочном листе; колонка контента
@@ -1698,9 +1662,7 @@
       h('div', { className: 'ar__body' },
         h('div', { className: 'ar__col' },
           h('div', { className: 'ar__kick' },
-            h('b', null, a.cap || 'Статья'),
-            a.dur ? h('i', null) : null,
-            a.dur ? a.dur : null),
+            h('b', null, a.cap || 'Статья')),
           h('h1', { className: 'ar__title' }, a.title),
           a.image ? h('img', { className: 'ar__img', src: a.image, alt: '' }) : null,
           body.map(block),
@@ -1712,8 +1674,7 @@
                   h('img', { src: m.image, alt: '', style: { objectPosition: m.thumbPos || '50% 42%' } }),
                   h('span', { className: 'ar__more-thumb__tint' })),
                 h('span', { className: 'ar__more-cap' }, m.cap),
-                h('span', { className: 'ar__more-title' }, m.title),
-                h('span', { className: 'ar__more-meta' }, clock(12), m.dur))))) : null)));
+                h('span', { className: 'ar__more-title' }, m.title))))) : null)));
   }
 
   function TaskModal(props) {
@@ -1747,36 +1708,82 @@
     const [p, setP] = useState(null);
     useEffect(() => { _pop.set = setP; return () => { _pop.set = null; }; }, []);
     if (!p) return null;
+    // Единый канонический AI-попап (тот же, что на #/documents) — своя подложка esa-backdrop
+    if (p.kind === 'chat') {
+      const AP = window.EUI && window.EUI.AssistantPopup;
+      if (!AP) return null;
+      const M = window.EMock || {};
+      const seeds = M.assistantSeeds7 || M.assistantSeeds || null;
+      const stage = (p.ctx && p.ctx.label) ? { id: 'ctx', title: p.ctx.label } : null;
+      return h(AP, { open: true, onClose: closePopup, stage: stage, seeds: seeds });
+    }
     return h('div', { className: 'sd-ov sd-ov--center', onMouseDown: closePopup },
-      p.kind === 'chat' ? h(Chat, { ctx: p.ctx })
-        : p.kind === 'article' ? h(ArticleModal, { key: (p.data && p.data.title) || 'ar', data: p.data, all: p.all })
-          : p.kind === 'task'
-            ? (window.ESTaskModal
-              ? h(window.ESTaskModal, { data: p.data, close: closePopup, openChat: openChat })
-              : h(TaskModal, { data: p.data }))
-            : null);
+      p.kind === 'article' ? h(ArticleModal, { key: (p.data && p.data.title) || 'ar', data: p.data, all: p.all })
+        : p.kind === 'task'
+          ? (window.ESTaskModal
+            ? h(window.ESTaskModal, { data: p.data, close: closePopup, openChat: openChat })
+            : h(TaskModal, { data: p.data }))
+          : null);
   }
 
   /* ── Shell — каркас страницы ученика ───────────────────────────────── */
   // props: active (ключ нав), surface ('light'|'dark'), title, sub, children
+  function Footer() {
+    const goto = (to) => (e) => { e.preventDefault(); nav(to); };
+    const col = (title, items) => h('div', { className: 'sd-foot__col' },
+      h('h4', null, title),
+      items.map((it, i) => h('a', { key: i, href: it.href || (it.to ? '#' + it.to : '#'), onClick: it.onClick || (it.to ? goto(it.to) : null) }, it.label)));
+    return h('footer', { className: 'sd-foot' },
+      h('div', { className: 'sd-foot__in' },
+        h('div', { className: 'sd-foot__grid' },
+          h('div', { className: 'sd-foot__brand' },
+            h('img', { className: 'sd-foot__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' }),
+            h('p', { className: 'sd-foot__tag' }, 'Спокойный путь к поступлению в университет Китая — от диагностики до заселения, рядом на каждом шаге.')),
+          col('Платформа', [
+            { label: 'Главная', to: '/student' },
+            { label: 'Мой путь', to: '/student' },
+            { label: 'Документы', to: '/documents' },
+            { label: 'Обучение', to: '/learn' }]),
+          col('Поддержка', [
+            { label: 'AI-наставник', onClick: (e) => { e.preventDefault(); openChat(); } },
+            { label: 'База знаний', to: '/student' },
+            { label: 'Частые вопросы', href: '#' },
+            { label: 'Связаться с куратором', href: '#' }]),
+          col('Контакты', [
+            { label: 'Telegram', href: '#' },
+            { label: 'Почта', href: 'mailto:hello@истсайд.рф' },
+            { label: 'истсайд.рф', href: '#' }])),
+        h('div', { className: 'sd-foot__legal' },
+          h('div', { className: 'sd-foot__copy' }, '© 2026 ИСТСАЙД · Поступление в университеты Китая'),
+          h('div', { className: 'sd-foot__legal-links' },
+            h('a', { href: '#' }, 'Политика конфиденциальности'),
+            h('a', { href: '#' }, 'Оферта')))));
+  }
+
   function Shell(props) {
     const surface = props.surface === 'dark' ? 'dark' : 'light';
     return h('div', { className: 'sd-app' },
       h(Sidebar, { active: props.active }),
-      h('div', { className: 'sd-main sd-main--' + surface },
-        h('div', { className: 'sd-wrap' },
-          props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
-          props.children)),
-      props.aiCenter
-        ? h('button', { type: 'button', className: 'lr-aifab', onClick: () => openChat(), 'aria-label': 'Спросить AI-наставника' },
-            h('span', { className: 'lr-aifab__ic' },
-              h('span', { className: 'lr-aifab__pulse', 'aria-hidden': 'true' }),
-              Ic.Spark ? h(Ic.Spark, { size: 18 }) : 'AI'),
-            h('span', { className: 'lr-aifab__tx' },
-              h('span', { className: 'lr-aifab__t' }, 'AI-наставник'),
-              h('span', { className: 'lr-aifab__s' }, 'Спросить о чём угодно')))
-        : h('button', { type: 'button', className: 'sd-fab', onClick: () => openChat(), 'aria-label': 'Спросить AI' },
-            Ic.Spark ? h(Ic.Spark, { size: 23 }) : 'AI'),
+      props.footer
+        ? h('div', { className: 'sd-scroll' },
+            h('div', { className: 'sd-main sd-main--' + surface + ' sd-main--inflow' },
+              h('div', { className: 'sd-wrap' },
+                props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
+                props.children)),
+            h(Footer, null))
+        : h('div', { className: 'sd-main sd-main--' + surface },
+            h('div', { className: 'sd-wrap' },
+              props.hideTopBar ? null : h(TopBar, { title: props.title, sub: props.sub, hideHello: props.hideHello }),
+              props.children)),
+      h('button', { type: 'button', className: 'lr-aifab', onClick: () => openChat(), 'aria-label': 'Спросить AI-наставника' },
+        h('span', { className: 'lr-aifab__ic' },
+          h('span', { className: 'lr-aifab__pulse', 'aria-hidden': 'true' }),
+          h('svg', { width: 19, height: 19, viewBox: '0 0 24 24', fill: 'currentColor', 'aria-hidden': 'true' },
+            h('path', { d: 'M11 2.5 L13 11 L21.5 13 L13 15 L11 23.5 L9 15 L0.5 13 L9 11 Z' }),
+            h('path', { d: 'M19 3 L19.6 4.9 L21.5 5.5 L19.6 6.1 L19 8 L18.4 6.1 L16.5 5.5 L18.4 4.9 Z' }))),
+        h('span', { className: 'lr-aifab__tx' },
+          h('span', { className: 'lr-aifab__t' }, 'AI-наставник'),
+          h('span', { className: 'lr-aifab__s' }, 'Спросить о чём угодно'))),
       h(PopupHost, null));
   }
 

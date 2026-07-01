@@ -86,19 +86,19 @@
   // ── Все этапы пути. У каждого: lead (d), у активного — full (read more) и tasks (STEPS),
   //    у пройденных — done-задачи, у будущих — превью will + after ──────────────────────────
   const STAGES = [
-    { n: 1, t: 'Выбор университета', st: 'done', sub: 'Подобрали программу и вуз под твой профиль.',
+    { n: 1, art: 'assets/stages/stage-2.png', t: 'Выбор университета', st: 'done', sub: 'Подобрали программу и вуз под твой профиль.',
       d: 'Разобрали твой профиль и подобрали программу и вуз, где у тебя реальные шансы на грант.',
       tasks: [
         { status: 'done', owner: 'us', title: 'Собрали профиль и цели', sub: 'Разобрали интересы, баллы и цель по стране.' },
         { status: 'done', owner: 'us', title: 'Подобрали вуз и программу', sub: 'Вуз и направление, где реальны шансы на грант.' },
       ] },
-    { n: 2, t: 'Уровень языка HSK', st: 'done', sub: 'Подтвердили уровень языка и участие в гранте.',
+    { n: 2, art: 'assets/stages/stage-1.png', t: 'Уровень языка HSK', st: 'done', sub: 'Подтвердили уровень языка и участие в гранте.',
       d: 'Зафиксировали твой уровень языка и подтвердили, что ты проходишь по требованиям гранта.',
       tasks: [
         { status: 'done', owner: 'you', title: 'Прошел диагностику уровня', sub: 'Зафиксировали твой текущий уровень языка.' },
         { status: 'done', owner: 'us', title: 'Подтвердили участие в гранте', sub: 'Профиль проходит по требованиям CSC.' },
       ] },
-    { n: 3, t: 'Сбор документов', st: 'active', sub: 'Собираем пакет под требования гранта CSC.',
+    { n: 3, art: 'assets/stages/stage-3.png', t: 'Сбор документов', st: 'active', sub: 'Собираем пакет под требования гранта CSC.',
       d: 'Собираем пакет под требования гранта CSC и проверяем каждый файл перед подачей. Сейчас в фокусе медсправка.',
       full: [
         'Готовим все, что комиссия CSC потребует при подаче: аттестат с оценками, сертификат HSK, медсправку по форме CSC, фото на документы, скан паспорта и письма.',
@@ -106,19 +106,19 @@
         'На выходе — готовый проверенный пакет, который мы подаем на грант от твоего имени. Сейчас от тебя нужны два документа, остальное берем на себя.',
       ],
       tasks: STEPS },
-    { n: 4, t: 'Подача на грант', st: 'locked', sub: 'Подадим заявку на грант CSC от твоего имени.',
+    { n: 4, art: 'assets/stages/stage-4.png', t: 'Подача на грант', st: 'locked', sub: 'Подадим заявку на грант CSC от твоего имени.',
       d: 'Когда пакет готов, подаем заявку на грант CSC от твоего имени и следим за статусом.',
       after: 3, will: ['Финальная проверка пакета', 'Подача заявки от твоего имени', 'Подтверждение приема заявки'] },
-    { n: 5, t: 'Решение CSC', st: 'locked', sub: 'Комиссия рассматривает твою заявку.',
+    { n: 5, art: 'assets/stages/stage-5.png', t: 'Решение CSC', st: 'locked', sub: 'Комиссия рассматривает твою заявку.',
       d: 'Комиссия рассматривает заявку. Держим тебя в курсе и готовим к следующему шагу.',
       after: 4, will: ['Отслеживаем статус заявки', 'Готовим к возможному интервью', 'Сообщаем решение комиссии'] },
-    { n: 6, t: 'Приглашение вуза', st: 'locked', sub: 'Вуз присылает официальное приглашение.',
+    { n: 6, art: 'assets/stages/stage-6.png', t: 'Приглашение вуза', st: 'locked', sub: 'Вуз присылает официальное приглашение.',
       d: 'После одобрения гранта вуз присылает официальное приглашение для визы.',
       after: 5, will: ['Получаем приглашение от вуза', 'Проверяем данные в документе', 'Готовим пакет на визу'] },
-    { n: 7, t: 'Виза и переезд', st: 'locked', sub: 'Оформляем визу и готовим к переезду.',
+    { n: 7, art: 'assets/stages/stage-7.png', t: 'Виза и переезд', st: 'locked', sub: 'Оформляем визу и готовим к переезду.',
       d: 'Оформляем учебную визу и готовим тебя к переезду: жилье, билеты, первые дни.',
       after: 6, will: ['Подаем на визу X1/X2', 'Бронируем общежитие', 'Помогаем с билетами и страховкой'] },
-    { n: 8, t: 'Приезд в Китай', st: 'locked', sub: 'Кампус, заселение и старт учебы.',
+    { n: 8, art: 'assets/stages/stage-8.png', t: 'Приезд в Китай', st: 'locked', sub: 'Кампус, заселение и старт учебы.',
       d: 'Ты на вершине: кампус, заселение, старт учебы. Цель достигнута, мы рядом на месте.',
       after: 7, will: ['Заселение в общежитие', 'Регистрация и документы на месте', 'Старт учебы и адаптация'] },
   ];
@@ -128,7 +128,7 @@
   // их рендерит светлый редакторский попап. У остальных body — простые абзацы.
   const KNOW = [
     { cap: 'Переезд', title: 'Как устроено жилье для студентов в Китае',
-      dur: '5 мин чтения', read: 5, icon: Ic.Home, image: 'assets/cosmos.png', thumbPos: '60% 36%', tint: '#2B8FFF',
+      dur: '5 мин чтения', read: 5, icon: Ic.Home, image: 'assets/articles/article-1.jpg', thumbPos: '50% 48%', tint: '#2B8FFF',
       dek: 'Кампус или аренда, сколько это стоит и что выбрать на первый семестр.',
       body: [
         { type: 'lead', text: 'Жилье — первое, что станет твоим домом в Китае. Разберемся спокойно: какие есть варианты, сколько стоят и что выбрать на первый семестр, чтобы думать про учебу, а не про быт.' },
@@ -168,19 +168,19 @@
         { type: 'p', text: 'Когда дойдем до переезда, мы оформим заселение, подскажем по документам на месте и будем на связи в первые дни. Твоя задача — собраться спокойно, остальное берем на себя.' },
       ] },
     { cap: 'Виза', title: 'Студенческая виза X1: что нужно знать',
-      dur: '5 мин чтения', read: 5, icon: Ic.Doc, image: 'assets/ascent-night.png', thumbPos: '50% 40%', tint: '#3AAE8F',
+      dur: '5 мин чтения', read: 5, icon: Ic.Doc, image: 'assets/articles/article-2.jpg', thumbPos: '50% 50%', tint: '#3AAE8F',
       dek: 'Когда оформлять, какие документы нужны и что делать в первые 30 дней.',
       body: ['Виза X1 — для долгой учебы (больше 180 дней). Оформляется после приглашения от вуза.', 'Нужны приглашение, загранпаспорт, фото и анкета.', 'В Китае в первые 30 дней оформляешь вид на жительство — поможем.'] },
     { cap: 'Быт', title: 'Деньги, связь и транспорт в первый месяц',
-      dur: '4 мин чтения', read: 4, icon: Ic.Clock, image: 'assets/mountain-dark.png', thumbPos: '50% 46%', tint: '#E08A5B',
+      dur: '4 мин чтения', read: 4, icon: Ic.Clock, image: 'assets/articles/article-3.jpg', thumbPos: '50% 42%', tint: '#E08A5B',
       dek: 'WeChat и Alipay вместо наличных, местная симка и проездной — все за первую неделю.',
       body: ['Основные платежи в Китае — через WeChat и Alipay, наличные почти не нужны.', 'Сразу оформи местную симку и студенческий проездной.', 'На первый месяц заложи бюджет на залог и бытовые мелочи.'] },
     { cap: 'Учеба', title: 'Что важно знать про учебу в китайском вузе',
-      dur: '5 мин чтения', read: 5, icon: Ic.Book, image: 'assets/ascent-lit.png', thumbPos: '50% 38%', tint: '#9B7BE6',
+      dur: '5 мин чтения', read: 5, icon: Ic.Book, image: 'assets/articles/article-4.jpg', thumbPos: '50% 55%', tint: '#9B7BE6',
       dek: 'Когда начинается год, на каком языке учат и что покрывают гранты CSC.',
       body: ['Учебный год начинается в сентябре, есть строгая посещаемость.', 'Часть программ на английском, часть на китайском — зависит от вуза.', 'Гранты CSC часто покрывают обучение, проживание и стипендию.'] },
     { cap: 'Культура', title: 'Китайские традиции, праздники и адаптация',
-      dur: '4 мин чтения', read: 4, icon: Ic.Heart, image: 'assets/mountain-path.png', thumbPos: '50% 50%', tint: '#56A8E0',
+      dur: '4 мин чтения', read: 4, icon: Ic.Heart, image: 'assets/articles/article-5.jpg', thumbPos: '50% 52%', tint: '#56A8E0',
       dek: 'Праздники, привычки и негласные правила, к которым стоит привыкнуть заранее.',
       body: [
         { type: 'lead', text: 'Переезд — это не только документы и жилье. Другая культура поначалу удивляет, но к ней быстро привыкаешь. Собрали то, что стоит знать заранее, чтобы первые недели прошли спокойно.' },
@@ -343,17 +343,17 @@
       border-top:1px solid rgba(43,143,255,.32);border-right:1px solid rgba(43,143,255,.32);border-radius:0 4px 0 0;}
 
     /* ── ПРАВО: панель этапа — воздушная плашка, заливка изнутри, без тени ─ */
-    .sd-jp2-panel{position:relative;overflow:hidden;z-index:2;border-radius:26px;padding:40px 44px 36px;
+    .sd-jp2-panel{position:relative;overflow:visible;z-index:2;border-radius:26px;padding:40px 44px 36px;
       background:linear-gradient(157deg,rgba(255,255,255,.82),rgba(244,247,255,.6));border:1px solid rgba(43,111,224,.12);
       -webkit-backdrop-filter:blur(22px) saturate(150%);backdrop-filter:blur(22px) saturate(150%);
       box-shadow:inset 0 1px 0 rgba(255,255,255,.92),inset 0 0 70px rgba(43,143,255,.045);
       animation:jp-fade .28s cubic-bezier(.23,1,.32,1);}
     @keyframes jp-fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-    .sd-jp2-art{float:right;margin:0 0 20px 32px;width:258px;pointer-events:none;opacity:.92;
-      filter:drop-shadow(0 20px 42px rgba(43,90,200,.14));
-      -webkit-mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);mask-image:radial-gradient(150% 130% at 78% 22%,#000 60%,transparent 100%);}
+    .sd-jp2-art{float:right;margin:-58px -62px 6px 26px;width:332px;pointer-events:none;opacity:.97;
+      filter:drop-shadow(0 22px 44px rgba(43,90,200,.16));
+      -webkit-mask-image:radial-gradient(160% 140% at 76% 26%,#000 64%,transparent 100%);mask-image:radial-gradient(160% 140% at 76% 26%,#000 64%,transparent 100%);}
     .sd-jp2-art.locked{opacity:.3;filter:grayscale(.5) drop-shadow(0 14px 30px rgba(43,90,200,.1));}
-    .sd-jp2-panel__head{position:relative;z-index:1;overflow:hidden;}
+    .sd-jp2-panel__head{position:relative;z-index:1;overflow:visible;}
     .sd-jp2-eyebrow{font-size:12px;font-weight:600;color:var(--sd-ink-mute);}
     .sd-jp2-eyebrow.active{color:var(--sd-acc-deep);}
     .sd-jp2-panel__t{font-weight:700;font-size:32px;letter-spacing:-1.1px;line-height:1.06;color:#15203B;margin:13px 0 0;text-wrap:balance;}
@@ -467,7 +467,7 @@
   function JpDetail(props) {
     const s = props.s;
     const locked = s.st === 'locked';
-    const art = locked ? 'assets/mountain-peak.png' : 'assets/folder-glass.png';
+    const art = s.art || (locked ? 'assets/mountain-peak.png' : 'assets/folder-glass.png');
     const eyebrow = locked ? 'Скоро' : s.st === 'done' ? 'Этап завершен' : 'Текущий этап';
     const head = [
       h('div', { key: 'e', className: 'sd-jp2-eyebrow' + (s.st === 'active' ? ' active' : '') }, eyebrow),
@@ -566,7 +566,9 @@
     .kb-c__img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1);}
     .kb-c:hover .kb-c__img{transform:scale(1.05);}
     .kb-c__scrim{position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(157deg,rgba(4,9,26,.6) 0%,rgba(4,9,26,.16) 40%,rgba(4,9,26,.12) 60%,rgba(4,9,26,.62) 100%);}
+      background:
+        linear-gradient(180deg,rgba(5,10,28,.50) 0%,rgba(5,10,28,.06) 30%,rgba(5,10,28,.24) 56%,rgba(5,10,28,.86) 100%),
+        rgba(5,10,28,.20);}
     .kb-c__b{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;justify-content:space-between;}
     .kb-c__top{display:flex;flex-direction:column;align-items:flex-start;min-width:0;}
     /* чип рубрики — лёгкий оттенок категории, текст белый */
@@ -575,38 +577,37 @@
       text-shadow:0 1px 2px rgba(4,9,28,.4);}
     .kb-time{display:inline-flex;align-items:center;gap:6px;font-weight:500;color:rgba(232,239,255,.9);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px rgba(4,9,28,.5);}
     .kb-time svg{color:rgba(170,202,255,.95);}
-    .kb-c__ttl{font-weight:600;color:#fff;letter-spacing:-.3px;text-wrap:balance;text-shadow:0 2px 10px rgba(4,9,28,.35);}
+    .kb-c__ttl{font-weight:600;color:#fff;letter-spacing:-.3px;text-wrap:balance;text-shadow:0 2px 14px rgba(4,9,28,.66),0 1px 3px rgba(4,9,28,.5);}
+    /* подвал карточки: заголовок + стрелка прямо на полноэкранном затемнении */
+    .kb-c__foot{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;}
     /* стеклянная кнопка со стрелкой */
     .kb-sq{flex:0 0 auto;display:grid;place-items:center;
       background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
       border:1px solid rgba(255,255,255,.2);border-radius:12px;color:#fff;
       transition:transform .18s,background .18s;}
-    .kb-sq svg{transition:transform .2s;}
+    .kb-sq svg{transform:rotate(-45deg);transition:transform .2s;}
     .kb-c:hover .kb-sq{transform:translateY(-2px);background:rgba(255,255,255,.22);}
-    .kb-c:hover .kb-sq svg{transform:translateX(2px);}
+    .kb-c:hover .kb-sq svg{transform:rotate(-45deg) translate(1.5px,-1.5px);}
 
     /* — крупная обложка слева — */
     .kb-feat{grid-column:1;grid-row:1 / span 2;border-radius:24px;
       box-shadow:inset 0 1px 0 rgba(255,255,255,.1),0 22px 56px rgba(8,16,44,.24);}
-    .kb-feat .kb-c__b{padding:28px 30px 26px;}
-    .kb-feat .kb-chip{font-size:11px;padding:6px 13px;}
-    .kb-feat .kb-c__ttl{font-size:29px;line-height:1.13;letter-spacing:-.8px;margin-top:13px;max-width:14ch;}
-    .kb-feat .kb-time{font-size:12.5px;margin-top:12px;}
+    .kb-feat .kb-c__b{padding:26px 28px;}
+    .kb-feat .kb-chip{font-size:11.5px;padding:6px 13px;}
+    .kb-feat .kb-c__ttl{font-size:23px;line-height:1.18;letter-spacing:-.5px;max-width:15ch;}
     .kb-feat__cta{flex:0 0 auto;display:grid;place-items:center;width:46px;height:46px;border-radius:14px;
       background:rgba(255,255,255,.13);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);
       border:1px solid rgba(255,255,255,.2);color:#fff;transition:transform .18s,background .18s;}
     .kb-feat:hover .kb-feat__cta{transform:translateY(-2px);background:rgba(255,255,255,.22);}
-    .kb-feat__cta svg{transition:transform .2s;}
-    .kb-feat:hover .kb-feat__cta svg{transform:translateX(2px);}
+    .kb-feat__cta svg{transform:rotate(-45deg);transition:transform .2s;}
+    .kb-feat:hover .kb-feat__cta svg{transform:rotate(-45deg) translate(1.5px,-1.5px);}
 
     /* — мелкие карточки 2×2 — */
     .kb-sm{border-radius:20px;}
     .kb-sm .kb-c__b{padding:15px 16px;}
-    .kb-sm .kb-chip{font-size:9.5px;padding:4px 10px;}
-    .kb-sm .kb-c__ttl{font-size:15px;line-height:1.26;margin-top:10px;max-width:17ch;
-      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-    .kb-sm .kb-time{font-size:11px;margin-top:8px;}
-    .kb-sm .kb-sq{width:36px;height:36px;}
+    .kb-sm .kb-chip{font-size:10.5px;padding:4px 11px;}
+    .kb-sm .kb-c__ttl{font-size:16px;line-height:1.26;}
+    .kb-sm .kb-sq{width:34px;height:34px;}
 
     /* ═══ ЛЕНТА КАТЕГОРИЙ (скрыта пока) ═══════════════════════════════════ */
     .kb-cats{display:none;}
@@ -653,12 +654,10 @@
       h('span', { className: 'kb-c__scrim' }),
       h('span', { className: 'kb-c__b' },
         h('span', { className: 'kb-c__top' },
-          h('span', { className: 'kb-chip', style: { background: hexA(a.tint, .22), borderColor: hexA(a.tint, .36) } }, label || a.cap),
+          h('span', { className: 'kb-chip', style: { background: hexA(a.tint, .30), borderColor: hexA(a.tint, .44) } }, label || a.cap)),
+        h('span', { className: 'kb-c__foot' },
           h('span', { className: 'kb-c__ttl' }, a.title),
-          h('span', { className: 'kb-time' }, clock(cls === 'kb-feat' ? 13 : 12), a.dur)),
-        cls === 'kb-feat'
-          ? h('span', { className: 'kb-feat__cta' }, arrR(20))
-          : h('span', { className: 'kb-sq' }, arrR(17))));
+          h('span', { className: cls === 'kb-feat' ? 'kb-feat__cta' : 'kb-sq' }, arrR(cls === 'kb-feat' ? 20 : 17)))));
 
     return h('section', { className: 'sd-sec' },
       h('div', { className: 'sd-sec__head' },
@@ -680,7 +679,7 @@
 
   function CabinetStudent() {
     if (!SH) return h('div', { style: { padding: 40, color: '#fff' } }, 'Скелет ученика не загружен');
-    return h(SH.Shell, { active: 'home', surface: 'light', hideTopBar: true },
+    return h(SH.Shell, { active: 'home', surface: 'light', hideTopBar: true, footer: true },
       h(Hero, null),
       h(TopRow, null),
       h(AiBanner, null),

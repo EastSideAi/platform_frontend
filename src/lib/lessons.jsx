@@ -180,7 +180,7 @@
     if (!u) return null;
     let m;
     if ((m = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/)))
-      return { src: 'https://www.youtube.com/embed/' + m[1] + '?rel=0&modestbranding=1', provider: 'YouTube' };
+      return { src: 'https://www.youtube.com/embed/' + m[1] + '?rel=0&modestbranding=1', provider: 'YouTube', thumb: 'https://img.youtube.com/vi/' + m[1] + '/hqdefault.jpg' };
     if ((m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/)))
       return { src: 'https://player.vimeo.com/video/' + m[1], provider: 'Vimeo' };
     if ((m = u.match(/rutube\.ru\/(?:video|play\/embed)\/([A-Za-z0-9]+)/)))
@@ -235,6 +235,8 @@
       case 'audio':     return { _id, kind, url: '', title: '' };
       case 'hint':      return { _id, kind, text: '' };
       case 'important': return { _id, kind, text: '' };
+      case 'spoiler':   return { _id, kind, title: '', text: '', marks: [] };
+      case 'example':   return { _id, kind, hanzi: '', pinyin: '', ru: '' };
       case 'material':  return { _id, kind, title: '', url: '' };
       case 'divider':   return { _id, kind };
       default:          return { _id, kind: 'para', text: '', marks: [] };

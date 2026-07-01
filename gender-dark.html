@@ -7,14 +7,14 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>EastSide — Кто вы</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — только Manrope, везде */
-:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
+/* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
 
   :root {
@@ -35,9 +35,12 @@
       radial-gradient(1100px 760px at 50% 8%, rgba(30,90,200,.26), transparent 62%),
       radial-gradient(900px 620px at 50% 116%, rgba(20,80,210,.16), transparent 60%),
       radial-gradient(140% 100% at 50% 50%, transparent 52%, rgba(2,5,18,.62) 100%); }
+  /* в портретной ориентации cover у sky-bg идёт по высоте и показывает светлый
+     дефектный край картинки сверху — лёгкий оверскан по высоте его убирает (п.3) */
+  @media (orientation: portrait) { .sky { background-size: auto 112%; } }
 
   .wrap {
-    position: relative; z-index: 2; min-height: 100vh;
+    position: relative; z-index: 2; min-height: 100vh; min-height: 100dvh;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     padding: clamp(24px, 5vh, 56px) clamp(20px, 5vw, 64px) clamp(104px, 16vh, 140px);
   }
@@ -145,15 +148,94 @@
   .btn-next svg, .btn-back svg { width: 17px; height: 17px; transform: rotate(-45deg); }
 
   @media (max-width: 560px) {
-    .cards { gap: 16px; }
-    .pick-label { font-size: 15px; padding: 12px 12px 8px; }
+    .cards { gap: 12px; }
+    .pick-label { font-size: 15px; padding: 12px 12px 8px; gap: 8px; }
+    .pick-radio { width: 20px; height: 20px; }
+    /* фото ниже — две карточки рядом помещаются на экран без прокрутки */
+    .pick-photo { height: clamp(168px, 26vh, 240px); }
+    .h1 { letter-spacing: -1px; }
+    .wrap { padding-bottom: clamp(96px, 14vh, 120px); }
+    /* нижняя панель: «Шаг N из 2» прячем, точки несут прогресс — кнопкам больше места */
+    .foot { gap: 10px; padding: 10px 12px; width: min(94vw, 560px); }
+    .foot-step { display: none; }
+    .btn-back { padding: 11px 14px; }
+    .btn-next { padding: 11px 18px; }
+  }
+
+  /* совсем узкий телефон — поле имени и заголовок плотнее */
+  @media (max-width: 380px) {
+    .pick-label { font-size: 14px; }
+    .pick-photo { height: 150px; }
+    .inp { height: 50px; font-size: 15px; }
   }
   @media (prefers-reduced-motion: reduce) {
     .sky, .panel, .pick { animation: none !important; opacity: 1 !important; transform: none !important; }
   }
+  /* ── Мягкая смена страниц и шагов: тихий кроссфейд (без «странного» блюра).
+     Тот же root-переход работает и для cross-document навигации, и для смены
+     шага персонаж↔имя (document.startViewTransition). Не поддержано → мгновенно. */
+  ::view-transition-old(root){ animation: vtFadeOut .24s ease both; }
+  ::view-transition-new(root){ animation: vtFadeIn .34s ease both; }
+  @keyframes vtFadeOut{ to{ opacity: 0; } }
+  @keyframes vtFadeIn { from{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
+     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
+     на новой странице уходит влево, открывая её. Назад — зеркально. Только
+     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
+  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
+    transform: translateX(0); will-change: transform;
+    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
+  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
+  html.pt-back #pt{ animation-name: ptEnterBack; }
+  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
 </style>
+
+<script>
+(function(){
+  try{ history.scrollRestoration='manual'; }catch(e){}
+  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
+  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.esGo = function(url, replace, dir){
+    var go = function(){ replace ? location.replace(url) : (location.href = url); };
+    var pt = document.getElementById('pt');
+    if (RM || !pt){ go(); return; }
+    dir = dir === 'back' ? 'back' : 'fwd';
+    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
+    pt.style.animation = 'none';
+    pt.style.transition = 'none';
+    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
+    void pt.offsetWidth;
+    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
+    pt.style.transform = 'translateX(0)';
+    setTimeout(go, 320);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;
+    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/.test(href)) return;
+    e.preventDefault();
+    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
+    window.esGo(href, false, back ? 'back' : 'fwd');
+  }, true);
+  addEventListener('pageshow', function(e){
+    try{ scrollTo(0,0); }catch(_){}
+    var pt = document.getElementById('pt');
+    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
+  });
+})();
+</script>
 </head>
 <body>
+<div id="pt" aria-hidden="true"></div>
 <div class="sky"></div>
 <div class="glow"></div>
 
@@ -238,6 +320,11 @@
     if (pg) picks.forEach(function (x) { if (x.dataset.gender === pg) { x.classList.add('sel'); chosen = pg; } });
   } catch (e) {}
 
+  // дефолтный выбор, если ничего не сохранено — экран сразу «живой», «Дальше» активна
+  if (!chosen) {
+    picks.forEach(function (x) { if (x.dataset.gender === 'boy') { x.classList.add('sel'); chosen = 'boy'; } });
+  }
+
   function valid() { return cur === 1 ? !!chosen : nameInp.value.trim().length > 0; }
 
   function renderFoot() {
@@ -253,10 +340,19 @@
 
   function show(n) {
     cur = n;
-    step1.classList.toggle('on', n === 1);
-    step2.classList.toggle('on', n === 2);
-    renderFoot();
-    if (n === 2) setTimeout(function () { nameInp.focus(); }, 60);
+    var apply = function () {
+      step1.classList.toggle('on', n === 1);
+      step2.classList.toggle('on', n === 2);
+      renderFoot();
+    };
+    // плавная смена шага тем же VT-движком, что и переходы между страницами
+    if (document.startViewTransition) {
+      document.documentElement.classList.add('vt-quick');
+      document.startViewTransition(apply).finished.finally(function () {
+        document.documentElement.classList.remove('vt-quick');
+      });
+    } else { apply(); }
+    if (n === 2) setTimeout(function () { nameInp.focus(); }, 80);
   }
 
   picks.forEach(function (p) {
@@ -277,13 +373,13 @@
     try { localStorage.setItem('es_gender', chosen); } catch (e) {}
     if (cur === 1) { show(2); return; }
     try { localStorage.setItem('es_name', nameInp.value.trim()); } catch (e) {}
-    window.location.href = 'anketa-dark.html';
+    esGo('anketa-dark.html');
   });
 
   // «Назад»: шаг 2 → шаг 1; шаг 1 → вход
   navBack.addEventListener('click', function () {
     if (cur === 2) show(1);
-    else window.location.href = 'login-dark.html';
+    else esGo('login-dark.html', false, 'back');
   });
 
   renderFoot();

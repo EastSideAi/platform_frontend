@@ -7,14 +7,14 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
 <title>EastSide — Анкета (dark)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — только Manrope, везде */
-:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
+/* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
   /* ── Палитра (снята с референса, см. spec) ─────────────────────── */
   :root {
@@ -214,7 +214,7 @@
 
   .h1 {
     font-family: var(--font-display);
-    font-size: 40px; font-weight: 600; letter-spacing: -1.4px; color: var(--ink);
+    font-size: 40px; font-weight: 600; letter-spacing: 0.2px; color: var(--ink);
   }
   .sub { margin-top: 8px; font-size: 15px; color: var(--ink-sub); }
 
@@ -227,7 +227,7 @@
   }
   /* между соседними блоками вопросов (английский/китайский) — плотнее */
   .q-card + .q-card { margin-top: 20px; }
-  .q-label { font-size: 22px; font-weight: 700; color: #21212E; }
+  .q-label { font-size: 22px; font-weight: 700; letter-spacing: 0.2px; color: #21212E; }
   .q-hint { margin-top: 8px; font-size: 15.5px; color: var(--ink-sub); }
 
   /* карточки-опции: крупные, аккуратные, еле-еле с цветом, тонкая белая обводка */
@@ -486,6 +486,23 @@
   }
   .sc-btn[data-tip]:hover::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+  /* «Не знаю свой уровень» — равноправный вариант под шкалой A1–C2 (одна группа,
+     взаимоисключающий со шкалой); материал и свечение как у выбранной опции */
+  .lvl-na {
+    display: block; width: 100%; margin-top: 10px;
+    padding: 14px 16px; border-radius: 14px; cursor: pointer; text-align: center;
+    background: rgba(255,255,255,.5); border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05);
+    font: 400 15px 'Onest', sans-serif; color: var(--ink-sub);
+    transition: border-color .15s, background .15s, box-shadow .15s, color .15s;
+  }
+  .lvl-na:hover { background: rgba(255,255,255,.65); border-color: rgba(43,143,255,.45); }
+  .lvl-na.on {
+    background: rgba(255,255,255,.92); color: #1D3A72;
+    border: 1.5px solid rgba(43,143,255,.4);
+    box-shadow: inset 0 0 18px rgba(43,143,255,.3), inset 0 0 5px rgba(43,143,255,.16);
+  }
+
   /* textarea */
   .textarea { width: 100%; min-height: 240px; resize: vertical; padding: 16px 18px; border-radius: 16px;
     background: rgba(255,255,255,.55); border: 1.5px solid rgba(74,98,150,.22);
@@ -506,9 +523,9 @@
   @media (max-height: 860px), (max-width: 1240px) {
     .shell { gap: 12px; padding: 12px; }
     .plate-scroll { padding: 32px 40px 16px 40px; margin-right: 320px; }
-    .h1 { font-size: 30px; letter-spacing: -2px; }
+    .h1 { font-size: 30px; letter-spacing: 0.15px; }
     .sub { font-size: 14px; margin-top: 8px; }
-    .q-card { margin-top: 16px; padding: 16px 18px; }
+    .q-card { margin-top: 64px; padding: 16px 18px; }
     .q-card + .q-card { margin-top: 12px; }
     .q-card:last-of-type { margin-bottom: 16px; }
     .opts { gap: 12px; }
@@ -548,6 +565,78 @@
     .path-mtn { height: 84px; margin-top: 12px; }
     .steps { gap: 3px; margin-top: 12px; }
     .step { padding: 4px 12px; }
+  }
+
+  /* ══ ТЕЛЕФОН / ПЛАНШЕТ-ПОРТРЕТ ════════════════════════════════════════
+     Трёхслойка (сайдбар 240 + плашка + спутник 312) физически не помещается
+     на узком экране. Схлопываем в ОДНУ колонку: светлая плашка раскрывается
+     на весь экран, тёмная база и сайдбар-спутник уходят, форма идёт одним
+     вертикальным потоком с нативным скроллом страницы. Спутник «Твой путь»
+     прячем — шаги и так считываются в нижней панели (точки + «Шаг N из M»),
+     а на телефоне фокус только на текущем вопросе. ──────────────────────── */
+  @media (max-width: 900px) {
+    body { overflow: auto; }
+    .shell { display: block; height: auto; min-height: 100vh; min-height: 100dvh; padding: 0; gap: 0; }
+    .sb { display: none; }
+    .path { display: none; }
+    .plate { border-radius: 0; min-height: 100vh; min-height: 100dvh; overflow: visible; }
+    .plate-scroll { height: auto; overflow: visible; margin-right: 0; padding: 28px 22px 22px; }
+    .plate-col { max-width: 620px; padding-bottom: 90px; }  /* воздух под фикс-панель снизу */
+    .h1 { font-size: 30px; letter-spacing: -.4px; }
+    .sub { font-size: 14.5px; }
+    .q-card { margin-top: 22px; padding: 24px 22px; }
+    .q-card + .q-card { margin-top: 16px; }
+    .q-card:last-of-type { margin-bottom: 4px; }
+    /* карточки-опции — в один столбец; галочка в ВЕРХНЕМ-левом углу на уровне
+       заголовка (не по центру и не поверх текста — п.4, п.7) */
+    .opts { grid-template-columns: 1fr !important; gap: 12px; }
+    .opts .opt { min-height: 0; padding: 16px 18px 16px 52px; justify-content: flex-start; }
+    .opts .opt .tick { top: 16px; left: 18px; transform: none; }
+    .opt b { font-size: 16.5px; }
+    .opt span { font-size: 14px; margin-top: 5px; }
+    /* шкала уровней — компактнее, чтобы 6 кнопок влезали по ширине */
+    .scale { gap: 8px; }
+    .sc-btn { font-size: 15px; padding: 14px 0; }
+    .theme-grid { grid-template-columns: 1fr 1fr; }
+    /* НИЖНЯЯ ПАНЕЛЬ: фиксированная и прижата к низу окна, плотный непрозрачный
+       фон — «Дальше» всегда виден и не висит посреди коротких вопросов (п.4, п.6) */
+    .foot {
+      position: fixed; left: 0; right: 0; bottom: 0; margin: 0; z-index: 30;
+      border-radius: 0; border: 0; border-top: 1px solid rgba(255,255,255,.7);
+      background: rgba(240,242,250,.97);
+      box-shadow: 0 -10px 30px rgba(8,16,48,.12);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); gap: 10px;
+    }
+    .btn-next { padding: 12px 18px; }
+    .btn-back { padding: 12px 14px; }
+  }
+
+  /* ── узкий телефон: ещё плотнее тип, разгружаем нижнюю панель ─────────── */
+  @media (max-width: 460px) {
+    .plate-scroll { padding: 24px 16px 18px; }
+    .h1 { font-size: 26px; letter-spacing: -.2px; }
+    .q-card { padding: 20px 16px; }
+    .q-label { font-size: 19px; }
+    .q-hint { font-size: 14px; }
+    /* чипсы — плотнее отступ, крупнее текст на пункт (п.5) */
+    .chips { gap: 9px; }
+    .chip { padding: 11px 15px; font-size: 15.5px; }
+    .seg button { padding: 11px 14px; font-size: 15px; }
+    .theme-grid { grid-template-columns: 1fr; }
+    /* точки прогресса при многих шагах шире текста и выпирают кнопку «Дальше»
+       за экран — прячем точки, оставляем компактный «Шаг N из M» */
+    .dots { display: none; }
+    .foot-mid { gap: 0; }
+    .foot-step { font-size: 12.5px; }
+    .btn-next { padding: 12px 16px; font-size: 13.5px; }
+    .btn-back { padding: 12px 13px; }
+  }
+
+  /* ультра-узкие (≤344px, старые iPhone SE/5) — убираем и текст шага,
+     оставляем только «Назад» и «Дальше», чтобы кнопки не выпирали */
+  @media (max-width: 344px) {
+    .foot-step { display: none; }
+    .foot { gap: 8px; }
   }
 
   /* ── модалка подтверждения выхода ── */
@@ -694,9 +783,79 @@
   .stg-warn { margin-top: 12px; padding: 12px 16px; border-radius: 11px; font-size: 12.5px; line-height: 1.45; color: var(--tx-soft);
     background: rgba(255,180,50,.08); border: 1px solid rgba(255,180,50,.2); }
 
+  /* ── Первый вход на анкету — мягкий фейд всего каркаса (не резкий поп) ─── */
+  .shell { animation: shellIn .5s ease both; }
+  @keyframes shellIn { from { opacity: 0; } to { opacity: 1; } }
+
+  /* ── Появление контента вопроса: стаггер элементов при смене шага (iOS/macOS).
+     Живёт через инлайн-переходы в JS (revealStep) — работает всегда, не зависит
+     от поддержки View Transitions. Ниже — только уважение к reduce-motion. */
+
+  /* ── Мягкая смена страниц: тихий кроссфейд (без «странного» блюра). Где
+     cross-document VT не поддержан — мгновенно, без регрессии. */
+  ::view-transition-old(root){ animation: vtFadeOut .26s ease both; }
+  ::view-transition-new(root){ animation: vtFadeIn .34s ease both; }
+  @keyframes vtFadeOut{ to{ opacity: 0; } }
+  @keyframes vtFadeIn { from{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .shell { animation: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
+     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
+     на новой странице уходит влево, открывая её. Назад — зеркально. Только
+     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
+  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
+    transform: translateX(0); will-change: transform;
+    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
+  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
+  html.pt-back #pt{ animation-name: ptEnterBack; }
+  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
 </style>
+
+<script>
+(function(){
+  try{ history.scrollRestoration='manual'; }catch(e){}
+  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
+  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.esGo = function(url, replace, dir){
+    var go = function(){ replace ? location.replace(url) : (location.href = url); };
+    var pt = document.getElementById('pt');
+    if (RM || !pt){ go(); return; }
+    dir = dir === 'back' ? 'back' : 'fwd';
+    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
+    pt.style.animation = 'none';
+    pt.style.transition = 'none';
+    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
+    void pt.offsetWidth;
+    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
+    pt.style.transform = 'translateX(0)';
+    setTimeout(go, 320);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;
+    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/.test(href)) return;
+    e.preventDefault();
+    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
+    window.esGo(href, false, back ? 'back' : 'fwd');
+  }, true);
+  addEventListener('pageshow', function(e){
+    try{ scrollTo(0,0); }catch(_){}
+    var pt = document.getElementById('pt');
+    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
+  });
+})();
+</script>
 </head>
 <body>
+<div id="pt" aria-hidden="true"></div>
 <div class="shell">
 
   <!-- ════ Сайдбар ════ -->
@@ -1168,7 +1327,7 @@
     // глава 1 — Что изучать
     { g: 1, s: 'Направление', body: function () {
       return q('Какое направление вам ближе', 'Можно выбрать несколько или вписать свое. Если еще не определились — отметьте то, что нравится.',
-        chipsMulti('dirs', DIRS) + '<div style="margin-top:12px">' + input('dirOther', 'Свои направления через запятую: дизайн, архитектура…') + '</div>');
+        chipsMulti('dirs', DIRS) + '<div style="margin-top:12px">' + input('dirOther', 'Например: дизайн, кино…') + '</div>');
     } },
     { g: 1, s: 'Формат обучения', body: function () {
       return q('Какой формат обучения вам подходит', 'Если пока выбираете — так и отметьте, поможем определиться.', cards('program', PROGRAM, 3));
@@ -1194,8 +1353,17 @@
     } },
     // глава 4 — Английский (уровень + сертификат на одном шаге)
     { g: 4, s: 'Английский', body: function () {
+      // «Не знаю свой уровень» — равноправный вариант ответа в той же группе, что и
+      // шкала A1–C2 (а не отдельная плашка): выбор одного снимает другой (п.6)
+      var enSel = S.enUnknown ? '' : (S.enLevel || 'B2');
+      var scaleBtns = EN_LEVELS.map(function (v) {
+        var d = EN_CAP[v] || '';
+        return '<button class="sc-btn' + (enSel === v ? ' on' : '') + '" data-enlevel="' + v + '"' +
+          (d ? ' data-tip="' + d + '" title="' + d + '"' : '') + '>' + v + '</button>';
+      }).join('');
+      var unknownBtn = '<button class="lvl-na' + (S.enUnknown ? ' on' : '') + '" data-enunknown="1">Не знаю свой уровень</button>';
       return q('Английский — какой у вас уровень', 'Оцените честно: это напрямую влияет на расчет.',
-        scale('enLevel', EN_LEVELS, EN_CAP) + softChip('enUnknown', 'Не знаю свой уровень')) +
+        '<div class="scale">' + scaleBtns + '</div>' + unknownBtn) +
         q('Есть ли сертификат по английскому', 'IELTS, TOEFL или другой — его просят многие вузы. Если нет, это нормально.', cards('enCert', CERT, 1));
     } },
     // глава 5 — Китайский (уровень + HSK на одном шаге)
@@ -1262,8 +1430,12 @@
     $('qhost').innerHTML = STEPS[idx].body();
     renderFoot();
     renderSide();
-    // скролл сбрасываем ТОЛЬКО при смене шага, не при выборе чипса/карточки
-    if (resetScroll) { var ps = document.querySelector('.plate-scroll'); if (ps) ps.scrollTop = 0; }
+    // скролл сбрасываем ТОЛЬКО при смене шага, не при выборе чипса/карточки.
+    // На десктопе прокручивается .plate-scroll, на телефоне — само окно.
+    if (resetScroll) {
+      var ps = document.querySelector('.plate-scroll'); if (ps) ps.scrollTop = 0;
+      try { window.scrollTo(0, 0); } catch (e) {}
+    }
   }
 
   /* ── Делегированные события (привязываются один раз) ──────────────── */
@@ -1271,6 +1443,9 @@
   qhost.addEventListener('click', function (e) {
     var el;
     if ((el = e.target.closest('[data-card]')))   { S[el.dataset.card] = el.dataset.v; render(); return; }
+    // английский уровень и «не знаю» — взаимоисключающие варианты одной группы (п.6)
+    if ((el = e.target.closest('[data-enlevel]')))  { S.enLevel = el.dataset.enlevel; S.enUnknown = false; render(); return; }
+    if ((el = e.target.closest('[data-enunknown]'))) { S.enUnknown = true; render(); return; }
     if ((el = e.target.closest('[data-single]')))  { S[el.dataset.single] = el.dataset.v; render(); return; }
     if ((el = e.target.closest('[data-seg]')))     { S[el.dataset.seg] = el.dataset.v; render(); return; }
     if ((el = e.target.closest('[data-toggle]')))  {
@@ -1291,11 +1466,40 @@
     if (el) S[el.dataset.input] = el.value;
   });
 
+  // Появление контента вопроса при смене шага — стаггер атомов ответа снизу
+  // вверх (iOS/macOS-вайб). Работает всегда, не зависит от поддержки VT. На выбор
+  // карточки/чипса НЕ вешаем (иначе мигало бы на каждом клике).
+  var RMOT = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function revealStep() {
+    if (RMOT) return;
+    var host = $('qhost');
+    var atoms = [$('h1')];
+    if (host) atoms = atoms.concat([].slice.call(
+      host.querySelectorAll('.q-label, .q-hint, .opt, .chip, .sc-btn, .lvl-na, .seg, .input, .textarea')));
+    // ТОЛЬКО transform + opacity (design.md §6.3) — без filter:blur: анимированный
+    // блюр на многих слоях роняет iOS Safari в белый экран. «Наведение фокуса»
+    // держим масштабом: атом чуть увеличивается до нормы, всплывая снизу.
+    atoms.forEach(function (el) {
+      if (!el) return;
+      el.style.transition = 'none';
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px) scale(.94)';
+    });
+    if (host) void host.offsetWidth;              // зафиксировать стартовое состояние
+    atoms.forEach(function (el, i) {
+      if (!el) return;
+      var d = Math.min(i * 42, 520);
+      el.style.transition = 'opacity .5s cubic-bezier(.16,1,.3,1) ' + d + 'ms, transform .62s cubic-bezier(.16,1,.3,1) ' + d + 'ms';
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+    });
+  }
+
   $('next').addEventListener('click', function () {
-    if (idx < QTOTAL - 1) { idx++; render(true); }
-    else { window.location.href = 'loading-dark.html'; }  // финал анкеты → экран генерации
+    if (idx < QTOTAL - 1) { idx++; render(true); revealStep(); }
+    else { esGo('loading-dark.html'); }  // финал анкеты → экран генерации
   });
-  $('back').addEventListener('click', function () { if (idx > 0) { idx--; render(true); } });
+  $('back').addEventListener('click', function () { if (idx > 0) { idx--; render(true); revealStep(); } });
 
   // выход из анкеты → модалка подтверждения → экран входа
   (function () {
@@ -1306,7 +1510,7 @@
     cancel.addEventListener('click', function () { ov.classList.remove('open'); });
     ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('open'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ov.classList.remove('open'); });
-    confirmB.addEventListener('click', function () { window.location.href = 'login-dark.html'; });
+    confirmB.addEventListener('click', function () { esGo('login-dark.html'); });
   })();
 
   // навигация по списку шагов справа (клик — переход на конкретный шаг)
@@ -1316,7 +1520,7 @@
     var i = parseInt(row.getAttribute('data-step'), 10);
     if (isNaN(i) || i < 0 || i >= STEPS.length) return;
     idx = i;
-    render(true);
+    render(true); revealStep();
   });
 
   // переход с диагностики кнопкой «Назад» — открыть анкету на последнем вопросе
@@ -1324,7 +1528,10 @@
     idx = QTOTAL - 1;
   }
 
-  render();
+  // сброс прокрутки окна при возврате на страницу (bfcache/назад)
+  addEventListener('pageshow', function () { try { window.scrollTo(0, 0); } catch (e) {} });
+
+  render(); revealStep();
 })();
 </script>
 <script>
@@ -1438,7 +1645,7 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') delModal.classList.remove('open'); });
   $('deleteConfirm').addEventListener('click', function () {
     try { localStorage.clear(); } catch (e) {}
-    window.location.href = 'login-dark.html';
+    esGo('login-dark.html');
   });
 })();
 </script>

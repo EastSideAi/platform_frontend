@@ -8,14 +8,18 @@
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<script>document.documentElement.classList.add('es-rv');</script>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <title>EastSide — Диагностика</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — только Manrope, везде */
-:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
+/* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
   :root {
     --base: #03081C; --panel: #060D28;
@@ -35,12 +39,14 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
   body { font-family: 'Onest', 'Segoe UI', sans-serif; background: var(--base); color: var(--tx); overflow: hidden; }
+  /* === ТЕСТ: синее свечение страницы сверху/снизу на тёмной базе — временно убрано (раскомментировать = вернуть) ===
   body::before {
     content: ''; position: fixed; inset: 0; pointer-events: none;
     background:
       radial-gradient(900px 500px at 85% -10%, rgba(30,114,240,.16), transparent 60%),
       radial-gradient(700px 500px at 0% 110%, rgba(22,100,230,.12), transparent 60%);
   }
+  === конец оригинала === */
   .shell { position: relative; display: grid; grid-template-columns: 240px 1fr; gap: 16px; height: 100vh; padding: 16px; }
 
   /* ════ Сайдбар ════ */
@@ -86,16 +92,21 @@
 
   /* ════ Светлая плашка ════ */
   .plate { position: relative; min-height: 0; border-radius: 24px; overflow: hidden;
+    /* === ТЕСТ: синее/цветное свечение плашки сверху и снизу — временно убрано (раскомментировать = вернуть) ===
     background:
       radial-gradient(720px 480px at 92% -6%, rgba(96,182,255,.6) 0%, rgba(110,170,252,.18) 46%, transparent 72%),
       radial-gradient(520px 380px at 4% 6%, rgba(126,236,184,.22), transparent 58%),
       radial-gradient(680px 460px at 78% 112%, rgba(43,143,255,.26), transparent 62%),
       radial-gradient(560px 420px at 12% 96%, rgba(150,120,255,.12), transparent 60%),
       linear-gradient(176deg, var(--plate-sky) 0%, var(--plate-hi) 44%, var(--plate-lo) 100%);
+    === конец оригинала === */
+    background: linear-gradient(176deg, var(--plate-sky) 0%, var(--plate-hi) 44%, var(--plate-lo) 100%);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.85);
     color: var(--ink); }
+  /* === ТЕСТ: синяя подсветка по нижней кромке плашки — временно убрана (раскомментировать = вернуть) ===
   .plate::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 200px; pointer-events: none;
     background: linear-gradient(0deg, rgba(96,160,250,.5) 0%, rgba(110,170,252,.14) 52%, rgba(110,170,252,0) 100%); }
+  === конец оригинала === */
   .plate-scroll, .path { z-index: 1; }
   .plate-scroll { position: relative; height: 100%; overflow-y: auto; padding: 68px 64px 32px; margin-right: 344px; }
   .plate-scroll::-webkit-scrollbar { width: 0; }
@@ -223,21 +234,22 @@
   .blk-eyebrow.grow { color: var(--acc-ink); margin-top: 28px; }
   /* единая лежачая карточка профиля: иконка-плитка слева, текст справа (по рефу).
      одинаковый стиль и для сильных сторон, и для зон роста — без скачков формата */
-  .lcards { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; margin-top: 16px; }
-  .lc { display: flex; flex-direction: row; align-items: center; gap: 16px; padding: 16px 20px; border-radius: 17px;
-    background: rgba(255,255,255,.72); border: 1px solid rgba(36,40,90,.07);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.9); transition: border-color .18s ease; }
-  .lc:hover { border-color: rgba(36,40,90,.14); }
-  .lc-ic { flex: none; width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  .lcards { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; margin-top: 18px; }
+  /* обводка как у карточек-ответов в анкете (.opt) — видимый сине-серый хайрлайн + мягкая тень, сапфир на ховере */
+  .lc { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 22px 26px; border-radius: 18px;
+    background: rgba(255,255,255,.72); border: 1.5px solid rgba(74,98,150,.22);
+    box-shadow: 0 2px 8px rgba(30,50,90,.05), inset 0 1px 0 rgba(255,255,255,.9); transition: border-color .15s ease, box-shadow .15s ease; }
+  .lc:hover { border-color: rgba(43,143,255,.6); box-shadow: 0 4px 14px rgba(43,143,255,.14), inset 0 1px 0 rgba(255,255,255,.9); }
+  .lc-ic { flex: none; width: 52px; height: 52px; border-radius: 15px; display: grid; place-items: center;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
-  .lc-ic svg { width: 22px; height: 22px; }
-  .lc-ic .lc-glyph { font-size: 21px; font-weight: 700; line-height: 1; letter-spacing: 0; }
+  .lc-ic svg { width: 24px; height: 24px; }
+  .lc-ic .lc-glyph { font-size: 23px; font-weight: 700; line-height: 1; letter-spacing: 0; }
   .lc-ic.sky { background: linear-gradient(145deg, rgba(124,196,255,.55), rgba(43,143,255,.12)); border: 1px solid rgba(43,143,255,.34); color: #1E72E6; }
   .lc-ic.violet { background: linear-gradient(145deg, rgba(165,143,255,.5), rgba(110,90,240,.12)); border: 1px solid rgba(130,110,240,.36); color: #6A52E0; }
   .lc-body { min-width: 0; flex: 1; }
-  .lc-eyebrow { font-size: 10.5px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
-  .lc-val { margin-top: 4px; font-size: 22px; font-weight: 700; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .lc-sub { margin-top: 4px; font-size: 12.5px; font-weight: 600; line-height: 1.35; color: var(--ink-sub); }
+  .lc-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--ink-faint); }
+  .lc-val { margin-top: 5px; font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1.05; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .lc-sub { margin-top: 5px; font-size: 13px; font-weight: 600; line-height: 1.35; color: var(--ink-sub); white-space: nowrap; }
   .lc-sub.good { color: var(--jade-ink); }
   /* отступ перед подблоком «Зоны роста» внутри секции */
   .grow-h { margin-top: var(--rhythm-subgroup); }
@@ -335,22 +347,20 @@
   .rm-bg { position: absolute; inset: 0; background: url('funnel-assets/prototypes/v2/bg-lit-wide.png') 56% 26% / cover no-repeat;
     transform: scale(1.02); transition: transform .8s cubic-bezier(.22,.61,.36,1); }
   .rm-banner:hover .rm-bg { transform: scale(1.06); }
-  .rm-shade { display: none; }
+  /* лёгкое затемнение поверх фото — текст белый, читается на любой картинке */
+  .rm-shade { position: absolute; inset: 0; pointer-events: none; }
   .rm-body { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: flex-start;
-    max-width: 540px; margin: 34px; padding: 0; color: var(--ink); }
-  .rm-title, .rm-sub { text-shadow: 0 1px 10px rgba(255,255,255,.82), 0 0 3px rgba(255,255,255,.5); }
-  .rm-kick { display: none; }
+    max-width: 540px; margin: 34px; padding: 0; color: #fff; }
+  .rm-title, .rm-sub { text-shadow: 0 1px 16px rgba(3,8,28,.55), 0 1px 3px rgba(3,8,28,.4); }
+  .rm-kick { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.9); }
+  .rm-kick i { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--violet-2); box-shadow: 0 0 8px var(--violet-2); }
   .rm-title { margin-top: 12px; font-family: 'Onest', sans-serif; font-size: 25px;
-    font-weight: 700; letter-spacing: -.7px; line-height: 1.15; color: var(--ink); }
-  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: var(--ink); max-width: 42ch; }
+    font-weight: 700; letter-spacing: -.7px; line-height: 1.15; color: #fff; }
+  .rm-sub { margin-top: 8px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.88); max-width: 42ch; }
   .rm-cta { margin-top: 20px; }
   .rm-cta svg { transition: transform .2s; }
   .rm-banner:hover .rm-cta { background: #2B8FFF; }
   .rm-banner:hover .rm-cta svg { transform: rotate(-45deg) translateX(2px); }
-  /* кнопка на баннере грантов — нейтральная (синяя выбивалась из фото) */
-  .rm-banner.b-grant .rm-cta { background: #FFFFFF; color: var(--ink);
-    box-shadow: 0 6px 18px rgba(3,8,28,.22); border: 1px solid rgba(255,255,255,.55); }
-  .rm-banner.b-grant:hover .rm-cta { background: #F2F5FB; color: var(--ink); }
 
   /* баннеры разделов с картинкой (по образцу баннера-маршрута) */
   .rm-banner.b-uni   .rm-bg { background-image: url('funnel-assets/banners/banner-universities.png'); background-position: 78% 38%; }
@@ -363,13 +373,13 @@
       linear-gradient(180deg, rgba(3,8,28,.04) 0%, rgba(3,8,28,.3) 100%); }
 
   /* ══════ Блок записи на бесплатный созвон ══════ */
-  .bk { margin-top: var(--rhythm-topic); border-radius: 30px; overflow: hidden; padding: 36px 40px 40px;
+  .bk { margin-top: var(--rhythm-topic); border-radius: 30px; overflow: hidden; padding: 26px 40px 26px;
     background: linear-gradient(180deg, #FFFFFF 0%, #F4F7FE 100%);
     border: 1px solid rgba(255,255,255,.92);
     box-shadow: 0 16px 44px rgba(20,40,90,.10), inset 0 1px 0 rgba(255,255,255,.9); }
   .bk-title { font-family: 'Onest', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -.7px; color: var(--ink); line-height: 1.12; }
   .bk-sub { margin-top: 10px; font-size: 14px; line-height: 1.55; color: var(--ink-sub); max-width: 54ch; }
-  .bk-grid { margin-top: 28px; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 38px; align-items: stretch; }
+  .bk-grid { margin-top: 22px; display: grid; grid-template-columns: 1fr 1px 1fr; gap: 38px; align-items: stretch; }
   .bk-div { background: linear-gradient(180deg, transparent, rgba(36,40,90,.12) 12%, rgba(36,40,90,.12) 88%, transparent); }
 
   /* левая часть: календарь */
@@ -392,24 +402,24 @@
   .cal-day.today { border-color: rgba(43,143,255,.4); }
   .cal-day.sel, .cal-day.sel:hover { color: #fff; background: #2073E6; border-color: rgba(120,185,255,.6);
     box-shadow: inset 0 0 18px rgba(175,215,255,.9), inset 0 1px 0 rgba(255,255,255,.45); }
-  .bk-left-cta { margin-top: auto; padding-top: 24px; display: none; }
-  .bk-left-cta.on { display: block; animation: bkFade .25s ease both; }
+  .bk-left-cta { margin-top: auto; min-height: 60px; display: none; align-items: center; justify-content: center; }
+  .bk-left-cta.on { display: flex; animation: bkFade .25s ease both; }
 
   /* правая часть: меняется по состояниям */
-  .bk-right { display: flex; flex-direction: column; min-height: 326px; }
+  .bk-right { display: flex; flex-direction: column; min-height: 0; }
   @keyframes bkFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
   .bk-state { display: none; flex: 1; flex-direction: column; }
   .bk-state.on { display: flex; animation: bkFade .28s ease both; }
 
   /* состояние 1 — пусто */
-  .bk-drop { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 16px;
-    border: 1.5px dashed rgba(43,143,255,.32); border-radius: 20px; padding: 30px 28px; background: rgba(43,143,255,.035); }
-  .bk-drop-ic { width: 62px; height: 62px; border-radius: 18px; display: grid; place-items: center;
-    background: rgba(43,143,255,.12); color: #2B8FFF;
-    box-shadow: inset 0 0 22px rgba(43,143,255,.6), inset 0 0 5px rgba(160,205,255,.7); }
-  .bk-drop-ic svg { width: 28px; height: 28px; }
+  .bk-drop { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px;
+    border: 1.5px dashed rgba(43,143,255,.32); border-radius: 20px; padding: 24px 24px; background: rgba(43,143,255,.035); }
+  .bk-drop-ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center;
+    background: rgba(43,143,255,.1); color: #2B8FFF;
+    box-shadow: inset 0 0 0 1px rgba(43,143,255,.18); }
+  .bk-drop-ic svg { width: 19px; height: 19px; }
   .bk-drop-tx { font-size: 14px; font-weight: 600; color: var(--ink-sub); max-width: 24ch; line-height: 1.5; }
-  .bk-or { margin: 18px 0 14px; display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; color: var(--ink-faint); }
+  .bk-or { margin: 28px 0 10px; display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; color: var(--ink-faint); }
   .bk-or::before, .bk-or::after { content: ''; flex: 1; height: 1px; background: rgba(36,40,90,.12); }
 
   /* telegram-кнопка (вторичная, белое стекло) */
@@ -443,20 +453,27 @@
   .bk-help { margin-top: 10px; font-size: 12.5px; color: var(--ink-sub); }
   .bk-tg-info { margin-top: auto; padding-top: 18px; }
 
-  /* состояние 3 — успех (целиком внутри правой панели) */
-  .bk-done { align-items: center; justify-content: center; text-align: center; }
-  .bk-check { width: 70px; height: 70px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #2073E6; color: #fff;
-    box-shadow: inset 0 0 26px rgba(175,215,255,.9), inset 0 1px 0 rgba(255,255,255,.45), 0 10px 26px rgba(43,143,255,.35); }
-  .bk-check svg { width: 32px; height: 32px; }
-  .bk-done-t { margin-top: 18px; font-family: 'Onest', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -.4px; color: var(--ink); }
-  .bk-done-s { margin-top: 6px; font-size: 13.5px; color: var(--ink-sub); }
-  .bk-card { margin-top: 20px; width: 100%; border-radius: 16px; padding: 16px 20px; text-align: left;
-    background: rgba(255,255,255,.72); border: 1px solid rgba(36,40,90,.1); box-shadow: inset 0 1px 0 rgba(255,255,255,.9);
-    display: flex; flex-direction: column; gap: 12px; }
-  .bk-card-row { display: flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
-  .bk-card-row svg { width: 18px; height: 18px; color: var(--acc-ink); flex: none; }
-  .bk-remind { margin-top: 16px; font-size: 12px; color: var(--ink-faint); line-height: 1.5; max-width: 32ch; }
-  .bk-secondary { margin-top: 18px; display: inline-flex; gap: 18px; }
+  /* состояние 3 — «записан»: экран на всю карточку, календарь и шапка скрыты */
+  .bk.booked .bk-title, .bk.booked .bk-sub, .bk.booked .bk-left, .bk.booked .bk-div { display: none; }
+  .bk.booked .bk-grid { grid-template-columns: 1fr; margin-top: 0; }
+  .bk.booked .bk-right { min-height: 0; }
+  .bk-done { align-items: center; justify-content: center; text-align: center; padding: 18px 0; }
+  .bk-done-box { width: 100%; max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; }
+  .bk-check { width: 76px; height: 76px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #2EA06E; color: #fff;
+    box-shadow: 0 12px 28px rgba(46,160,110,.32), inset 0 1px 0 rgba(255,255,255,.3); }
+  .bk-check svg { width: 36px; height: 36px; }
+  .bk-done-t { margin-top: 22px; font-family: 'Onest', sans-serif; font-size: 27px; font-weight: 700; letter-spacing: -.6px; color: var(--ink); line-height: 1.14; text-wrap: balance; }
+  .bk-done-pill { margin-top: 18px; display: inline-flex; align-items: center; gap: 9px; padding: 9px 18px; border-radius: 999px;
+    background: rgba(46,160,110,.1); border: 1px solid rgba(46,160,110,.24); color: var(--jade-ink); font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .bk-done-pill svg { width: 17px; height: 17px; color: #2EA06E; }
+  .bk-done-note { margin-top: 20px; font-size: 14.5px; line-height: 1.55; color: var(--ink-sub); max-width: 44ch; }
+  .bk-done-tg { margin-top: 22px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 420px;
+    padding: 15px 20px; border-radius: 14px; text-decoration: none; cursor: pointer;
+    background: rgba(43,143,255,.05); border: 1.5px solid rgba(43,143,255,.4); color: var(--acc-ink); font-size: 15px; font-weight: 700;
+    transition: background .15s, border-color .15s; }
+  .bk-done-tg:hover { background: rgba(43,143,255,.1); border-color: rgba(43,143,255,.6); }
+  .bk-done-tg svg { width: 19px; height: 19px; color: #2B8FFF; }
+  .bk-done-actions { margin-top: 20px; display: inline-flex; gap: 20px; }
   .bk-link { background: none; border: 0; cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--ink-sub); transition: color .15s; }
   .bk-link:hover { color: var(--acc-ink); }
   .bk-link.danger:hover { color: var(--terra-ink); }
@@ -791,19 +808,62 @@
   /* Совсем узко: правая панель «Твой результат» переходит в общий поток
      под контентом, скролл становится постраничным. */
   @media (max-width: 980px) {
-    .shell { height: auto; min-height: 100vh; }
-    .plate { overflow: visible; }
+    /* скролл переезжает с внутренней плашки на саму страницу — иначе при
+       body{overflow:hidden} (см. выше) контент ниже первого экрана обрезается */
+    html, body { height: auto; overflow: auto; }
+    .shell { height: auto; min-height: 100vh; min-height: 100dvh; }
+    /* min-width:0 — грид-айтем должен мочь сжаться уже своего min-content,
+       иначе трек 1fr раздувается под радар-чарт и контент уезжает за экран */
+    .plate { overflow: visible; min-width: 0; }
     .plate-scroll { height: auto; overflow: visible; margin-right: 0; padding: 36px 28px 16px; }
     .path { position: static; width: auto; inset: auto; margin: 24px auto 0; max-width: 860px; }
   }
 
-  /* Планшет/телефон: сайдбар прячем (мобайл — вне текущего объема работ). */
+  /* Планшет/телефон: сайдбар прячем, плашка во весь экран, одна колонка.
+     display:block вместо grid 1fr — иначе грид-трек 1fr раздувается под
+     min-content контента (радар 300px + параметры) ШИРЕ экрана, и текст
+     с подписями радара режется правым краем (overflow:hidden у .display). */
   @media (max-width: 720px) {
-    .shell { grid-template-columns: 1fr; padding: 0; gap: 0; }
+    .shell { display: block; padding: 0; gap: 0; }
     .sb { display: none; }
-    .plate { border-radius: 0; }
+    .plate { border-radius: 0; min-width: 0; min-height: 100vh; min-height: 100dvh; }
     .h1 { font-size: 32px; letter-spacing: -1.4px; }
     .plate-scroll { padding: 24px 16px 16px; }
+  }
+
+  /* ── узкий телефон: плотнее крупные блоки разбора (разбор, гранты, бронь) ── */
+  @media (max-width: 460px) {
+    .h1 { font-size: 27px; letter-spacing: -.6px; }
+    .plate-scroll { padding: 22px 14px 14px; }
+    .display { padding: 22px 18px; }
+    .sec-h { font-size: 19px; }
+    /* грант-карта — вертикальный pricing на всю ширину: круг и числа крупнее, воздух плотнее */
+    .gcards { gap: 14px; }
+    .gcard { padding: 24px 20px; }
+    .g-mtn { width: 96px; height: 96px; }
+    .g-mtn img { width: 78px; height: 78px; }
+    .g-cost-v { font-size: 38px; }
+    .gcol-head { min-height: 0; padding: 0 4px 12px; }
+    /* календарь брони и слоты — на всю ширину, ячейки крупнее под палец */
+    .cal-grid { gap: 5px; }
+    .cal-cell { font-size: 13px; }
+    .slots { grid-template-columns: 1fr 1fr; }
+    .bk { padding: 22px 18px 24px; border-radius: 22px; }
+    /* поддержка-блок: аватары и текст в столбец */
+    .sup-t { font-size: 18px; }
+    /* нижняя нав-панель: точки прячем (выпирают «К маршруту» за экран на узких),
+       оставляем компактный «Шаг N из 3», кнопки поджимаем */
+    .dbar { gap: 8px; padding: 10px 12px; }
+    .dbar .dots { display: none; }
+    .dbar .foot-step { font-size: 12px; }
+    .dbar .btn-back { padding: 11px 13px; }
+    .dbar .btn-next { padding: 11px 14px; font-size: 13px; flex: none; white-space: nowrap; }
+  }
+
+  /* ультра-узкие (≤344px) — только «Назад» и «К маршруту», без текста шага */
+  @media (max-width: 344px) {
+    .dbar .foot-step { display: none; }
+    .dbar { gap: 6px; }
   }
   /* ── модалка подтверждения выхода ── */
   .modal-ov { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center; padding: 20px;
@@ -940,7 +1000,7 @@
     background: rgba(43,143,255,.1); border: 1px solid rgba(43,143,255,.3); color: var(--acc-ink); font: 700 14px 'Onest', sans-serif; text-decoration: none; transition: background .14s; }
   .unis-all:hover { background: rgba(43,143,255,.18); }
   .unis-all svg { width: 16px; height: 16px; }
-  @media (max-width: 1140px) { .chs3 { grid-template-columns: 1fr; } .unis { grid-template-columns: 1fr; }
+  @media (max-width: 1140px) { .chs3 { grid-template-columns: 1fr; } .unis { grid-template-columns: 1fr; } .gcards { grid-template-columns: 1fr; }
     .cmpx-head { display: none; }
     .cmpx-label { padding-left: 4px; }
     .cmpx-card { grid-template-columns: 1fr; gap: 20px; }
@@ -1068,9 +1128,79 @@
   .stg-warn { margin-top: 12px; padding: 12px 16px; border-radius: 11px; font-size: 12.5px; line-height: 1.45; color: var(--tx-soft);
     background: rgba(255,180,50,.08); border: 1px solid rgba(255,180,50,.2); }
 
+  /* ── Появление контента: премиальный стаггер (iOS/macOS-вайб). Секции разбора
+     всплывают снизу по мере попадания в кадр — как на продуктовых страницах Apple.
+     Прячем ТОЛЬКО когда JS выставил .es-rv (без JS/при reduce-motion — всё видно). */
+  /* только transform + opacity (design.md §6.3) — без filter:blur (роняет iOS Safari) */
+  .es-rv [data-rv]{ opacity: 0; transform: translateY(40px) scale(.95); }
+  [data-rv].rv-in{ opacity: 1; transform: none;
+    transition: opacity .72s cubic-bezier(.16,1,.3,1), transform .82s cubic-bezier(.16,1,.3,1); }
+  @media (prefers-reduced-motion: reduce){ .es-rv [data-rv]{ opacity: 1 !important; transform: none !important; } }
+
+  /* ── Мягкая смена страниц: тихий кроссфейд (без «странного» блюра). Где
+     cross-document VT не поддержан — мгновенно, без регрессии. */
+  ::view-transition-old(root){ animation: vtFadeOut .26s ease both; }
+  ::view-transition-new(root){ animation: vtFadeIn .34s ease both; }
+  @keyframes vtFadeOut{ to{ opacity: 0; } }
+  @keyframes vtFadeIn { from{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
+     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
+     на новой странице уходит влево, открывая её. Назад — зеркально. Только
+     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
+  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
+    transform: translateX(0); will-change: transform;
+    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
+  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
+  html.pt-back #pt{ animation-name: ptEnterBack; }
+  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
 </style>
+
+<script>
+(function(){
+  try{ history.scrollRestoration='manual'; }catch(e){}
+  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
+  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.esGo = function(url, replace, dir){
+    var go = function(){ replace ? location.replace(url) : (location.href = url); };
+    var pt = document.getElementById('pt');
+    if (RM || !pt){ go(); return; }
+    dir = dir === 'back' ? 'back' : 'fwd';
+    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
+    pt.style.animation = 'none';
+    pt.style.transition = 'none';
+    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
+    void pt.offsetWidth;
+    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
+    pt.style.transform = 'translateX(0)';
+    setTimeout(go, 320);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;
+    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/.test(href)) return;
+    e.preventDefault();
+    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
+    window.esGo(href, false, back ? 'back' : 'fwd');
+  }, true);
+  addEventListener('pageshow', function(e){
+    try{ scrollTo(0,0); }catch(_){}
+    var pt = document.getElementById('pt');
+    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
+  });
+})();
+</script>
 </head>
 <body>
+<div id="pt" aria-hidden="true"></div>
 <div class="shell">
 
   <!-- ════ Сайдбар ════ -->
@@ -1104,15 +1234,15 @@
     <div class="plate-scroll">
      <div class="plate-col">
 
-      <div class="crumb"><span>Анкета</span>
+      <div class="crumb" data-rv><span>Анкета</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
         <b>Диагностика</b></div>
 
-      <h1 class="h1">Ваш профиль разобран</h1>
-      <p class="lead"><b>Вы подошли к поступлению с сильной базой:</b> средний балл 5.0, осознанно выбранное направление и ранний старт выгодно отличают вас от большинства абитуриентов. Сдерживает результат сейчас китайский — без HSK 5 часть грантов недоступна — и пока пустое портфолио. Это решаемо за год: ниже мы разобрали профиль по параметрам и показали, что именно стоит усилить.</p>
+      <h1 class="h1" data-rv>Ваш профиль разобран</h1>
+      <p class="lead" data-rv><b>Вы подошли к поступлению с сильной базой:</b> средний балл 5.0, осознанно выбранное направление и ранний старт выгодно отличают вас от большинства абитуриентов. Сдерживает результат сейчас китайский — без HSK 5 часть грантов недоступна — и пока пустое портфолио. Это решаемо за год: ниже мы разобрали профиль по параметрам и показали, что именно стоит усилить.</p>
 
       <!-- ── ДИСПЛЕЙ ПРОФИЛЯ ── -->
-      <section class="sec">
+      <section class="sec" data-rv>
         <div class="display">
           <div class="disp-head">
             <span class="disp-title">Ваш профиль по ключевым параметрам</span>
@@ -1184,7 +1314,7 @@
       </section>
 
       <!-- ── ШАНСЫ: 3 наглядных процента сразу после диаграммы ── -->
-      <section class="sec sec-chs3">
+      <section class="sec sec-chs3" data-rv>
         <div class="chs3">
           <div class="ch3 c-full">
             <div class="ch3-label">Шанс на полный грант</div>
@@ -1202,7 +1332,7 @@
       </section>
 
       <!-- ── СИЛЬНОЕ / РОСТ + РЕКОМЕНДАЦИИ ── -->
-      <section class="sec">
+      <section class="sec" data-rv>
         <div class="sec-h"><span class="sec-t">Сильные стороны</span></div>
         <p class="sec-s">Что у вас уже работает на поступление и грант — это ваша опора, на ней строим маршрут.</p>
         <div class="lcards">
@@ -1257,7 +1387,7 @@
       </section>
 
       <!-- ── ГРАНТЫ И ПОСТУПЛЕНИЕ (главный блок: ради этого работают с EastSide) ── -->
-      <section class="sec">
+      <section class="sec" data-rv>
         <div class="sec-h"><span class="sec-t">Что покрывает грант</span></div>
         <p class="sec-s">Что входит в каждый вариант, сколько учебы он покрывает и как меняется шанс с подготовкой по маршруту EastSide.</p>
 
@@ -1379,7 +1509,7 @@
       </section>
 
       <!-- ── УНИВЕРСИТЕТЫ ПОД ВАШ ПРОФИЛЬ ── -->
-      <section class="sec">
+      <section class="sec" data-rv>
         <div class="sec-h"><span class="sec-t">Университеты под ваш профиль</span></div>
         <p class="sec-s">Подобраны под ваше направление, язык и сроки. Нажмите на любой — откроется подробное описание всех вузов.</p>
         <div class="unis">
@@ -1503,36 +1633,31 @@
               <div class="bk-tg-info">
                 <a class="tg-btn" href="https://t.me/eastside_main" target="_blank" rel="noopener">
                   <span class="tg-ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg></span>
-                  <span class="tg-tx"><b>Удобнее в Telegram?</b><span>@eastside_main</span></span>
+                  <span class="tg-tx"><b>Telegram</b><span>@eastside_main</span></span>
                 </a>
               </div>
             </div>
 
             <!-- состояние 3 — запись создана -->
             <div class="bk-state bk-done" id="bkDone">
-              <span class="bk-check">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
-              </span>
-              <div class="bk-done-t">Вы записаны!</div>
-              <div class="bk-done-s">Мы отправили подтверждение в Telegram.</div>
-              <div class="bk-card">
-                <div class="bk-card-row">
+              <div class="bk-done-box">
+                <span class="bk-check">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+                </span>
+                <div class="bk-done-t" id="bkDoneTitle">Готово — место за вами</div>
+                <div class="bk-done-pill">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="2.5"/><path d="M3 9h18M8 2.5v4M16 2.5v4"/></svg>
-                  <span id="bkDoneDate">30 июня</span>
+                  <span id="bkDonePill">30 июня, 18:00</span>
                 </div>
-                <div class="bk-card-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
-                  <span id="bkDoneTime">16:30</span>
+                <p class="bk-done-note">Куратор напишет в течение дня, подтвердит время и пришлет ссылку на звонок. Хотите раньше — напишите сами:</p>
+                <a class="bk-done-tg" href="https://t.me/eastside_main" target="_blank" rel="noopener">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.84 18.9 19.2c-.23 1.01-.83 1.26-1.68.79l-4.64-3.42-2.24 2.16c-.25.25-.46.46-.94.46l.33-4.74 8.62-7.79c.38-.33-.08-.52-.58-.19l-10.65 6.71-4.59-1.44c-1-.31-1.02-1 .22-1.48L20.49 3.4c.83-.31 1.56.2 1.45 1.44z"/></svg>
+                  Telegram @eastside_main
+                </a>
+                <div class="bk-done-actions">
+                  <button class="bk-link" id="bkEdit" type="button">Изменить время</button>
+                  <button class="bk-link danger" id="bkCancel" type="button">Отменить запись</button>
                 </div>
-                <div class="bk-card-row">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-12.2 7.7L3 21l1.8-5.8A8.5 8.5 0 1 1 21 11.5z"/></svg>
-                  <span id="bkDoneTg">@telegram_username</span>
-                </div>
-              </div>
-              <p class="bk-remind">За несколько часов до встречи мы пришлем напоминание.</p>
-              <div class="bk-secondary">
-                <button class="bk-link" id="bkEdit" type="button">Изменить время</button>
-                <button class="bk-link danger" id="bkCancel" type="button">Отменить запись</button>
               </div>
             </div>
 
@@ -1919,7 +2044,7 @@
     cancel.addEventListener('click', function () { ov.classList.remove('open'); });
     ov.addEventListener('click', function (e) { if (e.target === ov) ov.classList.remove('open'); });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') ov.classList.remove('open'); });
-    confirmB.addEventListener('click', function () { window.location.href = 'login-dark.html'; });
+    confirmB.addEventListener('click', function () { esGo('login-dark.html'); });
   })();
 })();
 </script>
@@ -2140,7 +2265,7 @@
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape') delModal.classList.remove('open'); });
   $('deleteConfirm').addEventListener('click', function () {
     try { localStorage.clear(); } catch (e) {}
-    window.location.href = 'login-dark.html';
+    esGo('login-dark.html');
   });
 })();
 </script>
@@ -2341,6 +2466,9 @@
   var leftCta = document.getElementById('bkLeftCta');
   var tgInp   = document.getElementById('bkTg');
   var pickH   = document.getElementById('bkPickH');
+  var bookEl  = document.getElementById('book');
+  var esName  = '';
+  try { esName = (localStorage.getItem('es_name') || '').trim(); } catch (e) {}
 
   function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
   function firstColMon(y, m) { return (new Date(y, m, 1).getDay() + 6) % 7; }   // 0 = понедельник
@@ -2434,20 +2562,22 @@
   // записаться → состояние 3
   document.getElementById('bkConfirm').addEventListener('click', function () {
     if (!sel || !selSlot || normTg(tgInp.value).length < 2) return;
-    document.getElementById('bkDoneDate').textContent = sel.d + ' ' + MGEN[sel.m];
-    document.getElementById('bkDoneTime').textContent = selSlot;
-    document.getElementById('bkDoneTg').textContent = normTg(tgInp.value);
+    document.getElementById('bkDoneTitle').textContent = esName ? ('Готово, ' + esName + ' — место за вами') : 'Готово — место за вами';
+    document.getElementById('bkDonePill').textContent = sel.d + ' ' + MGEN[sel.m] + ', ' + selSlot;
     leftCta.classList.remove('on');
+    if (bookEl) bookEl.classList.add('booked');
     show('bkDone');
   });
 
-  // изменить время → назад к выбору
+  // изменить время → назад к выбору (вернуть календарь)
   document.getElementById('bkEdit').addEventListener('click', function () {
+    if (bookEl) bookEl.classList.remove('booked');
     show('bkPick');
     evalCta();
   });
   // отменить запись → сброс к состоянию 1
   document.getElementById('bkCancel').addEventListener('click', function () {
+    if (bookEl) bookEl.classList.remove('booked');
     sel = null; clearSlots(); tgInp.value = '';
     leftCta.classList.remove('on');
     renderMonth();
@@ -2455,6 +2585,41 @@
   });
 
   renderMonth();
+})();
+</script>
+<script>
+/* ── Премиальное появление секций: стаггер по мере попадания в кадр (iOS/macOS).
+   IntersectionObserver раскрывает каждую секцию, когда она входит в область
+   видимости; те, что уже в кадре при загрузке, каскадом всплывают сразу.
+   Без JS / при reduce-motion контент виден (класс .es-rv ставится только JS). */
+(function () {
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function run() {
+    try {
+      var els = [].slice.call(document.querySelectorAll('[data-rv]'));
+      if (els.length) {
+        if (RM || !('IntersectionObserver' in window)) {
+          els.forEach(function (e) { e.classList.add('rv-in'); });
+        } else {
+          var io = new IntersectionObserver(function (ents) {
+            var vis = ents.filter(function (en) { return en.isIntersecting; })
+                          .map(function (en) { return en.target; });
+            vis.forEach(function (t, i) {
+              setTimeout(function () { t.classList.add('rv-in'); }, i * 85);
+              io.unobserve(t);
+            });
+          }, { threshold: 0.12, rootMargin: '0px 0px -7% 0px' });
+          els.forEach(function (e) { io.observe(e); });
+          // failsafe: если что-то не сработало — показать всё
+          setTimeout(function () { els.forEach(function (e) { e.classList.add('rv-in'); }); }, 2600);
+        }
+      }
+    } catch (e) { document.documentElement.classList.remove('es-rv'); }
+    try { scrollTo(0, 0); } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+  else run();
+  addEventListener('pageshow', function () { try { scrollTo(0, 0); } catch (e) {} });
 })();
 </script>
 </body>

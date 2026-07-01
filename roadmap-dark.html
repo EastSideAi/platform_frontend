@@ -14,8 +14,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
-/* единый шрифт интерфейса — только Manrope, везде */
-:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display)}
+/* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
+:root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display)}
 *,*::before,*::after{font-family:var(--font-display)!important}
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -210,9 +210,70 @@
   .node.goal.sel .tag .n { background: var(--star-2); color: #3A2A07; }
 
   @media (prefers-reduced-motion: reduce) { .card, .close, .node { transition: opacity 1ms; } }
+  /* ── Мягкая смена страниц: тихий кроссфейд (без «странного» блюра). Где
+     cross-document VT не поддержан — мгновенно, без регрессии. */
+  ::view-transition-old(root){ animation: vtFadeOut .26s ease both; }
+  ::view-transition-new(root){ animation: vtFadeIn .34s ease both; }
+  @keyframes vtFadeOut{ to{ opacity: 0; } }
+  @keyframes vtFadeIn { from{ opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+  }
+  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
+     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
+     на новой странице уходит влево, открывая её. Назад — зеркально. Только
+     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
+  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
+    transform: translateX(0); will-change: transform;
+    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
+  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
+  html.pt-back #pt{ animation-name: ptEnterBack; }
+  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
 </style>
+
+<script>
+(function(){
+  try{ history.scrollRestoration='manual'; }catch(e){}
+  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
+  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.esGo = function(url, replace, dir){
+    var go = function(){ replace ? location.replace(url) : (location.href = url); };
+    var pt = document.getElementById('pt');
+    if (RM || !pt){ go(); return; }
+    dir = dir === 'back' ? 'back' : 'fwd';
+    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
+    pt.style.animation = 'none';
+    pt.style.transition = 'none';
+    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
+    void pt.offsetWidth;
+    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
+    pt.style.transform = 'translateX(0)';
+    setTimeout(go, 320);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;
+    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/.test(href)) return;
+    e.preventDefault();
+    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
+    window.esGo(href, false, back ? 'back' : 'fwd');
+  }, true);
+  addEventListener('pageshow', function(e){
+    try{ scrollTo(0,0); }catch(_){}
+    var pt = document.getElementById('pt');
+    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
+  });
+})();
+</script>
 </head>
 <body>
+<div id="pt" aria-hidden="true"></div>
 <div class="popup" id="popup">
   <div class="stage" id="stage">
     <svg class="scene" id="svg" viewBox="0 0 1536 1024" preserveAspectRatio="xMidYMid meet">
@@ -281,7 +342,7 @@ const IMG_FULL  = 'funnel-assets/prototypes/v2/mtn-lit-hd.png';
 const EMBED = window.self !== window.top;
 if (EMBED) document.body.classList.add('embed');
 function closeEmbed() { try { parent.postMessage({ type: 'roadmap-close' }, '*'); } catch (e) {} }
-function doClose() { if (EMBED) closeEmbed(); else location.href = 'diagnostic-dark.html'; }
+function doClose() { if (EMBED) closeEmbed(); else esGo('diagnostic-dark.html', false, 'back'); }
 
 const STAR = { x: 1044, y: 128 };
 

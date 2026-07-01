@@ -1,182 +1,328 @@
 <!doctype html>
-<!-- loading-dark.html — темная загрузка, ободранная до кости (как оригинал
-     screens.jsx): одна крупная вращающаяся фраза + числовой ролик + подсказка.
-     Текст — это весь UI. Никакой горы/рамки/бренда. Premium minimalist. -->
+<!-- loading-dark.html — премиальный экран расчета между анкетой и диагностикой.
+     Режим A «Атмосфера»: тёмное небо + тихое сапфировое свечение. Якорь — одно
+     кольцо прогресса со светящейся головой-кометой и числом в центре. Под ним —
+     тихие заголовок/подзаголовок, сменяются по стадиям анализа. Никаких карточек,
+     рамок, логотипов — только центральная композиция. Шрифт системный, как во
+     всем dark-флоу. По окончании — replace на diagnostic-dark.html. -->
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>EastSide — Генерация</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>EastSide — Расчет</title>
 <style>
-/* единый шрифт интерфейса — только Manrope, везде */
-:root{--font-display:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
-*,*::before,*::after{font-family:var(--font-display)!important}
+  /* единый шрифт интерфейса — системный (SF Pro / Segoe UI), как на остальных dark-страницах */
+  :root{
+    --font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
+    --font-text:var(--font-display);--font-ui:var(--font-display);
+  }
+  *,*::before,*::after{font-family:var(--font-display)!important}
 
-  :root {
-    --bg: #04081A; --ink: #EEF2FF; --ink-soft: #AEB6D8; --ink-faint: #6A739B;
-    --acc: #5CB4FF; --acc-ink: #8FCBFF;
+  :root{
+    --base:#03081C;          /* фон неба */
+    --tx:#FFFFFF;            /* белый — число и заголовок */
+    --tx-soft:#AEB7D8;       /* мягкий — подзаголовок */
+    --tx-mute:#6A739B;       /* приглушенный */
+    --acc:#5CB4FF;          /* светлый сапфир — дуга, % , голова */
+    --acc-deep:#1E72E6;      /* глубокий сапфир — низ дуги */
+    --acc-soft:#9FCBFF;      /* мягкий акцент */
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; }
-  body { font-family: 'Onest', 'Segoe UI', sans-serif; background: var(--bg); color: var(--ink); overflow: hidden; }
-  /* почти незаметный теплый перелив — не блоб, просто чтобы фон не был мертвым */
-  body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none;
-    background: radial-gradient(1100px 700px at 50% 42%, rgba(30,90,200,.12), transparent 66%);
-  }
-
-  .ld-wrap {
-    position: relative; min-height: 100vh; display: grid; place-items: center;
-    padding: clamp(28px, 5vw, 56px);
-    animation: pageIn .6s cubic-bezier(.32,.72,0,1) both;
-  }
-  @keyframes pageIn { from { opacity: 0; } to { opacity: 1; } }
-
-  /* статус-строка сверху — что происходит (Nielsen: видимость статуса) */
-  .ld-top { position: absolute; top: clamp(40px, 8vw, 86px); left: 0; right: 0; text-align: center; }
-  .ld-top-k {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: 12.5px; font-weight: 700; letter-spacing: 0; text-transform: none; color: var(--ink-faint);
-  }
-  .ld-top-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--acc);
-    box-shadow: 0 0 10px var(--acc); animation: ldPulse 1.5s ease-in-out infinite; }
-  @keyframes ldPulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
-
-  /* ГЕРОЙ — одна крупная фраза, слова всплывают из своих масок с блюром */
-  .ld-line {
-    margin: 0; max-width: 16ch;
-    font-family: 'Onest', sans-serif; font-weight: 700;
-    font-size: clamp(28px, 3.2vw, 52px); letter-spacing: -.04em; line-height: 1.06;
-    color: var(--ink); text-align: center; text-wrap: balance;
-    display: flex; flex-wrap: wrap; justify-content: center; gap: 0 .26em;
-  }
-  .ld-w { display: inline-block; overflow: hidden; padding: .02em .02em .12em; }
-  .ld-w i {
-    display: inline-block; font-style: normal; will-change: transform, opacity;
-    animation: ldRise 1s cubic-bezier(.16,1,.3,1) both; animation-delay: calc(var(--i,0) * .055s);
-  }
-  @keyframes ldRise {
-    0%   { transform: translateY(118%); opacity: 0; filter: blur(7px); }
-    55%  { opacity: 1; filter: blur(0); }
-    100% { transform: translateY(0); opacity: 1; filter: blur(0); }
-  }
-  .ld-line.leaving .ld-w i { animation: ldLeave .44s cubic-bezier(.5,0,.75,0) both; animation-delay: calc(var(--i,0) * .03s); }
-  @keyframes ldLeave { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-72%); opacity: 0; } }
-
-  /* числовой счетчик внизу — монотонный, Space Grotesk, табличные цифры */
-  .ld-count {
-    position: absolute; left: 0; right: 0; bottom: clamp(108px, 15vw, 140px);
-    display: flex; justify-content: center; align-items: flex-start; gap: .08em;
-    font-family: 'Space Grotesk', 'Onest', sans-serif; font-weight: 600;
-    font-size: clamp(34px, 3.6vw, 56px); letter-spacing: -.03em; color: var(--ink);
-    font-variant-numeric: tabular-nums; line-height: 1; transition: color .5s ease;
-  }
-  .ld-pct { font-size: .42em; font-weight: 500; color: var(--ink-faint); margin-top: .3em; transition: color .5s ease; }
-
-  .ld-hint {
-    position: absolute; left: 0; right: 0; bottom: clamp(34px, 5vw, 48px);
-    text-align: center; padding: 0 32px;
-    font-size: 13px; line-height: 1.45; color: var(--ink-faint); letter-spacing: -.01em;
-    transition: opacity .3s;
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--base); color:var(--tx); overflow:hidden;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   }
 
-  /* финиш — фраза и счетчик мягко уходят в sapphire, потом передача дальше */
-  .ld-wrap.done .ld-line, .ld-wrap.done .ld-count { color: var(--acc-ink); }
-  .ld-wrap.done .ld-count .ld-pct { color: var(--acc); }
-  .ld-wrap.exit { animation: ldOut .5s cubic-bezier(.5,0,.75,0) both; }
-  @keyframes ldOut { 0% { opacity: 1; transform: scale(1); filter: blur(0); } 100% { opacity: 0; transform: scale(1.03); filter: blur(3px); } }
+  /* дышащее сапфировое свечение позади всего — фон не мертвый, медленно пульсирует */
+  .sky{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(620px 620px at 50% 46%, rgba(43,143,255,.16), rgba(43,143,255,.05) 42%, transparent 70%),
+      radial-gradient(1200px 760px at 50% 120%, rgba(22,90,210,.10), transparent 64%);
+    animation:breathe 9s ease-in-out infinite;
+    will-change:transform,opacity;
+  }
+  @keyframes breathe{
+    0%,100%{ opacity:.78; transform:scale(1); }
+    50%    { opacity:1;   transform:scale(1.07); }
+  }
 
+  .stage{
+    position:relative; z-index:1; min-height:100vh; min-height:100dvh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    /* оптический центр — чуть выше геометрического */
+    transform:translateY(-16px);
+    padding:clamp(28px,5vw,56px);
+    animation:pageIn .7s cubic-bezier(.32,.72,0,1) both;
+  }
+  @keyframes pageIn{ from{opacity:0} to{opacity:1} }
+
+  /* ── якорь: кольцо прогресса ─────────────────────────────────────────── */
+  .ring{ position:relative; width:clamp(236px,40vw,284px); aspect-ratio:1; }
+  .ring svg{ display:block; width:100%; height:100%; overflow:visible; }
+
+  /* число по центру кольца */
+  .num{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+  }
+  .num .val{
+    display:inline-flex; align-items:baseline;
+    font-size:clamp(40px,5vw,60px);   /* база em для числа и % — число «плавает» в кольце с воздухом */
+  }
+  .num .big{
+    font-weight:800; font-size:1em; line-height:1;
+    letter-spacing:-.045em; color:var(--tx);
+    font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1;
+  }
+  .num .pct{
+    font-weight:600; font-size:.4em; color:var(--acc);
+    margin-left:.05em; letter-spacing:-.02em;
+  }
+
+  /* ── тихая копия под кольцом ─────────────────────────────────────────── */
+  .copy{
+    margin-top:clamp(44px,6vw,58px); text-align:center; max-width:22ch;
+    transition:opacity .36s ease, transform .36s cubic-bezier(.16,1,.3,1);
+    will-change:opacity,transform;
+  }
+  .copy.swap{ opacity:0; transform:translateY(8px); }
+  .copy h1{
+    font-weight:600; font-size:clamp(20px,2.2vw,28px); line-height:1.16;
+    letter-spacing:-.025em; color:var(--tx); text-wrap:balance;
+  }
+  .copy p{
+    margin-top:12px; font-weight:500; font-size:clamp(13.5px,1.35vw,16px);
+    line-height:1.5; letter-spacing:-.01em; color:var(--tx-soft);
+  }
+
+  /* финиш — копия мягко уходит в сапфир, затем весь экран растворяется */
+  .stage.done .num .big{ color:var(--acc-soft); transition:color .5s ease; }
+  .stage.exit{ animation:stageOut .55s cubic-bezier(.5,0,.75,0) both; }
+  @keyframes stageOut{
+    0%{ opacity:1; transform:translateY(-16px) scale(1); filter:blur(0); }
+    100%{ opacity:0; transform:translateY(-16px) scale(1.035); filter:blur(4px); }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .sky{ animation:none; }
+    .stage,.stage.exit{ animation:none; }
+    .copy{ transition:opacity .2s ease; }
+    .head-trail{ animation:none; }
+  }
+  /* ── Мягкая смена страниц: тихий кроссфейд (без «странного» блюра). Где
+     cross-document VT не поддержан — мгновенно, без регрессии. */
+  ::view-transition-old(root){ animation: vtFadeOut .26s ease both; }
+  ::view-transition-new(root){ animation: vtFadeIn .34s ease both; }
+  @keyframes vtFadeOut{ to{ opacity: 0; } }
+  @keyframes vtFadeIn { from{ opacity: 0; } }
   @media (prefers-reduced-motion: reduce) {
-    .ld-w i, .ld-line.leaving .ld-w i { animation: none; transform: none; opacity: 1; filter: none; }
-    .ld-wrap, .ld-wrap.exit { animation: none; }
+    ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   }
+  /* ── Переход между страницами — «перелистывание»: непрозрачная панель цвета
+     ночного неба проезжает поперёк экрана. Вперёд: заезжает справа, накрывает,
+     на новой странице уходит влево, открывая её. Назад — зеркально. Только
+     transform (GPU, iOS-safe), виден в ЛЮБОМ браузере. */
+  #pt{ position:fixed; inset:0; z-index:9998; pointer-events:none;
+    background: linear-gradient(115deg, #08153A 0%, #03081C 52%, #060F2A 100%);
+    transform: translateX(0); will-change: transform;
+    animation: ptEnter .56s cubic-bezier(.5,0,.15,1) both; }
+  @keyframes ptEnter{ from{ transform: translateX(0); } to{ transform: translateX(-100%); } }
+  @keyframes ptEnterBack{ from{ transform: translateX(0); } to{ transform: translateX(100%); } }
+  html.pt-back #pt{ animation-name: ptEnterBack; }
+  @media (prefers-reduced-motion: reduce){ #pt{ animation:none; transform:translateX(-100%); } }
 </style>
+
+<script>
+(function(){
+  try{ history.scrollRestoration='manual'; }catch(e){}
+  // направление перелистывания входящей страницы (назад — зеркально): класс ДО отрисовки #pt
+  try{ var _d = sessionStorage.getItem('es_ptdir'); if(_d){ sessionStorage.removeItem('es_ptdir'); if(_d==='back') document.documentElement.className += ' pt-back'; } }catch(e){}
+  var RM = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  window.esGo = function(url, replace, dir){
+    var go = function(){ replace ? location.replace(url) : (location.href = url); };
+    var pt = document.getElementById('pt');
+    if (RM || !pt){ go(); return; }
+    dir = dir === 'back' ? 'back' : 'fwd';
+    try{ sessionStorage.setItem('es_ptdir', dir); }catch(e){}
+    pt.style.animation = 'none';
+    pt.style.transition = 'none';
+    pt.style.transform = 'translateX(' + (dir === 'back' ? '-100%' : '100%') + ')';
+    void pt.offsetWidth;
+    pt.style.transition = 'transform .34s cubic-bezier(.5,0,.15,1)';
+    pt.style.transform = 'translateX(0)';
+    setTimeout(go, 320);
+  };
+  document.addEventListener('click', function(e){
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a || a.target === '_blank' || a.hasAttribute('download')) return;
+    var href = a.getAttribute('href') || '';
+    if (!href || href.charAt(0) === '#') return;
+    if (/^(https?:)?\/\//i.test(href) || /^(mailto:|tel:)/i.test(href)) return;
+    if (!/\.html(\?|#|$)/.test(href)) return;
+    e.preventDefault();
+    var back = /back/i.test(a.className || '') || a.hasAttribute('data-back');
+    window.esGo(href, false, back ? 'back' : 'fwd');
+  }, true);
+  addEventListener('pageshow', function(e){
+    try{ scrollTo(0,0); }catch(_){}
+    var pt = document.getElementById('pt');
+    if (pt && e.persisted){ pt.style.animation='none'; pt.style.transition='none'; pt.style.transform='translateX(-100%)'; }
+  });
+})();
+</script>
 </head>
 <body>
-<div class="ld-wrap" id="wrap">
-  <div class="ld-top"><span class="ld-top-k"><span class="ld-top-dot"></span> Генерация диагностики</span></div>
+<div id="pt" aria-hidden="true"></div>
+  <div class="sky"></div>
 
-  <p class="ld-line" id="line"></p>
+  <div class="stage" id="stage">
+    <div class="ring">
+      <svg viewBox="0 0 300 300" aria-hidden="true">
+        <defs>
+          <!-- мягкое свечение дуги -->
+          <filter id="arcGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.4" result="b" />
+            <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <!-- свечение головы -->
+          <filter id="headGlow" x="-200%" y="-200%" width="500%" height="500%">
+            <feGaussianBlur stdDeviation="3.6" result="hb" />
+            <feMerge><feMergeNode in="hb" /><feMergeNode in="hb" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+          <!-- градиент дуги: глубокий сапфир → светлый к голове -->
+          <linearGradient id="arcGrad" gradientUnits="userSpaceOnUse" x1="40" y1="260" x2="260" y2="40">
+            <stop offset="0"   stop-color="#1E72E6" />
+            <stop offset=".55" stop-color="#3F9BFF" />
+            <stop offset="1"   stop-color="#8FCBFF" />
+          </linearGradient>
+        </defs>
 
-  <div class="ld-count"><span id="num">0</span><span class="ld-pct">%</span></div>
+        <!-- база: почти невидимое кольцо -->
+        <circle cx="150" cy="150" r="128" fill="none"
+                stroke="rgba(124,164,255,.10)" stroke-width="3.4" />
 
-  <p class="ld-hint" id="hint">Собираю вашу диагностику и план — обычно меньше минуты</p>
-</div>
+        <!-- дуга прогресса (rotate -90 → старт сверху, идет по часовой) -->
+        <circle id="arc" cx="150" cy="150" r="128" fill="none"
+                stroke="url(#arcGrad)" stroke-width="3.4" stroke-linecap="round"
+                transform="rotate(-90 150 150)" filter="url(#arcGlow)"
+                stroke-dasharray="804.25" stroke-dashoffset="804.25" />
+
+        <!-- голова-комета: трейл из затухающих точек + яркое ядро. group вращается JS -->
+        <g id="head">
+          <circle cx="150" cy="22" r="1.3" fill="#9FCBFF" opacity=".22"
+                  transform="rotate(-9 150 150)" />
+          <circle cx="150" cy="22" r="1.9" fill="#BFE0FF" opacity=".5"
+                  transform="rotate(-5 150 150)" />
+          <circle cx="150" cy="22" r="7" fill="rgba(124,180,255,.3)" filter="url(#headGlow)" />
+          <circle cx="150" cy="22" r="3.4" fill="#EAF4FF" filter="url(#headGlow)" />
+        </g>
+      </svg>
+
+      <div class="num"><span class="val"><span class="big" id="num">0</span><span class="pct">%</span></span></div>
+    </div>
+
+    <div class="copy" id="copy">
+      <h1 id="title">Анализирую ваши данные</h1>
+      <p id="sub">Проверяю академический профиль и исходные параметры</p>
+    </div>
+  </div>
 
 <script>
 (function () {
   'use strict';
-  var phrases = [
-    'Читаю вашу анкету',
-    'Перевожу средний балл в китайскую шкалу',
-    'Сопоставляю профиль с требованиями вузов',
-    'Считаю реальные шансы по категориям',
-    'Подбираю вузы под ваш профиль',
-    'Проверяю, под какие гранты вы проходите',
-    'Считаю бюджет года — с грантом и без',
-    'Собираю план по шагам',
-    'Свожу все в одну честную картину',
+
+  // стадии анализа — заголовок + подзаголовок, сменяются по мере прогресса.
+  // голос на «вы», без буквы «ё», честно, без обещаний.
+  var STAGES = [
+    { t:'Анализирую ваши данные',  s:'Проверяю академический профиль и баллы' },
+    { t:'Подбираю вузы под вас',   s:'Сравниваю сотни программ под ваш профиль' },
+    { t:'Оцениваю шансы на грант', s:'Учитываю язык, оценки и сроки подачи' },
+    { t:'Считаю бюджет года',      s:'Сравниваю стоимость — с грантом и без' },
+    { t:'Собираю ваш план',        s:'Свожу разбор и маршрут в одну картину' }
   ];
-  var line = document.getElementById('line');
+
+  var R = 128, C = 2 * Math.PI * R;              // длина окружности
+  var arc   = document.getElementById('arc');
+  var head  = document.getElementById('head');
   var numEl = document.getElementById('num');
-  var wrap = document.getElementById('wrap');
+  var copy  = document.getElementById('copy');
+  var titleEl = document.getElementById('title');
+  var subEl   = document.getElementById('sub');
+  var stage = document.getElementById('stage');
 
-  function setLine(text) {
-    line.className = 'ld-line';
-    line.innerHTML = text.split(' ').map(function (w, i) {
-      return '<span class="ld-w"><i style="--i:' + i + '">' + w + '</i></span>';
-    }).join('');
-  }
-  function leaveLine(cb) { line.classList.add('leaving'); setTimeout(cb, 360); }
+  arc.setAttribute('stroke-dasharray', C.toFixed(2));
 
+  // прогресс/число/дуга/голова — всё из одного значения disp, поэтому дуга всегда
+  // ровно равна числу.
   var start = performance.now();
-  var DUR = 7000;
-  var curPhrase = -1, finishing = false;
-  var disp = 0;                 // плавно догоняет target (монотонно вверх)
+  var DUR = 8200;
+  var disp = 0, curStage = -1, finishing = false;
 
-  function ease(p) { return 1 - Math.pow(1 - p, 2.4); }
+  function ease(p){ return 1 - Math.pow(1 - p, 2.6); }   // ease-out, замедляется к концу
 
-  function frame(now) {
+  function render(v){
+    var p = v / 100;
+    numEl.textContent = Math.round(v);
+    arc.setAttribute('stroke-dashoffset', (C * (1 - p)).toFixed(2));
+    head.setAttribute('transform', 'rotate(' + (p * 360).toFixed(2) + ' 150 150)');
+  }
+
+  function swapCopy(i){
+    var st = STAGES[i];
+    copy.classList.add('swap');
+    setTimeout(function(){
+      titleEl.textContent = st.t;
+      subEl.textContent   = st.s;
+      copy.classList.remove('swap');
+    }, 360);
+  }
+
+  function frame(now){
     var p = Math.min(1, (now - start) / DUR);
-    var target = Math.round(ease(p) * 99);
-    disp += (target - disp) * 0.2;
-    if (target - disp < 0.5) disp = target;
-    numEl.textContent = Math.round(disp);
+    var target = ease(p) * 99;
+    disp += (target - disp) * 0.16;
+    if (target - disp < 0.4) disp = target;
+    render(disp);
 
-    var want = Math.min(phrases.length - 1, Math.floor(p * phrases.length));
-    if (!finishing && want !== curPhrase) {
-      var first = curPhrase < 0; curPhrase = want;
-      if (first) setLine(phrases[want]);
-      else leaveLine(function () { setLine(phrases[curPhrase]); });
+    var want = Math.min(STAGES.length - 1, Math.floor(p * STAGES.length));
+    if (!finishing && want !== curStage){
+      if (curStage < 0){ titleEl.textContent = STAGES[want].t; subEl.textContent = STAGES[want].s; }
+      else swapCopy(want);
+      curStage = want;
     }
 
-    // время вышло → завершаем (раньше цикл застревал на 99, т.к. target капался на 99)
-    if (p < 1) { requestAnimationFrame(frame); return; }
-    if (!finishing) {
+    if (p < 1){ requestAnimationFrame(frame); return; }
+
+    if (!finishing){
       finishing = true;
-      leaveLine(function () {
-        setLine('Готово');
-        var i = 0;
-        (function settle() {            // докрутить до 100
-          disp += (100 - disp) * 0.3;
-          numEl.textContent = Math.round(disp);
-          if (100 - disp > 0.5 && i++ < 40) requestAnimationFrame(settle);
-          else { numEl.textContent = 100; finish(); }
-        })();
-      });
+      // довести до 100 и завершить
+      swapCopy2('Готово', 'Открываю ваш разбор');
+      var i = 0;
+      (function settle(){
+        disp += (100 - disp) * 0.28;
+        render(disp);
+        if (100 - disp > 0.4 && i++ < 50) requestAnimationFrame(settle);
+        else { render(100); finish(); }
+      })();
     }
   }
-  function finish() {
-    wrap.classList.add('done');
-    document.getElementById('hint').style.opacity = 0;
-    setTimeout(function () { wrap.classList.add('exit'); }, 900);
-    // replace (не href): экран загрузки НЕ остается в истории — стрелка «назад»
-    // браузера с диагностики/маршрута не возвращает на пересчет загрузки
-    setTimeout(function () { window.location.replace('diagnostic-dark.html'); }, 1350);
+
+  // отдельный swap без индекса — для финального «Готово»
+  function swapCopy2(t, s){
+    copy.classList.add('swap');
+    setTimeout(function(){ titleEl.textContent = t; subEl.textContent = s; copy.classList.remove('swap'); }, 360);
   }
+
+  function finish(){
+    stage.classList.add('done');
+    setTimeout(function(){ stage.classList.add('exit'); }, 850);
+    // replace (не href): экран расчета НЕ остается в истории — «назад» с диагностики
+    // не возвращает на пересчет.
+    setTimeout(function(){ window.location.replace('diagnostic-dark.html'); }, 1320);
+  }
+
   requestAnimationFrame(frame);
 })();
 </script>

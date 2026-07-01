@@ -254,37 +254,39 @@
   // не «солнце». Стили инъектируются один раз; контракт пропсов 1:1 — чат везде один.
   const ASSIST_CSS = `
 .esa-scope{
-  --esa-ink:#15203B; --esa-ink-soft:rgba(21,32,59,.64); --esa-ink-mute:rgba(21,32,59,.45);
-  --esa-line:rgba(21,32,59,.08); --esa-line-2:rgba(21,32,59,.13);
-  --esa-accent:#2073E6; --esa-accent-hi:#2B8FFF; --esa-accent-ink:#1763C8; --esa-accent-soft:rgba(43,143,255,.10);
+  --esa-ink:#EAF0FF; --esa-ink-soft:rgba(234,240,255,.74); --esa-ink-mute:rgba(184,198,236,.56);
+  --esa-line:rgba(255,255,255,.08); --esa-line-2:rgba(255,255,255,.14);
+  --esa-accent:#2073E6; --esa-accent-hi:#2B8FFF; --esa-accent-ink:#A9CCFF; --esa-accent-soft:rgba(43,143,255,.16);
   --esa-ease:cubic-bezier(.23,1,.32,1);
 }
 /* затемнение + чистый ровный блюр (без saturate, чтобы фон не «горел») */
 .esa-backdrop{ position:fixed; inset:0; z-index:var(--z-modal); display:grid; place-items:center; padding:var(--sp-6);
-  background:rgba(10,15,32,.32);
-  backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
-  animation:esa-fade .2s ease both; }
+  background:rgba(4,8,22,.52);
+  backdrop-filter:blur(26px); -webkit-backdrop-filter:blur(26px);
+  animation:esa-fade .42s ease both, esa-bd-frost .36s ease .24s both; }  /* фон затемняется сразу, блюр набегает позже — реавл виден чётко */
 /* центрированная панель — плотное морозное стекло, ОДНА общая граница */
 .esa-panel{ position:relative; width:min(720px, 100%); height:min(720px, calc(100vh - 2*var(--sp-6)));
   display:flex; flex-direction:column; overflow:hidden; border-radius:28px;
   font-family:var(--font-text); color:var(--esa-ink);
-  background:linear-gradient(180deg, rgba(255,255,255,.975), rgba(248,250,254,.95));
-  backdrop-filter:blur(44px) saturate(180%); -webkit-backdrop-filter:blur(44px) saturate(180%);
-  border:1px solid rgba(21,32,59,.10);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.9); /* стеклянный кант грани, не тень */
-  animation:esa-rise .26s var(--esa-ease) both; }
+  background:rgba(15,20,39,.66);
+  backdrop-filter:blur(50px) saturate(155%); -webkit-backdrop-filter:blur(50px) saturate(155%);
+  border:1px solid rgba(130,165,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09); /* только тонкий стеклянный кант — без градиентов и свечений, чистое морозное стекло */
+  transform-origin:50% 100%;  /* растём от нижнего центра — из кнопки-вызова */
+  animation:esa-emerge .55s cubic-bezier(.42,.52,.4,1) both,
+            esa-frost .34s ease .42s both; }  /* СНАЧАЛА чётко раскрывается из кнопки (плотная панель), ПОТОМ застекляется блюром */
 /* шапка — без делителя, отделяется воздухом (одна общая граница у панели) */
 .esa-head{ display:flex; align-items:center; gap:var(--sp-3); padding:18px 20px 12px; }
 .esa-ava{ flex:none; width:40px; height:40px; border-radius:13px; display:grid; place-items:center; color:#fff;
-  background:linear-gradient(155deg, var(--esa-accent-hi), var(--esa-accent));
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.45); }
+  background:var(--esa-accent);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.28), inset 0 0 16px rgba(160,205,255,.45); }
 .esa-h-name{ font-family:var(--font-display); font-weight:600; font-size:15px; letter-spacing:-.01em; line-height:1.2; color:var(--esa-ink); }
 .esa-h-status{ display:flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; color:var(--esa-ink-mute); }
 .esa-live{ flex:none; width:6px; height:6px; border-radius:50%; background:var(--esa-accent-hi); }
 .esa-close{ flex:none; margin-left:auto; width:32px; height:32px; border-radius:10px; display:grid; place-items:center;
   color:var(--esa-ink-mute); background:transparent; border:0; cursor:pointer;
   transition:transform .15s var(--esa-ease), background .15s, color .15s; }
-.esa-close:hover{ background:rgba(21,32,59,.06); color:var(--esa-ink); }
+.esa-close:hover{ background:rgba(255,255,255,.08); color:var(--esa-ink); }
 .esa-close:active{ transform:scale(.92); }
 /* чип контекста этапа */
 .esa-ctx{ align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin:14px 18px 0;
@@ -292,17 +294,17 @@
   background:var(--esa-accent-soft); border:1px solid rgba(43,143,255,.18); }
 /* лента сообщений */
 .esa-feed{ flex:1; min-height:0; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:10px;
-  scrollbar-width:thin; scrollbar-color:rgba(21,32,59,.18) transparent; }
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.20) transparent; }
 .esa-feed::-webkit-scrollbar{ width:9px; }
-.esa-feed::-webkit-scrollbar-thumb{ background:rgba(21,32,59,.16); border-radius:99px; border:3px solid transparent; background-clip:content-box; }
+.esa-feed::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.16); border-radius:99px; border:3px solid transparent; background-clip:content-box; }
 .esa-feed::-webkit-scrollbar-track{ background:transparent; }
 .esa-row{ display:flex; animation:esa-pop .22s var(--esa-ease) both; }
 .esa-row.is-ai{ justify-content:flex-start; }
 .esa-row.is-me{ justify-content:flex-end; }
 .esa-bub{ max-width:min(82%, 560px); padding:11px 15px; font-size:15px; line-height:1.55; letter-spacing:-.003em; border-radius:18px; }
-.esa-bub.is-ai{ background:#EFF2FA; color:#15203B; border-top-left-radius:7px; }
-.esa-bub.is-me{ background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent)); color:#fff; border-top-right-radius:7px; }
-.esa-bub.is-soft{ background:#F2F5FB; color:var(--esa-ink-soft); }
+.esa-bub.is-ai{ background:rgba(54,110,214,.15); border:1px solid rgba(128,168,255,.20); color:#EEF3FF; border-top-left-radius:7px; box-shadow:inset 0 1px 0 rgba(255,255,255,.07); }
+.esa-bub.is-me{ background:var(--esa-accent); color:#fff; border-top-right-radius:7px; box-shadow:inset 0 1px 0 rgba(255,255,255,.24); }
+.esa-bub.is-soft{ background:rgba(54,110,214,.08); color:var(--esa-ink-soft); }
 /* typing «печатает» */
 .esa-bub.esa-typing{ display:inline-flex; align-items:center; gap:5px; padding:13px 15px; }
 .esa-typing i{ width:6px; height:6px; border-radius:50%; background:var(--esa-ink-mute); opacity:.4;
@@ -311,30 +313,32 @@
 /* чипы-стартеры */
 .esa-chips{ display:flex; flex-wrap:wrap; gap:8px; padding:0 20px 14px; }
 .esa-chip{ font-family:var(--font-text); font-size:13px; font-weight:500; color:var(--esa-accent-ink);
-  padding:8px 14px; border-radius:999px; background:rgba(43,143,255,.09); border:0; cursor:pointer;
+  padding:8px 14px; border-radius:999px; background:rgba(43,143,255,.14); border:1px solid rgba(120,160,255,.18); cursor:pointer;
   transition:transform .15s var(--esa-ease), background .15s; }
-.esa-chip:hover{ background:rgba(43,143,255,.16); }
+.esa-chip:hover{ background:rgba(43,143,255,.22); }
 .esa-chip:active{ transform:scale(.97); }
 /* композер: поле сверху, действия снизу. БЕЗ своей рамки и фокус-кольца —
    одна общая граница у панели; на фокусе меняется только мягкий фон поля. */
 .esa-compose{ padding:4px 16px 16px; }
-.esa-composer{ border-radius:16px; background:rgba(21,32,59,.04); padding:12px 12px 10px; transition:background .15s; }
-.esa-composer:focus-within{ background:rgba(21,32,59,.055); }
+.esa-composer{ border-radius:16px; background:rgba(255,255,255,.05); border:0; padding:13px 12px 11px; transition:background .15s; }
+.esa-composer:focus-within{ background:rgba(255,255,255,.075); }
 .esa-input{ display:block; width:100%; min-height:24px; max-height:160px; resize:none; overflow-y:auto;
   background:transparent; border:0; outline:0; color:var(--esa-ink);
   font-family:var(--font-text); font-size:15px; line-height:1.5; padding:2px 6px; }
 .esa-input::placeholder{ color:var(--esa-ink-mute); }
+/* глушим глобальное синее фокус-кольцо (styles.css textarea:focus-visible) — поле чистое, без обводки */
+.esa-scope .esa-input:focus, .esa-scope .esa-input:focus-visible{ outline:none; box-shadow:none; border:0; }
 .esa-input::-webkit-scrollbar{ width:8px; }
-.esa-input::-webkit-scrollbar-thumb{ background:rgba(21,32,59,.14); border-radius:99px; border:2px solid transparent; background-clip:content-box; }
+.esa-input::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:99px; border:2px solid transparent; background-clip:content-box; }
 .esa-bar{ display:flex; align-items:center; gap:4px; margin-top:8px; }
 .esa-tool{ flex:none; width:34px; height:34px; border-radius:10px; display:grid; place-items:center;
   color:var(--esa-ink-mute); background:transparent; border:0; cursor:pointer;
   transition:transform .15s var(--esa-ease), background .15s, color .15s; }
-.esa-tool:hover{ background:rgba(21,32,59,.07); color:var(--esa-ink); }
+.esa-tool:hover{ background:rgba(255,255,255,.08); color:var(--esa-ink); }
 .esa-tool:active{ transform:scale(.92); }
 .esa-send{ flex:none; margin-left:auto; height:38px; padding:0 17px; border-radius:11px; display:inline-flex; align-items:center; gap:7px;
   color:#fff; border:0; cursor:pointer; font-family:var(--font-text); font-weight:600; font-size:13.5px; letter-spacing:-.005em;
-  background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent));
+  background:var(--esa-accent);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.30);
   transition:transform .15s var(--esa-ease), filter .15s, opacity .15s; }
 .esa-send:hover{ filter:brightness(1.06); }
@@ -344,7 +348,7 @@
 .esa-fab{ position:fixed; right:var(--sp-6); bottom:var(--sp-6); z-index:var(--z-sticky);
   display:inline-flex; align-items:center; gap:9px; padding:10px 16px 10px 11px; border-radius:999px; border:0; cursor:pointer; color:#fff;
   font-family:var(--font-text); font-weight:600; font-size:14px; letter-spacing:-.005em;
-  background:linear-gradient(160deg, var(--esa-accent-hi), var(--esa-accent));
+  background:var(--esa-accent);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.28);
   transition:transform .18s cubic-bezier(.23,1,.32,1), filter .18s; }
 .esa-fab:hover{ transform:translateY(-1px); filter:brightness(1.05); }
@@ -359,6 +363,20 @@
 @media (max-width:380px){ .esa-fab__label{ display:none; } .esa-fab{ padding:11px; } }
 @keyframes esa-fade{ from{ opacity:0; } to{ opacity:1; } }
 @keyframes esa-rise{ from{ opacity:0; transform:translateY(10px) scale(.98); } to{ opacity:1; transform:none; } }
+/* «вырастает из кнопки»: origin — нижний центр (там кнопка-вызов); из маленькой пилюли
+   раскрывается в полную панель. Круглый радиус на малом масштабе читается как сама кнопка. */
+@keyframes esa-emerge{
+  0%{ opacity:0; transform:translateY(72px) scale(.16); }
+  28%{ opacity:1; }
+  100%{ opacity:1; transform:translateY(0) scale(1); } }
+/* панель застекляется ПОСЛЕ раскрытия: плотная и чёткая → морозное стекло */
+@keyframes esa-frost{
+  from{ background:rgba(13,17,34,.95); backdrop-filter:blur(0) saturate(100%); -webkit-backdrop-filter:blur(0) saturate(100%); }
+  to{ background:rgba(15,20,39,.66); backdrop-filter:blur(50px) saturate(155%); -webkit-backdrop-filter:blur(50px) saturate(155%); } }
+/* фон-подложка сначала чёткая, потом размывается */
+@keyframes esa-bd-frost{
+  from{ backdrop-filter:blur(0); -webkit-backdrop-filter:blur(0); }
+  to{ backdrop-filter:blur(26px); -webkit-backdrop-filter:blur(26px); } }
 @keyframes esa-pop{ from{ opacity:0; transform:translateY(5px); } to{ opacity:1; transform:none; } }
 @keyframes esa-blink{ 0%,80%,100%{ opacity:.35; transform:translateY(0); } 40%{ opacity:1; transform:translateY(-2px); } }
 @media (prefers-reduced-motion: reduce){

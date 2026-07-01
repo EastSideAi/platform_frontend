@@ -54,6 +54,10 @@
   const VolIc = (s) => svg(s, [P('M11 5 6 9H3v6h3l5 4z', 'a'), P('M15.5 8.5a5 5 0 0 1 0 7', 'b'), P('M18 6a8 8 0 0 1 0 12', 'c')]);
   const VolXIc = (s) => svg(s, [P('M11 5 6 9H3v6h3l5 4z', 'a'), P('M16 9.5l5 5M21 9.5l-5 5', 'b')]);
   const FsIc = (s) => svg(s, [P('M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3', 'a')]);
+  const Seek10Ic = (s, back) => h('svg', { width: s, height: s, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': true },
+    h('path', { d: back ? 'M4 7a9 9 0 1 1-2.3 8.8' : 'M20 7a9 9 0 1 0 2.3 8.8', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round' }),
+    h('path', { d: back ? 'M7 4.5 4 7l3 2.5' : 'M17 4.5 20 7l-3 2.5', fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round' }),
+    h('text', { x: 12, y: 15.5, textAnchor: 'middle', fontSize: 7.5, fontWeight: 700, fill: 'currentColor', stroke: 'none', fontFamily: 'inherit' }, '10'));
 
   /* Контур тона (SVG) и озвучка (Web Speech API, zh-CN) — для конструктора */
   const ToneContour = (d) => h('svg', { viewBox: '0 0 60 30', width: 34, height: 18, 'aria-hidden': true }, h('path', { d, stroke: 'currentColor', strokeWidth: 3.4, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }));
@@ -69,6 +73,8 @@
   ];
   const DOC_BLOCK_KINDS = [
     { kind: 'word', label: 'Новое слово', icon: (s) => svg(s, [P('M4 5h16M5 5l1.2 14a1 1 0 0 0 1 .9h9.6a1 1 0 0 0 1-.9L19 5', 'a')]) },
+    { kind: 'example', label: 'Пример', icon: (s) => svg(s, [P('M4 6h16M4 11h11M4 16h7', 'a'), P('M17 14l2.5 2.5L17 19', 'b')]) },
+    { kind: 'spoiler', label: 'Спойлер', icon: (s) => svg(s, [P('M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z', 'a'), h('circle', { key: 'c', cx: 12, cy: 12, r: 3 })]) },
     { kind: 'image', label: 'Изображение', icon: ImgIc },
     { kind: 'audio', label: 'Аудио', icon: AudioIc },
     { kind: 'material', label: 'Материал', icon: (s) => svg(s, [P('M13 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z', 'a'), P('M13 3v5h6', 'b')]) },
@@ -101,6 +107,10 @@
       radial-gradient(560px 460px at -3% 0%, rgba(120,170,255,.09) 0%, transparent 62%),
       linear-gradient(180deg,#F4F6FD 0%,#FAFBFF 58%,#F4F6FD 100%);}
   .lb-app *{box-sizing:border-box;}
+  /* гасим глобальный сапфировый focus-glow (--sh-focus) на инлайн-полях документа:
+     наш фокус — нейтральный (подсветка/обводка чернилом), синего свечения нет */
+  .lb-app input:focus, .lb-app input:focus-visible,
+  .lb-app [contenteditable]:focus, .lb-app [contenteditable]:focus-visible{box-shadow:none;outline:none;}
   .lb-app ::selection{background:#15203B;color:#fff;}
   .lb-app ::-moz-selection{background:#15203B;color:#fff;}
   .lb-num{font-variant-numeric:tabular-nums;}
@@ -142,38 +152,50 @@
   .lb-pane{height:100%;overflow-y:auto;padding:24px 24px 56px;position:relative;}
   .lb-pane::-webkit-scrollbar{width:8px;} .lb-pane::-webkit-scrollbar-thumb{background:rgba(22,32,59,.13);border-radius:99px;}
   .lb-pane--rail{border-right:1px solid var(--lb-line);background:rgba(247,249,253,.5);}
-  .lb-pane--prev{border-left:1px solid var(--lb-line);background:linear-gradient(180deg,rgba(236,240,251,.42),rgba(244,247,255,.26));
-    display:flex;flex-direction:column;align-items:center;}
+  /* Правая колонка превью НЕ скроллится сама — высота мокапа подгоняется под
+     доступное место, и скроллится только «экран» внутри него (.lb-phone__body),
+     как у настоящего телефона. Раньше при длинном уроке скроллилась вся
+     панель целиком, что выглядело как баг. */
+  .lb-pane--prev{overflow:hidden;border-left:1px solid var(--lb-line);background:linear-gradient(180deg,rgba(236,240,251,.42),rgba(244,247,255,.26));
+    display:flex;flex-direction:column;align-items:center;padding:22px 24px 18px;}
   .lb-pane--center{padding:0 14px 130px;}
   .lb-canvas{max-width:920px;margin:0 auto;position:relative;}
 
   /* ── ЛЕВЫЙ RAIL: структура урока ────────────────────────────────────────── */
   .lb-rail__h{font-family:var(--lb-display);font-size:14px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;margin:0 2px 4px;}
-  .lb-grp{margin-top:22px;}
-  .lb-grp__t{font-family:var(--lb-display);font-size:13px;font-weight:600;letter-spacing:-.012em;color:var(--lb-ink);margin:0 2px 9px;}
+  .lb-grp{margin-top:26px;display:flex;flex-direction:column;gap:9px;}
+  .lb-grp__t{font-family:var(--lb-display);font-size:13px;font-weight:600;letter-spacing:-.012em;color:var(--lb-ink);margin:0 2px;}
   .lb-rlink{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;font-family:inherit;
-    padding:10px 12px;border-radius:12px;background:transparent;border:1.5px solid transparent;color:var(--lb-ink);transition:background .15s,border-color .15s,transform .15s;}
-  .lb-rlink:hover{background:rgba(255,255,255,.7);border-color:var(--lb-line);}
+    padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid var(--lb-line);color:var(--lb-ink);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.65);transition:background .15s,border-color .15s,box-shadow .15s,transform .15s;}
+  .lb-rlink:hover{background:rgba(255,255,255,.8);border-color:var(--lb-line-strong);transform:translateY(-1px);}
   .lb-rlink.is-sel{background:linear-gradient(150deg,rgba(255,255,255,.95),rgba(238,244,255,.82));border-color:var(--lb-acc-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 22px rgba(43,143,255,.08);}
   .lb-rlink__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
   .lb-rlink.is-sel .lb-rlink__ic{color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
   .lb-rlink__b{flex:1 1 auto;min-width:0;}
   .lb-rlink__t{font-size:13px;font-weight:600;color:var(--lb-ink);letter-spacing:-.1px;}
   .lb-rlink__s{font-size:11.5px;color:var(--lb-ink-mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .lb-rail__add{margin-top:11px;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
+  .lb-rail__add{margin-top:0;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
     color:var(--lb-ink-sub);padding:11px;border-radius:12px;background:rgba(22,32,59,.03);border:1.5px dashed var(--lb-line-strong);transition:background .15s,color .15s,border-color .15s;}
   .lb-rail__add:hover{background:rgba(22,32,59,.05);color:var(--lb-ink);border-color:var(--lb-ink-faint);}
+  /* пустой список заданий — тихая дашед-заглушка, а не голая строка текста */
+  .lb-rail-empty{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;padding:18px 12px;border-radius:13px;
+    background:rgba(255,255,255,.4);border:1.5px dashed var(--lb-line);}
+  .lb-rail-empty__ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;color:var(--lb-ink-faint);background:rgba(22,32,59,.04);}
+  .lb-rail-empty span:last-child{font-size:12px;font-weight:500;color:var(--lb-ink-mute);}
 
   /* ── ЦЕНТР: табы — плавающий стеклянный сегмент-контрол по центру холста ──── */
   .lb-tabs{position:sticky;top:12px;z-index:34;display:flex;justify-content:center;padding:4px 0 26px;pointer-events:none;}
   .lb-tabseg{pointer-events:auto;display:inline-flex;align-items:center;gap:4px;padding:5px;border-radius:16px;
-    background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(22px) saturate(1.5);backdrop-filter:blur(22px) saturate(1.5);
-    border:1px solid rgba(255,255,255,.85);box-shadow:0 14px 36px -16px rgba(18,28,58,.34),0 1px 0 rgba(22,32,59,.04),inset 0 1px 0 rgba(255,255,255,.9);}
-  .lb-tab{position:relative;display:inline-flex;align-items:center;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-mute);background:0;border:0;cursor:pointer;padding:8px 17px;border-radius:12px;transition:color .18s var(--lb-ease,ease),background .18s;}
+    background:rgba(255,255,255,.46);-webkit-backdrop-filter:blur(28px) saturate(1.7);backdrop-filter:blur(28px) saturate(1.7);
+    border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.85);}
+  .lb-tab{position:relative;display:inline-flex;align-items:center;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-sub);background:0;border:0;cursor:pointer;padding:9px 18px;border-radius:12px;transition:color .18s var(--lb-ease,ease),background .18s,box-shadow .18s;}
   .lb-tab:hover{color:var(--lb-ink);}
-  .lb-tab.is-on{color:var(--lb-ink);background:#fff;box-shadow:0 3px 10px -3px rgba(18,28,58,.2),0 0 0 1px rgba(22,32,59,.05),inset 0 1px 0 #fff;}
+  /* активный таб — сочный сапфировый градиент (цвет в верхнем меню) */
+  .lb-tab.is-on{color:#fff;background:linear-gradient(135deg,#2B8FFF,#1E63C2);
+    box-shadow:0 8px 18px -7px rgba(32,115,230,.6),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-tab__c{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;margin-left:8px;border-radius:99px;background:rgba(22,32,59,.07);font-size:10.5px;font-weight:700;color:var(--lb-ink-sub);font-variant-numeric:tabular-nums;transition:background .18s,color .18s;}
-  .lb-tab.is-on .lb-tab__c{background:var(--lb-acc-deep);color:#fff;}
+  .lb-tab.is-on .lb-tab__c{background:rgba(255,255,255,.28);color:#fff;}
 
   /* ── вкладка ТЕОРИЯ: свойства урока + документ ─────────────────────────── */
   .lb-doc{position:relative;padding:34px 0 0 72px;}
@@ -196,12 +218,12 @@
   .lb-card__s{margin-left:auto;font-size:12px;font-weight:500;color:var(--lb-ink-mute);}
   .lb-vempty{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
   .lb-vempty .lb-in{flex:1 1 220px;min-width:180px;}
-  .lb-sect{margin-top:26px;}
+  .lb-sect{margin-top:42px;}
   .lb-flow__pad{min-height:240px;margin-top:4px;border-radius:10px;cursor:text;display:flex;align-items:flex-start;}
   .lb-flow__pad__hint{font-size:14px;color:var(--lb-ink-faint);opacity:0;padding:10px 6px;transition:opacity .15s;}
   .lb-flow__pad:hover .lb-flow__pad__hint{opacity:.85;}
-  .lb-aud__up{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-acc-deep);padding:7px 11px;border-radius:9px;background:var(--lb-acc-soft);border:0;transition:background .14s;}
-  .lb-aud__up:hover{background:rgba(43,143,255,.16);}
+  .lb-aud__up{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-ink-sub);padding:7px 12px;border-radius:9px;background:rgba(22,32,59,.05);border:0;transition:background .14s,color .14s;}
+  .lb-aud__up:hover{background:rgba(22,32,59,.09);color:var(--lb-ink);}
   /* модальное окно добавления задания (практика) — центрированное, надёжно кликабельное */
   .lb-overlay{position:fixed;inset:0;z-index:70;display:grid;place-items:center;padding:24px;background:rgba(8,14,32,.34);backdrop-filter:blur(4px);animation:lb-fade .15s ease;}
   .lb-modal{width:100%;max-width:460px;max-height:calc(100dvh - 48px);overflow-y:auto;background:#fff;border-radius:18px;border:1px solid var(--lb-line);box-shadow:0 30px 70px -24px rgba(8,16,44,.45),inset 0 1px 0 rgba(255,255,255,.9);padding:18px;animation:lb-pop .18s cubic-bezier(.23,1,.32,1);}
@@ -229,10 +251,10 @@
 
   /* видео — отдельный плеер на всю ширину конспекта */
   .lb-video{position:relative;display:flex;flex-direction:column;gap:12px;padding:0;}
-  .lb-video__player{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden;background:#0A1430;
+  .lb-video__player{position:relative;aspect-ratio:16/9;width:100%;border-radius:14px;overflow:hidden;background:#0A0A0C;
     border:1px solid var(--lb-line);box-shadow:0 14px 34px -20px rgba(8,16,44,.5),inset 0 0 0 1px rgba(255,255,255,.04);}
   .lb-video__player iframe,.lb-video__player video{width:100%;height:100%;border:0;display:block;}
-  .lb-video__thumb{display:grid;place-items:center;width:100%;height:100%;color:#fff;background:linear-gradient(150deg,#0A1126,#0C1A3C);}
+  .lb-video__thumb{display:grid;place-items:center;width:100%;height:100%;color:#fff;background:linear-gradient(150deg,#161618,#0A0A0C);}
   .lb-video__bar{display:flex;align-items:center;gap:12px;}
   .lb-video__b{flex:1 1 auto;min-width:0;}
   .lb-video__t{font-family:inherit;font-size:15px;font-weight:600;color:var(--lb-ink);background:transparent;border:0;outline:0;width:100%;padding:0;}
@@ -248,26 +270,40 @@
   .lb-vdrop__s{font-size:12.5px;color:var(--lb-ink-mute);line-height:1.5;max-width:300px;}
   .lb-vdrop__or{display:flex;align-items:center;gap:12px;width:100%;color:var(--lb-ink-faint);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
   .lb-vdrop__or::before,.lb-vdrop__or::after{content:'';flex:1;height:1px;background:var(--lb-line);}
-  /* кастомный видеоплеер (загруженный файл) — сапфировые контролы, своя перемотка и тайминги */
-  .lb-vp{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#070E22;border:1px solid var(--lb-line);
+  /* кастомный видеоплеер (загруженный файл) — жидкое стекло, Apple TV/iOS
+     референс: трио круглых frosted-кнопок (±10с + play/pause), нижняя
+     стеклянная панель со скрабером. Тот же рецепт, что у .le-gv в учебном
+     модуле — конструктор и урок ученика должны выглядеть одной семьёй. */
+  .lb-vp{position:relative;width:100%;aspect-ratio:16/9;border-radius:14px;overflow:hidden;background:#08080A;border:1px solid var(--lb-line);
     box-shadow:0 14px 34px -20px rgba(8,16,44,.55),inset 0 0 0 1px rgba(255,255,255,.04);cursor:pointer;}
-  .lb-vp video{width:100%;height:100%;object-fit:contain;display:block;background:#070E22;}
-  .lb-vp__big{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none;transition:opacity .25s;}
-  .lb-vp.is-playing .lb-vp__big{opacity:0;}
-  .lb-vp__bigbtn{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;color:#fff;background:rgba(34,115,230,.92);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 12px 30px -8px rgba(32,115,230,.6);}
-  .lb-vp__bar{position:absolute;left:0;right:0;bottom:0;padding:8px 12px 11px;display:flex;flex-direction:column;gap:8px;
-    background:linear-gradient(180deg,transparent,rgba(3,8,20,.55) 42%,rgba(3,8,20,.85));opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none;}
+  .lb-vp video{width:100%;height:100%;object-fit:contain;display:block;background:#08080A;}
+  .lb-vp__trio{position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;gap:22px;
+    opacity:0;transition:opacity .28s cubic-bezier(.23,1,.32,1);pointer-events:none;}
+  .lb-vp.is-shown .lb-vp__trio{opacity:1;pointer-events:auto;}
+  .lb-vp__glass{display:grid;place-items:center;cursor:pointer;color:#fff;border-radius:50%;
+    background:rgba(8,9,14,.42);-webkit-backdrop-filter:blur(18px) saturate(1.5);backdrop-filter:blur(18px) saturate(1.5);
+    border:1.5px solid rgba(255,255,255,.55);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 10px 26px -12px rgba(0,0,0,.55);
+    transition:transform .14s cubic-bezier(.23,1,.32,1),background .15s;}
+  .lb-vp__glass:hover{background:rgba(8,9,14,.58);}
+  .lb-vp__glass:active{transform:scale(.92);}
+  .lb-vp__glass--side{width:40px;height:40px;}
+  .lb-vp__glass--main{width:60px;height:60px;}
+  .lb-vp__glass--main svg{margin-left:2px;}
+  .lb-vp.is-playing .lb-vp__glass--main svg{margin-left:0;}
+  .lb-vp__bar{position:absolute;left:10px;right:10px;bottom:10px;z-index:2;display:flex;align-items:center;gap:10px;height:38px;padding:0 12px;border-radius:12px;
+    background:rgba(16,22,40,.42);-webkit-backdrop-filter:blur(22px) saturate(1.7);backdrop-filter:blur(22px) saturate(1.7);
+    border:1px solid rgba(255,255,255,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 10px 24px -16px rgba(2,8,28,.55);
+    opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none;}
   .lb-vp.is-shown .lb-vp__bar{opacity:1;transform:none;pointer-events:auto;}
-  .lb-vp__seek{-webkit-appearance:none;appearance:none;width:100%;height:5px;border-radius:99px;cursor:pointer;margin:0;display:block;background:rgba(255,255,255,.22);}
-  .lb-vp__seek::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 4px rgba(43,143,255,.4),0 2px 6px rgba(0,0,0,.45);}
-  .lb-vp__seek::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#fff;border:0;box-shadow:0 0 0 4px rgba(43,143,255,.4);}
-  .lb-vp__seek::-moz-range-track{background:transparent;}
-  .lb-vp__row{display:flex;align-items:center;gap:9px;color:#fff;}
-  .lb-vp__b{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;cursor:pointer;color:#fff;background:transparent;border:0;transition:background .14s,transform .12s;}
-  .lb-vp__b:hover{background:rgba(255,255,255,.16);} .lb-vp__b:active{transform:scale(.94);}
-  .lb-vp__time{font-size:12px;font-weight:600;color:rgba(255,255,255,.92);letter-spacing:.01em;}
-  .lb-vp__sep{opacity:.45;margin:0 3px;} .lb-vp__sp{flex:1 1 auto;}
+  .lb-vp__track{position:relative;flex:1 1 auto;height:16px;display:flex;align-items:center;cursor:pointer;}
+  .lb-vp__track::before{content:'';position:absolute;left:0;right:0;top:50%;height:4px;border-radius:99px;background:rgba(255,255,255,.22);transform:translateY(-50%);}
+  .lb-vp__fill{position:absolute;left:0;top:50%;height:4px;border-radius:99px;background:#fff;transform:translateY(-50%);pointer-events:none;}
+  .lb-vp__dot{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.4);transform:translate(-50%,-50%);pointer-events:none;}
+  .lb-vp__ic{flex:0 0 auto;width:24px;height:24px;display:grid;place-items:center;color:rgba(255,255,255,.86);background:0;border:0;cursor:pointer;border-radius:7px;transition:color .14s,background .14s;}
+  .lb-vp__ic:hover{color:#fff;background:rgba(255,255,255,.12);}
+  .lb-vp__time{flex:0 0 auto;font-size:11px;font-weight:600;color:rgba(255,255,255,.92);letter-spacing:.01em;font-variant-numeric:tabular-nums;}
+  .lb-vp__time--mute{color:rgba(255,255,255,.55);}
 
   /* материалы — вложения в строку (Gmail-style) */
   .lb-mats{display:flex;flex-wrap:wrap;gap:8px;padding:4px 2px;}
@@ -281,17 +317,11 @@
   .lb-flow{margin-top:2px;position:relative;}
   .lb-flow__h{font-family:var(--lb-display);font-size:12px;font-weight:700;color:var(--lb-ink-mute);letter-spacing:.08em;text-transform:uppercase;margin:0 0 16px;}
 
-  .lb-row{position:relative;border-radius:12px;transition:background .12s;margin-top:2px;}
-  /* система отступов: воздух перед смысловыми блоками, плотно внутри потока (design.md §5.6) */
-  .lb-row:first-child{margin-top:0;}
-  .lb-row--heading{margin-top:32px;}
-  .lb-row--quote{margin-top:18px;}
-  .lb-row--bullets,.lb-row--numbered{margin-top:14px;}
-  .lb-row--word{margin-top:8px;}
-  .lb-row--word + .lb-row--word{margin-top:6px;}
-  .lb-row--image,.lb-row--audio,.lb-row--material,.lb-row--hint,.lb-row--important{margin-top:16px;}
-  .lb-row--divider{margin-top:20px;}
-  .lb-row--heading + .lb-row{margin-top:12px;}
+  /* Отступ между блоками задаётся ИНЛАЙН-СТИЛЕМ из JS (docRowGap) — ReorderList
+     оборачивает каждую строку в свой .lb-rw, поэтому соседние .lb-row не
+     являются настоящими DOM-сиблингами и CSS-комбинаторы (:first-child, +)
+     тут физически не работают. margin-top ниже — только базовый сброс. */
+  .lb-row{position:relative;border-radius:12px;transition:background .12s;}
   .lb-row__gutter{position:absolute;left:-103px;top:11px;display:flex;align-items:flex-start;gap:1px;opacity:0;transition:opacity .15s;z-index:2;}
   .lb-row:hover .lb-row__gutter,.lb-row.is-focus .lb-row__gutter{opacity:1;}
   .lb-handle{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;color:var(--lb-ink-mute);cursor:grab;background:0;border:0;touch-action:none;flex:0 0 auto;transition:color .15s,background .15s;}
@@ -311,19 +341,23 @@
   .lb-ce b,.lb-ce strong{font-weight:700;} .lb-ce i,.lb-ce em{font-style:italic;}
   .lb-ce--h{font-family:var(--lb-display);font-size:27px;font-weight:600;letter-spacing:-.024em;line-height:1.18;color:var(--lb-ink);}
   .lb-ce--p{font-size:16.5px;line-height:1.7;color:var(--lb-ink);}
-  .lb-ce--q{font-size:16px;color:var(--lb-ink);font-style:italic;border-left:3px solid var(--lb-acc);padding-left:14px;margin:2px 0;}
+  .lb-ce--q{position:relative;font-family:var(--lb-display);font-size:18.5px;font-weight:500;font-style:normal;color:var(--lb-ink);line-height:1.5;
+    margin:4px 0;padding:15px 20px 15px 52px;border-radius:14px;background:rgba(43,143,255,.05);}
+  .lb-ce--q::before{content:'\\201C';position:absolute;left:15px;top:8px;font-family:Georgia,'Times New Roman',serif;font-size:50px;line-height:1;color:rgba(32,115,230,.3);pointer-events:none;}
   .lb-ce:empty::before{content:attr(data-ph);color:var(--lb-ink-mute);}
 
   /* списки */
-  .lb-list{margin:4px 0;padding-left:2px;display:flex;flex-direction:column;gap:6px;}
-  .lb-list__i{display:flex;align-items:center;gap:9px;}
-  .lb-list__mk{flex:0 0 auto;font-size:14px;font-weight:700;color:var(--lb-acc-deep);font-variant-numeric:tabular-nums;width:20px;text-align:center;}
-  .lb-list__in{flex:1 1 auto;font-family:inherit;font-size:15px;color:var(--lb-ink);padding:5px 8px;border:0;background:0;border-radius:7px;transition:background .12s;}
-  .lb-list__in:focus{outline:0;background:rgba(43,143,255,.06);}
-  .lb-list__x{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-faint);background:0;border:0;opacity:0;transition:color .15s,opacity .15s;}
-  .lb-list__i:hover .lb-list__x{opacity:1;} .lb-list__x:hover{color:var(--lb-rose);}
-  .lb-listadd{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:600;color:var(--lb-acc-deep);background:0;border:0;padding:5px 7px;border-radius:7px;transition:background .12s;margin-top:2px;}
-  .lb-listadd:hover{background:var(--lb-acc-soft);}
+  .lb-list{margin:2px 0;padding-left:0;display:flex;flex-direction:column;gap:1px;}
+  .lb-list__i{display:flex;align-items:stretch;gap:13px;min-height:32px;}
+  .lb-list__mk{flex:0 0 24px;display:flex;align-items:center;justify-content:center;user-select:none;}
+  .lb-list__dot{width:7px;height:7px;border-radius:50%;background:var(--lb-acc);}
+  .lb-list__num{font-family:var(--lb-display);font-size:14px;font-weight:600;color:var(--lb-acc-deep);font-variant-numeric:tabular-nums;line-height:1;}
+  .lb-list__in{flex:1 1 auto;font-family:inherit;font-size:16px;line-height:1.5;color:var(--lb-ink);padding:4px 8px;border:0;background:0;border-radius:8px;transition:background .12s;}
+  .lb-list__in:focus{outline:0;background:rgba(22,32,59,.04);}
+  .lb-list__x{flex:0 0 auto;width:24px;height:24px;border-radius:7px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-faint);background:0;border:0;opacity:0;transition:color .15s,opacity .15s,background .15s;}
+  .lb-list__i:hover .lb-list__x{opacity:1;} .lb-list__x:hover{color:var(--lb-rose);background:rgba(210,96,79,.1);}
+  .lb-listadd{align-self:flex-start;display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--lb-ink-mute);background:0;border:0;padding:6px 9px 6px 4px;border-radius:8px;transition:background .12s,color .12s;margin-top:4px;}
+  .lb-listadd:hover{background:rgba(22,32,59,.04);color:var(--lb-ink);}
 
   /* спец-блоки встроены в поток — отступы задаются по типу блока (.lb-row--*) */
   .lb-flowlist{display:flex;flex-direction:column;gap:0;}
@@ -340,7 +374,7 @@
     background:linear-gradient(180deg,rgba(255,255,255,.8),rgba(247,250,255,.5));border:1px solid var(--lb-line);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 1px 2px rgba(18,28,58,.03);transition:border-color .14s,box-shadow .14s;}
   .lb-word:hover{border-color:var(--lb-line-strong);box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 10px 24px -18px rgba(18,28,58,.24);}
-  .lb-word__hz{flex:0 0 auto;field-sizing:content;width:auto;min-width:56px;max-width:160px;height:56px;padding:0 16px;border-radius:12px;text-align:center;box-sizing:border-box;
+  .lb-word__hz{flex:0 0 auto;field-sizing:content;width:auto;min-width:56px;max-width:210px;height:56px;padding:0 16px;border-radius:12px;text-align:center;box-sizing:border-box;
     font-family:var(--lb-display);font-size:28px;font-weight:600;color:var(--lb-acc-deep);letter-spacing:1px;line-height:56px;
     background:var(--lb-acc-soft);border:0;outline:0;}
   .lb-word__fields{display:flex;flex-direction:column;gap:1px;flex:1 1 auto;min-width:0;}
@@ -365,25 +399,62 @@
   /* аудио — поле названия/ссылки (база ряда общая выше) */
   .lb-aud{color:var(--lb-acc-deep);}
   .lb-aud__t,.lb-aud__u{font-family:inherit;font-size:14px;background:transparent;border:0;border-bottom:1px solid transparent;outline:0;transition:border-color .15s;padding:3px 0;}
-  .lb-aud__t{font-weight:600;color:var(--lb-ink);min-width:120px;}
-  .lb-aud__u{color:var(--lb-ink-mute);flex:1;min-width:140px;}
+  .lb-aud__t{font-weight:600;color:var(--lb-ink);flex:1 1 120px;min-width:0;}
+  .lb-aud__u{color:var(--lb-ink-mute);flex:2 1 150px;min-width:0;}
   .lb-aud__t:focus,.lb-aud__u:focus{border-bottom-color:var(--lb-line-strong);}
 
   /* материал-ссылка — поле названия/ссылки (база ряда общая выше) */
   .lb-matblk{color:var(--lb-acc-deep);}
-  .lb-matblk__t{font-family:inherit;font-size:14px;font-weight:600;color:var(--lb-ink);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;min-width:120px;padding:3px 0;transition:border-color .15s;}
-  .lb-matblk__u{font-family:inherit;font-size:13px;color:var(--lb-ink-mute);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;flex:1;min-width:140px;padding:3px 0;transition:border-color .15s;}
+  .lb-matblk__t{font-family:inherit;font-size:14px;font-weight:600;color:var(--lb-ink);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;flex:1 1 120px;min-width:0;padding:3px 0;transition:border-color .15s;}
+  .lb-matblk__u{font-family:inherit;font-size:13px;color:var(--lb-ink-mute);background:transparent;border:0;border-bottom:1px solid transparent;outline:0;flex:2 1 150px;min-width:0;padding:3px 0;transition:border-color .15s;}
   .lb-matblk__t:focus,.lb-matblk__u:focus{border-bottom-color:var(--lb-line-strong);}
+  /* загруженный файл материала — чип с именем и размером */
+  .lb-matblk__file{flex:1 1 auto;display:inline-flex;align-items:center;gap:8px;min-width:0;padding:5px 6px 5px 11px;border-radius:9px;background:rgba(22,32,59,.045);border:1px solid var(--lb-line);}
+  .lb-matblk__fname{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:600;color:var(--lb-ink);}
+  .lb-matblk__fsize{flex:0 0 auto;font-size:11.5px;font-weight:500;color:var(--lb-ink-mute);font-variant-numeric:tabular-nums;}
+  .lb-matblk__fx{flex:0 0 auto;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;cursor:pointer;color:var(--lb-ink-mute);background:0;border:0;transition:color .14s,background .14s;}
+  .lb-matblk__fx:hover{color:var(--lb-rose);background:rgba(210,96,79,.1);}
 
-  /* выноска — левый бордер, без полной рамки */
-  .lb-callout{display:flex;gap:10px;align-items:flex-start;padding:8px 14px;border-left:3px solid;border-radius:0 8px 8px 0;font-size:15px;line-height:1.55;}
-  .lb-callout svg{flex:0 0 auto;margin-top:3px;}
-  .lb-callout--hint{border-color:var(--lb-gold);background:rgba(226,165,46,.07);color:#7A5712;}
-  .lb-callout--imp{border-color:var(--lb-acc);background:rgba(43,143,255,.07);color:var(--lb-ink);}
-  .lb-callout__in{flex:1 1 auto;}
-  .lb-callout__ce{font-family:inherit;font-size:15px;line-height:1.55;background:0;outline:0;}
-  .lb-callout--hint .lb-callout__ce{color:#7A5712;} .lb-callout--imp .lb-callout__ce{color:var(--lb-ink);}
+  /* ── Выноски: «Подсказка» (лёгкая заметка) ≠ «Важно» (правило-карточка) ── */
+  .lb-callout__in{flex:1 1 auto;min-width:0;}
+  .lb-callout__ce{font-family:inherit;font-size:15px;line-height:1.55;background:0;outline:0;overflow-wrap:break-word;word-break:break-word;}
   .lb-callout__ce:empty::before{content:attr(data-ph);opacity:.55;}
+  /* Подсказка — мягкая золотая заметка с иконкой-чипом */
+  .lb-callout--hint{display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border-radius:13px;background:rgba(226,165,46,.08);border:1px solid rgba(226,165,46,.24);}
+  .lb-callout--hint .lb-callout__ic{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;background:#D49A33;box-shadow:inset 0 1px 0 rgba(255,255,255,.28);margin-top:1px;}
+  .lb-callout--hint .lb-callout__ce{color:#6E4F12;font-weight:500;}
+  .lb-callout--hint .lb-callout__ce:empty::before{color:#9A7A3A;opacity:.8;}
+  .lb-callout--hint .lb-row__x{margin-top:2px;}
+  /* Важно — ключевое правило: шапка-лейбл + тело, акцентная подложка, левая грань */
+  .lb-callout--imp{position:relative;display:flex;flex-direction:column;gap:6px;padding:11px 15px 13px 18px;border-radius:13px;background:rgba(43,143,255,.06);border:1px solid var(--lb-acc-line);}
+  .lb-callout--imp::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:99px;background:var(--lb-acc);}
+  .lb-callout--imp .lb-callout__head{display:flex;align-items:center;gap:7px;color:var(--lb-acc-deep);font-family:var(--lb-display);font-size:12.5px;font-weight:700;}
+  .lb-callout--imp .lb-callout__head>span{flex:1 1 auto;}
+  .lb-callout--imp .lb-callout__head svg{flex:0 0 auto;}
+  .lb-callout--imp .lb-callout__head .lb-row__x{margin:0;}
+  .lb-callout--imp .lb-callout__ce{color:var(--lb-ink);}
+
+  /* ── Спойлер (самопроверка): вопрос виден, ответ «закрыт» штриховкой ── */
+  .lb-spoiler{border-radius:14px;border:1px solid var(--lb-line);background:rgba(255,255,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);overflow:hidden;}
+  .lb-spoiler__head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px dashed var(--lb-line);}
+  .lb-spoiler__ic{flex:0 0 26px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;background:var(--lb-acc-deep);box-shadow:inset 0 1px 0 rgba(255,255,255,.22);}
+  .lb-spoiler__q{flex:1 1 auto;min-width:0;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--lb-ink);background:0;border:0;outline:0;padding:0;}
+  .lb-spoiler__a{padding:12px 14px 8px;font-family:inherit;font-size:15px;line-height:1.55;color:var(--lb-ink);outline:0;overflow-wrap:break-word;word-break:break-word;min-height:1.7em;
+    background:repeating-linear-gradient(135deg,rgba(43,143,255,.05),rgba(43,143,255,.05) 9px,rgba(43,143,255,.09) 9px,rgba(43,143,255,.09) 18px);}
+  .lb-spoiler__a:empty::before{content:attr(data-ph);color:var(--lb-ink-mute);opacity:.75;}
+  .lb-spoiler__note{display:flex;align-items:center;gap:6px;padding:7px 14px 9px;font-size:11.5px;font-weight:500;color:var(--lb-ink-mute);}
+  .lb-spoiler__note svg{flex:0 0 auto;opacity:.7;}
+
+  /* ── Пример — фраза в контексте: озвучка + иероглифы / чтение / перевод ── */
+  .lb-example{display:flex;align-items:flex-start;gap:13px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.55);border:1px solid var(--lb-line);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);transition:border-color .14s,background .14s;}
+  .lb-example:hover{background:rgba(255,255,255,.82);border-color:var(--lb-line-strong);}
+  .lb-example__say{flex:0 0 34px;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;cursor:pointer;color:var(--lb-acc-deep);background:rgba(43,143,255,.08);border:0;margin-top:2px;transition:background .12s,transform .1s;}
+  .lb-example__say:hover{background:rgba(43,143,255,.16);} .lb-example__say:active{transform:scale(.92);}
+  .lb-example__fields{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;min-width:0;}
+  .lb-example__hz{font-family:var(--lb-display);font-size:20px;font-weight:600;color:var(--lb-ink);background:0;border:0;outline:0;width:100%;padding:0;letter-spacing:.5px;}
+  .lb-example__py{font-size:13px;color:var(--lb-acc-deep);font-weight:500;background:0;border:0;outline:0;width:100%;padding:0;font-variant-numeric:tabular-nums;}
+  .lb-example__ru{font-size:14.5px;color:var(--lb-ink-sub);background:0;border:0;outline:0;width:100%;padding:2px 0 0;}
+
   .lb-divider{height:1px;background:var(--lb-line);margin:6px 4px;border:0;}
   .lb-flow__endplus{display:flex;justify-content:flex-start;margin-top:14px;padding-left:2px;}
   .lb-endplus{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-mute);
@@ -481,16 +552,20 @@
   .lb-tone__n{font-size:10.5px;font-weight:600;color:var(--lb-ink-mute);} .lb-tone.on .lb-tone__n{color:var(--lb-acc-deep);}
 
   /* ── ПРАВЫЙ превью: рамка телефона ──────────────────────────────────────── */
-  .lb-prevh{width:100%;max-width:390px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  /* шапка и подпись — фиксированной высоты (flex:0 0 auto по умолчанию),
+     сам мокап — растягивается на всё оставшееся место колонки (flex:1 1 auto),
+     поэтому общая высота превью никогда не выталкивает скролл всей панели */
+  .lb-prevh{flex:0 0 auto;width:100%;max-width:390px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
   .lb-prevh__t{font-size:12.5px;font-weight:600;color:var(--lb-ink);}
   .lb-prevh__s{font-size:11.5px;color:var(--lb-ink-mute);font-variant-numeric:tabular-nums;}
-  .lb-phone{width:100%;max-width:384px;border-radius:48px;padding:9px;
+  .lb-phone{flex:1 1 auto;min-height:0;width:100%;max-width:384px;border-radius:48px;padding:9px;
+    display:flex;
     background:linear-gradient(152deg,#171E33 0%,#0B1224 46%,#070C18 100%);
     box-shadow:0 44px 90px -30px rgba(8,14,34,.6),0 12px 30px -16px rgba(8,14,34,.5),
       inset 0 0 0 1.5px rgba(255,255,255,.07),inset 0 1.5px 1px rgba(255,255,255,.16),inset 0 -2px 2px rgba(0,0,0,.4);}
   .lb-phone__screen{position:relative;border-radius:40px;overflow:hidden;background:
       radial-gradient(420px 300px at 88% -12%, rgba(118,150,255,.18), transparent 64%),
-      linear-gradient(180deg,#FBFCFF,#F3F6FD);min-height:560px;max-height:calc(100vh - 200px);display:flex;flex-direction:column;
+      linear-gradient(180deg,#FBFCFF,#F3F6FD);flex:1 1 auto;min-height:0;width:100%;display:flex;flex-direction:column;
       box-shadow:inset 0 0 0 1px rgba(8,14,34,.5);}
   .lb-phone__island{position:absolute;left:50%;top:13px;transform:translateX(-50%);width:78px;height:23px;border-radius:99px;background:#05070E;z-index:6;
     box-shadow:inset 0 0 0 1px rgba(255,255,255,.05),0 1px 3px rgba(0,0,0,.4);}
@@ -822,6 +897,16 @@
       if (!el) return;
       const data = readBlockFromDom(el);
       let text = data.text, marks = data.marks;
+      // Блок-markdown: ВСТАВИЛ или набрал «### Заголовок» / «> Цитата» одной
+      // строкой — конвертируем в соответствующий блок. Раньше это ловилось ТОЛЬКО
+      // при ручном наборе «###» + пробел; вставка одной строкой проходила мимо и
+      // «### » оставалось буквально в тексте.
+      if (onMarkdown && (block.kind === 'para' || block.kind === 'quote')) {
+        const single = text.indexOf('\n') < 0;
+        let mm;
+        if (single && (mm = text.match(/^#{1,6}\s+(.+)$/))) { onMarkdown('heading', mm[1].trim()); return; }
+        if (single && block.kind === 'para' && (mm = text.match(/^>\s+(.+)$/))) { onMarkdown('quote', mm[1].trim()); return; }
+      }
       // Инлайн-markdown: если в тексте есть маркеры — разбираем, маркеры выкидываем,
       // spans уходят в marks (рендерится жирным/курсивом в превью). Без маркеров —
       // сохраняем formatting из toolbar (b/i из DOM).
@@ -849,7 +934,7 @@
       const el = ref.current;
       const txt = (el && el.textContent) || '';
       let kind = null;
-      if (txt === '#' || txt === '##') kind = 'heading';
+      if (/^#{1,6}$/.test(txt)) kind = 'heading';
       else if (txt === '>') kind = 'quote';
       else if (txt === '-' || txt === '*') kind = 'bullets';
       else if (/^\d+\.$/.test(txt)) kind = 'numbered';
@@ -888,13 +973,26 @@
      markdown-маркере + Space → соответствующий блок. */
   function GhostBlock(props) {
     const ref = useRef(null);
-    const onBlur = () => { const el = ref.current; const t = ((el && el.textContent) || '').trim(); if (t) { const p = parseInline(t); props.onCreate({ kind: 'para', text: p.text, marks: p.marks }); } };
+    const created = useRef(false);
+    // Превращаем «ghost» в реальный блок на ПЕРВОМ вводе (а не на blur) — иначе
+    // превью ученика молчит, пока не кликнешь мимо, и кажется, что «ничего не
+    // печатается». После создания блок берёт фокус через focusTarget и набор
+    // продолжается уже в TextBlock (со своим live-обновлением превью).
+    const onInput = () => {
+      if (created.current) return;
+      const el = ref.current; const t = ((el && el.textContent) || '');
+      if (!t.trim()) return;
+      created.current = true;
+      const p = parseInline(t);
+      props.onCreate({ kind: 'para', text: p.text, marks: p.marks });
+    };
+    const onBlur = () => { if (created.current) return; const el = ref.current; const t = ((el && el.textContent) || '').trim(); if (t) { created.current = true; const p = parseInline(t); props.onCreate({ kind: 'para', text: p.text, marks: p.marks }); } };
     const onKeyDown = (e) => {
       if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); try { document.execCommand('insertLineBreak'); } catch (err) {} return; }
       if (e.key !== ' ') return;
       const el = ref.current; const txt = (el && el.textContent) || '';
       let kind = null;
-      if (txt === '#' || txt === '##') kind = 'heading';
+      if (/^#{1,6}$/.test(txt)) kind = 'heading';
       else if (txt === '>') kind = 'quote';
       else if (txt === '-' || txt === '*') kind = 'bullets';
       else if (/^\d+\.$/.test(txt)) kind = 'numbered';
@@ -906,23 +1004,44 @@
       e.preventDefault();
       props.onPasteMulti(text);
     };
-    return h('div', { ref, className: 'lb-ce lb-ce--p', contentEditable: true, suppressContentEditableWarning: true, 'data-ph': 'Начните писать…', spellCheck: false, onBlur, onKeyDown, onPaste });
+    return h('div', { ref, className: 'lb-ce lb-ce--p', contentEditable: true, suppressContentEditableWarning: true, 'data-ph': 'Начните писать…', spellCheck: false, onInput, onBlur, onKeyDown, onPaste });
   }
 
   /* Список (bullets/numbered) */
   function ListBlock(props) {
-    const { block, onCommit } = props;
+    const { block, onCommit, onRemove } = props;
     const items = block.items || [''];
+    const listRef = useRef(null);
+    const numbered = block.kind === 'numbered';
     const setItem = (i, v) => { const a = items.slice(); a[i] = v; onCommit({ items: a }); };
-    const addItem = () => onCommit({ items: items.concat('') });
     const delItem = (i) => { const a = items.filter((_, k) => k !== i); onCommit({ items: a.length ? a : [''] }); };
-    return h('div', { className: 'lb-list' },
+    const focusItem = (i) => { setTimeout(() => {
+      const root = listRef.current; if (!root) return;
+      const ins = root.querySelectorAll('.lb-list__in');
+      const el = ins[Math.max(0, Math.min(i, ins.length - 1))];
+      if (el) { el.focus(); try { const v = el.value; el.setSelectionRange(v.length, v.length); } catch (e) {} }
+    }, 0); };
+    const onKey = (i, e) => {
+      if (e.key === 'Enter') { e.preventDefault(); const a = items.slice(); a.splice(i + 1, 0, ''); onCommit({ items: a }); focusItem(i + 1); return; }
+      // Backspace на пустом пункте — стираем пункт (Docs/Notion-логика). Если он
+      // был последним и единственным пустым — удаляем весь блок-список.
+      if (e.key === 'Backspace' && (e.target.value || '') === '') {
+        e.preventDefault();
+        if (items.length > 1) { delItem(i); focusItem(i - 1); }
+        else if (onRemove) onRemove();
+        return;
+      }
+    };
+    return h('div', { className: 'lb-list', ref: listRef },
       items.map((it, i) => h('div', { key: i, className: 'lb-list__i' },
-        h('span', { className: 'lb-list__mk' }, block.kind === 'numbered' ? (i + 1) + '.' : '•'),
-        h('input', { className: 'lb-list__in', value: it, placeholder: block.kind === 'numbered' ? 'Пункт списка' : 'Пункт',
-          onChange: (e) => setItem(i, e.target.value), onKeyDown: (e) => { if (e.key === 'Enter') { e.preventDefault(); addItem(); } } }),
-        h('button', { type: 'button', className: 'lb-list__x', onClick: () => delItem(i), 'aria-label': 'Удалить пункт' }, Ic.Close ? h(Ic.Close, { size: 13 }) : '×'))),
-      h('button', { type: 'button', className: 'lb-listadd', onClick: addItem }, Ic.Plus ? h(Ic.Plus, { size: 13 }) : '+', 'Добавить пункт'));
+        h('span', { className: 'lb-list__mk' }, numbered
+          ? h('span', { className: 'lb-list__num' }, (i + 1))
+          : h('span', { className: 'lb-list__dot' })),
+        h('input', { className: 'lb-list__in', value: it, placeholder: 'Пункт списка',
+          onChange: (e) => setItem(i, e.target.value), onKeyDown: (e) => onKey(i, e) }),
+        h('button', { type: 'button', className: 'lb-list__x', onClick: () => { if (items.length > 1) delItem(i); else if (onRemove) onRemove(); }, 'aria-label': 'Удалить пункт' }, Ic.Close ? h(Ic.Close, { size: 14 }) : '×'))),
+      h('button', { type: 'button', className: 'lb-listadd', onClick: () => { const a = items.concat(''); onCommit({ items: a }); focusItem(a.length - 1); } },
+        h('span', { className: 'lb-list__mk' }, Ic.Plus ? h(Ic.Plus, { size: 14 }) : '+'), 'Добавить пункт'));
   }
 
   /* Слово — компактная инлайн-строка, часть потока документа */
@@ -964,17 +1083,29 @@
       h('input', { className: 'lb-aud__t', value: block.title || '', placeholder: 'Название записи', onChange: (e) => onCommit({ title: e.target.value }) }),
       h('input', { className: 'lb-aud__u', value: block.url || '', placeholder: 'ссылка на mp3', onChange: (e) => onCommit({ url: e.target.value }) }),
       h('input', { ref: fileRef, type: 'file', accept: 'audio/*', style: { display: 'none' }, onChange: onPick }),
-      h('button', { type: 'button', className: 'lb-aud__up', onClick: () => fileRef.current && fileRef.current.click() }, Ic.Plus ? h(Ic.Plus, { size: 13 }) : '+', 'Файл'),
+      h('button', { type: 'button', className: 'lb-aud__up', onClick: () => fileRef.current && fileRef.current.click() }, Ic.Upload ? h(Ic.Upload, { size: 14 }) : (Ic.Plus ? h(Ic.Plus, { size: 13 }) : '+'), 'Файл'),
       h('button', { type: 'button', className: 'lb-row__x', onClick: onRemove, 'aria-label': 'Удалить' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×'));
   }
 
-  /* Материал-ссылка — чип в потоке */
+  /* Материал — ссылка ИЛИ загруженный файл (PDF/док/презентация) */
   function MaterialBlock(props) {
     const { block, onCommit, onRemove } = props;
-    return h('div', { className: 'lb-matblk' },
-      LinkIc(15),
+    const fileRef = useRef(null);
+    const fmtSize = (n) => { if (!n && n !== 0) return ''; if (n < 1024) return n + ' Б'; if (n < 1048576) return Math.round(n / 1024) + ' КБ'; return (n / 1048576).toFixed(1) + ' МБ'; };
+    const onPick = (e) => { const f = e.target.files && e.target.files[0]; if (!f) return; onCommit({ url: URL.createObjectURL(f), title: block.title || f.name.replace(/\.[^.]+$/, ''), fileName: f.name, size: f.size }); };
+    const clearFile = () => onCommit({ url: '', fileName: '', size: 0 });
+    const hasFile = !!block.fileName;
+    return h('div', { className: 'lb-matblk' + (hasFile ? ' is-file' : '') },
+      hasFile ? (Ic.File ? h(Ic.File, { size: 15 }) : LinkIc(15)) : LinkIc(15),
       h('input', { className: 'lb-matblk__t', value: block.title || '', placeholder: 'Название материала', onChange: (e) => onCommit({ title: e.target.value }) }),
-      h('input', { className: 'lb-matblk__u', value: block.url || '', placeholder: 'ссылка (PDF, Док, веб)', onChange: (e) => onCommit({ url: e.target.value }) }),
+      hasFile
+        ? h('span', { className: 'lb-matblk__file' },
+            h('span', { className: 'lb-matblk__fname' }, block.fileName),
+            block.size ? h('span', { className: 'lb-matblk__fsize' }, fmtSize(block.size)) : null,
+            h('button', { type: 'button', className: 'lb-matblk__fx', onClick: clearFile, 'aria-label': 'Убрать файл' }, Ic.Close ? h(Ic.Close, { size: 12 }) : '×'))
+        : h('input', { className: 'lb-matblk__u', value: block.url || '', placeholder: 'вставьте ссылку или загрузите файл', onChange: (e) => onCommit({ url: e.target.value }) }),
+      h('input', { ref: fileRef, type: 'file', style: { display: 'none' }, onChange: onPick }),
+      hasFile ? null : h('button', { type: 'button', className: 'lb-aud__up', onClick: () => fileRef.current && fileRef.current.click() }, Ic.Upload ? h(Ic.Upload, { size: 14 }) : (Ic.Plus ? h(Ic.Plus, { size: 13 }) : '+'), 'Файл'),
       h('button', { type: 'button', className: 'lb-row__x', onClick: onRemove, 'aria-label': 'Удалить' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×'));
   }
 
@@ -983,29 +1114,87 @@
     const { block, onCommit, onRemove } = props;
     const ref = useRef(null);
     const focusedRef = useRef(false);
-    const variant = block.kind === 'important' ? 'imp' : 'hint';
-    const ph = block.kind === 'important' ? 'Что важно запомнить…' : 'Подсказка ученику…';
+    const imp = block.kind === 'important';
+    const ph = imp ? 'Правило, исключение или частая ошибка…' : 'Лёгкий совет ученику…';
     useEffect(() => {
       const el = ref.current;
       if (!el || focusedRef.current) return;
       if (el.textContent !== (block.text || '')) el.textContent = block.text || '';
     }, [block.text]);
-    return h('div', { className: 'lb-callout lb-callout--' + variant },
-      variant === 'imp' ? (Ic.AlertCircle ? h(Ic.AlertCircle, { size: 17 }) : null) : (Ic.Info ? h(Ic.Info, { size: 17 }) : null),
-      h('div', { className: 'lb-callout__in' },
-        h('div', { ref, className: 'lb-callout__ce', contentEditable: true, suppressContentEditableWarning: true, 'data-ph': ph, spellCheck: false,
-          onFocus: () => { focusedRef.current = true; }, onBlur: () => { focusedRef.current = false; if (ref.current) onCommit({ text: (ref.current.textContent || '').replace(/ /g, ' ') }); } })),
+    const ce = h('div', { ref, className: 'lb-callout__ce', contentEditable: true, suppressContentEditableWarning: true, 'data-ph': ph, spellCheck: false,
+      onFocus: () => { focusedRef.current = true; }, onBlur: () => { focusedRef.current = false; if (ref.current) onCommit({ text: (ref.current.textContent || '').replace(/ /g, ' ') }); } });
+    const del = h('button', { type: 'button', className: 'lb-row__x', onClick: onRemove, 'aria-label': 'Удалить' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×');
+    if (imp) {
+      return h('div', { className: 'lb-callout lb-callout--imp' },
+        h('div', { className: 'lb-callout__head' },
+          Ic.AlertTriangle ? h(Ic.AlertTriangle, { size: 14 }) : null, h('span', null, 'Важно'), del),
+        h('div', { className: 'lb-callout__in' }, ce));
+    }
+    return h('div', { className: 'lb-callout lb-callout--hint' },
+      h('span', { className: 'lb-callout__ic' }, Ic.Spark ? h(Ic.Spark, { size: 15 }) : null),
+      h('div', { className: 'lb-callout__in' }, ce),
+      del);
+  }
+
+  /* Спойлер — вопрос/подсказка + скрытый ответ (самопроверка ученика) */
+  function SpoilerBlock(props) {
+    const { block, onCommit, onRemove } = props;
+    const ref = useRef(null);
+    const focusedRef = useRef(false);
+    useEffect(() => {
+      const el = ref.current;
+      if (!el || focusedRef.current) return;
+      if (el.textContent !== (block.text || '')) el.textContent = block.text || '';
+    }, [block.text]);
+    return h('div', { className: 'lb-spoiler' },
+      h('div', { className: 'lb-spoiler__head' },
+        h('span', { className: 'lb-spoiler__ic' }, Ic.Eye ? h(Ic.Eye, { size: 15 }) : null),
+        h('input', { className: 'lb-spoiler__q', value: block.title || '', placeholder: 'Вопрос или подсказка — видна сразу', onChange: (e) => onCommit({ title: e.target.value }) }),
+        h('button', { type: 'button', className: 'lb-row__x', onClick: onRemove, 'aria-label': 'Удалить' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×')),
+      h('div', { ref, className: 'lb-spoiler__a', contentEditable: true, suppressContentEditableWarning: true, 'data-ph': 'Ответ — откроется по клику ученика…', spellCheck: false,
+        onFocus: () => { focusedRef.current = true; }, onBlur: () => { focusedRef.current = false; if (ref.current) onCommit({ text: (ref.current.textContent || '').replace(/ /g, ' ') }); } }),
+      h('div', { className: 'lb-spoiler__note' }, Ic.Eye ? h(Ic.Eye, { size: 12 }) : null, 'Ученик нажмёт «Показать ответ» — и увидит этот текст'));
+  }
+
+  /* Пример — фраза целиком: иероглифы + чтение + перевод (контекст) */
+  function ExampleBlock(props) {
+    const { block, onCommit, onRemove } = props;
+    const set = (k, v) => onCommit(Object.assign({}, block, { [k]: v }));
+    return h('div', { className: 'lb-example' },
+      h('button', { type: 'button', className: 'lb-example__say', onClick: () => speak(block.hanzi), disabled: !block.hanzi, 'aria-label': 'Прослушать', title: 'Прослушать' }, AudioIc(15)),
+      h('div', { className: 'lb-example__fields' },
+        h('input', { className: 'lb-example__hz', value: block.hanzi || '', placeholder: '例句 — пример на китайском', onChange: (e) => set('hanzi', e.target.value) }),
+        h('input', { className: 'lb-example__py', value: block.pinyin || '', placeholder: 'пиньинь', onChange: (e) => set('pinyin', e.target.value) }),
+        h('input', { className: 'lb-example__ru', value: block.ru || '', placeholder: 'перевод', onChange: (e) => set('ru', e.target.value) })),
       h('button', { type: 'button', className: 'lb-row__x', onClick: onRemove, 'aria-label': 'Удалить' }, Ic.Close ? h(Ic.Close, { size: 15 }) : '×'));
   }
 
   /* ── Один блок документа внутри ReorderList ─────────────────────────────── */
+  /* Отступ между блоками документа — считаем В JS, не CSS-комбинаторами:
+     ReorderList оборачивает каждую строку в свой .lb-rw, поэтому соседние
+     .lb-row физически не являются DOM-сиблингами друг друга — `:first-child`
+     и `+` там никогда не сработают (ловит «каждый блок единственный в своей
+     обёртке» и тихо обнуляет отступ ВСЕМ строкам). Считаем явно: безопасный
+     дефолт 18px, теснее — только для специально перечисленных тесных пар. */
+  function docRowGap(kind, prevKind, isFirst) {
+    if (isFirst) return 0;
+    if (kind === 'heading') return 38;
+    if (prevKind === 'heading') return 14;
+    if (kind === 'para' && prevKind === 'para') return 9;
+    if (kind === 'word' && prevKind === 'word') return 6;
+    if (kind === 'divider') return 24;
+    return 18;
+  }
+
   function DocRow(props) {
-    const { block, idx, ctx, onCommit, onRemove, onFocusRow, isActive, onOpenPlus, registerActiveCe, onConvertMd, onPasteMultiRow, onSplit } = props;
+    const { block, idx, ctx, onCommit, onRemove, onFocusRow, isActive, onOpenPlus, registerActiveCe, onConvertMd, onPasteMultiRow, onSplit, prevKind } = props;
     const body = (() => {
       if (block.kind === 'heading' || block.kind === 'para' || block.kind === 'quote')
         return h(TextBlock, { block, onCommit, onMarkdown: onConvertMd ? (kind, t) => onConvertMd(idx, kind, t) : null, onPasteMulti: onPasteMultiRow ? (text) => onPasteMultiRow(idx, text) : null, onEmptyBackspace: props.onEmptyBackspace, onEnter: onSplit ? () => onSplit(idx) : null, focusSignal: props.focusSignal, registerActive: () => { registerActiveCe(idx); onFocusRow(); } });
-      if (block.kind === 'bullets' || block.kind === 'numbered') return h(ListBlock, { block, onCommit });
+      if (block.kind === 'bullets' || block.kind === 'numbered') return h(ListBlock, { block, onCommit, onRemove });
       if (block.kind === 'word') return h(WordBlock, { block, onCommit, onRemove });
+      if (block.kind === 'example') return h(ExampleBlock, { block, onCommit, onRemove });
+      if (block.kind === 'spoiler') return h(SpoilerBlock, { block, onCommit, onRemove });
       if (block.kind === 'image') return h(ImageBlock, { block, onCommit, onRemove });
       if (block.kind === 'audio') return h(AudioBlock, { block, onCommit, onRemove });
       if (block.kind === 'material') return h(MaterialBlock, { block, onCommit, onRemove });
@@ -1014,7 +1203,7 @@
       return null;
     })();
     const showTextTools = block.kind === 'para' || block.kind === 'quote';
-    return h('div', { className: 'lb-row lb-row--' + block.kind + (isActive ? ' is-focus' : '') },
+    return h('div', { className: 'lb-row lb-row--' + block.kind + (isActive ? ' is-focus' : ''), style: { marginTop: docRowGap(block.kind, prevKind, idx === 0) + 'px' } },
       h('div', { className: 'lb-row__gutter' },
         h('button', { type: 'button', className: 'lb-plus', onClick: (e) => { e.stopPropagation(); onOpenPlus(idx, e); }, 'aria-label': 'Вставить блок' }, Ic.Plus ? h(Ic.Plus, { size: 16 }) : '+'),
         h('button', Object.assign({ type: 'button', className: 'lb-handle', 'aria-label': 'Перетащить' }, ctx.gripProps), Grip(16)),
@@ -1183,9 +1372,10 @@
     }, []);
     useEffect(() => () => { try { clearTimeout(hideRef.current); } catch (e) {} }, []);
     const toggle = (e) => { if (e) e.stopPropagation(); const v = vref.current; if (!v) return; if (v.paused) { v.play(); } else { v.pause(); } };
-    const onSeek = (e) => { const v = vref.current; if (!v || !dur) return; v.currentTime = (Number(e.target.value) / 100) * dur; setCur(v.currentTime); };
-    const toggleMute = (e) => { if (e) e.stopPropagation(); const v = vref.current; if (!v) return; v.muted = !v.muted; setMuted(v.muted); };
-    const goFs = (e) => { if (e) e.stopPropagation(); const v = vref.current; if (!v) return; try { if (document.fullscreenElement) document.exitFullscreen(); else if (v.requestFullscreen) v.requestFullscreen(); } catch (err) {} };
+    const seekBy = (e, delta) => { if (e) e.stopPropagation(); const v = vref.current; if (!v) return; v.currentTime = Math.max(0, Math.min(dur || v.duration || 0, (v.currentTime || 0) + delta)); poke(); };
+    const onTrackClick = (e) => { e.stopPropagation(); const v = vref.current; if (!v || !dur) return; const r = e.currentTarget.getBoundingClientRect(); const pct2 = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)); v.currentTime = pct2 * dur; setCur(pct2 * dur); poke(); };
+    const toggleMute = (e) => { if (e) e.stopPropagation(); const v = vref.current; if (!v) return; v.muted = !v.muted; setMuted(v.muted); poke(); };
+    const goFs = (e) => { if (e) e.stopPropagation(); const el = e.currentTarget.closest('.lb-vp'); if (!el) return; try { if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen(); } catch (err) {} poke(); };
     const fmt = (s) => { s = Math.max(0, Math.floor(s || 0)); const m = Math.floor(s / 60); const ss = s % 60; return m + ':' + (ss < 10 ? '0' : '') + ss; };
     const pct = dur ? Math.min(100, Math.max(0, (cur / dur) * 100)) : 0;
     return h('div', { className: 'lb-vp' + (shown ? ' is-shown' : '') + (playing ? ' is-playing' : ''),
@@ -1195,17 +1385,18 @@
         onEnded: () => { setPlaying(false); setShown(true); },
         onTimeUpdate: (e) => setCur(e.currentTarget.currentTime || 0),
         onLoadedMetadata: (e) => setDur(e.currentTarget.duration || 0) }),
-      !playing ? h('div', { className: 'lb-vp__big' }, h('span', { className: 'lb-vp__bigbtn' }, PlayTri(24))) : null,
+      h('div', { className: 'lb-vp__trio' },
+        h('button', { type: 'button', className: 'lb-vp__glass lb-vp__glass--side', onClick: (e) => seekBy(e, -10), 'aria-label': 'Назад на 10 секунд' }, Seek10Ic(18, true)),
+        h('button', { type: 'button', className: 'lb-vp__glass lb-vp__glass--main', onClick: toggle, 'aria-label': playing ? 'Пауза' : 'Смотреть' }, playing ? PauseIc(22) : PlayTri(22)),
+        h('button', { type: 'button', className: 'lb-vp__glass lb-vp__glass--side', onClick: (e) => seekBy(e, 10), 'aria-label': 'Вперёд на 10 секунд' }, Seek10Ic(18, false))),
       h('div', { className: 'lb-vp__bar' },
-        h('input', { type: 'range', className: 'lb-vp__seek', min: 0, max: 100, step: 0.1, value: pct,
-          onChange: onSeek, onClick: (e) => e.stopPropagation(), 'aria-label': 'Перемотка',
-          style: { background: 'linear-gradient(to right, #2B8FFF 0%, #2B8FFF ' + pct + '%, rgba(255,255,255,.22) ' + pct + '%)' } }),
-        h('div', { className: 'lb-vp__row' },
-          h('button', { type: 'button', className: 'lb-vp__b', onClick: toggle, 'aria-label': playing ? 'Пауза' : 'Слушать' }, playing ? PauseIc(16) : PlayTri(16)),
-          h('button', { type: 'button', className: 'lb-vp__b', onClick: toggleMute, 'aria-label': muted ? 'Включить звук' : 'Без звука' }, muted ? VolXIc(16) : VolIc(16)),
-          h('span', { className: 'lb-vp__time lb-num' }, fmt(cur), h('span', { className: 'lb-vp__sep' }, '/'), fmt(dur)),
-          h('span', { className: 'lb-vp__sp' }),
-          h('button', { type: 'button', className: 'lb-vp__b', onClick: goFs, 'aria-label': 'На весь экран' }, FsIc(15)))));
+        h('span', { className: 'lb-vp__time lb-num' }, fmt(cur)),
+        h('span', { className: 'lb-vp__track', onClick: onTrackClick },
+          h('i', { className: 'lb-vp__fill', style: { width: pct + '%' } }),
+          h('i', { className: 'lb-vp__dot', style: { left: pct + '%' } })),
+        h('span', { className: 'lb-vp__time lb-num lb-vp__time--mute' }, fmt(dur)),
+        h('button', { type: 'button', className: 'lb-vp__ic', onClick: toggleMute, 'aria-label': muted ? 'Включить звук' : 'Без звука' }, muted ? VolXIc(15) : VolIc(15)),
+        h('button', { type: 'button', className: 'lb-vp__ic', onClick: goFs, 'aria-label': 'На весь экран' }, FsIc(15))));
   }
 
   /* Всплывающая панель форматирования — появляется при выделении текста в блоке */
@@ -1421,7 +1612,7 @@
       const flush = () => { if (listKind && items.length) { out.push({ kind: listKind, items: items.slice() }); listKind = null; items.length = 0; } };
       String(text || '').replace(/\r/g, '').split('\n').forEach((raw) => {
         const line = raw.trim(); let m;
-        if ((m = line.match(/^##\s+(.*)/)) || (m = line.match(/^#\s+(.*)/))) { flush(); out.push(Object.assign({ kind: 'heading' }, parseInline(m[1]))); }
+        if ((m = line.match(/^#{1,6}\s+(.*)/))) { flush(); out.push(Object.assign({ kind: 'heading' }, parseInline(m[1]))); }
         else if ((m = line.match(/^>\s+(.*)/))) { flush(); out.push(Object.assign({ kind: 'quote' }, parseInline(m[1]))); }
         else if ((m = line.match(/^[-*]\s+(.*)/))) { listKind = 'bullets'; items.push(parseInline(m[1]).text); }
         else if ((m = line.match(/^\d+\.\s+(.*)/))) { listKind = 'numbered'; items.push(parseInline(m[1]).text); }
@@ -1525,13 +1716,15 @@
           h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, 'Документ'), h('div', { className: 'lb-rlink__s' }, doc.length + ' ' + (doc.length === 1 ? 'блок' : 'блоков'))))),
       h('div', { className: 'lb-grp' },
         h('div', { className: 'lb-grp__t' }, 'Практика', h('span', { className: 'lb-tab__c', style: { marginLeft: 'auto', background: 'rgba(22,32,59,.08)' } }, blocks.length)),
-        blocks.length ? h('div', { style: { display: 'flex', flexDirection: 'column', gap: 6 } }, blocks.map((b, i) => {
+        blocks.length ? h('div', { style: { display: 'flex', flexDirection: 'column', gap: 8 } }, blocks.map((b, i) => {
           const meta = L.typeMeta(b.type); const IcT = Ic[meta.icon] || Ic.Book;
           return h('button', { key: i, type: 'button', className: 'lb-rlink' + (tab === 'practice' && focus === i ? ' is-sel' : ''), onClick: () => { setTab('practice'); setFocus(i); setOpenCards((s) => Object.assign({}, s, { [i]: true })); } },
             h('span', { className: 'lb-rlink__n', style: { flex: '0 0 22px', width: 22, height: 22, borderRadius: 7, display: 'grid', placeItems: 'center', fontSize: 11, fontWeight: 700, color: 'var(--lb-ink-mute)', background: 'rgba(22,32,59,.05)' } }, i + 1),
             h('span', { className: 'lb-rlink__ic' }, IcT ? h(IcT, { size: 14 }) : null),
             h('div', { className: 'lb-rlink__b' }, h('div', { className: 'lb-rlink__t' }, meta.label)));
-        })) : h('div', { style: { fontSize: 12.5, color: 'var(--lb-ink-mute)', padding: '4px 2px', lineHeight: 1.5 } }, 'Пока нет заданий.'),
+        })) : h('div', { className: 'lb-rail-empty' },
+            h('span', { className: 'lb-rail-empty__ic' }, Ic.Compass ? h(Ic.Compass, { size: 16 }) : null),
+            h('span', null, 'Пока нет заданий')),
         h('button', { type: 'button', className: 'lb-rail__add', onClick: () => setPalette(true) }, Ic.Plus ? h(Ic.Plus, { size: 15 }) : '+', 'Добавить задание')));
 
     /* ── ЦЕНТР: вкладка Теория ── */
@@ -1593,6 +1786,7 @@
               items: doc, keyFor: (b) => b._id, onReorder: moveDoc, scrollRef: centerRef, reduced: reducedMotion, className: 'lb-flowlist',
               renderRow: (block, i, ctx) => h(DocRow, {
                 key: block._id, block, idx: i, ctx, isActive: activeCe === i || focus === block._id,
+                prevKind: i > 0 ? doc[i - 1].kind : null,
                 onCommit: (patch) => patchDoc(i, patch), onRemove: () => removeDoc(i),
                 onConvertMd: convertMd, onPasteMultiRow: pasteMulti,
                 onEmptyBackspace: () => focusPrev(i), onSplit: () => splitDoc(i),
@@ -1602,7 +1796,7 @@
                 registerActiveCe: setActiveCe,
               }),
             }) : h(GhostBlock, {
-              onCreate: (b) => { const nb = L.blankDocBlock(b.kind); if (b.kind === 'bullets' || b.kind === 'numbered') nb.items = ['']; else nb.text = b.text || ''; insertDoc(0, nb); },
+              onCreate: (b) => { const nb = L.blankDocBlock(b.kind); if (b.kind === 'bullets' || b.kind === 'numbered') nb.items = ['']; else { nb.text = b.text || ''; nb.marks = b.marks || []; } insertDoc(0, nb); if (b.kind !== 'bullets' && b.kind !== 'numbered') setFocusTarget({ id: nb._id, nonce: Date.now() }); },
               onPasteMulti: (text) => { const bs = parseMdBlocks(text); bs.forEach((b, k) => { const nb = L.blankDocBlock(b.kind); Object.assign(nb, b); insertDoc(k, nb); }); },
             }),
             h('div', { className: 'lb-flow__pad', onClick: () => { const nb = L.blankDocBlock('para'); insertDoc(doc.length, nb); setFocusTarget({ id: nb._id, nonce: Date.now() }); } },
