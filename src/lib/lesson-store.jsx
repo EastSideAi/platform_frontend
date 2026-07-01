@@ -154,6 +154,8 @@
       subtitle: lesson.subtitle || '',
       level: lesson.level || '',
       hasVideo: !!((vid.url && String(vid.url).trim()) || (vid.file && String(vid.file).trim())),
+      duration: vid.duration || '',
+      thumb: vid.poster || '',
       createdAt: lesson.createdAt || null,
       updatedAt: lesson.updatedAt || lesson.createdAt || null,
       counts: { doc: m.doc, blocks: m.blocks, words: m.words, minutes: m.minutes, xp: m.xp },

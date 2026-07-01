@@ -385,6 +385,27 @@
     .lr-page .sd-hero2__stats{grid-template-columns:1fr;}
     .lr-page .sd-hero2__h{font-size:27px;}
   }
+
+  /* ── Мои уроки (живой режим #/learn?live) — реальные уроки из ELessonStore ── */
+  .lr-les{display:grid;grid-template-columns:repeat(auto-fill,minmax(238px,1fr));gap:15px;}
+  .lr-lescard{position:relative;display:flex;flex-direction:column;min-height:148px;padding:17px 17px 15px;border-radius:18px;cursor:pointer;
+    background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(255,255,255,.4));border:1px solid rgba(120,150,215,.22);
+    -webkit-backdrop-filter:blur(26px) saturate(150%);backdrop-filter:blur(26px) saturate(150%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.8);transition:transform .16s cubic-bezier(.23,1,.32,1),border-color .16s,background .16s;}
+  .lr-lescard:hover{transform:translateY(-2px);border-color:rgba(43,143,255,.45);
+    background:linear-gradient(150deg,rgba(255,255,255,.82),rgba(255,255,255,.58));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 30px rgba(43,143,255,.1);}
+  .lr-lescard__lv{align-self:flex-start;font-size:11.5px;font-weight:700;color:#1763C8;padding:3px 9px;border-radius:99px;
+    background:rgba(43,143,255,.1);border:1px solid rgba(43,143,255,.16);}
+  .lr-lescard__t{margin-top:11px;font-size:16px;font-weight:700;letter-spacing:-.02em;line-height:1.22;color:#15203B;text-wrap:balance;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .lr-lescard__m{margin-top:auto;padding-top:12px;font-size:12px;font-weight:600;color:rgba(21,32,59,.5);font-variant-numeric:tabular-nums;
+    display:flex;align-items:center;gap:8px;border-top:1px solid rgba(22,32,59,.07);}
+  .lr-lescard__m i{width:3px;height:3px;border-radius:50%;background:rgba(21,32,59,.24);font-style:normal;}
+  .lr-lescard__go{position:absolute;top:15px;right:15px;color:#1E63C2;opacity:0;transform:translate(-2px,2px);transition:opacity .16s,transform .16s;}
+  .lr-lescard:hover .lr-lescard__go{opacity:1;transform:none;}
+  .lr-lesempty{padding:30px;border-radius:18px;text-align:center;font-size:14px;font-weight:500;color:rgba(21,32,59,.55);
+    background:rgba(255,255,255,.4);border:1px dashed rgba(22,32,59,.16);}
   `;
 
   if (!document.getElementById('learn-home-styles')) {
@@ -556,6 +577,34 @@
         })));
   }
 
+  /* ── Мои уроки (живой режим #/learn?live) — реальные уроки из ELessonStore ──
+     Витрина уроков, собранных в конструкторе: клик → открыть как ученик, ссылка
+     «Все уроки» → библиотека /learn/lessons. В демо-режиме секция не рендерится. */
+  function lesPlural(n, a, b, c) { const m = Math.abs(n) % 100, n1 = m % 10; if (m > 10 && m < 20) return c; if (n1 > 1 && n1 < 5) return b; if (n1 === 1) return a; return c; }
+  function MyLessons(props) {
+    const nav = (window.ERouter && window.ERouter.navigate) || function () {};
+    const items = (props && props.items) || [];
+    return h('section', { className: 'lr-sec' },
+      h('div', { className: 'lr-sec__h' },
+        h('h2', null, 'Мои уроки'),
+        h('span', { className: 'lr-chip' }, Ic.Book ? h(Ic.Book, { size: 12 }) : null, items.length + ' ' + lesPlural(items.length, 'урок', 'урока', 'уроков')),
+        h('button', { type: 'button', className: 'lr-seclink', onClick: function () { nav('/learn/lessons'); } }, 'Все уроки', arr(14))),
+      items.length
+        ? h('div', { className: 'lr-les' }, items.slice(0, 6).map(function (it) {
+            const c = it.counts || {};
+            return h('div', { key: it.id, className: 'lr-lescard', onClick: function () { nav('/learn/lesson/' + it.id); } },
+              h('span', { className: 'lr-lescard__go' }, arr(16)),
+              h('span', { className: 'lr-lescard__lv' }, it.level || 'Урок'),
+              h('div', { className: 'lr-lescard__t' }, it.title || 'Новый урок'),
+              h('div', { className: 'lr-lescard__m' },
+                h('span', null, (c.blocks || 0) + ' ' + lesPlural(c.blocks || 0, 'задание', 'задания', 'заданий')),
+                c.words ? h('i', null) : null,
+                c.words ? h('span', null, c.words + ' ' + lesPlural(c.words, 'слово', 'слова', 'слов')) : null,
+                h('i', null), h('span', null, '~' + (c.minutes || 1) + ' мин')));
+          }))
+        : h('div', { className: 'lr-lesempty' }, 'Пока нет созданных уроков — соберите первый в конструкторе'));
+  }
+
   /* ── Низ ───────────────────────────────────────────────────────────────── */
   function Bottom() {
     return h('section', { className: 'lr-sec lr-bot' },
@@ -593,14 +642,22 @@
   }
 
   /* ── Ваш прогресс: крупные KPI + ряд аналитики (бары · донат · топ-темы) ── */
-  function Stats() {
+  function Stats(props) {
+    const live = props && props.live;
+    const ls = (props && props.lessonStats) || null;
+    // В живом режиме KPI считаются из реальных уроков (ELessonStore), в демо — статика.
+    const kpis = (live && ls) ? [
+      { ic: Ic.Book, num: String(ls.lessons), lbl: 'Уроков в библиотеке', delta: 'в конструкторе', up: true, anchor: true, glow: '43,143,255', bars: [.4, .55, .5, .7, .62, .85, 1] },
+      { ic: Ic.Edit, num: String(ls.tasks), lbl: 'Заданий собрано', delta: 'во всех уроках', up: true, glow: '124,132,246', bars: [.35, .5, .48, .62, .7, .8, 1] },
+      { ic: Ic.Book, num: String(ls.words), lbl: 'Слов в уроках', delta: 'словарь курса', up: true, glow: '150,124,240', line: [.3, .44, .4, .6, .66, .7, .95] },
+    ] : STATS;
     return h('section', { className: 'lr-sec' },
       h('div', { className: 'lr-sec__h' },
         h('h2', null, 'Ваш прогресс'),
-        h('span', { className: 'lr-chip' }, Ic.TrendUp ? h(Ic.TrendUp, { size: 12 }) : null, 'Эта неделя')),
+        h('span', { className: 'lr-chip' }, Ic.TrendUp ? h(Ic.TrendUp, { size: 12 }) : null, live ? 'По библиотеке' : 'Эта неделя')),
       // крупные KPI
       h('div', { className: 'lr-kpi' },
-        STATS.map(function (s, i) {
+        kpis.map(function (s, i) {
           var color = s.anchor ? 'rgba(255,255,255,.92)' : ('rgb(' + s.glow + ')');
           var spark = s.line ? sparkLine(s.line, color) : sparkBars(s.bars, color);
           return h('div', { key: i, className: 'lr-kpic' + (s.anchor ? ' anchor' : ''), style: { '--kpi-glow': s.glow } },
@@ -682,14 +739,25 @@
             })))));
   }
 
-  function LearnHome() {
+  function LearnHome(props) {
     if (!SH) return h('div', { style: { padding: 40, color: '#fff' } }, 'Скелет ученика не загружен');
+    // Живой режим: #/learn?live — данные из реального бэкенда/ELessonStore.
+    // Демо: #/learn — статичная витрина (как сейчас). Один макет, два источника.
+    const live = !!(props && props.query && ('live' in props.query));
+    const Store = window.ELessonStore;
+    const summaries = (live && Store) ? Store.listSync() : [];
+    const lessonStats = {
+      lessons: summaries.length,
+      tasks: summaries.reduce(function (a, s) { return a + ((s.counts && s.counts.blocks) || 0); }, 0),
+      words: summaries.reduce(function (a, s) { return a + ((s.counts && s.counts.words) || 0); }, 0),
+    };
     return h(SH.Shell, { active: 'learn', surface: 'light', hideTopBar: true, aiCenter: true, footer: true },
       h('div', { className: 'lr-page' },
         h(Hero, null),
         h(Programs, null),
+        live ? h(MyLessons, { items: summaries }) : null,
         h(Bottom, null),
-        h(Stats, null)));
+        h(Stats, { live: live, lessonStats: lessonStats })));
   }
 
   EScreens.LearnHome = LearnHome;

@@ -181,9 +181,9 @@
   .lb-canvas{max-width:920px;margin:0 auto;position:relative;}
 
   /* ── ЛЕВЫЙ RAIL: структура урока ────────────────────────────────────────── */
-  .lb-rail__h{font-family:var(--lb-display);font-size:14px;font-weight:600;color:var(--lb-ink);letter-spacing:-.01em;margin:0 2px 4px;}
+  .lb-rail__h{font-family:var(--lb-display);font-size:16px;font-weight:700;color:var(--lb-ink);letter-spacing:-.02em;margin:0 2px 12px;}
   .lb-grp{margin-top:26px;display:flex;flex-direction:column;gap:9px;}
-  .lb-grp__t{font-family:var(--lb-display);font-size:13px;font-weight:600;letter-spacing:-.012em;color:var(--lb-ink);margin:0 2px;}
+  .lb-grp__t{font-family:var(--lb-display);font-size:14px;font-weight:700;letter-spacing:-.014em;color:var(--lb-ink);margin:0 2px;}
   .lb-rlink{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;font-family:inherit;
     padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.5);border:1px solid var(--lb-line);color:var(--lb-ink);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.65);transition:background .15s,border-color .15s,box-shadow .15s,transform .15s;}
@@ -192,8 +192,8 @@
   .lb-rlink__ic{flex:0 0 30px;width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--lb-acc-deep);background:var(--lb-acc-soft);}
   .lb-rlink.is-sel .lb-rlink__ic{color:#EAF2FF;background:#2073E6;box-shadow:inset 0 0 14px rgba(120,190,255,.7),inset 0 1px 0 rgba(255,255,255,.3);}
   .lb-rlink__b{flex:1 1 auto;min-width:0;}
-  .lb-rlink__t{font-size:13px;font-weight:600;color:var(--lb-ink);letter-spacing:-.1px;}
-  .lb-rlink__s{font-size:11.5px;color:var(--lb-ink-mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lb-rlink__t{font-size:14.5px;font-weight:700;color:var(--lb-ink);letter-spacing:-.012em;}
+  .lb-rlink__s{font-size:12px;color:var(--lb-ink-mute);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .lb-rail__add{margin-top:0;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;
     color:var(--lb-ink-sub);padding:11px;border-radius:12px;background:rgba(22,32,59,.03);border:1.5px dashed var(--lb-line-strong);transition:background .15s,color .15s,border-color .15s;}
   .lb-rail__add:hover{background:rgba(22,32,59,.05);color:var(--lb-ink);border-color:var(--lb-ink-faint);}
@@ -579,8 +579,10 @@
      сам мокап — растягивается на всё оставшееся место колонки (flex:1 1 auto),
      поэтому общая высота превью никогда не выталкивает скролл всей панели */
   .lb-prevh{flex:0 0 auto;width:100%;max-width:390px;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .lb-prevh__t{font-size:12.5px;font-weight:600;color:var(--lb-ink);}
+  .lb-prevh__t{font-size:15px;font-weight:700;color:var(--lb-ink);letter-spacing:-.015em;}
   .lb-prevh__s{font-size:11.5px;color:var(--lb-ink-mute);font-variant-numeric:tabular-nums;}
+  .lb-phone__body .le-study.is-compact .le-h1{font-size:26px;letter-spacing:-.026em;}
+  .lb-phone__body .le-study.is-compact .le-sub{font-size:13.5px;margin-top:10px;}
   .lb-phone{flex:1 1 auto;min-height:0;width:100%;max-width:384px;border-radius:48px;padding:9px;
     display:flex;
     background:linear-gradient(152deg,#171E33 0%,#0B1224 46%,#070C18 100%);

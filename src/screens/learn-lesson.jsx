@@ -1821,7 +1821,7 @@
     const titleEl = compact
       ? h('h1', { className: 'le-h1' }, lesson.title || 'Урок')
       : h('div', { className: 'le-titlerow' },
-          h('h1', { className: 'le-h1' }, props.item ? ('Урок ' + props.item.n) : (lesson.title || 'Урок')),
+          h('h1', { className: 'le-h1' }, lesson.title || (props.item ? ('Урок ' + props.item.n) : 'Урок')),
           props.moduleName ? h('span', { className: 'le-modpill' }, Ic.Route ? h(Ic.Route, { size: 14 }) : null, props.moduleName) : null);
 
     return h('div', { className: 'le-study' + (compact ? ' is-compact' : '') },
@@ -2024,7 +2024,7 @@
       h('div', { className: 'le-pl__hd' },
         h('span', { className: 'le-pl__hd-ic' }, Ic.Route ? h(Ic.Route, { size: 17 }) : (Ic.Grid ? h(Ic.Grid, { size: 16 }) : null)),
         h('span', { className: 'le-pl__hd-b' },
-          h('span', { className: 'le-pl__hd-t' }, C.module || 'Модуль 1 · Первые слова'),
+          h('span', { className: 'le-pl__hd-t' }, props.moduleName || C.module || 'Все уроки'),
           h('span', { className: 'le-pl__hd-m' }, doneCount + ' из ' + lessons.length + ' ' + plural(lessons.length, 'урок', 'урока', 'уроков') + ' пройдено'))),
       h('div', { className: 'le-pl__list' }, lessons.map((it) => {
         const cur = it.n === n;
@@ -2048,7 +2048,7 @@
               it.words ? h('span', null, it.words + ' ' + plural(it.words, 'слово', 'слова', 'слов')) : null)),
           h('span', { className: 'le-pli__r' }, right));
       })),
-      h('button', { type: 'button', className: 'le-pl__all', onClick: () => nav('/learn') },
+      h('button', { type: 'button', className: 'le-pl__all', onClick: () => nav('/learn/lessons') },
         'Показать все уроки'));
   }
 
@@ -2073,7 +2073,7 @@
       h('div', { className: 'le-crumb' },
         h('button', { type: 'button', className: 'le-crumb__home', onClick: () => nav('/learn') }, Ic.Book ? h(Ic.Book, { size: 15 }) : null, 'Обучение'),
         h('span', { className: 'le-crumb__sep le-crumb__sep--mod' }, '/'),
-        h('span', { className: 'le-crumb__mod', style: { color: 'var(--le-ink-mute)', fontWeight: 500 } }, (L.COURSE && L.COURSE.module) || 'Модуль'),
+        h('span', { className: 'le-crumb__mod', style: { color: 'var(--le-ink-mute)', fontWeight: 500 } }, props.moduleName || (L.COURSE && L.COURSE.module) || 'Модуль'),
         h('span', { className: 'le-crumb__sep' }, '/'),
         h('span', { className: 'le-crumb__cur' }, 'Урок ' + cur.n)),
       h('div', { className: 'le-switch' },
@@ -2101,17 +2101,17 @@
   }
 
   function LessonPage(props) {
-    const { lesson, item, lessons, onStart, homeworkDone, hwResult, playing, onPlay, onSwitch, onPrev, onNext, prevOk, nextOk } = props;
-    const total = (L.COURSE && L.COURSE.total) || lessons.length;
+    const { lesson, item, lessons, total, moduleName, onStart, homeworkDone, hwResult, playing, onPlay, onSwitch, onPrev, onNext, prevOk, nextOk } = props;
+    const tot = total || lessons.length;
     return h('div', { className: 'le-root' },
-      h(LessonHeader, { item, total, onPrev, onNext, prevOk, nextOk }),
+      h(LessonHeader, { item, total: tot, moduleName, onPrev, onNext, prevOk, nextOk }),
       h('div', { className: 'le-grid' },
         h('div', { className: 'le-main' },
-          h(StudyView, { lesson, item, moduleName: (L.COURSE && L.COURSE.module) || 'Модуль 1', onStart, homeworkDone, hwResult, playing, onPlay })),
+          h(StudyView, { lesson, item, moduleName, onStart, homeworkDone, hwResult, playing, onPlay })),
         h('aside', { className: 'le-rail' },
-          h(Playlist, { lessons, activeN: item.n, onSwitch }),
+          h(Playlist, { lessons, activeN: item.n, moduleName, onSwitch }),
           h(TeacherCard, null))),
-      h(LessonFoot, { item, total, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart }));
+      h(LessonFoot, { item, total: tot, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart }));
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
@@ -2181,53 +2181,76 @@
     if (!L) return h('div', { style: { padding: 40 } }, 'Учебный модуль не загружен');
     const Store = window.ELessonStore;
     const routeId = (props && props.params && props.params.id) || null;
-    const loadedRef = useRef(null);
     const isDemo = /[?&]demo\b/.test(window.location.hash || '');
     const isTask2 = /demo=task2/.test(window.location.hash || '');
     const isTaskDemo = /demo=task\b/.test(window.location.hash || '');
-    // Конкретный урок — по id из URL (/learn/lesson/:id); без id — последний открытый.
-    const fromStore = () => {
-      if (!Store) return L.load();
-      if (routeId) return Store.getSync(routeId) || L.load();
-      return Store.getSync(Store.currentId()) || L.load();
-    };
-    if (!loadedRef.current) loadedRef.current = isTask2 ? DEMO_TASK2 : (isTaskDemo ? DEMO_TASK : (isDemo ? DEMO_LESSON : fromStore()));
-    const live = loadedRef.current;
-    const lessons = ((L.COURSE && L.COURSE.lessons) || []).map((it) => it.live ? Object.assign({}, it, { title: live.title || it.title }) : it);
-    const currentItem = lessons.find((it) => it.live) || lessons[lessons.length - 1] || { n: 1, state: 'current' };
+    const demoLive = isTask2 ? DEMO_TASK2 : (isTaskDemo ? DEMO_TASK : (isDemo ? DEMO_LESSON : null));
 
-    const [activeN, setActiveN] = useState(currentItem.n);
+    // Библиотека уроков из стора → плейлист. Демо-шорткаты (?demo) изолированы:
+    // показываем только сам демо-урок, чтобы не путать с реальной лентой.
+    const lib = (!demoLive && Store) ? Store.listSync() : [];
+    const firstId = lib[0] && lib[0].id;
+    const activeId = demoLive ? null : (routeId || (Store && Store.currentId()) || firstId || null);
+
+    // Живой урок: демо, иначе конкретный по id из URL, иначе fallback на черновик.
+    const live = demoLive || (Store ? (Store.getSync(activeId) || L.load()) : L.load());
+
+    // Позиционный прогресс: до активного — пройдено, активный — сейчас, дальше — открыт.
+    const activeIdx = lib.findIndex((s) => s.id === activeId);
+    const lessons = lib.map((s, i) => ({
+      n: i + 1, id: s.id,
+      title: s.title || ('Урок ' + (i + 1)),
+      duration: s.duration || '',
+      words: (s.counts && s.counts.words) || 0,
+      thumb: s.thumb || '',
+      state: s.id === activeId ? 'current' : (activeIdx >= 0 && i < activeIdx ? 'done' : 'available'),
+      live: s.id === activeId,
+    }));
+    // currentItem — активный из ленты; если урока нет в ленте (демо/битый id/пустая
+    // библиотека) — синтезируем одиночный элемент из самого урока.
+    let currentItem = lessons.find((it) => it.id === activeId);
+    let workLessons = lessons;
+    if (!currentItem) {
+      const v = live.video || {};
+      currentItem = { n: 1, id: activeId || (live && live.id) || 'live', title: live.title || 'Урок', duration: v.duration || '', words: (live.glossary || []).length, thumb: v.poster || '', state: 'current', live: true };
+      workLessons = [currentItem];
+    }
+    const moduleName = 'Все уроки';
+
     const [mode, setMode] = useState('study');
     const [hwDone, setHwDone] = useState(false);
     const [hwResult, setHwResult] = useState(null);
     const [playing, setPlaying] = useState(false);
     const [run, setRun] = useState(0);
 
-    const item = lessons.find((it) => it.n === activeN) || currentItem;
-    const activeLesson = item.live ? live : (item.lesson || live);
-
-    const openable = lessons.filter((it) => it.state !== 'locked');
-    const pos = openable.findIndex((it) => it.n === item.n);
-    const prevItem = pos > 0 ? openable[pos - 1] : null;
-    const nextItem = pos >= 0 && pos < openable.length - 1 ? openable[pos + 1] : null;
-
-    const switchTo = (it) => {
-      if (!it) return;
-      if (it.state === 'locked') { toast('Урок откроется после занятия' + (it.when ? ': ' + it.when : '')); return; }
-      setActiveN(it.n); setMode('study'); setHwDone(false); setHwResult(null); setPlaying(false);
+    // Смена урока (навигация по id / prev-next / клик в плейлисте) сбрасывает
+    // режим изучения/домашку и скроллит наверх.
+    useEffect(() => {
+      setMode('study'); setHwDone(false); setHwResult(null); setPlaying(false);
       const mn = document.querySelector('.sd-main'); if (mn) mn.scrollTop = 0;
-    };
+    }, [activeId]);
+
+    const item = currentItem;
+    const activeLesson = live;
+    const total = workLessons.length;
+
+    const pos = workLessons.findIndex((it) => it.id === item.id);
+    const prevItem = pos > 0 ? workLessons[pos - 1] : null;
+    const nextItem = pos >= 0 && pos < workLessons.length - 1 ? workLessons[pos + 1] : null;
+
+    // Переключение урока — реальная навигация по id (адресуемо, URL меняется).
+    const switchTo = (it) => { if (it && it.id) nav('/learn/lesson/' + it.id); };
 
     // Страница урока — всегда; тест — попап-модалка поверх неё.
     const page = h(LessonPage, {
-      lesson: activeLesson, item, lessons,
+      lesson: activeLesson, item, lessons: workLessons, total, moduleName,
       onStart: () => { setRun((r) => r + 1); setMode('homework'); },
       homeworkDone: hwDone, hwResult, playing, onPlay: setPlaying, onSwitch: switchTo,
       onPrev: prevItem ? () => switchTo(prevItem) : undefined, onNext: nextItem ? () => switchTo(nextItem) : undefined,
       prevOk: !!prevItem, nextOk: !!nextItem,
     });
     const modal = mode === 'homework' ? h(Trainer, {
-      key: 'hw-' + run + '-' + activeN, lesson: activeLesson,
+      key: 'hw-' + run + '-' + item.id, lesson: activeLesson,
       onExit: () => setMode('study'),
       onDone: (res) => { setHwDone(true); setHwResult(res || null); setMode('study'); },
     }) : null;
