@@ -73,6 +73,12 @@
   .sd-brand__logo{width:150px;height:auto;display:block;}
 
   .sd-nav{display:flex;flex-direction:column;gap:3px;flex:1 1 auto;overflow-y:auto;min-height:0;}
+  /* «Создать урок» — основной CTA сайдбара (плоский сапфир, без выпуклости) */
+  .sd-newlesson{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 2px 6px;padding:12px 14px;border-radius:13px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:-.2px;color:#fff;
+    background:#2073E6;border:1px solid rgba(120,170,255,.38);
+    box-shadow:inset 0 0 18px rgba(120,190,255,.5),inset 0 1px 0 rgba(255,255,255,.22),0 8px 20px -8px rgba(20,60,160,.55);transition:background .16s,transform .16s;}
+  .sd-newlesson:hover{background:#2b8fff;transform:translateY(-1px);}
+  .sd-newlesson__ic{display:grid;place-items:center;}
   .sd-nav::-webkit-scrollbar{width:0;}
   .sd-nav__item{
     display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
@@ -1055,6 +1061,20 @@
   @keyframes sdFade{from{opacity:0}to{opacity:1}}
   .sd-ov--center{align-items:center;justify-content:center;padding:34px;}
   .sd-ov--right{justify-content:flex-end;}
+  /* попап-заглушка «раздел в разработке» (единый, зовётся через SH.openSoon) */
+  .sd-soon{position:relative;width:100%;max-width:404px;border-radius:24px;padding:30px 28px 26px;text-align:center;
+    background:linear-gradient(160deg,rgba(255,255,255,.95),rgba(238,242,253,.9));border:1px solid rgba(255,255,255,.7);
+    box-shadow:0 34px 74px -22px rgba(6,16,44,.6),inset 0 1px 0 rgba(255,255,255,.92);
+    animation:sdSoonIn .22s cubic-bezier(.23,1,.32,1) both;}
+  @keyframes sdSoonIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+  .sd-soon__ic{width:52px;height:52px;margin:0 auto 16px;border-radius:16px;display:grid;place-items:center;color:#fff;
+    background:var(--sd-acc-deep,#1f63c8);box-shadow:inset 0 0 18px rgba(120,190,255,.6),inset 0 1px 0 rgba(255,255,255,.3),0 10px 22px -8px rgba(31,99,200,.5);}
+  .sd-soon__eyebrow{font-size:12.5px;font-weight:600;color:var(--sd-acc-deep,#1f63c8);margin-bottom:6px;}
+  .sd-soon__t{font-weight:700;font-size:21px;letter-spacing:-.5px;color:var(--sd-ink,#15203b);}
+  .sd-soon__s{font-size:14px;font-weight:500;line-height:1.5;color:var(--sd-ink-sub,#5a6785);margin-top:9px;text-wrap:balance;}
+  .sd-soon__btn{margin-top:22px;width:100%;padding:14px;border-radius:14px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:600;color:#fff;border:0;
+    background:var(--sd-acc-deep,#1f63c8);box-shadow:inset 0 0 18px rgba(120,190,255,.5),inset 0 1px 0 rgba(255,255,255,.3);transition:background .16s,transform .16s;}
+  .sd-soon__btn:hover{background:var(--sd-acc,#2b8fff);transform:translateY(-1px);}
   .sd-modal{width:100%;max-width:540px;max-height:86vh;display:flex;flex-direction:column;border-radius:22px;overflow:hidden;color:#fff;
     background:rgba(13,20,46,.58);
     -webkit-backdrop-filter:blur(34px) saturate(150%);backdrop-filter:blur(34px) saturate(150%);
@@ -1362,6 +1382,7 @@
 
   /* ── Футер «Атмосфера»: белый контент уходит в ночь ─────────────────────── */
   .sd-foot{position:relative;color:#EAF0FF;background:transparent;margin-top:28px;padding:40px 0 44px;}
+  .sd-foot__block{position:absolute;inset:0;z-index:6;cursor:default;}
   .sd-foot__in{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 52px;}
   /* футер выравнивается по контенту каждой страницы: обучение (.lr-page) уже 1248/44 */
   .sd-scroll:has(.lr-page) .sd-foot__in{max-width:1248px;padding:0 44px;}
@@ -1460,7 +1481,6 @@
   ];
 
   function onNav(it) {
-    if (it.to) { nav(it.to); return; }
     const l = (it.label || '').toLowerCase();
     if (l.indexOf('ai') >= 0 || l.indexOf('ассистент') >= 0 || l.indexOf('куратор') >= 0) {
       openChat(l.indexOf('куратор') >= 0
@@ -1468,8 +1488,16 @@
         : null);
       return;
     }
-    if (toast) toast('Раздел «' + it.label + '» скоро будет');
-    else console.log('[student] раздел скоро:', it.label);
+    // Пока готов только раздел «Обучение» (/learn) — остальная навигация в разработке (попап).
+    if (it.to === '/learn') { nav(it.to); return; }
+    openSoon(it.label);
+  }
+
+  // «Создать урок» (в сайдбаре): создаёт новый урок и открывает конструктор
+  function createLesson() {
+    const Store = window.ELessonStore;
+    if (Store && Store.create) { Store.create().then(function (l) { nav(l && l.id ? '/learn/build/' + l.id : '/learn/build'); }).catch(function () { nav('/learn/build'); }); }
+    else { nav('/learn/build'); }
   }
 
   /* ── Ring — кольцо прогресса (SVG) ──────────────────────────────────── */
@@ -1501,6 +1529,9 @@
     return h('aside', { className: 'sd-side' },
       h('div', { className: 'sd-brand' },
         h('img', { className: 'sd-brand__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' })),
+      h('button', { type: 'button', className: 'sd-newlesson', onClick: () => { createLesson(); if (props.onItemClick) props.onItemClick(); } },
+        h('span', { className: 'sd-newlesson__ic' }, Ic.Plus ? h(Ic.Plus, { size: 16 }) : null),
+        'Создать урок'),
       h('nav', { className: 'sd-nav' },
         navItems.map((it) => h('button', {
           key: it.key, type: 'button',
@@ -1547,6 +1578,7 @@
   const openChat = (ctx) => openPopup({ kind: 'chat', ctx: ctx || null });
   const openArticle = (a, all) => openPopup({ kind: 'article', data: a, all: all || (a && a.more) || null });
   const openTask = (t) => openPopup({ kind: 'task', data: t });
+  const openSoon = (label, message) => openPopup({ kind: 'soon', label: label || null, message: message || null });
   const closePopup = () => openPopup(null);
   // AI-чат — единый канонический попап EUI.AssistantPopup (тот же, что на #/documents),
   // рендерится из PopupHost по SH.openChat(). Локальный Chat удалён, чтобы попап был один.
@@ -1778,6 +1810,15 @@
           Ic.Spark ? h(Ic.Spark, { size: 16 }) : null, 'Спросить AI')));
   }
 
+  function SoonModal(props) {
+    return h('div', { className: 'sd-soon', onMouseDown: function (e) { e.stopPropagation(); } },
+      h('div', { className: 'sd-soon__ic' }, Ic.Bolt ? h(Ic.Bolt, { size: 22 }) : null),
+      props.label ? h('div', { className: 'sd-soon__eyebrow' }, props.label) : null,
+      h('div', { className: 'sd-soon__t' }, 'Платформа в разработке'),
+      h('div', { className: 'sd-soon__s' }, props.message || 'Мы ещё дорабатываем платформу — этот раздел включим позже. Пока доступен раздел «Обучение».'),
+      h('button', { type: 'button', className: 'sd-soon__btn', onClick: props.close }, 'Понятно'));
+  }
+
   function PopupHost() {
     const [p, setP] = useState(null);
     useEffect(() => { _pop.set = setP; return () => { _pop.set = null; }; }, []);
@@ -1797,7 +1838,9 @@
           ? (window.ESTaskModal
             ? h(window.ESTaskModal, { data: p.data, close: closePopup, openChat: openChat })
             : h(TaskModal, { data: p.data }))
-          : null);
+          : p.kind === 'soon'
+            ? h(SoonModal, { label: p.label, message: p.message, close: closePopup })
+            : null);
   }
 
   /* ── Shell — каркас страницы ученика ───────────────────────────────── */
@@ -1831,7 +1874,9 @@
           h('div', { className: 'sd-foot__copy' }, '© 2026 ИСТСАЙД · Поступление в университеты Китая'),
           h('div', { className: 'sd-foot__legal-links' },
             h('a', { href: '#' }, 'Политика конфиденциальности'),
-            h('a', { href: '#' }, 'Оферта')))));
+            h('a', { href: '#' }, 'Оферта')))),
+      // футер пока некликабелен — оверлей перехватывает клики (платформа в разработке)
+      h('div', { className: 'sd-foot__block', onClick: function () { openSoon(); }, 'aria-hidden': 'true' }));
   }
 
   function Shell(props) {
@@ -1976,5 +2021,5 @@
       h(PopupHost, null));
   }
 
-  window.ESStudentShell = { Shell, Sidebar, TopBar, Ring, NAV, USER, onNav, openChat, openArticle, openTask, closePopup };
+  window.ESStudentShell = { Shell, Sidebar, TopBar, Ring, NAV, USER, onNav, openChat, openArticle, openTask, openSoon, closePopup };
 })();

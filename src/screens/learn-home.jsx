@@ -15,7 +15,7 @@
    ============================================================================ */
 (function () {
   'use strict';
-  const { createElement: h } = window.React || React;
+  const { createElement: h, useState } = window.React || React;
   const EScreens = (window.EScreens = window.EScreens || {});
   const Ic = window.EIcons || {};
   const SH = window.ESStudentShell;
@@ -43,20 +43,18 @@
      тёмные углы гасим радиальной маской. Высоту держим по контенту, чтобы блок
      «Мои обучения» шёл близко, без пустоты. Голубое ВНУТРЕННЕЕ свечение — НЕ за
      шаром, а в стат-карточках (как активный чип anketa, см. .lr-page .sd-stat). */
-  .lr-page .sd-hero2{min-height:392px;margin:4px 0 0;}
-  .lr-page .sd-hero2__main{margin-top:14px;}
+  /* hero без картинки — компактный, «Мои обучения» поднимается сильно выше */
+  .lr-page .sd-hero2{min-height:auto;margin:0;}
+  .lr-page .sd-hero2__main{margin-top:6px;max-width:100%;}
   /* главный заголовок — чуть больше воздуха между буквами (мягче минус-трекинг, не разрядка) */
   .lr-page .sd-hero2__h{letter-spacing:-.8px;}
-  /* восхождение — светящаяся лестница справа, поднимается в свет (свой альфа-фейд, маска не нужна) */
-  .lr-page .sd-hero2__mtwrap{top:50%;right:-6px;width:588px;max-width:51%;transform:translateY(-50%);}
-  .lr-page .sd-hero2__mt{width:100%;height:auto;
-    -webkit-mask-image:none;mask-image:none;
-    filter:drop-shadow(0 20px 44px rgba(40,90,200,.18));}
+  .lr-page .sd-hero2__stats{margin-top:22px;max-width:620px;}
+  .lr-page .sd-hero2__mtwrap{display:none;}
   /* стат-карточки хиро — ТОЧНО как активная карточка anketa (свечение внутри) */
   .lr-page .sd-stat{border:1.5px solid rgba(43,143,255,.4);
     box-shadow:inset 0 0 26px rgba(43,143,255,.3),inset 0 0 6px rgba(43,143,255,.16),inset 0 1px 0 rgba(255,255,255,.5);}
   /* первый блок сразу под хиро — ближе, без пустоты */
-  .lr-page .sd-hero2 + .lr-sec{margin-top:18px;}
+  .lr-page .sd-hero2 + .lr-sec{margin-top:44px;}
 
   /* ── Заголовок секции ───────────────────────────────────────────────────── */
   .lr-sec{margin-top:38px;}
@@ -172,6 +170,9 @@
   .lr-kpic__delta{display:inline-flex;align-items:center;gap:4px;margin-top:13px;font-size:12.5px;font-weight:600;color:#1C7E52;}
   .lr-kpic__delta.neutral{color:var(--sd-ink-mute);}
   .lr-kpic__bot .lr-spark{align-self:flex-end;margin-bottom:4px;}
+  /* «Средний балл» — солидный прогресс-бар к 100 вместо спарклайна (на сапфир-якоре — белый) */
+  .lr-kpic__gauge{margin-top:16px;height:8px;border-radius:99px;background:rgba(255,255,255,.2);overflow:hidden;box-shadow:inset 0 1px 2px rgba(6,20,54,.2);}
+  .lr-kpic__gaugefill{height:100%;border-radius:99px;background:rgba(255,255,255,.92);box-shadow:0 0 10px rgba(255,255,255,.45);}
   /* анкер — ПЛОСКАЯ сапфировая заливка, единственный сильный акцент в ряду (без выпуклости) */
   .lr-kpic.anchor{border-color:rgba(255,255,255,.28);background:var(--sd-acc-deep);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 1px 2px rgba(31,99,200,.2),0 22px 46px -20px rgba(31,99,200,.55);}
@@ -432,8 +433,9 @@
   }
 
   // ── helpers
-  const go = (label) => SH && SH.onNav({ label: label });
-  const chat = () => SH && SH.openChat();
+  // попап-заглушка: кнопки без реального перехода зовут единый попап шелла SH.openSoon
+  const openStub = (label) => SH && SH.openSoon && SH.openSoon(label, 'Этот раздел мы достроим позже — вместе с агентом. Пока это макет.');
+  const go = (label) => openStub(label);
   const arr = (s) => Ic.ArrowRight ? h(Ic.ArrowRight, { size: s || 16 }) : '→';
   const chev = (s) => Ic.ChevronRight ? h(Ic.ChevronRight, { size: s || 17 }) : '›';
 
@@ -484,6 +486,12 @@
     { t: T.gold, ic: Ic.Edit, time: '23:59', title: 'Домашнее задание', sub: 'Аудирование · Тоны и интонации', meta: 'Дедлайн сегодня', m: T.gold, mt: 'Сдать' },
   ];
 
+  const SCHEDULE_TOMORROW = [
+    { t: T.sap, ic: Ic.Book, time: '16:00', title: 'Китайский язык', sub: 'Урок 13 · Иероглифы и радикалы', meta: 'Онлайн · 50 минут', m: T.sap, mt: 'Занятие', next: true },
+    { t: T.jade, ic: Ic.Monitor, time: '18:30', title: 'Разговорный клуб', sub: 'Английский · Speaking practice', meta: 'Онлайн · 40 минут', m: T.jade, mt: 'Занятие' },
+    { t: T.gold, ic: Ic.Edit, time: '21:00', title: 'Тест по лексике', sub: 'HSK 4 · Урок 12', meta: 'Дедлайн завтра', m: T.gold, mt: 'Пройти' },
+  ];
+
   const TASKS = [
     { t: T.coral, ic: Ic.Doc, title: 'Домашка по уроку 11', sub: 'IELTS · Writing', m: T.coral, mt: 'Сегодня, 23:59', hot: true },
     { t: T.sap, ic: Ic.Edit, title: 'Написать эссе Task 2', sub: 'Китайский язык', m: T.sap, mt: 'Завтра' },
@@ -492,7 +500,7 @@
 
   const STATS = [
     { ic: Ic.Book, num: '30', lbl: 'Уроков пройдено', delta: '+3 за неделю', up: true, glow: '43,143,255', bars: [.32, .5, .42, .64, .56, .82, 1] },
-    { ic: Ic.Star, num: '88', unit: '%', lbl: 'Средний балл', delta: '+6% за месяц', up: true, anchor: true, glow: '43,143,255', line: [.5, .46, .6, .55, .68, .72, .88] },
+    { ic: Ic.Star, num: '88', unit: '%', lbl: 'Средний балл', anchor: true, glow: '43,143,255', gauge: 88 },
     { ic: Ic.CheckCircle, num: '14', lbl: 'Тестов сдано', delta: '+2 за неделю', up: true, glow: '124,132,246', bars: [.4, .55, .5, .68, .6, .85, 1] },
   ];
 
@@ -566,13 +574,13 @@
         h('button', { type: 'button', className: 'lr-seclink', onClick: function () { go('Все программы'); } }, 'Все программы', arr(14))),
       h('div', { className: 'lr-prog' },
         PROGRAMS.map(function (p, i) {
-          return h('div', { key: i, className: 'lr-card' + (p.active ? ' is-active' : '') + (p.dim ? ' lr-card--dim' : '') + (p.dim2 ? ' lr-card--dim2' : ''), style: { '--card-acc': p.acc }, onClick: chat },
+          return h('div', { key: i, className: 'lr-card' + (p.active ? ' is-active' : '') + (p.dim ? ' lr-card--dim' : '') + (p.dim2 ? ' lr-card--dim2' : ''), style: { '--card-acc': p.acc }, onClick: function () { openStub(p.l1 + ' ' + p.l2); } },
             h('img', { className: 'lr-card__bg', src: p.bg, alt: '', 'aria-hidden': 'true' }),
             h('div', { className: 'lr-card__top' },
               h('div', { className: 'lr-card__name' }, p.l1, h('br'), p.l2),
               h('div', { className: 'lr-card__count' }, p.count)),
             h('div', { className: 'lr-card__bottom' },
-              h('button', { type: 'button', className: 'lr-card__btn' + (p.btn ? ' lr-card__btn--accent' : ''), style: p.btn ? { '--btn': p.btn } : null, onClick: function (e) { e.stopPropagation(); chat(); } },
+              h('button', { type: 'button', className: 'lr-card__btn' + (p.btn ? ' lr-card__btn--accent' : ''), style: p.btn ? { '--btn': p.btn } : null, onClick: function (e) { e.stopPropagation(); openStub(p.l1 + ' ' + p.l2); } },
                 p.cta, Ic.ArrowUpRight ? h(Ic.ArrowUpRight, { size: 16 }) : '↗')));
         })));
   }
@@ -607,16 +615,18 @@
 
   /* ── Низ ───────────────────────────────────────────────────────────────── */
   function Bottom() {
+    const [day, setDay] = useState('today');
+    const list = day === 'tomorrow' ? SCHEDULE_TOMORROW : SCHEDULE;
     return h('section', { className: 'lr-sec lr-bot' },
       // расписание
       h('div', { className: 'lr-panel' },
         h('div', { className: 'lr-panel__h' },
           h('h3', null, 'Расписание'),
           h('div', { className: 'lr-tabs' },
-            h('button', { type: 'button', className: 'lr-tab is-on' }, 'Сегодня'),
-            h('button', { type: 'button', className: 'lr-tab' }, 'Завтра'))),
-        SCHEDULE.map(function (s, i) {
-          return h('div', { key: i, className: 'lr-ev' + (s.next ? ' is-next' : ''), style: { '--t': s.t, '--m': s.m }, onClick: function () { go('Открыть занятие'); } },
+            h('button', { type: 'button', className: 'lr-tab' + (day === 'today' ? ' is-on' : ''), onClick: function () { setDay('today'); } }, 'Сегодня'),
+            h('button', { type: 'button', className: 'lr-tab' + (day === 'tomorrow' ? ' is-on' : ''), onClick: function () { setDay('tomorrow'); } }, 'Завтра'))),
+        list.map(function (s, i) {
+          return h('div', { key: day + i, className: 'lr-ev' + (s.next ? ' is-next' : ''), style: { '--t': s.t, '--m': s.m }, onClick: function () { go('Открыть занятие'); } },
             h('span', { className: 'lr-ev__time' }, s.time),
             h('span', { className: 'lr-ev__ic' }, s.ic ? h(s.ic, { size: 17 }) : null),
             h('div', { className: 'lr-ev__b' },
@@ -659,7 +669,7 @@
       h('div', { className: 'lr-kpi' },
         kpis.map(function (s, i) {
           var color = s.anchor ? 'rgba(255,255,255,.92)' : ('rgb(' + s.glow + ')');
-          var spark = s.line ? sparkLine(s.line, color) : sparkBars(s.bars, color);
+          var spark = s.gauge != null ? null : (s.line ? sparkLine(s.line, color) : sparkBars(s.bars, color));
           return h('div', { key: i, className: 'lr-kpic' + (s.anchor ? ' anchor' : ''), style: { '--kpi-glow': s.glow } },
             h('div', { className: 'lr-kpic__top' },
               h('span', { className: 'lr-kpic__ic' }, s.ic ? h(s.ic, { size: 19 }) : null),
@@ -667,9 +677,11 @@
             h('div', { className: 'lr-kpic__bot' },
               h('div', null,
                 h('div', { className: 'lr-kpic__num' }, s.num, s.unit ? h('span', { className: 'lr-kpic__u' }, s.unit) : null),
-                h('div', { className: 'lr-kpic__delta' + (s.up ? '' : ' neutral') },
-                  s.up && Ic.TrendUp ? h(Ic.TrendUp, { size: 12 }) : null, s.delta)),
-              spark));
+                s.delta ? h('div', { className: 'lr-kpic__delta' + (s.up ? '' : ' neutral') },
+                  s.up && Ic.TrendUp ? h(Ic.TrendUp, { size: 12 }) : null, s.delta) : null),
+              spark),
+            s.gauge != null ? h('div', { className: 'lr-kpic__gauge' },
+              h('div', { className: 'lr-kpic__gaugefill', style: { width: s.gauge + '%' } })) : null);
         })),
       // ряд аналитики: активность за неделю + время по предметам
       h('div', { className: 'lr-charts' },
