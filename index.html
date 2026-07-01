@@ -20,10 +20,7 @@
     })();
   </script>
 
-  <!-- Шрифт: только Manrope, везде -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
+  <!-- Шрифт: SF Pro Display (системный, -apple-system). Вебфонт не грузим. -->
 
   <!-- Дизайн-токены, затем базовые стили (порядок важен). Хешируются на сборке
        (Vite), бастер кеша вручную больше не нужен. -->
@@ -38,6 +35,10 @@
     // бьёт по /kb/* своего домена, а прокси (Vite dev / vercel.json rewrites)
     // server-side ходит на бота. Так CORS бота не нужен вовсе.
     window.ES_BOT_BASE = '';
+    // Уроки (конструктор/библиотека/страница урока) сохраняются в реальную БД
+    // (Postgres через бэкенд). Отдельно от ES_API_BASE — только уроки уходят на
+    // бэкенд, остальной фронт остаётся на моке. Пусто = уроки в localStorage.
+    window.ES_LESSONS_BASE = 'https://eastside-backend-production.up.railway.app';
   </script>
 </head>
 <body>

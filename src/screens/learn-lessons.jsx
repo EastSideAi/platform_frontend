@@ -25,7 +25,7 @@
     --lb-acc-soft:rgba(43,143,255,.1);--lb-acc-line:rgba(43,143,255,.4);
     --lb-ink:#15203B;--lb-ink-sub:rgba(21,32,59,.6);--lb-ink-mute:rgba(21,32,59,.42);--lb-ink-faint:rgba(21,32,59,.24);
     --lb-line:rgba(22,32,59,.08);--lb-line-strong:rgba(22,32,59,.14);--lb-jade:#1C7E52;--lb-rose:#B23B2A;
-    position:fixed;inset:0;display:flex;flex-direction:column;font-family:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
+    position:fixed;inset:0;display:flex;flex-direction:column;font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
     color:var(--lb-ink);z-index:1;
     background:
       radial-gradient(760px 500px at 96% -10%, rgba(118,150,255,.13) 0%, transparent 64%),

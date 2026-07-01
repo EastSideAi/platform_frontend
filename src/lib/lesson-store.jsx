@@ -33,7 +33,10 @@
 
   const TABLE_KEY = 'es-lessons-v1';   // таблица уроков
   const LEGACY_KEY = (L && L.KEY) || 'es-lesson-draft'; // старый одиночный черновик
-  const BASE = (window.ES_API_BASE || '').replace(/\/+$/, '');
+  // База уроков отдельная (ES_LESSONS_BASE): только уроки уходят в бэкенд/БД, а
+  // остальной фронт (диагностика/анкета/AI) остаётся на своём ES_API_BASE. Если
+  // отдельной нет — падаем на общий ES_API_BASE. Пусто = локальный режим.
+  const BASE = (window.ES_LESSONS_BASE || window.ES_API_BASE || '').replace(/\/+$/, '');
   const REMOTE = !!BASE;
 
   const clone = (x) => (L && L.clone ? L.clone(x) : JSON.parse(JSON.stringify(x)));
@@ -227,10 +230,17 @@
     persist();
   }
 
+  // Прямой fetch к базе уроков (не через EApi — тот завязан на ES_API_BASE).
+  // Без credentials: эндпоинты уроков анонимны, cookie/CSRF не нужны.
   async function remote(method, id, body) {
     const path = '/api/learning/lessons' + (id ? '/' + encodeURIComponent(id) : '');
-    const r = await Api.request(method, path, body);
-    return r && r.data;
+    const res = await fetch(BASE + path, {
+      method: method,
+      headers: { 'Content-Type': 'application/json' },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json().catch(function () { return null; });
   }
 
   /* ── ПУБЛИЧНЫЙ АСИНХРОННЫЙ API ───────────────────────────────────────────── */

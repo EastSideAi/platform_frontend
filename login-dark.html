@@ -10,7 +10,6 @@
 <title>EastSide — Вход</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
 /* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
 :root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
@@ -22,7 +21,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
-  body { font-family: 'Manrope', 'Segoe UI', sans-serif; color: var(--tx); overflow: hidden; background: var(--base); }
+  body { font-family: 'SF Pro Display', 'Segoe UI', sans-serif; color: var(--tx); overflow: hidden; background: var(--base); }
 
   /* нарезка в 3 слоя — в темноте по очереди: 1) дорога подсвечивается снизу
      вверх → 2) зажигается звезда → 3) проявляется все остальное (фигура + фон).
@@ -113,7 +112,7 @@
     background: url('funnel-assets/logo-dark.png') no-repeat left center / contain;
     filter: drop-shadow(0 1px 8px rgba(38,118,231,.32)); }
 
-  .hi { font-family: 'Manrope', 'Segoe UI', sans-serif; font-size: clamp(27px, 3vw, 36px); font-weight: 600; line-height: 1.06; letter-spacing: -0.5px; color: #fff; }
+  .hi { font-family: 'SF Pro Display', 'Segoe UI', sans-serif; font-size: clamp(27px, 3vw, 36px); font-weight: 600; line-height: 1.06; letter-spacing: -0.5px; color: #fff; }
   .hi em { font-style: normal; color: #2676e7; }
   .hi #hiTail { display: block; }  /* «пожаловать!» всегда со второй строки */
   .desc { margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--tx-soft); max-width: 40ch; }
@@ -122,7 +121,7 @@
   .tabs { margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px;
     border-radius: 13px; background: rgba(18,32,68,.26); border: 1px solid rgba(160,195,255,.18);
     -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: inset 0 1px 0 rgba(255,255,255,.06); }
-  .tab { border: 1px solid transparent; cursor: pointer; font: 700 13.5px 'Manrope', sans-serif; padding: 12px 0; border-radius: 10px;
+  .tab { border: 1px solid transparent; cursor: pointer; font: 700 13.5px 'SF Pro Display', sans-serif; padding: 12px 0; border-radius: 10px;
     background: transparent; color: var(--tx-soft); transition: color .18s, background .18s, box-shadow .18s; }
   .tab:not(.on):hover { color: #fff; }
   .tab.on { color: #fff; background: #2676e7; border: 1px solid rgba(120,185,255,.6);
@@ -135,7 +134,7 @@
   .inp-wrap { position: relative; }
   .inp { width: 100%; height: 46px; padding: 0 16px; border-radius: 13px;
     background: rgba(3,9,28,.55); border: 1.5px solid rgba(150,185,255,.18); color: #fff;
-    font: 500 14.5px 'Manrope', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s, background .15s; }
+    font: 500 14.5px 'SF Pro Display', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s, background .15s; }
   .inp::placeholder { color: #5C6488; }
   .inp:focus { border-color: rgba(38,118,231,.7); background: rgba(8,16,44,.7);
     box-shadow: inset 0 0 18px rgba(38,118,231,.2), 0 0 0 3px rgba(38,118,231,.14); }
@@ -153,7 +152,7 @@
   /* ── кнопка (как «Дальше» в анкете: плоский сапфир + внутреннее свечение) ── */
   .btn { margin-top: 24px; width: 100%; height: 48px; border: 0; border-radius: 14px; cursor: pointer;
     display: inline-flex; align-items: center; justify-content: center;
-    font: 700 15.5px 'Manrope', sans-serif; color: #fff; background: #2676e7;
+    font: 700 15.5px 'SF Pro Display', sans-serif; color: #fff; background: #2676e7;
     box-shadow: inset 0 0 24px rgba(175,215,255,.95), inset 0 0 8px rgba(255,255,255,.5), inset 0 1px 0 rgba(255,255,255,.5);
     transition: background .12s, transform .08s; }
   .btn:hover { background: #3A85F0; }
@@ -181,7 +180,7 @@
     box-shadow: inset 0 0 18px rgba(38,118,231,.28), inset 0 1px 0 rgba(255,255,255,.1); }
   .soc:active { transform: translateY(1px); }
   .soc svg { width: 22px; height: 22px; display: block; }
-  .soc span { font: 800 18px 'Manrope', sans-serif; line-height: 1; }
+  .soc span { font: 800 18px 'SF Pro Display', sans-serif; line-height: 1; }
 
   @media (max-width: 720px) {
     body { background-position: center top; }

@@ -6,7 +6,7 @@
 Страницы в этом стиле: `anketa-dark.html`, `diagnostic-dark.html` («Разбор»),
 `loading-dark.html` (экран генерации), `roadmap-dark.html` («Твое восхождение» —
 кинематографичная фото-гора с прожигом тропы, HUD целиком в этом языке:
-Manrope, сапфир, внутренние свечения; открывается из разбора большим
+SF Pro, сапфир, внутренние свечения; открывается из разбора большим
 попапом, умеет embed-режим через postMessage `roadmap-close`).
 Старый прототип `prototypes/v2/ignite-demo.html` (Unbounded/Golos) — архив,
 с него снят движок; новые правки — только в `roadmap-dark.html`.
@@ -137,15 +137,17 @@ body::before {  /* fixed, pointer-events: none */
 
 ## 4. Типографика
 
-Один шрифт, везде — **Manrope** (Google Fonts, вес 200–800). Заголовки, текст,
+Один шрифт, везде — **SF Pro Display** (системный шрифт Apple). Заголовки, текст,
 кнопки, цифры, лейблы — всё на нём; иерархию держим ВЕСОМ и кеглем, а не сменой
-гарнитуры. Грузится одним `<link>` (`family=Manrope:wght@200..800`), стек-фолбэк
-`'Manrope', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif`.
-Гарантия «только он» — глобальный `*{font-family:var(--font-display)!important}` на
-каждой странице и в `styles.css`; токены `--font-display/-text/-arkhip/-ui/-mono`
-все указывают на этот стек. Arkhip, Onest, SF Pro, Space Grotesk, Inter — выпилены.
+гарнитуры. Вебфонт НЕ грузим: SF Pro проприетарный, свободного webfont нет — отдаём
+его системно через `-apple-system`/`BlinkMacSystemFont`, стек
+`'SF Pro Display', -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', sans-serif`.
+На Mac/iOS рендерится настоящий SF Pro, на Windows/Android — системный фолбэк (Segoe UI /
+system-ui). Гарантия «только он» — глобальный `*{font-family:var(--font-display)!important}`
+на каждой странице и в `styles.css`; токены `--font-display/-text/-arkhip/-ui/-mono` все
+указывают на этот стек. Manrope, Arkhip, Onest, Space Grotesk, Inter — выпилены.
 
-Шкала (px), всё Manrope — вес несёт иерархию:
+Шкала (px), всё SF Pro Display — вес несёт иерархию:
 
 | Роль | Размер | Вес | Межбуквенное |
 |---|---|---|---|
@@ -166,9 +168,9 @@ body::before {  /* fixed, pointer-events: none */
 Правила:
 
 - Цифры всегда `font-variant-numeric: tabular-nums`.
-- Иерархию держим ВЕСОМ Manrope (400 текст → 500–600 акценты → 700 заголовки →
+- Иерархию держим ВЕСОМ SF Pro Display (400 текст → 500–600 акценты → 700 заголовки →
   800 крупные значения), а не сменой шрифта. Заголовки больше НЕ отдельной
-  гарнитурой (был Arkhip) — это просто Manrope покрупнее с минус-трекингом.
+  гарнитурой (был Arkhip, потом Manrope) — это просто SF Pro покрупнее с минус-трекингом.
 - **Максимум два уровня текста на карточку**: заголовок + одна строка. Третий
   уровень — только если это капс-лейбл или значение, не предложение.
 - Заголовки никогда не светятся и не красятся в акцент — цвет несут элементы.
@@ -264,7 +266,7 @@ body::before {  /* fixed, pointer-events: none */
   подложка `linear-gradient(150deg, rgba(43,143,255,.2), rgba(43,143,255,.05) 60%), #07143A;`
   border `rgba(60,150,250,.34)`. **Маскот выглядывает за верхнюю границу**:
   `position: absolute; left: 4px; bottom: 0; width: 92px; height: 130px;`
-  (`assets/mascot-cut.png`, drop-shadow вниз). Имя — Manrope 17.
+  (`assets/mascot-cut.png`, drop-shadow вниз). Имя — SF Pro Display 17.
 - Низ: две кнопки «Настройки» и «Выйти» (`flex: 1` каждая, radius 14),
   внутри светящийся чип-иконка 28×28 (формула `chip-glow`); «Выйти» — красная
   версия с красным свечением. При нехватке высоты сжимается НАВИГАЦИЯ
@@ -272,7 +274,7 @@ body::before {  /* fixed, pointer-events: none */
 
 ### 7.2 Контент плашки
 
-- **H1** Manrope 40 + `sub` 15/1.6 под ним. Без кикеров над H1.
+- **H1** SF Pro Display 40 + `sub` 15/1.6 под ним. Без кикеров над H1.
 - **Чипсы** (мультивыбор): пилюли `padding: 10px 16px; radius 13;` материал `.opt`;
   выбранный — `.sel` с уменьшенным свечением (inset 18px/.28). Мягкий выход
   «не знаю» — пунктирная рамка `dashed rgba(120,120,200,.4)`.
@@ -289,7 +291,7 @@ body::before {  /* fixed, pointer-events: none */
 
 ### 7.3 Тёмная панель (слой 3)
 
-Порядок сверху вниз: кикер (12.5, muted) → заголовок Manrope 25 →
+Порядок сверху вниз: кикер (12.5, muted) → заголовок SF Pro Display 25 →
 [крупная цифра/контент] → блок горы → прогресс-бар → строки-факты → виджет внизу.
 
 - **Гора** — блок `height: 142px; border-radius: 14px; overflow: hidden;`
@@ -414,8 +416,9 @@ body::before {  /* fixed, pointer-events: none */
 9. Эмодзи, стоковые 3D-иллюстрации, дженерик-иконки с заливкой.
 10. Буква «ё», канцелярит, «Вы» с большой буквы.
 11. Серые рамки `#ccc`/`#ddd` — обводки у нас белые полупрозрачные или синие.
-12. Любой шрифт кроме Manrope. Один шрифт на весь продукт — Manrope, точка.
-    (Arkhip/Onest/SF Pro/Space Grotesk/Inter выпилены, не возвращать.)
+12. Любой шрифт кроме SF Pro Display. Один шрифт на весь продукт — SF Pro Display, точка.
+    Отдаётся системно (`-apple-system`), вебфонт не грузим.
+    (Manrope/Arkhip/Onest/Space Grotesk/Inter выпилены, не возвращать.)
 
 ---
 
@@ -425,7 +428,7 @@ body::before {  /* fixed, pointer-events: none */
 2. Контент в колонке ≤824px, не растекся?
 3. Все выбранные/активные состояния светятся ИЗНУТРИ по формулам раздела 5?
 4. На карточках максимум два уровня текста?
-5. Всё на Manrope (заголовки — тоже Manrope, просто крупнее), цифры tabular-nums?
+5. Всё на SF Pro Display (заголовки — тоже SF Pro, просто крупнее), цифры tabular-nums?
 6. Стрелки в кнопках повернуты на −45°?
 7. Гора (если есть) — единый SVG, точки на гребне, звезда по статусу?
 8. Бары заполняются анимацией из нуля, блик бежит?
@@ -443,7 +446,7 @@ body::before {  /* fixed, pointer-events: none */
 | `diagnostic-dark.html` | «Разбор» — пример страницы результата в этом языке |
 | `loading-dark.html` | загрузка — минимальный регистр стиля |
 | `assets/logo.png`, `assets/mascot-cut.png`, `assets/compass.png` | фирменные ассеты |
-| Manrope (Google Fonts) | единственный шрифт продукта, грузится `<link>` (`assets/fonts/arkhip/` — мёртвый, не используется) |
+| SF Pro Display (системный, `-apple-system`) | единственный шрифт продукта; вебфонт не грузим (`assets/fonts/arkhip/` — мёртвый) |
 | `_build-standalone.ps1` | сборка единых файлов (base64-инлайн) |
 | `_shot-dark.mjs`, `_shot-steps.mjs`, `_shot-file.mjs` | скриншот-тулинг для итераций |
 | `_ref/anketa-dark-reference.png` | исходный референс владельца |

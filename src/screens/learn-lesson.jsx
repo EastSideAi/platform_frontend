@@ -30,7 +30,7 @@
     --lx-jade:#0E9F6E; --lx-jade-soft:#E2F4EA; --lx-jade-line:rgba(16,185,120,.5);
     --lx-rose:#E5484D; --lx-rose-soft:#FBE7E2; --lx-rose-line:rgba(240,84,72,.5);
     --lx-gold:#E2A52E;
-    font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;
+    font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
   }
   .lx-scope *{box-sizing:border-box;}
   .lx-prompt{font-weight:600;font-size:21px;letter-spacing:-.4px;line-height:1.22;color:var(--lx-ink);text-wrap:balance;}
@@ -107,15 +107,15 @@
   .lx-slot.bad{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.09);color:var(--lx-rose);box-shadow:inset 0 0 20px rgba(240,84,72,.18);}
 
   /* ── Пары (match) ───────────────────────────────────────────────────────── */
-  .lx-match{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px;margin-top:18px;}
+  .lx-match{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 16px;margin-top:18px;}
   .lx-mcol{display:flex;flex-direction:column;gap:12px;}
   .lx-mcol__h{align-self:flex-start;font-size:12.5px;font-weight:600;color:var(--lx-ink-mute);letter-spacing:-.01em;padding:0 2px;margin-bottom:2px;}
-  .lx-mi{position:relative;display:flex;align-items:center;gap:10px;cursor:pointer;padding:14px 15px;border-radius:15px;min-height:60px;
+  .lx-mi{position:relative;display:flex;align-items:center;gap:10px;min-width:0;cursor:pointer;padding:14px 15px;border-radius:15px;min-height:60px;
     background:rgba(255,255,255,.55);border:1px solid rgba(22,32,59,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.7);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
     transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s,background .15s,box-shadow .15s;}
   .lx-mi:active:not(.is-locked){transform:scale(.975);}
   .lx-mi:hover:not(.is-locked){border-color:rgba(43,143,255,.4);transform:translateY(-1px);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 24px rgba(43,143,255,.07);}
-  .lx-mi__t{flex:1 1 auto;font-size:16px;font-weight:600;color:var(--lx-ink);letter-spacing:-.2px;}
+  .lx-mi__t{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;font-size:16px;font-weight:600;color:var(--lx-ink);letter-spacing:-.2px;}
   .lx-mcol--l .lx-mi{justify-content:center;background:linear-gradient(180deg,rgba(43,143,255,.06),rgba(43,143,255,.02));}
   .lx-mcol--l .lx-mi__t{flex:0 0 auto;font-family:var(--le-display,inherit);font-size:24px;color:var(--lx-acc-deep);letter-spacing:1px;}
   .lx-mi__b{flex:0 0 auto;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;
@@ -166,8 +166,8 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 0 30px rgba(43,143,255,.05);}
   .lx-tone__hz{font-size:72px;font-weight:600;line-height:1;color:var(--lx-acc-deep);letter-spacing:1px;}
   .lx-tone__pin{font-size:18px;font-weight:700;color:var(--lx-ink-sub);}
-  .lx-tone__opts{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:18px;}
-  .lx-tone__b{display:flex;align-items:center;gap:13px;cursor:pointer;font-family:inherit;text-align:left;padding:14px 18px;border-radius:14px;
+  .lx-tone__opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:18px;}
+  .lx-tone__b{display:flex;align-items:center;gap:13px;min-width:0;cursor:pointer;font-family:inherit;text-align:left;padding:14px 18px;border-radius:14px;
     background:rgba(255,255,255,.7);border:1.5px solid rgba(22,32,59,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.8);color:var(--lx-ink);
     transition:transform .15s cubic-bezier(.23,1,.32,1),border-color .15s,background .15s;}
   .lx-tone__b:hover:not(.is-locked){transform:translateY(-1px);border-color:var(--lx-acc-line);}
@@ -175,7 +175,7 @@
   .lx-tone__mark{flex:0 0 42px;width:42px;display:inline-flex;align-items:center;justify-content:center;color:var(--lx-acc-deep);}
   .lx-tone__mark svg{display:block;width:38px;height:20px;}
   .lx-tone__n{font-weight:800;color:var(--lx-ink);font-variant-numeric:tabular-nums;margin-right:5px;}
-  .lx-tone__name{flex:1 1 auto;font-size:13.5px;font-weight:600;color:var(--lx-ink-sub);}
+  .lx-tone__name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;font-size:13.5px;font-weight:600;color:var(--lx-ink-sub);}
   .lx-tone__b.is-sel{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 30px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13);}
   .lx-tone__b.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.09);box-shadow:inset 0 0 24px rgba(16,185,120,.18);}
   .lx-tone__b.is-correct .lx-tone__mark,.lx-tone__b.is-correct .lx-tone__name{color:var(--lx-jade);}
@@ -183,6 +183,8 @@
   .lx-tone__b.is-wrong .lx-tone__mark,.lx-tone__b.is-wrong .lx-tone__name{color:var(--lx-rose);}
   .lx-tone__b.is-dim{opacity:.5;}
   .lx-tone__b.is-locked{cursor:default;}
+  /* превью в конструкторе (contained-тренажёр) — узкий телефон: тоны в одну колонку, как на мобиле */
+  .lt-modal--in .lx-tone__opts{grid-template-columns:1fr;}
 
   /* ── Открытое задание (отправка на проверку: текст + файлы/скрины) ────────── */
   .lx-task__brief{margin-top:16px;padding:15px 17px;border-radius:14px;background:rgba(43,143,255,.06);border:1px solid rgba(43,143,255,.22);box-shadow:inset 0 0 26px rgba(43,143,255,.06);font-size:14.5px;line-height:1.58;color:var(--lx-ink);}
@@ -233,7 +235,7 @@
      объявляться и на нём, иначе var(--le-*) внутри модалки не резолвится
      (кнопки становятся прозрачными — «невидимая белая кнопка»). */
   .le-root,.le-study,.lt-modal{
-    --le-display:-apple-system,'SF Pro Display','Onest',system-ui,sans-serif;
+    --le-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
     --le-acc:#2B8FFF; --le-acc-2:#5CB4FF; --le-acc-deep:#2073E6; --le-acc-ink:#1763C8;
     --le-acc-soft:rgba(43,143,255,.09); --le-acc-line:rgba(43,143,255,.36);
     --le-ink:#16203B; --le-ink-sub:rgba(22,32,59,.62); --le-ink-mute:rgba(22,32,59,.44); --le-ink-faint:rgba(22,32,59,.28);
@@ -241,7 +243,7 @@
     --le-line:rgba(22,32,59,.08); --le-line-soft:rgba(22,32,59,.05); --le-line-strong:rgba(22,32,59,.14);
     --le-card:rgba(255,255,255,.66); --le-hi:inset 0 1px 0 rgba(255,255,255,.95); --le-cbord:rgba(22,32,59,.1); --le-cbord-hi:rgba(255,255,255,.9);
     --le-lift:0 0 0 0 transparent; --le-glow:inset 0 0 32px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13); --le-sel:inset 0 0 30px rgba(43,143,255,.24),inset 0 0 7px rgba(43,143,255,.13); --le-sh:0 0 0 0 transparent;
-    font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;color:var(--le-ink);-webkit-font-smoothing:antialiased;
+    font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;color:var(--le-ink);-webkit-font-smoothing:antialiased;
   }
   /* чистая светлая поверхность — как «Главная»/кабинет: без аврор и свечений.
      Фон даёт сам светлый shell, страница — только чистые белые карточки. */
@@ -911,7 +913,7 @@
     .lt-modal__head{padding:16px 16px 14px;}
     .lt-modal__body{padding:22px 16px 16px;}
     .lx-voc,.lx-tone__opts{grid-template-columns:1fr;}
-    .lx-match{grid-template-columns:1fr 1fr;gap:9px 10px;}
+    .lx-match{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px 10px;}
     .lx-mcol{gap:9px;}
     .lx-mi{padding:12px 11px;min-height:54px;}
     .lx-mcol--l .lx-mi__t{font-size:21px;}

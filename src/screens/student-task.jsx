@@ -54,7 +54,7 @@
     --jade:#3EE08F; --jade-tx:#8FE7C0; --rose:#FF7A7A; --amber:#E9B24A;
     width:100%; max-width:552px; max-height:88vh; display:flex; flex-direction:column;
     position:relative; border-radius:22px; overflow:hidden; color:#fff;
-    font-family:'Manrope',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
+    font-family:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;
     background:rgba(13,20,46,.58);
     -webkit-backdrop-filter:blur(34px) saturate(150%); backdrop-filter:blur(34px) saturate(150%);
     border:1px solid rgba(120,160,255,.28);

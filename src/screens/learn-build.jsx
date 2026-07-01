@@ -98,8 +98,8 @@
   ───────────────────────────────────────────────────────────────────────── */
   const CSS = `
   .lb-app{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;
-    --lb-display:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-    --lb-text:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --lb-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+    --lb-text:'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
     --lb-acc:#2073E6; --lb-acc-2:#5CB4FF; --lb-acc-deep:#1E63C2; --lb-acc-ink:#1763C8;
     --lb-acc-soft:rgba(43,143,255,.1); --lb-acc-line:rgba(43,143,255,.4);
     --lb-ink:#15203B; --lb-ink-sub:rgba(21,32,59,.6); --lb-ink-mute:rgba(21,32,59,.42); --lb-ink-faint:rgba(21,32,59,.24);
@@ -218,8 +218,8 @@
 
   /* ── вкладка ТЕОРИЯ: свойства урока + документ ─────────────────────────── */
   .lb-doc{position:relative;padding:34px 0 0 72px;}
-  .lb-titlein{width:100%;font-family:var(--lb-display);font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.06;color:var(--lb-ink);
-    padding:4px 2px;border:0;border-bottom:1.5px solid transparent;background:0;transition:border-color .15s;text-wrap:balance;}
+  .lb-titlein{display:block;width:100%;resize:none;overflow:hidden;white-space:pre-wrap;overflow-wrap:break-word;font-family:var(--lb-display);font-size:38px;font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--lb-ink);
+    padding:4px 2px;border:0;border-bottom:1.5px solid transparent;background:0;transition:border-color .15s;}
   .lb-titlein::placeholder{color:var(--lb-ink-faint);}
   .lb-titlein:focus{outline:0;border-bottom-color:var(--lb-line-strong);}
   .lb-subin{width:100%;font-family:inherit;font-size:15px;font-weight:400;line-height:1.6;color:var(--lb-ink-sub);
@@ -1924,7 +1924,7 @@
     /* статичная панель форматирования убрана — теперь это всплывающий bubble по выделению текста (BubbleBar) */
 
     const theoryTab = h('div', { className: 'lb-doc' },
-      h('input', { className: 'lb-titlein', value: lesson.title || '', placeholder: 'Название урока', onChange: (e) => setMeta({ title: e.target.value }), onFocus: () => setFocus(null) }),
+      h('textarea', { className: 'lb-titlein', rows: 1, value: lesson.title || '', placeholder: 'Название урока', ref: (el) => { if (el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; } }, onChange: (e) => { setMeta({ title: e.target.value }); const el = e.target; el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }, onFocus: () => setFocus(null) }),
       h('input', { className: 'lb-subin', value: lesson.subtitle || '', placeholder: 'Короткое описание урока', onChange: (e) => setMeta({ subtitle: e.target.value }) }),
       h('div', { className: 'lb-sect' },
         h('div', { className: 'lb-card__h' },

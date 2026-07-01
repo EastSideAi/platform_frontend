@@ -97,29 +97,28 @@
   }
   .sd-nav__tick{color:var(--sd-jade);display:inline-flex;filter:drop-shadow(0 0 6px rgba(62,224,143,.6));}
 
-  /* профиль ученика */
+  /* профиль ученика — приём anketa-dark: cutout-маскот выглядывает НАД плашкой,
+     тёплое приветствие + имя. Аврора-свечение слева, тонкая сапфировая обводка. */
   .sd-prof{
-    position:relative;margin-top:14px;flex:0 0 auto;
-    border-radius:18px;padding:13px 14px 13px 92px;min-height:80px;
-    background:linear-gradient(150deg,rgba(43,143,255,.22),rgba(43,143,255,.05) 62%),#07143A;
-    border:1px solid rgba(60,150,250,.32);
+    position:relative;margin-top:16px;flex:0 0 auto;overflow:visible;
+    display:flex;align-items:center;min-height:100px;
+    border-radius:20px;padding:16px 14px 16px 94px;
+    background:linear-gradient(150deg,rgba(43,143,255,.2),rgba(43,143,255,.05) 60%),#07143A;
+    border:1px solid rgba(60,150,250,.34);
   }
-  .sd-prof__mascot{position:absolute;left:0;bottom:0;width:88px;height:122px;pointer-events:none;}
-  .sd-prof__mascot img{width:100%;height:100%;object-fit:contain;object-position:bottom;filter:drop-shadow(0 6px 10px rgba(0,0,0,.4));}
-  .sd-prof__name{font-family:'Onest','Segoe UI',system-ui,-apple-system,sans-serif;font-weight:700;font-size:15px;color:#fff;letter-spacing:.4px;}
-  .sd-prof__role{font-size:11.5px;color:#9AA6CE;margin-top:2px;}
-  .sd-prof__xp{margin-top:9px;}
-  .sd-prof__xptrack{height:5px;border-radius:99px;background:rgba(7,17,46,.9);overflow:hidden;}
-  .sd-prof__xpfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--sd-acc-2),var(--sd-acc));box-shadow:0 0 8px rgba(43,143,255,.8);}
-  .sd-prof__xprow{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:10.5px;color:#9AA6CE;}
-  .sd-prof__lvl{display:inline-flex;align-items:center;gap:4px;color:#CFE2FF;font-weight:600;}
+  .sd-prof__mascot{position:absolute;left:0;bottom:0;width:92px;height:174px;pointer-events:none;z-index:1;}
+  .sd-prof__mascot img{width:100%;height:100%;object-fit:contain;object-position:bottom center;filter:drop-shadow(0 6px 14px rgba(4,6,26,.6));}
+  .sd-prof__b{position:relative;z-index:2;min-width:0;}
+  .sd-prof__hi{font-size:13px;line-height:1.25;color:#AFBBDD;margin-bottom:3px;}
+  .sd-prof__name{font-weight:700;font-size:19px;color:#fff;letter-spacing:-.2px;text-transform:capitalize;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .sd-prof__role{font-size:12px;color:#9AA6CE;margin-top:3px;}
   /* профиль без маскота (родитель): инициалы-аватар в языке chip-glow (design.md §5) */
-  .sd-prof--avatar{padding:13px 14px;display:flex;align-items:center;gap:12px;min-height:0;}
-  .sd-prof__ava{flex:0 0 44px;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
-    font-weight:700;font-size:15px;letter-spacing:.3px;color:#EAF2FF;
+  .sd-prof--avatar{padding:14px;display:flex;align-items:center;gap:12px;min-height:0;}
+  .sd-prof__ava{flex:0 0 46px;width:46px;height:46px;border-radius:13px;display:grid;place-items:center;
+    font-weight:700;font-size:16px;color:#EAF2FF;
     background:rgba(43,143,255,.16);box-shadow:inset 0 0 14px rgba(43,143,255,.9),inset 0 0 3px rgba(160,205,255,.7);}
   .sd-prof--avatar .sd-prof__b{flex:1 1 auto;min-width:0;}
-  .sd-prof--avatar .sd-prof__name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   .sd-help-mini{
     margin-top:10px;flex:0 0 auto;display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;
@@ -1453,15 +1452,11 @@
   ───────────────────────────────────────────────────────────────────────── */
   const USER = { name: 'Дима Соколов', first: 'Дима', role: '11 класс', xp: 760, xpMax: 1000, lvl: 7, initials: 'Д' };
 
-  // Навигация сайдбара. to — реальный маршрут; soon — пункт «скоро» (тост, не мертвая кнопка).
+  // Навигация сайдбара. Пока только два живых раздела — Главная и Обучение;
+  // остальные (задачи/документы/гранты/куратор/сообщество) временно убраны.
   const NAV = [
-    { key: 'home',   label: 'Главная',    icon: Ic.Home,        to: '/student' },
-    { key: 'tasks',  label: 'Задачи',     icon: Ic.CheckCircle, badge: 2, soon: true },
-    { key: 'docs',   label: 'Документы',  icon: Ic.Doc,         to: '/documents' },
-    { key: 'learn',  label: 'Обучение',   icon: Ic.Book,        to: '/learn' },
-    { key: 'grants', label: 'Гранты',     icon: Ic.Star,        soon: true },
-    { key: 'curator',label: 'Куратор',    icon: Ic.Users,       soon: true },
-    { key: 'social', label: 'Сообщество', icon: Ic.Chat,        soon: true },
+    { key: 'home',  label: 'Главная',  icon: Ic.Home, to: '/student' },
+    { key: 'learn', label: 'Обучение', icon: Ic.Book, to: '/learn' },
   ];
 
   function onNav(it) {
@@ -1503,7 +1498,6 @@
     const active = props.active;
     const navItems = props.nav || NAV;
     const user = props.user || USER;
-    const hasXp = user.xp != null && user.xpMax != null;
     return h('aside', { className: 'sd-side' },
       h('div', { className: 'sd-brand' },
         h('img', { className: 'sd-brand__logo', src: 'funnel-assets/logo-dark.png', alt: 'ИСТСАЙД.РФ' })),
@@ -1517,23 +1511,20 @@
           h('span', { className: 'sd-nav__lab' }, it.label),
           it.badge != null ? h('span', { className: 'sd-nav__badge sd-num' }, it.badge) : null,
           it.done ? h('span', { className: 'sd-nav__tick' }, Ic.Check ? h(Ic.Check, { size: 15 }) : '✓') : null))),
-      // профиль: у ученика — маскот + XP; у родителя (user.avatar) — инициалы-аватар без XP
+      // профиль в стиле anketa-dark: cutout-маскот выглядывает над плашкой,
+      // тёплое приветствие + имя. У родителя (user.avatar) — инициалы + роль, без маскота.
       h('div', { className: 'sd-prof' + (user.avatar ? ' sd-prof--avatar' : '') },
         user.avatar
           ? h('div', { className: 'sd-prof__ava' }, user.initials || '')
-          : h('div', { className: 'sd-prof__mascot' }, h('img', { src: user.mascot || 'assets/mascot-cut.png', alt: '' })),
+          : h('div', { className: 'sd-prof__mascot' },
+              h('img', { src: user.mascot || 'assets/mascot-cut.png', alt: '' })),
         h('div', { className: 'sd-prof__b' },
-          h('div', { className: 'sd-prof__name' }, user.name),
-          h('div', { className: 'sd-prof__role' }, user.role),
-          hasXp ? h('div', { className: 'sd-prof__xp' },
-            h('div', { className: 'sd-prof__xptrack' },
-              h('div', { className: 'sd-prof__xpfill', style: { width: Math.round(user.xp / user.xpMax * 100) + '%' } })),
-            h('div', { className: 'sd-prof__xprow' },
-              h('span', { className: 'sd-num' }, user.xp + ' / ' + user.xpMax + ' XP'),
-              h('span', { className: 'sd-prof__lvl' }, Ic.Star ? h(Ic.Star, { size: 11 }) : null, 'Уровень ' + user.lvl))) : null)),
+          h('div', { className: 'sd-prof__hi' }, user.hello || 'С возвращением,'),
+          h('div', { className: 'sd-prof__name' }, user.first || user.name),
+          user.avatar ? h('div', { className: 'sd-prof__role' }, user.role) : null)),
       h('button', { type: 'button', className: 'sd-help-mini', onClick: () => { onNav({ label: 'Куратор' }); if (props.onItemClick) props.onItemClick(); } },
         h('span', { className: 'sd-help-mini__ic' }, Ic.Chat ? h(Ic.Chat, { size: 15 }) : null),
-        h('span', null, user.help || 'Нужна помощь? Напиши куратору')));
+        h('span', null, user.help || 'Нужна помощь? Напишите куратору')));
   }
 
   /* ── TopBar ────────────────────────────────────────────────────────── */
@@ -1571,7 +1562,7 @@
     el.id = 'es-article-css';
     el.textContent = `
     .ar{position:relative;width:100%;max-width:840px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;
-      border-radius:24px;font-family:'Manrope','Segoe UI',system-ui,-apple-system,sans-serif;color:#fff;
+      border-radius:24px;font-family:'SF Pro Display','Segoe UI',system-ui,-apple-system,sans-serif;color:#fff;
       background:rgba(13,20,46,.58);
       border:1px solid rgba(120,160,255,.28);
       box-shadow:0 32px 84px rgba(6,12,36,.5),inset 0 1px 0 rgba(255,255,255,.14),inset 0 0 46px rgba(40,110,240,.1);

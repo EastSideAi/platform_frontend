@@ -70,8 +70,8 @@
   /* ── Карточки программ: цвет даёт сама картинка, текст БЕЛЫЙ без теней.
      Заголовок в две строки сверху, под ним счётчик уроков; кнопка внизу —
      полупрозрачное стекло в цвет своей карточки (--card-acc), текст белый. ── */
-  .lr-prog{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
-  .lr-card{position:relative;overflow:hidden;border-radius:22px;min-height:286px;display:flex;flex-direction:column;padding:24px 24px;cursor:pointer;
+  .lr-prog{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  .lr-card{position:relative;overflow:hidden;border-radius:22px;aspect-ratio:1536/1024;display:flex;flex-direction:column;padding:24px 24px;cursor:pointer;
     border:1px solid rgba(43,90,200,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.5);
     transition:transform .2s cubic-bezier(.23,1,.32,1);}
   .lr-card:hover{transform:translateY(-3px);}
@@ -82,14 +82,19 @@
   .lr-card--dim .lr-card__bg{filter:brightness(.9) saturate(1.03);}
   .lr-card--dim2 .lr-card__bg{filter:brightness(.82) saturate(1.05);}
   .lr-card__top{position:relative;z-index:2;}
-  .lr-card__name{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:30px;letter-spacing:-1.1px;color:#fff;line-height:1.05;}
-  .lr-card__count{margin-top:11px;font-size:13.5px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;}
+  .lr-card__name{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:35px;letter-spacing:-1.4px;color:#fff;line-height:1.01;}
+  .lr-card__count{margin-top:12px;font-size:14px;font-weight:600;color:#fff;font-variant-numeric:tabular-nums;}
   .lr-card__bottom{position:relative;z-index:2;margin-top:auto;}
   .lr-card__btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:14px;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:600;letter-spacing:-.2px;color:#fff;
     background:rgba(var(--card-acc,255,255,255),.15);-webkit-backdrop-filter:blur(8px) saturate(140%);backdrop-filter:blur(8px) saturate(140%);
     border:1px solid rgba(255,255,255,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.34);transition:transform .16s,background .16s;}
   .lr-card__btn:hover{transform:translateY(-2px);background:rgba(var(--card-acc,255,255,255),.28);}
   .lr-card__btn svg{opacity:.9;}
+  /* акцентная кнопка «под цвет карточки»: плоская заливка --btn + внутренний блик, без выпуклости */
+  .lr-card__btn--accent{background:var(--btn,#2073E6);border-color:rgba(255,255,255,.36);
+    box-shadow:inset 0 0 18px rgba(255,255,255,.2),inset 0 1px 0 rgba(255,255,255,.34);}
+  .lr-card__btn--accent:hover{filter:brightness(1.08);}
+  .lr-card__btn--accent svg{opacity:1;}
 
   /* ── Низ: расписание · задачи (две равные колонки, премиум-карточки) ─────── */
   .lr-bot{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch;}
@@ -160,6 +165,8 @@
   .lr-kpic__lbl{font-size:13px;font-weight:600;color:var(--sd-ink-sub);line-height:1.2;}
   .lr-kpic__bot{margin-top:auto;display:flex;align-items:flex-end;justify-content:space-between;gap:12px;}
   .lr-kpic__num{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:52px;letter-spacing:-2.6px;color:var(--sd-ink);line-height:.9;font-variant-numeric:tabular-nums;}
+  .lr-kpic__u{font-size:.4em;font-weight:700;letter-spacing:-.5px;margin-left:2px;color:var(--sd-ink-sub);}
+  .lr-kpic.anchor .lr-kpic__u{color:rgba(255,255,255,.72);}
   .lr-kpic__delta{display:inline-flex;align-items:center;gap:4px;margin-top:13px;font-size:12.5px;font-weight:600;color:#1C7E52;}
   .lr-kpic__delta.neutral{color:var(--sd-ink-mute);}
   .lr-kpic__bot .lr-spark{align-self:flex-end;margin-bottom:4px;}
@@ -197,18 +204,18 @@
   .lr-barlbl{font-size:11.5px;font-weight:600;color:var(--sd-ink-mute);}
   .lr-barcol.is-today .lr-barlbl{color:var(--sd-acc-deep);font-weight:700;}
 
-  /* донат «Время по предметам» (крупнее, легенда с процентами) */
-  .lr-donut{display:flex;flex-direction:column;align-items:center;gap:22px;margin-top:auto;}
-  .lr-donut__svg{position:relative;display:grid;place-items:center;}
-  .lr-donut__c{position:absolute;text-align:center;pointer-events:none;}
-  .lr-donut__cn{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:31px;letter-spacing:-1.2px;color:var(--sd-ink);line-height:1;font-variant-numeric:tabular-nums;}
-  .lr-donut__cl{font-size:11.5px;font-weight:500;color:var(--sd-ink-mute);margin-top:4px;}
-  .lr-leg{width:100%;display:flex;flex-direction:column;gap:13px;}
-  .lr-legrow{display:flex;align-items:center;gap:11px;font-size:13px;}
-  .lr-legdot{flex:0 0 10px;width:10px;height:10px;border-radius:3px;}
-  .lr-legname{font-weight:600;color:var(--sd-ink-sub);}
-  .lr-legpct{margin-left:auto;font-weight:600;color:var(--sd-ink-mute);font-variant-numeric:tabular-nums;}
-  .lr-legval{margin-left:13px;font-weight:700;color:var(--sd-ink);font-variant-numeric:tabular-nums;}
+  /* «Результаты тестов» — строки-скоркарты: имя + балл + горизонтальный балл-бар,
+     цвет по статус-полосе (успех/хорошо/внимание/риск из design.md §3) */
+  .lr-tst{display:flex;flex-direction:column;margin-top:-3px;}
+  .lr-tstrow{padding:13px 0;border-bottom:1px solid rgba(22,32,59,.06);}
+  .lr-tstrow:first-child{padding-top:0;}
+  .lr-tstrow:last-child{border-bottom:0;padding-bottom:0;}
+  .lr-tst__top{display:flex;align-items:baseline;gap:9px;}
+  .lr-tst__t{font-size:13.5px;font-weight:600;color:var(--sd-ink);line-height:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .lr-tst__s{font-size:11.5px;font-weight:500;color:var(--sd-ink-mute);white-space:nowrap;flex:0 0 auto;}
+  .lr-tst__v{margin-left:auto;flex:0 0 auto;font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:15.5px;letter-spacing:-.4px;font-variant-numeric:tabular-nums;}
+  .lr-tst__track{margin-top:9px;height:7px;border-radius:99px;background:rgba(43,90,200,.08);overflow:hidden;box-shadow:inset 0 0 0 1px rgba(21,32,59,.03);}
+  .lr-tst__fill{height:100%;border-radius:99px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35);}
 
   /* топ-темы (список со спарклайнами) */
   .lr-top{display:flex;flex-direction:column;}
@@ -249,14 +256,17 @@
   .lr-hmbest b{color:var(--sd-acc-deep);font-weight:700;}
   .lr-fire{display:inline-flex;align-items:center;gap:6px;margin-left:auto;padding:5px 12px 5px 10px;border-radius:99px;
     background:var(--sd-acc-soft);font-size:12.5px;font-weight:700;color:var(--sd-acc-deep);font-variant-numeric:tabular-nums;}
-  /* статистика серии (правая панель) */
-  .lr-sst{display:flex;flex-direction:column;margin-top:-2px;}
-  .lr-sstrow{display:flex;align-items:center;gap:13px;padding:13px 0;border-bottom:1px solid rgba(22,32,59,.06);}
-  .lr-sstrow:first-child{padding-top:0;}
-  .lr-sstrow:last-child{border-bottom:0;padding-bottom:0;}
-  .lr-sst__ic{flex:0 0 38px;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--sd-acc-deep);background:var(--sd-acc-soft);box-shadow:inset 0 0 0 1px rgba(43,111,224,.12);}
-  .lr-sst__lbl{flex:1 1 auto;min-width:0;font-size:13px;font-weight:500;color:var(--sd-ink-sub);}
-  .lr-sst__val{font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:16px;letter-spacing:-.4px;color:var(--sd-ink);font-variant-numeric:tabular-nums;}
+  /* «Прогресс по курсам» — кольцо прогресса + счётчик уроков и следующий шаг */
+  .lr-crs{display:flex;flex-direction:column;margin-top:-2px;}
+  .lr-crsrow{display:flex;align-items:center;gap:16px;padding:16px 0;border-bottom:1px solid rgba(22,32,59,.06);}
+  .lr-crsrow:first-child{padding-top:2px;}
+  .lr-crsrow:last-child{border-bottom:0;padding-bottom:2px;}
+  .lr-crs__ring{position:relative;flex:0 0 58px;width:58px;height:58px;}
+  .lr-crs__pct{position:absolute;inset:0;display:grid;place-items:center;font-family:'Onest','Segoe UI',system-ui,sans-serif;font-weight:700;font-size:14.5px;letter-spacing:-.6px;color:var(--sd-ink);font-variant-numeric:tabular-nums;}
+  .lr-crs__b{flex:1 1 auto;min-width:0;}
+  .lr-crs__t{font-size:14.5px;font-weight:600;color:var(--sd-ink);line-height:1.2;letter-spacing:-.2px;}
+  .lr-crs__s{font-size:12px;font-weight:500;color:var(--sd-ink-mute);margin-top:4px;font-variant-numeric:tabular-nums;}
+  .lr-crs__s b{color:var(--sd-acc-deep);font-weight:700;}
 
   /* ── центральная плавающая кнопка AI (вместо FAB и баннера) ──────────────── */
   .lr-aifab{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:840;
@@ -349,8 +359,8 @@
 
     /* карточки программ */
     .lr-prog{gap:15px;}
-    .lr-card{min-height:202px;padding:22px;border-radius:22px;}
-    .lr-card__name{font-size:27px;letter-spacing:-.9px;}
+    .lr-card{padding:22px;border-radius:22px;}
+    .lr-card__name{font-size:31px;letter-spacing:-1.1px;}
 
     /* низ */
     .lr-bot{gap:15px;}
@@ -443,21 +453,12 @@
       h('polyline', { points: pts, fill: 'none', stroke: color, strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round', opacity: '.9' }),
       h('circle', { cx: lx, cy: ly, r: '2.8', fill: color }));
   }
-  // плоское кольцо-донат: segs=[{val,color}], сегменты с зазорами
-  function donut(segs, sz) {
-    sz = sz || 132;
-    const total = segs.reduce(function (a, s) { return a + s.val; }, 0) || 1;
-    const r = sz / 2 - 14, cx = sz / 2, cy = sz / 2, sw = 18, C = 2 * Math.PI * r, gap = 3;
-    let acc = 0;
-    const arcs = segs.map(function (s, i) {
-      const len = (s.val / total) * C, off = acc; acc += len;
-      const dash = Math.max(0, len - gap);
-      return h('circle', { key: i, cx: cx, cy: cy, r: r, fill: 'none', stroke: s.color, strokeWidth: sw,
-        strokeDasharray: dash.toFixed(2) + ' ' + (C - dash).toFixed(2), strokeDashoffset: (-off).toFixed(2),
-        strokeLinecap: 'round', transform: 'rotate(-90 ' + cx + ' ' + cy + ')' });
-    });
-    return h('svg', { width: sz, height: sz, viewBox: '0 0 ' + sz + ' ' + sz, fill: 'none', 'aria-hidden': 'true' },
-      h('circle', { cx: cx, cy: cy, r: r, fill: 'none', stroke: 'rgba(22,32,59,.06)', strokeWidth: sw }), arcs);
+  // статус-полоса балла: цвет бара и чернил по диапазону (design.md §3)
+  function tband(sc) {
+    if (sc >= 90) return { bar: 'rgba(46,160,110,.62)', ink: '#1C7E52' };  // надежно / успех
+    if (sc >= 80) return { bar: 'rgba(43,143,255,.58)', ink: '#1E63C2' };  // сильно
+    if (sc >= 70) return { bar: 'rgba(201,146,62,.62)', ink: '#936417' };  // средне / внимание
+    return { bar: 'rgba(210,96,79,.62)', ink: '#B23B2A' };                 // слабо / риск
   }
   // плоское кольцо прогресса (трек + дуга), % рисуем поверх в разметке
   function ring(pct, color, sz) {
@@ -476,9 +477,8 @@
   ];
 
   const PROGRAMS = [
-    { bg: 'assets/card-blue.png',   acc: '43,143,255',  active: true, l1: 'Китайский', l2: 'язык', count: '32 урока · 12 тестов', cta: 'Продолжить' },
-    { bg: 'assets/card-pink.png',   acc: '232,120,155', dim2: true, l1: 'Курс', l2: 'IELTS', count: '24 урока · 8 тестов', cta: 'Продолжить' },
-    { bg: 'assets/card-orange.png', acc: '240,148,54',  dim: true, l1: 'Поступление', l2: 'в вуз', count: '8 этапов · 5 документов', cta: 'Перейти' },
+    { bg: 'assets/card-chinese.png', acc: '43,143,255', active: true, btn: '#6E58C4', l1: 'Китайский', l2: 'язык', count: '32 урока · 12 тестов', cta: 'Продолжить' },
+    { bg: 'assets/card-ielts.png',   acc: '43,143,255', btn: '#2477EA', l1: 'Курс', l2: 'IELTS', count: '24 урока · 8 тестов', cta: 'Продолжить' },
   ];
 
   const SCHEDULE = [
@@ -494,9 +494,9 @@
   ];
 
   const STATS = [
-    { ic: Ic.Book, num: '18', lbl: 'Уроков пройдено', delta: '+3 за неделю', up: true, anchor: true, glow: '43,143,255', bars: [.32, .5, .42, .64, .56, .82, 1] },
-    { ic: Ic.Bolt, num: '12', lbl: 'Дней подряд', delta: 'Личный рекорд', up: true, glow: '124,132,246', bars: [.4, .55, .5, .68, .6, .85, 1] },
-    { ic: Ic.Edit, num: '240', lbl: 'Слов выучено', delta: '+18 за неделю', up: true, glow: '150,124,240', line: [.28, .42, .38, .6, .68, .64, .92] },
+    { ic: Ic.Book, num: '30', lbl: 'Уроков пройдено', delta: '+3 за неделю', up: true, glow: '43,143,255', bars: [.32, .5, .42, .64, .56, .82, 1] },
+    { ic: Ic.Star, num: '88', unit: '%', lbl: 'Средний балл', delta: '+6% за месяц', up: true, anchor: true, glow: '43,143,255', line: [.5, .46, .6, .55, .68, .72, .88] },
+    { ic: Ic.CheckCircle, num: '14', lbl: 'Тестов сдано', delta: '+2 за неделю', up: true, glow: '124,132,246', bars: [.4, .55, .5, .68, .6, .85, 1] },
   ];
 
   // активность по дням недели (минуты), донат-распределение часов, сильные темы
@@ -504,9 +504,17 @@
     { d: 'Пн', v: .45, m: 42 }, { d: 'Вт', v: .7, m: 65 }, { d: 'Ср', v: .56, m: 52 },
     { d: 'Чт', v: .85, m: 78 }, { d: 'Пт', v: .6, m: 56 }, { d: 'Сб', v: 1, m: 92, today: true }, { d: 'Вс', v: .3, m: 28 },
   ];
-  const SUBJECTS = [
-    { name: 'Китайский', val: 8, color: 'rgb(32,115,230)' },
-    { name: 'IELTS', val: 4, color: 'rgb(150,195,255)' },
+  // недавние тесты (успеваемость) — имя, предмет, балл 0-100
+  const TESTS = [
+    { t: 'HSK 3 · Лексика', s: 'Китайский', score: 92 },
+    { t: 'Reading · Task 1', s: 'IELTS', score: 84 },
+    { t: 'Тоны и интонации', s: 'Китайский', score: 76 },
+    { t: 'Listening · Part 2', s: 'IELTS', score: 88 },
+  ];
+  // прогресс по курсам — пройдено/всего, % и следующий урок (сумма done = KPI «Уроков пройдено»)
+  const COURSES = [
+    { name: 'Китайский язык', done: 21, total: 32, pct: 66, next: 22, color: 'rgb(32,115,230)' },
+    { name: 'Курс IELTS', done: 9, total: 24, pct: 38, next: 10, color: 'rgb(90,175,255)' },
   ];
   // тепловая карта серии: 24 недели × 7 дней, интенсивность 0-4 (детерминированно)
   // шкала интенсивности (0–4) и месяцы
@@ -524,12 +532,6 @@
     }
     return out;
   })();
-  const STREAKSTATS = [
-    { ic: Ic.Bolt, lbl: 'Текущая серия', val: '12 дней' },
-    { ic: Ic.Star, lbl: 'Лучшая серия', val: '14 дней' },
-    { ic: Ic.Calendar, lbl: 'Эта неделя', val: '5 из 7 дней' },
-    { ic: Ic.Clock, lbl: 'Всего часов', val: '48 ч' },
-  ];
 
   /* ── HERO — копия hero Главной (sd-hero2/sd-stat), контент обучения ──────── */
   function Hero() {
@@ -562,7 +564,7 @@
     return h('section', { className: 'lr-sec' },
       h('div', { className: 'lr-sec__h' },
         h('h2', null, 'Мои обучения'),
-        h('span', { className: 'lr-chip' }, Ic.Bolt ? h(Ic.Bolt, { size: 12 }) : null, '3 активные программы'),
+        h('span', { className: 'lr-chip' }, Ic.Bolt ? h(Ic.Bolt, { size: 12 }) : null, '2 активные программы'),
         h('button', { type: 'button', className: 'lr-seclink', onClick: function () { go('Все программы'); } }, 'Все программы', arr(14))),
       h('div', { className: 'lr-prog' },
         PROGRAMS.map(function (p, i) {
@@ -572,7 +574,7 @@
               h('div', { className: 'lr-card__name' }, p.l1, h('br'), p.l2),
               h('div', { className: 'lr-card__count' }, p.count)),
             h('div', { className: 'lr-card__bottom' },
-              h('button', { type: 'button', className: 'lr-card__btn', onClick: function (e) { e.stopPropagation(); chat(); } },
+              h('button', { type: 'button', className: 'lr-card__btn' + (p.btn ? ' lr-card__btn--accent' : ''), style: p.btn ? { '--btn': p.btn } : null, onClick: function (e) { e.stopPropagation(); chat(); } },
                 p.cta, Ic.ArrowUpRight ? h(Ic.ArrowUpRight, { size: 16 }) : '↗')));
         })));
   }
@@ -666,7 +668,7 @@
               h('span', { className: 'lr-kpic__lbl' }, s.lbl)),
             h('div', { className: 'lr-kpic__bot' },
               h('div', null,
-                h('div', { className: 'lr-kpic__num' }, s.num),
+                h('div', { className: 'lr-kpic__num' }, s.num, s.unit ? h('span', { className: 'lr-kpic__u' }, s.unit) : null),
                 h('div', { className: 'lr-kpic__delta' + (s.up ? '' : ' neutral') },
                   s.up && Ic.TrendUp ? h(Ic.TrendUp, { size: 12 }) : null, s.delta)),
               spark));
@@ -686,21 +688,20 @@
                 h('span', { className: 'lr-barlbl' }, a.d));
             }))),
         h('div', { className: 'lr-cpnl' },
-          h('div', { className: 'lr-cpnl__h' }, h('h3', null, 'Время по предметам')),
-          h('div', { className: 'lr-donut' },
-            h('div', { className: 'lr-donut__svg' },
-              donut(SUBJECTS, 152),
-              h('div', { className: 'lr-donut__c' },
-                h('div', { className: 'lr-donut__cn' }, '12'),
-                h('div', { className: 'lr-donut__cl' }, 'часов в неделю'))),
-            h('div', { className: 'lr-leg' },
-              SUBJECTS.map(function (s, i) {
-                return h('div', { key: i, className: 'lr-legrow' },
-                  h('span', { className: 'lr-legdot', style: { background: s.color } }),
-                  h('span', { className: 'lr-legname' }, s.name),
-                  h('span', { className: 'lr-legpct' }, Math.round(s.val / 12 * 100) + '%'),
-                  h('span', { className: 'lr-legval' }, s.val + ' ч'));
-              }))))),
+          h('div', { className: 'lr-cpnl__h' },
+            h('h3', null, 'Результаты тестов'),
+            h('span', { className: 'lr-cpnl__sum' }, 'за 2 недели')),
+          h('div', { className: 'lr-tst' },
+            TESTS.map(function (t, i) {
+              var b = tband(t.score);
+              return h('div', { key: i, className: 'lr-tstrow' },
+                h('div', { className: 'lr-tst__top' },
+                  h('span', { className: 'lr-tst__t' }, t.t),
+                  h('span', { className: 'lr-tst__s' }, t.s),
+                  h('span', { className: 'lr-tst__v', style: { color: b.ink } }, t.score + '%')),
+                h('div', { className: 'lr-tst__track' },
+                  h('div', { className: 'lr-tst__fill', style: { width: t.score + '%', background: b.bar } })));
+            })))),
       // ряд аналитики 2: понятная тепловая карта серии + статистика серии
       h('div', { className: 'lr-charts2' },
         h('div', { className: 'lr-cpnl' },
@@ -729,13 +730,16 @@
               return h('div', { key: i, className: 'lr-day' + (on ? '' : ' off') + (d.today ? ' is-today' : '') }, h('span', { className: 'lr-day__box', style: on ? { background: HM_COLORS[d.v] } : null }));
             })))),
         h('div', { className: 'lr-cpnl' },
-          h('div', { className: 'lr-cpnl__h' }, h('h3', null, 'Статистика серии')),
-          h('div', { className: 'lr-sst' },
-            STREAKSTATS.map(function (s, i) {
-              return h('div', { key: i, className: 'lr-sstrow' },
-                h('span', { className: 'lr-sst__ic' }, s.ic ? h(s.ic, { size: 17 }) : null),
-                h('span', { className: 'lr-sst__lbl' }, s.lbl),
-                h('span', { className: 'lr-sst__val' }, s.val));
+          h('div', { className: 'lr-cpnl__h' }, h('h3', null, 'Прогресс по курсам')),
+          h('div', { className: 'lr-crs' },
+            COURSES.map(function (c, i) {
+              return h('div', { key: i, className: 'lr-crsrow' },
+                h('div', { className: 'lr-crs__ring' },
+                  ring(c.pct, c.color, 58),
+                  h('span', { className: 'lr-crs__pct' }, c.pct + '%')),
+                h('div', { className: 'lr-crs__b' },
+                  h('div', { className: 'lr-crs__t' }, c.name),
+                  h('div', { className: 'lr-crs__s' }, c.done + ' из ' + c.total + ' уроков · дальше ', h('b', null, 'урок ' + c.next))));
             })))));
   }
 

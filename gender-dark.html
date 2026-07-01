@@ -11,7 +11,6 @@
 <title>EastSide — Кто вы</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet" />
 <style>
 /* единый шрифт интерфейса — системный (SF Pro / Segoe UI), везде */
 :root{--font-display:'SF Pro Display',-apple-system,BlinkMacSystemFont,system-ui,'Segoe UI',sans-serif;--font-arkhip:var(--font-display);--font-text:var(--font-display);--font-ui:var(--font-display)}
@@ -23,7 +22,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html, body { height: 100%; }
-  body { font-family: 'Manrope', 'Segoe UI', sans-serif; background: var(--base); color: var(--tx); overflow: hidden; }
+  body { font-family: 'SF Pro Display', 'Segoe UI', sans-serif; background: var(--base); color: var(--tx); overflow: hidden; }
 
   /* ── ночное небо как на входе ── */
   .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none;
@@ -52,7 +51,7 @@
   .step.on { display: block; }
 
   .head { text-align: left; }
-  .h1 { font-family: 'Onest','Manrope',sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; letter-spacing: -1.6px; line-height: 1.04; color: #fff; }
+  .h1 { font-family: 'Onest','SF Pro Display',sans-serif; font-size: clamp(30px, 4vw, 46px); font-weight: 700; letter-spacing: -1.6px; line-height: 1.04; color: #fff; }
   .sub { margin-top: 12px; font-size: clamp(14px, 1.5vw, 16px); line-height: 1.5; color: var(--tx-soft); max-width: 46ch; }
 
   /* ── карточки персонажей ── */
@@ -106,7 +105,7 @@
   .lbl { display: block; font-size: 13px; font-weight: 700; color: var(--tx-soft); margin-bottom: 8px; }
   .inp { width: 100%; height: 54px; padding: 0 18px; border-radius: 14px;
     background: rgba(3,9,28,.55); border: 1.5px solid rgba(150,185,255,.18); color: #fff;
-    font: 600 16px 'Manrope', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s, background .15s; }
+    font: 600 16px 'SF Pro Display', sans-serif; outline: none; transition: border-color .15s, box-shadow .15s, background .15s; }
   .inp::placeholder { color: #5C6488; font-weight: 500; }
   .inp:focus { border-color: rgba(38,118,231,.7); background: rgba(8,16,44,.7);
     box-shadow: inset 0 0 18px rgba(38,118,231,.2), 0 0 0 3px rgba(38,118,231,.14); }
@@ -125,7 +124,7 @@
   .btn-back {
     display: inline-flex; align-items: center; gap: 8px;
     border: 1px solid rgba(100,150,255,.22); border-radius: 13px; cursor: pointer;
-    background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); font: 600 14px 'Onest','Manrope',sans-serif; padding: 12px 20px;
+    background: rgba(255,255,255,.08); color: rgba(255,255,255,.8); font: 600 14px 'Onest','SF Pro Display',sans-serif; padding: 12px 20px;
     transition: background .15s;
   }
   .btn-back:hover { background: rgba(255,255,255,.14); }
@@ -138,7 +137,7 @@
   .btn-next {
     display: inline-flex; align-items: center; gap: 8px;
     border: 0; border-radius: 13px; cursor: pointer;
-    background: #2073E6; color: #fff; font: 700 14px 'Onest','Manrope',sans-serif;
+    background: #2073E6; color: #fff; font: 700 14px 'Onest','SF Pro Display',sans-serif;
     padding: 12px 28px; white-space: nowrap; flex-shrink: 0;
     box-shadow: inset 0 0 18px rgba(120,190,255,.85), inset 0 1px 0 rgba(255,255,255,.3);
     transition: background .12s;
