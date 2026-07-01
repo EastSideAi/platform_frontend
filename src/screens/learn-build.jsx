@@ -490,6 +490,14 @@
   .lb-example__ru{font-size:14.5px;color:var(--lb-ink-sub);background:0;border:0;outline:0;width:100%;padding:2px 0 0;}
 
   .lb-divider{height:1px;background:var(--lb-line);margin:6px 4px;border:0;}
+  .lb-table{margin:4px 0;overflow-x:auto;border-radius:12px;border:1px solid var(--lb-line);}
+  .lb-table table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .lb-table th,.lb-table td{padding:8px 12px;text-align:left;vertical-align:top;line-height:1.4;border-bottom:1px solid var(--lb-line);border-right:1px solid var(--lb-line);color:var(--lb-ink,#15203b);}
+  .lb-table th:last-child,.lb-table td:last-child{border-right:0;}
+  .lb-table tbody tr:last-child td{border-bottom:0;}
+  .lb-table thead th{background:rgba(43,143,255,.08);font-weight:700;font-size:12.5px;color:var(--lb-acc,#1f63c8);white-space:nowrap;}
+  .lb-code{margin:4px 0;padding:12px 14px;border-radius:12px;overflow-x:auto;background:#0b1430;border:1px solid rgba(43,143,255,.22);}
+  .lb-code code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12.5px;line-height:1.55;color:#cdd7f5;white-space:pre;}
   .lb-flow__endplus{display:flex;justify-content:flex-start;margin-top:14px;padding-left:2px;}
   .lb-endplus{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--lb-ink-mute);
     padding:6px 10px;border-radius:8px;background:0;border:0;transition:color .15s,background .12s;}
@@ -960,10 +968,20 @@
     let i = 0;
     while (i < str.length) {
       const ch = str[i];
+      // inline code: `code`
+      if (ch === '`') {
+        const close = str.indexOf('`', i + 1);
+        if (close > i) {
+          const start = out.length;
+          out += str.slice(i + 1, close);
+          if (out.length > start) marks.push({ start, end: out.length, type: 'code' });
+          i = close + 1; continue;
+        }
+      }
       // bold: ** или __
       if ((ch === '*' || ch === '_') && str[i + 1] === ch) {
         const close = str.indexOf(ch + ch, i + 2);
-        if (close > i + 1) {
+        if (close > i + 2) {
           const start = out.length;
           out += str.slice(i + 2, close);
           if (out.length > start) marks.push({ start, end: out.length, type: 'bold' });
@@ -1328,6 +1346,15 @@
       if (block.kind === 'audio') return h(AudioBlock, { block, onCommit, onRemove });
       if (block.kind === 'material') return h(MaterialBlock, { block, onCommit, onRemove });
       if (block.kind === 'hint' || block.kind === 'important') return h(CalloutBlock, { block, onCommit, onRemove });
+      if (block.kind === 'table') {
+        const txt = (c) => (c && typeof c === 'object') ? (c.text || '') : (c || '');
+        const head = block.head || [], rows = block.rows || [];
+        return h('div', { className: 'lb-table' },
+          h('table', null,
+            head.length ? h('thead', null, h('tr', null, head.map((c, k) => h('th', { key: k }, txt(c))))) : null,
+            h('tbody', null, (rows || []).map((r, ri) => h('tr', { key: ri }, (r || []).map((c, k) => h('td', { key: k }, txt(c))))))));
+      }
+      if (block.kind === 'code') return h('pre', { className: 'lb-code' }, h('code', null, block.text || ''));
       if (block.kind === 'divider') return h('div', { className: 'lb-divider' });
       return null;
     })();
@@ -1786,17 +1813,47 @@
     });
     // Markdown → массив блоков (для вставки многострочного текста).
     const parseMdBlocks = (text) => {
+      const lines = String(text || '').replace(/\r/g, '').split('\n');
       const out = []; let listKind = null; const items = [];
       const flush = () => { if (listKind && items.length) { out.push({ kind: listKind, items: items.slice() }); listKind = null; items.length = 0; } };
-      String(text || '').replace(/\r/g, '').split('\n').forEach((raw) => {
-        const line = raw.trim(); let m;
-        if ((m = line.match(/^#{1,6}\s+(.*)/))) { flush(); out.push(Object.assign({ kind: 'heading' }, parseInline(m[1]))); }
-        else if ((m = line.match(/^>\s+(.*)/))) { flush(); out.push(Object.assign({ kind: 'quote' }, parseInline(m[1]))); }
-        else if ((m = line.match(/^[-*]\s+(.*)/))) { listKind = 'bullets'; items.push(parseInline(m[1]).text); }
-        else if ((m = line.match(/^\d+\.\s+(.*)/))) { listKind = 'numbered'; items.push(parseInline(m[1]).text); }
-        else if (line === '') { flush(); }
-        else { flush(); out.push(Object.assign({ kind: 'para' }, parseInline(line))); }
-      });
+      const isDivider = (s) => /^([-*_])( *\1){2,}$/.test(s);
+      const isRow = (s) => /^\s*\|.*\|\s*$/.test(s);
+      const isSep = (s) => /\|/.test(s) && /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(s);
+      const cells = (s) => { let t = s.trim(); if (t.charAt(0) === '|') t = t.slice(1); if (t.charAt(t.length - 1) === '|') t = t.slice(0, -1); return t.split('|').map((c) => parseInline(c.trim())); };
+      let i = 0;
+      while (i < lines.length) {
+        const raw = lines[i]; const line = raw.trim(); let m;
+        // код-блок ```lang … ```
+        if ((m = line.match(/^```+\s*([\w+.#-]*)\s*$/))) {
+          flush(); const lang = m[1] || ''; const buf = []; i++;
+          while (i < lines.length && !/^```+\s*$/.test(lines[i].trim())) { buf.push(lines[i]); i++; }
+          i++; out.push({ kind: 'code', text: buf.join('\n'), lang: lang }); continue;
+        }
+        // таблица: строка |…| + строка-разделитель |---|
+        if (isRow(raw) && i + 1 < lines.length && isSep(lines[i + 1])) {
+          flush(); const head = cells(raw); i += 2; const rows = [];
+          while (i < lines.length && isRow(lines[i])) { rows.push(cells(lines[i])); i++; }
+          out.push({ kind: 'table', head: head, rows: rows }); continue;
+        }
+        // разделитель --- *** ___
+        if (isDivider(line)) { flush(); out.push({ kind: 'divider' }); i++; continue; }
+        // заголовок (уровень = число #)
+        if ((m = line.match(/^(#{1,6})\s+(.*)$/))) { flush(); out.push(Object.assign({ kind: 'heading', level: m[1].length }, parseInline(m[2].replace(/\s+#+\s*$/, '')))); i++; continue; }
+        // цитата — подряд идущие «> …» склеиваем в один блок
+        if (/^>\s?/.test(line)) {
+          flush(); const q = [];
+          while (i < lines.length && /^>\s?/.test(lines[i].trim())) { q.push(lines[i].trim().replace(/^>\s?/, '')); i++; }
+          const qt = q.join('\n').replace(/\n{2,}/g, '\n').replace(/^\n+|\n+$/g, '').replace(/\n/g, ' ');
+          out.push(Object.assign({ kind: 'quote' }, parseInline(qt))); continue;
+        }
+        // списки
+        if ((m = line.match(/^[-*+]\s+(.*)$/))) { listKind = 'bullets'; items.push(parseInline(m[1]).text); i++; continue; }
+        if ((m = line.match(/^\d+[.)]\s+(.*)$/))) { listKind = 'numbered'; items.push(parseInline(m[1]).text); i++; continue; }
+        // пустая строка — граница
+        if (line === '') { flush(); i++; continue; }
+        // абзац
+        flush(); out.push(Object.assign({ kind: 'para' }, parseInline(line))); i++;
+      }
       flush();
       return out;
     };

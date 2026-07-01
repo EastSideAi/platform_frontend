@@ -238,6 +238,8 @@
       case 'spoiler':   return { _id, kind, title: '', text: '', marks: [] };
       case 'example':   return { _id, kind, hanzi: '', pinyin: '', ru: '' };
       case 'material':  return { _id, kind, title: '', url: '' };
+      case 'table':     return { _id, kind, head: [], rows: [] };
+      case 'code':      return { _id, kind, text: '', lang: '' };
       case 'divider':   return { _id, kind };
       default:          return { _id, kind: 'para', text: '', marks: [] };
     }

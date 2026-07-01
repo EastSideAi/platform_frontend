@@ -82,15 +82,16 @@
     color:#2073E6;background:rgba(43,143,255,.12);box-shadow:inset 0 0 12px rgba(43,143,255,.45),inset 0 0 3px rgba(160,205,255,.5);transition:all .15s;}
   .lx-opt__t{flex:1 1 auto;font-size:17px;font-weight:600;letter-spacing:-.2px;}
   .lx-opt__fb{flex:0 0 auto;display:none;}
-  .lx-opt.is-sel{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 32px rgba(43,143,255,.24),inset 0 0 8px rgba(43,143,255,.14);}
+  /* глоу украден из .ch3 (diagnostic-dark): чище, плотнее, ровнее — белая база + двойной inset */
+  .lx-opt.is-sel{border-color:rgba(43,143,255,.4);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(43,143,255,.3),inset 0 0 6px rgba(43,143,255,.16);}
   .lx-opt.is-sel .lx-opt__mk{color:#fff;background:#2073E6;box-shadow:inset 0 0 14px rgba(120,190,255,.9),inset 0 1px 0 rgba(255,255,255,.3);animation:lx-badgepop .34s cubic-bezier(.23,1,.32,1);}
   .lx-opt.is-sel .lx-opt__t{color:var(--lx-acc-deep);}
   .lx-opt.is-locked{cursor:default;}
-  .lx-opt.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.1);box-shadow:inset 0 0 34px rgba(16,185,120,.24),inset 0 0 9px rgba(16,185,120,.14);animation:lx-pop .42s cubic-bezier(.23,1,.32,1);}
+  .lx-opt.is-correct{border-color:rgba(16,185,120,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(16,185,120,.3),inset 0 0 6px rgba(16,185,120,.16);animation:lx-pop .42s cubic-bezier(.23,1,.32,1);}
   .lx-opt.is-correct .lx-opt__mk{color:#fff;background:#0E9F6E;box-shadow:inset 0 0 12px rgba(120,235,180,.7),inset 0 1px 0 rgba(255,255,255,.25);}
   .lx-opt.is-correct .lx-opt__t{color:var(--lx-jade);}
   .lx-opt.is-correct .lx-opt__fb{display:inline-flex;color:var(--lx-jade);}
-  .lx-opt.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 32px rgba(240,84,72,.18),inset 0 0 8px rgba(240,84,72,.1);animation:lx-shake .32s cubic-bezier(.36,.07,.19,.97);}
+  .lx-opt.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(240,84,72,.26),inset 0 0 6px rgba(240,84,72,.14);animation:lx-shake .32s cubic-bezier(.36,.07,.19,.97);}
   .lx-opt.is-wrong .lx-opt__mk{color:#fff;background:#E5484D;box-shadow:inset 0 0 12px rgba(250,165,150,.6),inset 0 1px 0 rgba(255,255,255,.2);}
   .lx-opt.is-wrong .lx-opt__t{color:var(--lx-rose);}
   .lx-opt.is-wrong .lx-opt__fb{display:inline-flex;color:var(--lx-rose);}
@@ -125,9 +126,9 @@
   .lx-mi.is-active{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 30px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13);}
   .lx-mi.is-matched{border-color:rgba(43,143,255,.4);background:rgba(255,255,255,.66);box-shadow:inset 0 0 24px rgba(43,143,255,.14),inset 0 0 6px rgba(43,143,255,.1);}
   .lx-mi.is-locked{cursor:default;}
-  .lx-mi.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.09);box-shadow:inset 0 0 26px rgba(16,185,120,.18),inset 0 0 7px rgba(16,185,120,.11);}
+  .lx-mi.is-correct{border-color:rgba(16,185,120,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(16,185,120,.3),inset 0 0 6px rgba(16,185,120,.16);}
   .lx-mi.is-correct .lx-mi__b{background:var(--lx-jade);}
-  .lx-mi.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 26px rgba(240,84,72,.16),inset 0 0 7px rgba(240,84,72,.1);}
+  .lx-mi.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(240,84,72,.26),inset 0 0 6px rgba(240,84,72,.14);}
   .lx-mi.is-wrong .lx-mi__b{background:var(--lx-rose);}
   /* бейдж-связка по умолчанию сапфировый */
   .lx-mi__b{background:var(--lx-acc-deep);}
@@ -176,10 +177,10 @@
   .lx-tone__mark svg{display:block;width:38px;height:20px;}
   .lx-tone__n{font-weight:800;color:var(--lx-ink);font-variant-numeric:tabular-nums;margin-right:5px;}
   .lx-tone__name{flex:1 1 auto;min-width:0;overflow-wrap:anywhere;font-size:13.5px;font-weight:600;color:var(--lx-ink-sub);}
-  .lx-tone__b.is-sel{border-color:rgba(43,143,255,.45);background:rgba(255,255,255,.72);box-shadow:inset 0 0 30px rgba(43,143,255,.22),inset 0 0 8px rgba(43,143,255,.13);}
-  .lx-tone__b.is-correct{border-color:rgba(16,185,120,.5);background:rgba(16,185,120,.09);box-shadow:inset 0 0 24px rgba(16,185,120,.18);}
+  .lx-tone__b.is-sel{border-color:rgba(43,143,255,.4);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(43,143,255,.3),inset 0 0 6px rgba(43,143,255,.16);}
+  .lx-tone__b.is-correct{border-color:rgba(16,185,120,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(16,185,120,.3),inset 0 0 6px rgba(16,185,120,.16);}
   .lx-tone__b.is-correct .lx-tone__mark,.lx-tone__b.is-correct .lx-tone__name{color:var(--lx-jade);}
-  .lx-tone__b.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(240,84,72,.08);box-shadow:inset 0 0 24px rgba(240,84,72,.16);}
+  .lx-tone__b.is-wrong{border-color:rgba(240,84,72,.5);background:rgba(255,255,255,.9);box-shadow:inset 0 0 26px rgba(240,84,72,.26),inset 0 0 6px rgba(240,84,72,.14);}
   .lx-tone__b.is-wrong .lx-tone__mark,.lx-tone__b.is-wrong .lx-tone__name{color:var(--lx-rose);}
   .lx-tone__b.is-dim{opacity:.5;}
   .lx-tone__b.is-locked{cursor:default;}
@@ -249,24 +250,30 @@
      Фон даёт сам светлый shell, страница — только чистые белые карточки. */
   .le-root{position:relative;}
   .le-root *{box-sizing:border-box;}
-  .le-head,.le-grid{position:relative;z-index:1;}
-  body:has(.le-root) .lr-aifab{display:none!important;}
+  .le-grid{position:relative;z-index:1;}
 
-  /* хедер — чистая крошка + белая пилюля-навигация, без тяжёлого бара (по референсу) */
-  .le-head{display:flex;align-items:center;gap:16px;margin:0 0 24px;}
+  /* ── Верхний ПРЕМИУМ-бар урока: плавающее морозное стекло, sticky сверху.
+     Крошка слева + нав-пилюля справа в ОДНОМ баре. Нижнего бара больше нет,
+     навигация и прогресс живут здесь. AI-наставник — плавающий снизу (шелл). ── */
+  .le-head{position:sticky;top:14px;z-index:30;display:flex;align-items:center;gap:14px;margin:0 0 30px;padding:9px 11px 9px 19px;border-radius:20px;
+    background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.56));
+    border:1px solid rgba(255,255,255,.75);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 0 26px rgba(43,143,255,.05),0 22px 46px -26px rgba(20,32,64,.34);
+    -webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7);}
   .le-crumb{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;font-size:13px;font-weight:600;}
   .le-crumb a,.le-crumb button{font:inherit;color:var(--le-ink-mute);background:0;border:0;cursor:pointer;padding:0;display:inline-flex;align-items:center;gap:7px;transition:color .15s;white-space:nowrap;}
   .le-crumb a:hover,.le-crumb button:hover{color:var(--le-acc-deep);}
   .le-crumb__home{color:var(--le-acc-deep);}
   .le-crumb__sep{color:var(--le-ink-faint);flex:0 0 auto;}
   .le-crumb__cur{color:var(--le-ink);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
-  /* пилюля-навигация «‹ Урок N / M ›» */
-  .le-switch{flex:0 0 auto;display:flex;align-items:center;gap:2px;padding:4px;border-radius:99px;background:rgba(255,255,255,.78);
-    border:1px solid var(--le-cbord);box-shadow:var(--le-hi);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
-  .le-switch__lab{font-size:13px;font-weight:600;color:var(--le-ink);font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 8px;}
-  .le-nav{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--le-ink-sub);
-    background:0;border:0;transition:color .15s,background .15s,opacity .15s;}
-  .le-nav:hover:not(:disabled){color:var(--le-acc-deep);background:var(--le-acc-soft);}
+  /* нав-пилюля «‹ Урок N / M ›» — тихий сегмент ВНУТРИ стеклянного бара (без второго стекла) */
+  .le-switch{flex:0 0 auto;display:flex;align-items:center;gap:2px;padding:3px;border-radius:99px;background:rgba(255,255,255,.55);
+    border:1px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 rgba(255,255,255,.9);}
+  .le-switch__lab{font-size:13px;font-weight:600;color:var(--le-ink);font-variant-numeric:tabular-nums;white-space:nowrap;padding:0 9px;letter-spacing:-.01em;}
+  .le-nav{flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--le-ink-sub);
+    background:0;border:0;transition:color .15s,background .15s,transform .15s,opacity .15s;}
+  .le-nav:hover:not(:disabled){color:var(--le-acc-deep);background:rgba(43,143,255,.1);transform:translateY(-1px);}
+  .le-nav:active:not(:disabled){transform:translateY(0);}
   .le-nav:disabled{opacity:.3;cursor:not-allowed;}
 
   .le-grid{display:grid;grid-template-columns:minmax(0,1fr) 364px;gap:38px;align-items:start;margin-top:30px;}
@@ -533,6 +540,16 @@
 .le-doc-material:hover{border-color:var(--le-acc-line);background:#fff;transform:translateY(-1px);}
 .le-doc-material:hover .le-doc-material__dl{color:var(--le-acc-deep);background:var(--le-acc-soft);}
 .le-doc-divider{border:0;border-top:1px solid var(--le-line);margin:22px 0;}
+.le-doc-tablewrap{margin:16px 0 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:14px;border:1px solid var(--le-line);box-shadow:var(--le-hi);}
+.le-doc-table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--le-card,#fff);}
+.le-doc-table th,.le-doc-table td{padding:9px 14px;text-align:left;vertical-align:top;line-height:1.45;color:var(--le-ink);border-bottom:1px solid var(--le-line);border-right:1px solid var(--le-line);}
+.le-doc-table th:last-child,.le-doc-table td:last-child{border-right:0;}
+.le-doc-table tbody tr:last-child td{border-bottom:0;}
+.le-doc-table thead th{background:rgba(43,143,255,.08);font-family:var(--le-display);font-weight:700;font-size:13px;color:var(--le-acc-deep);border-bottom:1px solid var(--le-acc-line);white-space:nowrap;}
+.le-doc-table tbody tr:nth-child(even) td{background:rgba(22,32,59,.02);}
+.le-code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:.9em;padding:1px 6px;border-radius:6px;background:rgba(43,143,255,.1);border:1px solid var(--le-acc-line);color:var(--le-acc-deep);white-space:nowrap;}
+.le-doc-code{margin:14px 0 4px;padding:14px 16px;border-radius:12px;overflow-x:auto;background:#0b1430;border:1px solid rgba(43,143,255,.22);}
+.le-doc-code code{font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:13px;line-height:1.6;color:#cdd7f5;white-space:pre;}
 .le-study.is-compact .le-doc{gap:0;}
 .le-study.is-compact .le-doc .le-note-h{font-size:18px;font-weight:600;margin-top:26px;}
 .le-study.is-compact .le-doc .le-note-p{font-size:14px;line-height:1.62;margin-top:8px;}
@@ -709,17 +726,22 @@
   /* ── НИЖНЯЯ ПАНЕЛЬ урока — ПЛАВАЮЩАЯ пилюля: «Назад · Урок N из M · Дальше».
      Отрывается от контента (sticky снизу + тень + зазор), стекло-блюр (футер —
      единственное разрешённое место настоящего blur в системе). ─────────────── */
-  .le-foot{position:sticky;bottom:22px;z-index:12;margin:26px 402px 0 0;display:flex;align-items:center;gap:16px;padding:14px 18px;border-radius:20px;
-    background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(24px) saturate(1.4);backdrop-filter:blur(24px) saturate(1.4);border:1px solid rgba(22,32,59,.08);box-shadow:0 16px 40px -18px rgba(20,32,64,.24);}
-  .le-foot__mid{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:16px;min-width:0;}
-  .le-foot__step{font-size:12.5px;font-weight:500;color:var(--le-ink-mute);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  /* короткая ЦЕНТРИРОВАННАЯ плавающая пилюля: «‹ Назад · Урок N из M · Дальше ›».
+     Не тянется на всю колонку — hug-content по центру, стекло-блюр, мягкий отрыв. */
+  .le-foot{position:sticky;bottom:22px;z-index:12;margin:36px auto 10px;width:max-content;max-width:100%;
+    display:flex;align-items:center;gap:8px;padding:8px 10px 8px 12px;border-radius:99px;
+    background:rgba(255,255,255,.64);-webkit-backdrop-filter:blur(28px) saturate(1.5);backdrop-filter:blur(28px) saturate(1.5);
+    border:1px solid rgba(255,255,255,.72);box-shadow:0 22px 50px -22px rgba(20,32,64,.42),inset 0 1px 0 rgba(255,255,255,.85);}
+  .le-foot__mid{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:12px;min-width:0;padding:0 6px;}
+  .le-foot__step{font-size:12.5px;font-weight:600;color:var(--le-ink-sub);white-space:nowrap;font-variant-numeric:tabular-nums;}
   .le-foot__dots{display:flex;align-items:center;}
-  .le-foot__ln{width:6px;height:3px;border-radius:2px;background:#D3D8F0;margin:0 5px;flex:none;}
-  .le-foot__dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 1.5px #C4CAE6;flex:none;}
-  .le-foot__dot.done{background:#2B8FFF;box-shadow:none;}
-  .le-foot__dot.cur{width:15px;height:15px;background:#2B8FFF;box-shadow:0 0 0 4px rgba(43,143,255,.22),inset 0 0 0 3px rgba(255,255,255,.92);}
-  .le-foot .le-btn{padding:14px 26px;font-size:14.5px;}
-  @media (max-width:560px){ .le-foot__dots{display:none;} }
+  .le-foot__ln{width:5px;height:2px;border-radius:2px;background:rgba(22,32,59,.16);margin:0 4px;flex:none;}
+  .le-foot__dot{width:7px;height:7px;border-radius:50%;background:transparent;box-shadow:inset 0 0 0 1.5px rgba(22,32,59,.24);flex:none;}
+  .le-foot__dot.done{background:var(--le-acc);box-shadow:none;}
+  .le-foot__dot.cur{width:13px;height:13px;background:var(--le-acc);box-shadow:0 0 0 4px rgba(43,143,255,.2),inset 0 0 0 3px rgba(255,255,255,.92);}
+  .le-foot .le-btn{padding:11px 18px;font-size:13.5px;border-radius:99px;}
+  .le-foot .le-btn--ghost{background:rgba(255,255,255,.55);border-color:rgba(22,32,59,.1);}
+  @media (max-width:560px){ .le-foot__dots{display:none;} .le-foot__mid{padding:0 2px;} .le-foot .le-btn{padding:11px 15px;} }
 
   /* кнопки (общие с попапом) — плоские, без выпуклости */
   .le-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;border:0;white-space:nowrap;font-family:inherit;font-size:14.5px;font-weight:600;letter-spacing:-.005em;padding:13px 22px;border-radius:12px;transition:transform .14s,background .14s,box-shadow .14s,opacity .14s;}
@@ -809,23 +831,16 @@
   .lt-conf{position:absolute;top:48px;left:50%;width:0;height:0;pointer-events:none;z-index:2;}
   .lt-conf i{position:absolute;left:0;top:0;width:9px;height:9px;border-radius:2px;opacity:0;animation:lt-conf 1.1s cubic-bezier(.2,.7,.3,1) forwards;}
   @keyframes lt-conf{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(0);}18%{opacity:1;}100%{opacity:0;transform:translate(var(--cx),var(--cy)) scale(1) rotate(var(--cr));}}
-  .lt-done__k{margin-top:24px;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--le-acc-ink);
-    background:rgba(43,143,255,.08);border:1px solid rgba(43,143,255,.2);padding:7px 15px 7px 12px;border-radius:99px;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
-  .lt-done__k svg{opacity:.85;}
-  .lt-done__h{font-family:var(--le-display);font-weight:700;font-size:33px;letter-spacing:-.032em;line-height:1.04;color:var(--le-ink);margin-top:17px;text-wrap:balance;}
-  .lt-done__s{font-size:15px;color:var(--le-ink-sub);margin-top:11px;max-width:38ch;line-height:1.5;font-weight:400;text-wrap:balance;}
-  /* Статы — один стеклянный монолит с хейрлайн-делением (не две карточки-дефолта). */
-  .lt-stats{display:inline-flex;align-items:stretch;margin-top:30px;border-radius:18px;overflow:hidden;
-    background:rgba(255,255,255,.6);border:1px solid var(--le-cbord);
-    box-shadow:var(--le-hi),inset 0 0 34px rgba(43,143,255,.06);
-    -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
-  .lt-stat{padding:16px 32px;text-align:center;position:relative;}
-  .lt-stat+.lt-stat{border-left:1px solid var(--le-line);}
-  .lt-stat--gold{background:rgba(245,200,76,.08);}
-  .lt-stat__v{font-family:var(--le-display);font-size:29px;font-weight:600;letter-spacing:-.02em;color:var(--le-acc-deep);font-variant-numeric:tabular-nums;line-height:1;}
-  .lt-stat__v.gold{color:var(--le-gold);}
-  .lt-stat__k{font-size:11.5px;font-weight:500;color:var(--le-ink-mute);margin-top:9px;}
+  .lt-done__h{font-family:var(--le-display);font-weight:700;font-size:32px;letter-spacing:-.032em;line-height:1.05;color:var(--le-ink);margin-top:26px;text-wrap:balance;}
+  .lt-done__s{font-size:15px;color:var(--le-ink-sub);margin-top:10px;max-width:34ch;line-height:1.5;font-weight:400;text-wrap:balance;}
+  /* Результат — ОДНА чистая светящаяся карточка (глоу украден из .ch3), без монолита-мусора. */
+  .lt-score{margin-top:26px;display:inline-flex;flex-direction:column;align-items:center;gap:5px;padding:16px 36px;border-radius:18px;
+    background:rgba(255,255,255,.9);border:1.5px solid rgba(43,143,255,.4);
+    box-shadow:inset 0 0 26px rgba(43,143,255,.3),inset 0 0 6px rgba(43,143,255,.16);}
+  .lt-score__v{font-family:var(--le-display);font-size:40px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--le-acc-deep);font-variant-numeric:tabular-nums;}
+  .lt-score__k{font-size:12.5px;font-weight:500;color:var(--le-ink-sub);}
+  .lt-score--wait{flex-direction:row;align-items:center;gap:8px;padding:12px 20px;font-size:13px;font-weight:600;color:var(--le-acc-ink);}
+  .lt-score--wait svg{opacity:.85;}
   .lt-done__cta{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap;justify-content:center;}
   @media (prefers-reduced-motion:reduce){ .lt-done__star,.lt-done__star::before{animation:none;} }
 
@@ -855,10 +870,8 @@
   .lt-modal--in .lt-done__star svg{width:44px;height:44px;}
   .lt-modal--in .lt-done__h{font-size:25px;}
   .lt-modal--in .lt-done__s{font-size:14px;margin-top:10px;}
-  .lt-modal--in .lt-stats{margin-top:22px;display:flex;width:100%;}
-  .lt-modal--in .lt-stat{min-width:0;flex:1 1 0;padding:14px 10px;text-align:center;}
-  .lt-modal--in .lt-stat__v{font-size:21px;}
-  .lt-modal--in .lt-stat__k{font-size:10.5px;margin-top:6px;}
+  .lt-modal--in .lt-score{margin-top:22px;padding:14px 28px;}
+  .lt-modal--in .lt-score__v{font-size:34px;}
   .lt-modal--in .lt-done__cta{margin-top:26px;flex-direction:column;width:100%;gap:10px;}
   .lt-modal--in .lt-done__cta .le-btn{width:100%;justify-content:center;}
 
@@ -893,7 +906,7 @@
     .le-card{flex:1 1 280px;}
   }
   @media (max-width:680px){
-    .le-head{margin:0 0 18px;padding:0;}
+    .le-head{margin:0 0 20px;padding:8px 9px 8px 14px;top:10px;border-radius:16px;}
     .le-crumb{font-size:13.5px;min-width:0;}
     .le-crumb__mod,.le-crumb__cur,.le-crumb__sep{display:none;}
     .le-titlerow{gap:12px;}
@@ -943,8 +956,8 @@
     .lt-done{padding:34px 18px 30px;}
     .lt-done__h{font-size:26px;}
     .lt-done__s{font-size:14.5px;}
-    .lt-stats{display:flex;width:100%;}
-    .lt-stat{min-width:0;flex:1 1 0;padding:15px 10px;}
+    .lt-score{padding:14px 26px;}
+    .lt-score__v{font-size:34px;}
   }
   @media (prefers-reduced-motion: reduce){
     .lt-q,.lt-done__star,.lt-modal,.lt-modal__panel,.lx-opt.is-wrong{animation:none;}
@@ -1317,12 +1330,13 @@
     const str = String(text == null ? '' : text);
     if (!str) return str;
     const n = str.length;
-    const b = new Array(n).fill(false), it = new Array(n).fill(false);
+    const b = new Array(n).fill(false), it = new Array(n).fill(false), cd = new Array(n).fill(false);
     (marks || []).forEach((mm) => {
       if (!mm || mm.start == null || mm.end == null) return;
       for (let k = Math.max(0, mm.start); k < Math.min(n, mm.end); k++) {
         if (mm.type === 'bold') b[k] = true;
         if (mm.type === 'italic') it[k] = true;
+        if (mm.type === 'code') cd[k] = true;
       }
     });
     const re = /([一-鿿]+)/g;
@@ -1342,16 +1356,17 @@
     const out = [];
     let seg = 0, i = 0;
     while (i < n) {
-      const cb = b[i], ci = it[i];
+      const cb = b[i], ci = it[i], cc = cd[i];
       let j = i + 1;
-      while (j < n && b[j] === cb && it[j] === ci) j++;
+      while (j < n && b[j] === cb && it[j] === ci && cd[j] === cc) j++;
       const kids = splitHanzi(str.slice(i, j));
       const key = 's' + (seg++);
       let node;
-      if (cb && ci) node = h('b', { key }, h('i', null, kids));
-      else if (cb) node = h('b', { key }, kids);
-      else if (ci) node = h('i', { key }, kids);
-      else node = kids.length === 1 ? kids[0] : h('span', { key }, kids);
+      if (cb && ci) node = h('b', null, h('i', null, kids));
+      else if (cb) node = h('b', null, kids);
+      else if (ci) node = h('i', null, kids);
+      else node = kids;
+      node = cc ? h('code', { key, className: 'le-code' }, node) : h('span', { key }, node);
       out.push(node);
       i = j;
     }
@@ -1517,6 +1532,15 @@
             h('span', { className: 'le-doc-material__meta' }, fm.meta)),
           Ic.Download ? h('span', { className: 'le-doc-material__dl' }, h(Ic.Download, { size: 16 })) : null);
       }
+      if (b.kind === 'table') {
+        const cell = (c) => (c && typeof c === 'object') ? richText(c.text, c.marks) : richText(c);
+        const head = b.head || [], rows = b.rows || [];
+        return h('div', { key, className: 'le-doc-tablewrap' },
+          h('table', { className: 'le-doc-table' },
+            head.length ? h('thead', null, h('tr', null, head.map((c, k) => h('th', { key: k }, cell(c))))) : null,
+            h('tbody', null, (rows || []).map((r, ri) => h('tr', { key: ri }, (r || []).map((c, k) => h('td', { key: k }, cell(c))))))));
+      }
+      if (b.kind === 'code') return h('pre', { key, className: 'le-doc-code' }, h('code', null, b.text || ''));
       if (b.kind === 'divider') return h('hr', { key, className: 'le-doc-divider' });
       return null;
     });
@@ -1673,7 +1697,12 @@
     const emb = L.videoEmbed(v);
     const hasDoc = !!(lesson.doc && lesson.doc.length);
     const noteBlocks = hasDoc ? [] : L.notesToBlocks(lesson.notes);
-    const blocks = lesson.blocks || [];
+    // Нормализация формы: часть уроков хранит дискриминатор квиз-блока как `kind`
+    // (старый генератор), а рендер диспатчится по `type` → блок отдавал null и
+    // домашка открывалась пустой. Приводим `type = type || kind` (не мутируя).
+    const blocks = (lesson.blocks || []).map(function (b) {
+      return (b && !b.type && b.kind) ? Object.assign({}, b, { type: b.kind }) : b;
+    });
     const start = onStart || function () {};
     const glossary = (lesson.glossary && lesson.glossary.length) ? lesson.glossary : collectVocab(blocks);
     const objectives = (lesson.objectives || []).filter(Boolean);
@@ -1782,7 +1811,37 @@
         h('span', { className: 'le-gl__ru' }, g.ru || ''))))) : null;
 
     const pdfMat = (lesson.materials || []).find(function (m) { return m && /pdf/i.test((m.filename || '') + (m.url || '') + (m.title || '')); });
-    const onPdf = function () { if (pdfMat && pdfMat.url && pdfMat.url !== '#') window.open(pdfMat.url, '_blank'); else toast('PDF-конспект скоро будет доступен'); };
+    const onPdf = function () {
+      // Прикреплён готовый PDF — открываем его; иначе собираем печатный конспект
+      // из lesson.doc и шлём в печать (браузер → «Сохранить в PDF»).
+      if (pdfMat && pdfMat.url && pdfMat.url !== '#') { window.open(pdfMat.url, '_blank'); return; }
+      try {
+        const L2 = lesson || {};
+        const esc = function (s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
+        const P = [];
+        P.push('<h1>' + esc(L2.title || 'Конспект урока') + '</h1>');
+        if (L2.subtitle) P.push('<p class="sub">' + esc(L2.subtitle) + '</p>');
+        const objs = (L2.objectives || []).filter(Boolean);
+        if (objs.length) { P.push('<h2>В этом уроке вы научитесь</h2><ul>'); objs.forEach(function (o) { P.push('<li>' + esc(o) + '</li>'); }); P.push('</ul>'); }
+        (L2.doc || []).forEach(function (b) {
+          if (!b) return;
+          if (b.kind === 'heading') P.push('<h2>' + esc(b.text) + '</h2>');
+          else if (b.kind === 'para' || b.kind === 'quote') P.push('<p>' + esc(b.text) + '</p>');
+          else if (b.kind === 'word' || b.kind === 'example') P.push('<div class="w"><b>' + esc(b.hanzi) + '</b> <i>' + esc(b.pinyin) + '</i>' + (b.ru ? ' — ' + esc(b.ru) : '') + '</div>');
+          else if (b.kind === 'important') P.push('<div class="imp"><b>Важно.</b> ' + esc(b.text) + '</div>');
+          else if (b.kind === 'hint') P.push('<div class="hint">' + esc(b.text) + '</div>');
+          else if (b.kind === 'bullets' || b.kind === 'numbered') { const tg = b.kind === 'numbered' ? 'ol' : 'ul'; P.push('<' + tg + '>'); (b.items || []).forEach(function (it) { P.push('<li>' + esc(it) + '</li>'); }); P.push('</' + tg + '>'); }
+          else if (b.kind === 'divider') P.push('<hr>');
+        });
+        const gl = (L2.glossary || []).filter(function (g) { return g && (g.hanzi || g.ru); });
+        if (gl.length) { P.push('<h2>Словарь урока</h2><table>'); gl.forEach(function (g) { P.push('<tr><td><b>' + esc(g.hanzi) + '</b></td><td><i>' + esc(g.pinyin) + '</i></td><td>' + esc(g.ru) + '</td></tr>'); }); P.push('</table>'); }
+        const css = 'body{font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#15203b;max-width:720px;margin:32px auto;padding:0 24px;line-height:1.55}h1{font-size:26px;letter-spacing:-.02em;margin:0 0 4px}.sub{color:#5b6478;margin:0 0 18px;font-size:15px}h2{font-size:18px;margin:22px 0 8px}p{margin:8px 0}.w{margin:6px 0;padding:8px 12px;background:#f4f6fd;border-radius:8px}.w b{font-size:18px}.w i{color:#2073e6}.imp{margin:12px 0;padding:10px 14px;background:#eef4ff;border-left:3px solid #2073e6;border-radius:6px}.hint{margin:10px 0;padding:8px 12px;background:#f6f8fe;border-radius:6px;color:#5b6478}ul,ol{margin:8px 0 8px 20px}li{margin:3px 0}table{border-collapse:collapse;width:100%;margin:8px 0}td{padding:5px 10px;border-bottom:1px solid #eee}hr{border:0;border-top:1px solid #e5e8f2;margin:16px 0}@media print{body{margin:0}}';
+        const html = '<!doctype html><html lang="ru"><head><meta charset="utf-8"><title>' + esc(L2.title || 'Конспект') + '</title><style>' + css + '</style></head><body>' + P.join('') + '<scr' + 'ipt>window.onload=function(){setTimeout(function(){window.print();},350);}</scr' + 'ipt></body></html>';
+        const w = window.open('', '_blank');
+        if (!w) { toast('Разрешите всплывающие окна, чтобы сохранить конспект в PDF'); return; }
+        w.document.open(); w.document.write(html); w.document.close();
+      } catch (e) { toast('Не удалось собрать конспект'); }
+    };
 
     // Конспект — единый поток (цели, разбор, слова, выноски) тем же renderDoc,
     // что и превью конструктора (build). Без табов — как во всём продукте.
@@ -1857,7 +1916,12 @@
   ───────────────────────────────────────────────────────────────────────── */
   function Trainer(props) {
     const lesson = props.lesson;
-    const blocks = lesson.blocks || [];
+    // Нормализация формы: часть уроков хранит дискриминатор квиз-блока как `kind`
+    // (старый генератор), а рендер диспатчится по `type` → блок отдавал null и
+    // домашка открывалась пустой. Приводим `type = type || kind` (не мутируя).
+    const blocks = (lesson.blocks || []).map(function (b) {
+      return (b && !b.type && b.kind) ? Object.assign({}, b, { type: b.kind }) : b;
+    });
 
     // Состояние по каждому вопросу — массивами, чтобы работала навигация «назад»
     // без переспрашивания и без двойного начисления XP (счёт берём из scored[]).
@@ -1957,6 +2021,11 @@
     if (done) {
       const scoredCount = blocks.filter((b) => b.type !== 'theory' && b.type !== 'task').length;
       const acc = scoredCount ? Math.round((rightCount / scoredCount) * 100) : null;
+      const isHw = blocks.some((b) => b.type === 'task');
+      const heading = isHw ? 'Домашка отправлена' : (acc != null && acc >= 80 ? 'Отлично пройдено' : 'Тест пройден');
+      const sub = isHw
+        ? 'Преподаватель проверит ваши ответы и даст обратную связь.'
+        : 'Так держать — можно двигаться дальше по курсу.';
       return h('div', { className: 'lt-modal' + (props.contained ? ' lt-modal--in' : ''), onMouseDown: backdrop },
         h('div', { className: 'lt-modal__panel', role: 'dialog', 'aria-modal': 'true' },
           closeX(true),
@@ -1970,13 +2039,16 @@
                 { c: '#F5C84C', cx: '-44px', cy: '116px', cr: '210deg', d: '.15s' },
                 { c: '#2B8FFF', cx: '52px', cy: '116px', cr: '-210deg', d: '.13s' },
               ].map(function (cp, i) { return h('i', { key: i, style: { background: cp.c, '--cx': cp.cx, '--cy': cp.cy, '--cr': cp.cr, animationDelay: cp.d } }); })),
-              h('div', { className: 'lt-done__star' }, Ic.Star ? h(Ic.Star, { size: 52 }) : '★')),
-            h('div', { className: 'lt-done__k' }, Ic.Clock ? h(Ic.Clock, { size: 13 }) : null, h('span', null, 'На проверке у преподавателя')),
-            h('h2', { className: 'lt-done__h' }, acc >= 80 ? 'Отлично, домашка сдана!' : 'Готово — домашка отправлена!'),
-            h('p', { className: 'lt-done__s' }, 'Ответы ушли преподавателю — он проверит и даст обратную связь. Предварительный результат ниже.'),
-            scoredCount ? h('div', { className: 'lt-stats' },
-              h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, acc + '%'), h('div', { className: 'lt-stat__k' }, 'Точность')),
-              h('div', { className: 'lt-stat' }, h('div', { className: 'lt-stat__v' }, rightCount + '/' + scoredCount), h('div', { className: 'lt-stat__k' }, 'Верных ответов'))) : null,
+              h('div', { className: 'lt-done__star' }, Ic.Star ? h(Ic.Star, { size: 50 }) : '★')),
+            h('h2', { className: 'lt-done__h' }, heading),
+            h('p', { className: 'lt-done__s' }, sub),
+            scoredCount
+              ? h('div', { className: 'lt-score' },
+                  h('div', { className: 'lt-score__v' }, acc + '%'),
+                  h('div', { className: 'lt-score__k' }, rightCount + ' из ' + scoredCount + ' верных' + (isHw ? ' · предварительно' : '')))
+              : (isHw
+                  ? h('div', { className: 'lt-score lt-score--wait' }, Ic.Clock ? h(Ic.Clock, { size: 15 }) : null, h('span', null, 'На проверке у преподавателя'))
+                  : null),
             h('div', { className: 'lt-done__cta' },
               h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: () => finish({ acc: acc }) }, 'Вернуться к уроку', arrEl()),
               h('button', { type: 'button', className: 'le-btn le-btn--ghost', onClick: restart }, 'Пройти ещё раз')))));
@@ -2099,7 +2171,7 @@
         h('div', { className: 'le-tch__b' },
           h('div', { className: 'le-tch__n' }, t.name),
           h('div', { className: 'le-tch__r' }, t.role || 'Преподаватель курса'))),
-      h('button', { type: 'button', className: 'le-tchbtn', onClick: () => { if (SH && SH.openChat) SH.openChat({ label: t.name + ' · преподаватель' }); } },
+      h('button', { type: 'button', className: 'le-tchbtn', onClick: () => { toast('Написать преподавателю можно будет из кабинета — скоро. AI-наставник рядом внизу.'); } },
         Ic.Chat ? h(Ic.Chat, { size: 15 }) : null, 'Написать преподавателю'));
   }
 
@@ -2126,7 +2198,7 @@
     const back = h('button', { type: 'button', className: 'le-btn le-btn--ghost', disabled: !prevOk, onClick: prevOk ? onPrev : undefined },
       h('svg', { width: 15, height: 15, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2.2, strokeLinecap: 'round', strokeLinejoin: 'round', className: 'bk' }, h('path', { d: 'M19 12H5M11 6l-6 6 6 6' })), 'Назад');
     let next;
-    if (nextOk) next = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onNext }, 'Следующий урок', arr());
+    if (nextOk) next = h('button', { type: 'button', className: 'le-btn le-btn--primary', onClick: onNext }, 'Дальше', arr());
     else next = h('button', { type: 'button', className: 'le-btn le-btn--primary', disabled: true }, 'Модуль пройден');
     return h('div', { className: 'le-foot' },
       back,
@@ -2146,8 +2218,7 @@
           h(StudyView, { lesson, item, moduleName, onStart, homeworkDone, hwResult, playing, onPlay })),
         h('aside', { className: 'le-rail' },
           h(Playlist, { lessons, activeN: item.n, moduleName, onSwitch }),
-          h(TeacherCard, null))),
-      h(LessonFoot, { item, total: tot, lessons, prevOk, onPrev, nextOk, onNext, homeworkDone, onStart }));
+          h(TeacherCard, null))));
   }
 
   /* ─────────────────────────────────────────────────────────────────────────
